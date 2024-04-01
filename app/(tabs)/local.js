@@ -11,7 +11,7 @@ import {
 import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
-import { useSongsStore } from "../../state/songs";
+import { useSongsStore } from "../../store/songs";
 
 function listItem({ item }, setLikeSong, setUnlikeSong) {
     return (
@@ -40,6 +40,7 @@ export default function LocalFilesTab() {
 
     // process new songs
     useEffect(() => {
+        console.log("local renew");
         (async () => {
             // get permissions
             const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -47,7 +48,6 @@ export default function LocalFilesTab() {
                 alert("Permission to access media library was denied");
                 return;
             }
-
             // get audio assets
             const { assets } = await MediaLibrary.getAssetsAsync({
                 mediaType: MediaLibrary.MediaType.audio,

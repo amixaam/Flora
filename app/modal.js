@@ -1,12 +1,26 @@
-import { View } from "react-native";
-import { Link, router } from "expo-router";
+import { Button, Text, TextInput, View } from "react-native";
+import { useSongsStore } from "../store/songs";
+import { useState } from "react";
 export default function Modal() {
-    const isPresented = router.canGoBack();
+    const { createPlaylist } = useSongsStore();
+    const [name, setName] = useState("");
+
     return (
         <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+            style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+            }}
         >
-            {!isPresented && <Link href="../">Dismiss</Link>}
+            <Text>Add a playlist</Text>
+            <TextInput
+                value={name}
+                onChangeText={(text) => setName(text)}
+                placeholder="Playlist name"
+                style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+            />
+            <Button title="Add" onPress={() => createPlaylist(name)} />
         </View>
     );
 }

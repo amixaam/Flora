@@ -6,9 +6,15 @@ const MARKED_SONGS_KEY = "MarkedSongs";
 
 export const useSongsStore = create(
     persist(
-        (set) => ({
+        (set, get) => ({
             songs: [],
-            playlists: [],
+            playlists: [
+                {
+                    id: "1",
+                    name: "Liked songs",
+                    songs: [],
+                },
+            ],
 
             setSongs: (songs) => set({ songs }),
             setPlaylists: (playlists) => set({ playlists }),
@@ -17,7 +23,7 @@ export const useSongsStore = create(
                     id: (
                         Date.now().toString(36) +
                         Math.random().toString(36).substr(2, 5)
-                    ).toUpperCase(), // Generate a random playlist ID in base 36
+                    ).toUpperCase(),
                     name,
                     songs: [],
                 };
@@ -25,9 +31,9 @@ export const useSongsStore = create(
                     playlists: [...state.playlists, newPlaylist],
                 }));
             },
-
             addSongToPlaylist: (playlistId, songId) => {
-                const playlists = [...state.playlists];
+                const playlists = [...get().playlists];
+
                 const playlistIndex = playlists.findIndex(
                     (p) => p.id === playlistId
                 );
@@ -36,7 +42,7 @@ export const useSongsStore = create(
             },
 
             removeSongFromPlaylist: (playlistId, songId) => {
-                const playlists = [...state.playlists];
+                const playlists = [...get().playlists];
                 const playlistIndex = playlists.findIndex(
                     (p) => p.id === playlistId
                 );
@@ -51,6 +57,7 @@ export const useSongsStore = create(
                         song.id === id ? { ...song, isLiked: true } : song
                     ),
                 }));
+                get().addSongToPlaylist("1", id);
             },
             setUnlikeSong: (id) => {
                 set((state) => ({
@@ -58,6 +65,7 @@ export const useSongsStore = create(
                         song.id === id ? { ...song, isLiked: false } : song
                     ),
                 }));
+                get().removeSongFromPlaylist("1", id);
             },
         }),
         {
