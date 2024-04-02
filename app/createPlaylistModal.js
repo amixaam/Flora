@@ -1,7 +1,7 @@
 import { Button, Text, TextInput, View } from "react-native";
 import { useSongsStore } from "../store/songs";
 import { useState } from "react";
-export default function Modal() {
+export default function CreatePlaylistModal() {
     const { createPlaylist } = useSongsStore();
     const [name, setName] = useState("");
 

@@ -31,6 +31,22 @@ export const useSongsStore = create(
                     playlists: [...state.playlists, newPlaylist],
                 }));
             },
+            getPlaylist: (id) => {
+                const playlists = get().playlists;
+                const playlist = playlists.find((p) => p.id === id);
+                if (!playlist) return null;
+
+                const songs = playlist.songs.map((songId) =>
+                    get().songs.find((s) => s.id === songId)
+                );
+
+                return {
+                    ...playlist,
+                    songs,
+                };
+            },
+            getSong: (id) => get().songs.find((song) => song.id === id),
+
             addSongToPlaylist: (playlistId, songId) => {
                 const playlists = [...get().playlists];
 

@@ -7,7 +7,7 @@ const useAudioStore = create((set) => ({
     nextSong: [], //metadata
     setSong: (song, soundObject) =>
         set({ currentSong: song, currentSongObject: soundObject }),
-    setIsPlaying: (isPlaying) => set({ isPlaying }),
+    toggleIsPlaying: () => set((state) => ({ isPlaying: !state.isPlaying })),
     setNextSong: (nextSong) => set({ nextSong }),
 }));
 

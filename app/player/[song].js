@@ -1,32 +1,54 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 
-import * as MediaLibrary from "expo-media-library";
-import { Audio } from "expo-av";
-const soundObject = new Audio.Sound();
+import { MaterialIcons } from "@expo/vector-icons";
+import { useSongsStore } from "../../store/songs";
+import useAudioStore from "../../store/audio";
 
-async function loadMusic(id) {
-    const musicAsset = await MediaLibrary.getAssetInfoAsync(id);
-    // console.log(musicAsset);
-
-    await soundObject.loadAsync({ uri: musicAsset.uri });
-    await soundObject.playAsync();
+function PlaybackControls({ isPlaying, toggleIsPlaying }) {
+    return (
+        <View
+            style={{
+                flexDirection: "row",
+                justifyContent: "center",
+            }}
+        >
+            <TouchableOpacity
+                style={{ padding: 16 }}
+                onPress={() => toggleIsPlaying()}
+            >
+                <MaterialIcons
+                    name={isPlaying ? "pause" : "play-arrow"}
+                    size={64}
+                />
+            </TouchableOpacity>
+        </View>
+    );
 }
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
-    loadMusic(song);
-    return (
-        <View>
-            <Text>Player</Text>
-            <Text>{song}</Text>
+    const { getSong, setLikeSong, setUnlikeSong } = useSongsStore();
+    const { setSong, toggleIsPlaying, isPlaying } = useAudioStore();
 
-            <TouchableOpacity
-                style={{ padding: 16 }}
-                onPress={() => soundObject.stopAsync()}
-            >
-                <Text>Toggle</Text>
-            </TouchableOpacity>
+    const songData = getSong(song);
+    console.log(isPlaying);
+
+    return (
+        <View style={{ padding: 16, paddingHorizontal: 32 }}>
+            <View
+                style={{
+                    width: "100%",
+                    aspectRatio: 1,
+                    backgroundColor: "gray",
+                    borderRadius: 7,
+                }}
+            />
+            <Text>{songData.name}</Text>
+            <PlaybackControls
+                isPlaying={isPlaying}
+                toggleIsPlaying={toggleIsPlaying}
+            />
         </View>
     );
 }

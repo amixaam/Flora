@@ -1,42 +1,16 @@
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useState } from "react";
-import {
-    Dimensions,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { Dimensions, View, StyleSheet, Text, Button } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
 import { useSongsStore } from "../../store/songs";
-
-function listItem({ item }, setLikeSong, setUnlikeSong) {
-    return (
-        <TouchableOpacity
-            style={styles.listItem}
-            onPress={() => router.push("/" + item.id)}
-        >
-            <Text>{item.name}</Text>
-            <TouchableOpacity
-                onPress={() =>
-                    item.isLiked ? setUnlikeSong(item.id) : setLikeSong(item.id)
-                }
-            >
-                <MaterialIcons
-                    name={item.isLiked ? "favorite" : "favorite-border"}
-                    size={24}
-                    color="red"
-                />
-            </TouchableOpacity>
-        </TouchableOpacity>
-    );
-}
+import SongListItem from "../../Components/SongListItem";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 
 export default function LocalFilesTab() {
     const { songs, setSongs, setLikeSong, setUnlikeSong } = useSongsStore();
+    const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
 
     // process new songs
     useEffect(() => {
@@ -80,6 +54,10 @@ export default function LocalFilesTab() {
         })();
     }, []);
 
+    const bottomSheetRef = useRef(null);
+    const handleClosePress = () => bottomSheetRef.current.close();
+    const handleOpenPress = () => bottomSheetRef.current.expand();
+
     return (
         <View
             style={{
@@ -87,24 +65,18 @@ export default function LocalFilesTab() {
             }}
         >
             {/* <Text>{JSON.stringify(songs[0])}</Text> */}
+            <Button title="close" onPress={handleClosePress} />
+            <Button title="open" onPress={handleOpenPress} />
             <FlashList
                 data={songs}
                 estimatedItemSize={80} // Adjust based on your item size
                 renderItem={({ item }) =>
-                    listItem({ item }, setLikeSong, setUnlikeSong)
+                    SongListItem({ item }, setLikeSong, setUnlikeSong)
                 }
                 keyExtractor={(item) => item.id} // Ensure unique keys
             />
+            {/* TODO: forwardRef */}
+            <EditSongBottomSheet ref={bottomSheetRef} />
         </View>
     );
 }
-const styles = StyleSheet.create({
-    listItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
-    },
-});

@@ -17,6 +17,7 @@ function PlaylistList({ playlists }) {
                         style={{
                             margin: 4,
                         }}
+                        onPress={() => router.push("/(playlist)/" + item.id)}
                     >
                         <View
                             style={{

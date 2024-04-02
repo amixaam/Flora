@@ -33,7 +33,9 @@ export default function TabLayout() {
                         />
                     ),
                     headerRight: () => (
-                        <TouchableOpacity onPress={() => router.push("/modal")}>
+                        <TouchableOpacity
+                            onPress={() => router.push("/createPlaylistModal")}
+                        >
                             <MaterialIcons
                                 name="add"
                                 size={24}
