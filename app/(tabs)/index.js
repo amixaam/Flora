@@ -12,12 +12,17 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
         setSelectedPlaylist(item);
         handleOpenPress();
     };
+
+    const handlePress = () => {
+        setSelectedPlaylist(item);
+        router.push("/(playlist)/" + item.id);
+    };
     return (
         <TouchableOpacity
             style={{
                 margin: 4,
             }}
-            onPress={() => router.push("/(playlist)/" + item.id)}
+            onPress={handlePress}
             onLongPress={handleLongPress}
         >
             <View

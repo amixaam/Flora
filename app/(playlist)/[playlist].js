@@ -15,6 +15,7 @@ export default function PlaylistList() {
 
     const bottomSheetRef = useRef(null);
     const handleOpenPress = () => bottomSheetRef.current.present();
+
     return (
         <View
             style={{
@@ -49,6 +50,9 @@ export default function PlaylistList() {
                 {playlistData.description}
             </Text>
             <View style={{ height: "100%", width: "100%" }}>
+                {playlistData.songs.length === 0 && (
+                    <Text style={{ textAlign: "center" }}>No songs here!</Text>
+                )}
                 <FlashList
                     data={playlistData.songs}
                     estimatedItemSize={50}

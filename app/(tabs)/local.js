@@ -78,7 +78,7 @@ export default function LocalFilesTab() {
     return (
         <View
             style={{
-                height: Dimensions.get("window").height,
+                height: "100%",
             }}
         >
             <FlashList

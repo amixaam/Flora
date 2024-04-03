@@ -32,6 +32,29 @@ export const useSongsStore = create(
                 get().removeSongFromPlaylist("1", id);
             },
 
+            hideSong: (id) => {
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        song.id === id
+                            ? { ...song, isHidden: true, isLiked: false }
+                            : song
+                    ),
+                    playlists: state.playlists.map((playlist) => ({
+                        ...playlist,
+                        songs: playlist.songs.filter((songId) => songId !== id),
+                    })),
+                }));
+            },
+
+
+            unhideSong: (id) => {
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        song.id === id ? { ...song, isHidden: false } : song
+                    ),
+                }));
+            },
+
             // playlists
             setPlaylists: (playlists) => set({ playlists }),
             setSelectedPlaylist: (playlist) =>

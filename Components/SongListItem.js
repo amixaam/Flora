@@ -20,7 +20,15 @@ export default function SongListItem(
             onPress={() => router.push("/player/" + item.id)}
             onLongPress={handleLongPress}
         >
-            <Text style={item.isHidden ? styles.strikedText : {}}>
+            <Text
+                style={{
+                    width: "90%",
+                    overflow: "hidden",
+                    color: item.isHidden ? "gray" : "black",
+                }}
+                numberOfLines={1}
+            >
+                {item.isHidden ? "(Hidden) " : ""}
                 {item.name}
             </Text>
 

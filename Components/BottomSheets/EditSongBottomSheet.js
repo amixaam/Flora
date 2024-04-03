@@ -8,6 +8,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
+import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
 
 const EditSongBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -19,10 +20,21 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
         />
     ));
 
-    const { selectedSong } = useSongsStore();
+    const { selectedSong, hideSong, unhideSong } = useSongsStore();
 
-    const bottomSheetRef = useRef(null);
-    const handleOpenPress = () => bottomSheetRef.current.present();
+    const addSongBottomSheetRef = useRef(null);
+    const handleOpenAddSongBottomSheet = () =>
+        addSongBottomSheetRef.current.present();
+
+    const removeSongBottomSheetRef = useRef(null);
+    const handleRemoveSongBottomSheet = () =>
+        removeSongBottomSheetRef.current.present();
+
+    const handleHideSongPress = () => {
+        ref.current.dismiss();
+        if (selectedSong.isHidden) unhideSong(selectedSong.id);
+        else hideSong(selectedSong.id);
+    };
 
     if (selectedSong === null) return;
     return (
@@ -47,14 +59,32 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
                         style={styles.listItem}
                         onPress={() => {
                             ref.current.dismiss();
-                            handleOpenPress();
+                            handleOpenAddSongBottomSheet();
                         }}
                     >
                         <Text>Add to Playlist</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={() => {
+                            ref.current.dismiss();
+                            handleRemoveSongBottomSheet();
+                        }}
+                    >
+                        <Text>Remove from Playlist</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.listItem}
+                        onPress={handleHideSongPress}
+                    >
+                        <Text>
+                            {selectedSong.isHidden ? "Show" : "Hide"} this song
+                        </Text>
+                    </TouchableOpacity>
                 </BottomSheetView>
             </BottomSheetModal>
-            <AddSongToPlaylistBottomSheet ref={bottomSheetRef} />
+            <AddSongToPlaylistBottomSheet ref={addSongBottomSheetRef} />
+            <RemoveSongToPlaylistBottomSheet ref={removeSongBottomSheetRef} />
         </>
     );
 });
