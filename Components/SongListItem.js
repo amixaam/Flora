@@ -2,16 +2,33 @@ import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function SongListItem({ item }, setLikeSong, setUnlikeSong) {
+export default function SongListItem(
+    { item },
+    addSongLike,
+    removeSongLike,
+    handleOpenPress,
+    setSelectedSong
+) {
+    const handleLongPress = () => {
+        setSelectedSong(item);
+        handleOpenPress();
+    };
+
     return (
         <TouchableOpacity
             style={styles.listItem}
             onPress={() => router.push("/player/" + item.id)}
+            onLongPress={handleLongPress}
         >
-            <Text>{item.name}</Text>
+            <Text style={item.isHidden ? styles.strikedText : {}}>
+                {item.name}
+            </Text>
+
             <TouchableOpacity
                 onPress={() =>
-                    item.isLiked ? setUnlikeSong(item.id) : setLikeSong(item.id)
+                    item.isLiked
+                        ? removeSongLike(item.id)
+                        : addSongLike(item.id)
                 }
             >
                 <MaterialIcons

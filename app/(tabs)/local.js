@@ -1,20 +1,26 @@
 import { FlashList } from "@shopify/flash-list";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { Dimensions, View, StyleSheet, Text, Button } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Dimensions, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
 import { useSongsStore } from "../../store/songs";
 import SongListItem from "../../Components/SongListItem";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 
 export default function LocalFilesTab() {
-    const { songs, setSongs, setLikeSong, setUnlikeSong } = useSongsStore();
-    const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
+    const {
+        songs,
+        setPlaylists,
+        setSongs,
+        addSongLike,
+        removeSongLike,
+        setSelectedSong,
+    } = useSongsStore();
 
     // process new songs
     useEffect(() => {
         console.log("local renew");
+        // return;
         (async () => {
             // get permissions
             const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -54,9 +60,20 @@ export default function LocalFilesTab() {
         })();
     }, []);
 
+    // useEffect(() => {
+    //     setSongs([]);
+    //     setPlaylists([
+    //         {
+    //             id: "1",
+    //             name: "Liked songs",
+    //             description: "Your songs that you liked.",
+    //             songs: [],
+    //         },
+    //     ]);
+    // }, []);
+
     const bottomSheetRef = useRef(null);
-    const handleClosePress = () => bottomSheetRef.current.close();
-    const handleOpenPress = () => bottomSheetRef.current.expand();
+    const handleOpenPress = () => bottomSheetRef.current.present();
 
     return (
         <View
@@ -64,18 +81,20 @@ export default function LocalFilesTab() {
                 height: Dimensions.get("window").height,
             }}
         >
-            {/* <Text>{JSON.stringify(songs[0])}</Text> */}
-            <Button title="close" onPress={handleClosePress} />
-            <Button title="open" onPress={handleOpenPress} />
             <FlashList
                 data={songs}
                 estimatedItemSize={80} // Adjust based on your item size
                 renderItem={({ item }) =>
-                    SongListItem({ item }, setLikeSong, setUnlikeSong)
+                    SongListItem(
+                        { item },
+                        addSongLike,
+                        removeSongLike,
+                        handleOpenPress,
+                        setSelectedSong
+                    )
                 }
                 keyExtractor={(item) => item.id} // Ensure unique keys
             />
-            {/* TODO: forwardRef */}
             <EditSongBottomSheet ref={bottomSheetRef} />
         </View>
     );

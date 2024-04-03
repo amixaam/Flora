@@ -1,14 +1,23 @@
 import { create } from "zustand";
 
 const useAudioStore = create((set) => ({
-    currentSong: [], //metadata
-    currentSongObject: null, //soundObject
+    playingSongData: [], //metadata
+    playingSongObject: null, //soundObject
     isPlaying: false, //paused/playing
-    nextSong: [], //metadata
-    setSong: (song, soundObject) =>
-        set({ currentSong: song, currentSongObject: soundObject }),
+    playlingPlaylist: [], //metadata
     toggleIsPlaying: () => set((state) => ({ isPlaying: !state.isPlaying })),
-    setNextSong: (nextSong) => set({ nextSong }),
+    setupMusic: async (song, playlist) => {
+        const { Sound } = await require("expo-av").Audio.Sound.createAsync(
+            song.path
+        );
+        set(() => ({
+            playingSongObject: Sound,
+            playingSongData: song,
+            playlingPlaylist: playlist,
+            isPlaying: true,
+        }));
+    },
+
 }));
 
 export default useAudioStore;

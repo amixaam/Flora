@@ -28,8 +28,8 @@ function PlaybackControls({ isPlaying, toggleIsPlaying }) {
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
-    const { getSong, setLikeSong, setUnlikeSong } = useSongsStore();
-    const { setSong, toggleIsPlaying, isPlaying } = useAudioStore();
+    const { getSong, addSongLike, removeSongLike } = useSongsStore();
+    const { setupMusic, toggleIsPlaying, isPlaying } = useAudioStore();
 
     const songData = getSong(song);
     console.log(isPlaying);

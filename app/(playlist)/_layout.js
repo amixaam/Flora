@@ -4,7 +4,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 export default function DefaultLayout() {
     return (
-        
         <Stack>
             <Stack.Screen name="settings" options={{}} />
             <Stack.Screen
