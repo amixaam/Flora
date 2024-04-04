@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Tabs, router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Pressable, TouchableOpacity } from "react-native";
+import { Pressable, Text, TouchableOpacity } from "react-native";
 import CreatePlaylistBottomSheet from "../../Components/BottomSheets/CreatePlaylistBottomSheet";
 
 export default function TabLayout() {

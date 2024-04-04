@@ -1,23 +1,181 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { Audio } from "expo-av";
+import { useEffect } from "react";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
 export const useSongsStore = create(
     persist(
         (set, get) => ({
-            songs: [],
-            selectedSong: null,
+            songs: [], //full data (such as the uri)
             playlists: [
                 {
                     id: "1",
                     name: "Liked songs",
                     description: "Your songs that you liked.",
-                    songs: [],
+                    songs: [], //contains only id's
                 },
             ],
+            // for menus, ect..
+            selectedSong: null,
             selectedPlaylist: null,
+
+            // for music playback
+            currentTrack: [],
+            isPlaying: false,
+            playlist: [],
+            audioRef: null,
+            repeat: false,
+
+            trackDuration: 0,
+            trackPosition: 0,
+
+            // Init & cleanup for playback
+            loadTrack: async (song, playlist = null) => {
+                await get().unloadTrack();
+                try {
+                    const { sound } = await Audio.Sound.createAsync(
+                        { uri: song.uri },
+                        { shouldPlay: true }
+                    );
+
+                    sound._onPlaybackStatusUpdate =
+                        get().setOnPlaybackStatusUpdate;
+
+                    set({
+                        audioRef: sound,
+                        currentTrack: song,
+                        playlist: playlist ? playlist : get().playlist,
+                        isPlaying: true,
+                    });
+                } catch (error) {
+                    console.error("Error loading audio:", error);
+                }
+            },
+
+            setOnPlaybackStatusUpdate: (playbackStatus) => {
+                if (playbackStatus.isLoaded) {
+                    set({
+                        trackPosition: playbackStatus.positionMillis,
+                        trackDuration: playbackStatus.durationMillis,
+                    });
+
+                    if (
+                        playbackStatus.didJustFinish &&
+                        !playbackStatus.isLooping
+                    ) {
+                        get().next();
+                    }
+                }
+            },
+
+            unloadTrack: async () => {
+                const audioRef = get().audioRef;
+                if (audioRef) {
+                    await audioRef.unloadAsync();
+                    set({ audioRef: null, isPlaying: false });
+                }
+            },
+
+            // Playback & controls
+            play: async () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+
+                try {
+                    await audioRef.playAsync();
+                    set({ isPlaying: true });
+                } catch (error) {
+                    console.error("Error playing audio:", error);
+                }
+            },
+            pause: async () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+
+                try {
+                    await audioRef.pauseAsync();
+                    set({ isPlaying: false });
+                } catch (error) {
+                    console.error("Error pausing audio:", error);
+                }
+            },
+
+            next: async () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+
+                const playlist = get().playlist.songs;
+                const currentTrack = get().currentTrack.id;
+
+                const index = playlist.indexOf(currentTrack);
+                const nextSongId = playlist[index + 1];
+
+                if (nextSongId) {
+                    const nextSong = get().getSong(nextSongId);
+                    if (nextSong) {
+                        await get().loadTrack(nextSong);
+                    } else {
+                        console.error(
+                            "Next song not found in song data: ",
+                            nextSongId
+                        );
+                    }
+                } else {
+                    await get().unloadTrack();
+                }
+            },
+
+            previous: async () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+
+                if (get().positionMillis > 2000) {
+                    await audioRef.replayAsync();
+                }
+                const playlist = get().playlist.songs;
+                const currentTrack = get().currentTrack.id;
+
+                const index = playlist.indexOf(currentTrack);
+                const previousSongId = playlist[index - 1];
+
+                if (previousSongId) {
+                    const previousSong = get().getSong(previousSongId);
+                    if (previousSong) {
+                        await get().loadTrack(previousSong);
+                    } else {
+                        console.error(
+                            "Previous song not found in song data: ",
+                            previousSongId
+                        );
+                    }
+                }
+            },
+
+            skipPosition: async (position) => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+                const { durationMillis } = await audioRef.getStatusAsync();
+                const newPosition = Math.floor(position * durationMillis);
+                await audioRef.setPositionAsync(newPosition);
+            },
+
+            shuffle: () => {
+                const playlists = get().playlists;
+                if (playlists.length < 2) return;
+
+                const shuffledPlaylists = [...playlists].sort(
+                    () => 0.5 - Math.random()
+                );
+                set({ playlists: shuffledPlaylists });
+            },
+
+            turnOnRepeat: () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+            },
 
             // songs, selectedSong
             setSongs: (songs) => set({ songs }),
@@ -46,7 +204,6 @@ export const useSongsStore = create(
                 }));
             },
 
-
             unhideSong: (id) => {
                 set((state) => ({
                     songs: state.songs.map((song) =>
@@ -72,6 +229,22 @@ export const useSongsStore = create(
                 };
                 set((state) => ({
                     playlists: [...state.playlists, newPlaylist],
+                }));
+            },
+
+            editPlaylist: (id, name, description) => {
+                set((state) => ({
+                    playlists: state.playlists.map((playlist) =>
+                        playlist.id === id
+                            ? {
+                                  ...playlist,
+                                  ...(name !== "" ? { name } : {}),
+                                  ...(description !== ""
+                                      ? { description }
+                                      : {}),
+                              }
+                            : playlist
+                    ),
                 }));
             },
             deletePlaylist: (id) => {
@@ -160,6 +333,10 @@ export const useSongsStore = create(
         {
             name: MARKED_SONGS_KEY,
             storage: createJSONStorage(() => AsyncStorage),
+            partialize: (state) => ({
+                songs: state.songs,
+                playlists: state.playlists,
+            }),
         }
     )
 );

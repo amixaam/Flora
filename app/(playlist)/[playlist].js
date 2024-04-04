@@ -19,9 +19,9 @@ export default function PlaylistList() {
     return (
         <View
             style={{
-                padding: 16,
                 flex: 1,
                 alignItems: "center",
+                marginTop: 16,
             }}
         >
             <View
@@ -49,13 +49,13 @@ export default function PlaylistList() {
             >
                 {playlistData.description}
             </Text>
-            <View style={{ height: "100%", width: "100%" }}>
-                {playlistData.songs.length === 0 && (
-                    <Text style={{ textAlign: "center" }}>No songs here!</Text>
-                )}
+            {playlistData.songs.length === 0 && (
+                <Text style={{ textAlign: "center" }}>No songs here!</Text>
+            )}
+            <View style={{ flex: 1, width: "100%", height: "100%" }}>
                 <FlashList
                     data={playlistData.songs}
-                    estimatedItemSize={50}
+                    estimatedItemSize={100}
                     renderItem={({ item }) =>
                         SongListItem(
                             { item },

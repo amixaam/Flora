@@ -6,11 +6,13 @@ import * as MediaLibrary from "expo-media-library";
 import { useSongsStore } from "../../store/songs";
 import SongListItem from "../../Components/SongListItem";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import { MusicInfo } from "expo-music-info-2";
 
 export default function LocalFilesTab() {
     const {
         songs,
         setPlaylists,
+        createPlaylist,
         setSongs,
         addSongLike,
         removeSongLike,
@@ -20,7 +22,6 @@ export default function LocalFilesTab() {
     // process new songs
     useEffect(() => {
         console.log("local renew");
-        // return;
         (async () => {
             // get permissions
             const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -33,12 +34,15 @@ export default function LocalFilesTab() {
                 mediaType: MediaLibrary.MediaType.audio,
             });
 
+            console.log(assets[5].uri);
+            let metadata = await MusicInfo.getMusicInfoAsync(assets[5].uri);
+            console.log(metadata);
+
             // check if there are new songs
             const newSongs = assets.filter(
                 (asset) => !songs.some((song) => song.id === asset.id)
             );
 
-            // process new songs
             const newSongsWithInfo = newSongs.map((asset) => {
                 return {
                     uri: asset.uri,
@@ -59,18 +63,6 @@ export default function LocalFilesTab() {
             setSongs([...songs, ...newSongsWithInfo]);
         })();
     }, []);
-
-    // useEffect(() => {
-    //     setSongs([]);
-    //     setPlaylists([
-    //         {
-    //             id: "1",
-    //             name: "Liked songs",
-    //             description: "Your songs that you liked.",
-    //             songs: [],
-    //         },
-    //     ]);
-    // }, []);
 
     const bottomSheetRef = useRef(null);
     const handleOpenPress = () => bottomSheetRef.current.present();

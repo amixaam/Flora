@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
 import {
     BottomSheetBackdrop,
@@ -55,32 +61,34 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
                             {selectedSong.name}
                         </Text>
                     </BottomSheetView>
-                    <TouchableOpacity
-                        style={styles.listItem}
+                    <TouchableNativeFeedback
                         onPress={() => {
                             ref.current.dismiss();
                             handleOpenAddSongBottomSheet();
                         }}
                     >
-                        <Text>Add to Playlist</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.listItem}
+                        <View style={styles.listItem}>
+                            <Text>Add to Playlist</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
                         onPress={() => {
                             ref.current.dismiss();
                             handleRemoveSongBottomSheet();
                         }}
                     >
-                        <Text>Remove from Playlist</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={handleHideSongPress}
-                    >
-                        <Text>
-                            {selectedSong.isHidden ? "Show" : "Hide"} this song
-                        </Text>
-                    </TouchableOpacity>
+                        <View style={styles.listItem}>
+                            <Text>Remove from Playlist</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback onPress={handleHideSongPress}>
+                        <View style={styles.listItem}>
+                            <Text>
+                                {selectedSong.isHidden ? "Show" : "Hide"} this
+                                song
+                            </Text>
+                        </View>
+                    </TouchableNativeFeedback>
                 </BottomSheetView>
             </BottomSheetModal>
             <AddSongToPlaylistBottomSheet ref={addSongBottomSheetRef} />

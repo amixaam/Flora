@@ -1,10 +1,15 @@
 import { Link, Stack, router } from "expo-router";
-import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+    Text,
+    TouchableNativeFeedback,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../store/songs";
 import { useEffect, useRef } from "react";
-import EditPlaylistBottomSheet from "../../Components/BottomSheets/EditPlaylistBottomSheet";
+import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
 import { Poppins_600SemiBold, useFonts } from "@expo-google-fonts/poppins";
 
 const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
@@ -18,32 +23,46 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
         router.push("/(playlist)/" + item.id);
     };
     return (
-        <TouchableOpacity
-            style={{
-                margin: 4,
-            }}
+        <TouchableNativeFeedback
             onPress={handlePress}
             onLongPress={handleLongPress}
         >
             <View
                 style={{
-                    marginBottom: 8,
-                    width: "100%",
-                    aspectRatio: 1,
-                    borderRadius: 7,
-                    backgroundColor: "gray",
+                    margin: 4,
                 }}
-            ></View>
-            <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-            <Text>{item.songs.length} songs</Text>
-        </TouchableOpacity>
+            >
+                <View
+                    style={{
+                        marginBottom: 8,
+                        width: "100%",
+                        aspectRatio: 1,
+                        borderRadius: 7,
+                        backgroundColor: "gray",
+                    }}
+                ></View>
+                <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                <Text>{item.songs.length} songs</Text>
+            </View>
+        </TouchableNativeFeedback>
     );
 };
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist } = useSongsStore();
+    const { playlists, setSelectedPlaylist, setSongs, setPlaylists } =
+        useSongsStore();
     useEffect(() => {
         console.log("playlists renew");
+
+        // setSongs([]);
+        // setPlaylists([
+        //     {
+        //         id: "1",
+        //         name: "Liked songs",
+        //         description: "Your songs that you liked.",
+        //         songs: [],
+        //     },
+        // ]);
     }, []);
 
     const bottomSheetRef = useRef(null);
@@ -82,7 +101,7 @@ export default function PlaylistsTab() {
                     }
                 />
             </View>
-            <EditPlaylistBottomSheet ref={bottomSheetRef} />
+            <EditPlaylistOptionsBottomSheet ref={bottomSheetRef} />
         </View>
     );
 }

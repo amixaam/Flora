@@ -1,5 +1,11 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function SongListItem(
@@ -13,39 +19,43 @@ export default function SongListItem(
         setSelectedSong(item);
         handleOpenPress();
     };
+    const handlePress = () => {
+        router.push("/player/" + item.id);
+    };
 
     return (
-        <TouchableOpacity
-            style={styles.listItem}
-            onPress={() => router.push("/player/" + item.id)}
+        <TouchableNativeFeedback
+            onPress={handlePress}
             onLongPress={handleLongPress}
         >
-            <Text
-                style={{
-                    width: "90%",
-                    overflow: "hidden",
-                    color: item.isHidden ? "gray" : "black",
-                }}
-                numberOfLines={1}
-            >
-                {item.isHidden ? "(Hidden) " : ""}
-                {item.name}
-            </Text>
+            <View style={styles.listItem}>
+                <Text
+                    style={{
+                        width: "90%",
+                        overflow: "hidden",
+                        color: item.isHidden ? "gray" : "black",
+                    }}
+                    numberOfLines={1}
+                >
+                    {item.isHidden ? "(Hidden) " : ""}
+                    {item.name}
+                </Text>
 
-            <TouchableOpacity
-                onPress={() =>
-                    item.isLiked
-                        ? removeSongLike(item.id)
-                        : addSongLike(item.id)
-                }
-            >
-                <MaterialIcons
-                    name={item.isLiked ? "favorite" : "favorite-border"}
-                    size={24}
-                    color="red"
-                />
-            </TouchableOpacity>
-        </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        item.isLiked
+                            ? removeSongLike(item.id)
+                            : addSongLike(item.id)
+                    }
+                >
+                    <MaterialIcons
+                        name={item.isLiked ? "favorite" : "favorite-border"}
+                        size={24}
+                        color="red"
+                    />
+                </TouchableOpacity>
+            </View>
+        </TouchableNativeFeedback>
     );
 }
 
@@ -54,7 +64,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 10,
+        paddingHorizontal: 17,
+        paddingVertical: 8,
         borderBottomWidth: 1,
         borderBottomColor: "#ccc",
     },

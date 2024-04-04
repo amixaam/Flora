@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { forwardRef, useCallback, useMemo } from "react";
 import {
     BottomSheetBackdrop,
@@ -82,16 +88,17 @@ const PlaylistListItem = (
     handleDismissPress
 ) => {
     return (
-        <TouchableOpacity
-            style={styles.listItem}
+        <TouchableNativeFeedback
             onPress={() => {
                 addSongToPlaylist(item.id, selectedSong.id);
                 handleDismissPress();
             }}
         >
-            <BottomSheetView style={styles.playlistIcon} />
-            <Text>{item.name}</Text>
-        </TouchableOpacity>
+            <View style={styles.listItem}>
+                <BottomSheetView style={styles.playlistIcon} />
+                <Text>{item.name}</Text>
+            </View>
+        </TouchableNativeFeedback>
     );
 };
 
