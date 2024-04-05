@@ -1,11 +1,11 @@
 import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { MaterialIcons } from "@expo/vector-icons";
 import { useSongsStore } from "../../store/songs";
 import { useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import PlaybackControls from "../../Components/PlaybackControls";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
@@ -47,14 +47,12 @@ export default function PlayerTab() {
                         {currentTrack.name ? currentTrack.name : "No name"}
                     </Text>
                     <TouchableOpacity onPress={handleLikeButtonPress}>
-                        <MaterialIcons
+                        <MaterialCommunityIcons 
                             name={
-                                currentTrack.isLiked
-                                    ? "favorite"
-                                    : "favorite-border"
+                                currentTrack.isLiked ? "heart" : "heart-outline"
                             }
                             size={24}
-                            color="red"
+                            color="black"
                         />
                     </TouchableOpacity>
                 </View>

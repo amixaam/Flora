@@ -1,4 +1,5 @@
-import { Stack } from "expo-router";
+import { Stack, Tabs, router } from "expo-router";
+import { Text, TouchableOpacity } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -27,7 +28,6 @@ export default function DefaultLayout() {
                             presentation: "modal",
                             headerShown: false,
                             navigationBarColor: "transparent",
-                            gestureEnabled: true,
                         }}
                     />
                 </Stack>

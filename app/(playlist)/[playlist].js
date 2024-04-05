@@ -6,6 +6,8 @@ import { useRef } from "react";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSongsStore } from "../../store/songs";
+import { Appbar } from "react-native-paper";
+import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -15,10 +17,17 @@ export default function PlaylistList() {
     const playlistData = getPlaylist(playlist);
 
     const bottomSheetRef = useRef(null);
-    const handleOpenPress = () => bottomSheetRef.current.present();
+    const handleEditSong = () => bottomSheetRef.current.present();
+
+    const editPlaylistBSR = useRef(null);
+    const handleEditPlaylist = () => editPlaylistBSR.current.present();
 
     return (
         <View style={{ flex: 1 }}>
+            <Appbar.Header>
+                <Appbar.Content title={playlistData.name} />
+                <Appbar.Action icon="cog" onPress={handleEditPlaylist} />
+            </Appbar.Header>
             <View style={{ padding: 16, alignItems: "center", rowGap: 4 }}>
                 <LinearGradient
                     colors={["pink", "lightblue"]}
@@ -53,7 +62,7 @@ export default function PlaylistList() {
                             { item },
                             addSongLike,
                             removeSongLike,
-                            handleOpenPress,
+                            handleEditSong,
                             setSelectedSong
                         )
                     }
@@ -61,6 +70,7 @@ export default function PlaylistList() {
                 />
             </View>
             <EditSongBottomSheet ref={bottomSheetRef} />
+            <EditPlaylistOptionsBottomSheet ref={editPlaylistBSR} />
         </View>
     );
 }

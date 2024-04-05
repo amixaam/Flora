@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useSongsStore } from "../store/songs";
 import Slider from "@react-native-community/slider";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 
@@ -39,8 +39,9 @@ const MiniPlaybackControls = () => {
                     flexDirection: "column",
                     rowGap: 4,
                     margin: 8,
+                    marginTop: 0,
                     padding: 8,
-                    backgroundColor: "white",
+                    backgroundColor: "#F3EDF6",
                     borderRadius: 10,
                 }}
             >
@@ -92,16 +93,22 @@ const MiniPlaybackControls = () => {
                         </View>
                         <View style={{ flexDirection: "row", columnGap: 16 }}>
                             <TouchableOpacity onPress={previous}>
-                                <MaterialIcons name="skip-previous" size={36} />
+                                <MaterialCommunityIcons
+                                    name="skip-previous"
+                                    size={36}
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={hanldePlayPausePress}>
-                                <MaterialIcons
-                                    name={isPlaying ? "pause" : "play-arrow"}
+                                <MaterialCommunityIcons
+                                    name={isPlaying ? "pause" : "play"}
                                     size={36}
                                 />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={next}>
-                                <MaterialIcons name="skip-next" size={36} />
+                                <MaterialCommunityIcons
+                                    name="skip-next"
+                                    size={36}
+                                />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -183,22 +190,22 @@ const PlaybackControls = ({ isMini = false }) => {
                 }}
             >
                 <TouchableOpacity onPress={handleShufflePress}>
-                    <MaterialIcons name="shuffle" size={32} />
+                    <MaterialCommunityIcons name="shuffle" size={32} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSkipPreviousPress}>
-                    <MaterialIcons name="skip-previous" size={48} />
+                    <MaterialCommunityIcons name="skip-previous" size={48} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={hanldePlayPausePress}>
-                    <MaterialIcons
+                    <MaterialCommunityIcons
                         name={isPlaying ? "pause-circle" : "play-circle"}
                         size={64}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSkipNextPress}>
-                    <MaterialIcons name="skip-next" size={48} />
+                    <MaterialCommunityIcons name="skip-next" size={48} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleShufflePress}>
-                    <MaterialIcons
+                    <MaterialCommunityIcons
                         name="repeat"
                         size={32}
                         color={"lightgray"}

@@ -1,10 +1,11 @@
-import { Link, Stack, router } from "expo-router";
+import { router } from "expo-router";
 import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../store/songs";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import CreatePlaylistBottomSheet from "../../Components/BottomSheets/CreatePlaylistBottomSheet";
 import {
     Poppins_600SemiBold,
     Poppins_700Bold,
@@ -13,7 +14,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import PlaybackControls from "../../Components/PlaybackControls";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { Appbar } from "react-native-paper";
 const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
     const handleLongPress = () => {
         setSelectedPlaylist(item);
@@ -24,6 +25,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
         setSelectedPlaylist(item);
         router.push("/(playlist)/" + item.id);
     };
+
     return (
         <TouchableNativeFeedback
             onPress={handlePress}
@@ -32,8 +34,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
         >
             <View
                 style={{
-                    margin: 4,
-                    rowGap: 4,
+                    margin: 8,
                 }}
             >
                 <LinearGradient
@@ -44,6 +45,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
                         width: "100%",
                         aspectRatio: 1,
                         borderRadius: 7,
+                        marginBottom: 4,
                     }}
                 />
                 <View>
@@ -92,6 +94,9 @@ export default function PlaylistsTab() {
     const bottomSheetRef = useRef(null);
     const handleOpenPress = () => bottomSheetRef.current.present();
 
+    const addNewPlaylistBSR = useRef(null);
+    const handleCreatePlaylist = () => addNewPlaylistBSR.current.present();
+
     let [fontsLoaded, fontError] = useFonts({
         Poppins_600SemiBold,
         Poppins_700Bold,
@@ -101,11 +106,13 @@ export default function PlaylistsTab() {
     if (!fontsLoaded && !fontError) {
         return null;
     }
-
     return (
         <View style={styles.container}>
+            <Appbar.Header>
+                <Appbar.Content title="Playlists" />
+                <Appbar.Action icon="plus" onPress={handleCreatePlaylist} />
+            </Appbar.Header>
             <View style={{ margin: 8, flex: 1, height: "100%" }}>
-                <Text style={styles.greetingMessage}>Greeting message!</Text>
                 <FlashList
                     numColumns={2}
                     data={playlists}
@@ -121,6 +128,7 @@ export default function PlaylistsTab() {
                 />
             </View>
             <PlaybackControls isMini={true} />
+            <CreatePlaylistBottomSheet ref={addNewPlaylistBSR} />
             <EditPlaylistOptionsBottomSheet ref={bottomSheetRef} />
         </View>
     );
