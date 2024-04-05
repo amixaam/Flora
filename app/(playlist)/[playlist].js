@@ -1,10 +1,11 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
 import SongListItem from "../../Components/SongListItem";
 import { useRef } from "react";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import { LinearGradient } from "expo-linear-gradient";
+import { useSongsStore } from "../../store/songs";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -17,38 +18,29 @@ export default function PlaylistList() {
     const handleOpenPress = () => bottomSheetRef.current.present();
 
     return (
-        <View
-            style={{
-                flex: 1,
-                alignItems: "center",
-                marginTop: 16,
-            }}
-        >
-            <View
-                style={{
-                    height: 250,
-                    aspectRatio: 1,
-                    borderRadius: 7,
-                    backgroundColor: "gray",
-                }}
-            />
-            <Text
-                style={{
-                    fontWeight: "bold",
-                    fontSize: 24,
-                    marginBottom: 4,
-                    marginTop: 8,
-                }}
-            >
-                {playlistData.name}
-            </Text>
-            <Text
-                style={{
-                    marginBottom: 16,
-                }}
-            >
-                {playlistData.description}
-            </Text>
+        <View style={{ flex: 1 }}>
+            <View style={{ padding: 16, alignItems: "center", rowGap: 4 }}>
+                <LinearGradient
+                    colors={["pink", "lightblue"]}
+                    start={{ x: -0.5, y: 0 }}
+                    end={{ x: 1, y: 1.5 }}
+                    style={{
+                        height: 250,
+                        aspectRatio: 1,
+                        borderRadius: 7,
+                        backgroundColor: "gray",
+                    }}
+                />
+                <Text
+                    style={{
+                        fontWeight: "bold",
+                        fontSize: 24,
+                    }}
+                >
+                    {playlistData.name}
+                </Text>
+                <Text>{playlistData.description}</Text>
+            </View>
             {playlistData.songs.length === 0 && (
                 <Text style={{ textAlign: "center" }}>No songs here!</Text>
             )}

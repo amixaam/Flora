@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
+import {
+    Image,
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    View,
+} from "react-native";
 import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import {
     BottomSheetBackdrop,
@@ -7,6 +13,7 @@ import {
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
+import * as ImagePicker from "expo-image-picker";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -21,15 +28,32 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
     const { selectedPlaylist, editPlaylist } = useSongsStore();
 
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
     const handleSubmitForm = () => {
         if (selectedPlaylist.id == 1) return;
 
         editPlaylist(selectedPlaylist.id, name, description);
         ref.current.dismiss();
+        setImage(null);
         setName("");
         setDescription("");
     };
-
+    const [image, setImage] = useState(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
@@ -69,6 +93,20 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     value={description}
                     onChangeText={setDescription}
                 />
+                {image && (
+                    <Image source={{ uri: image }} style={styles.image} />
+                )}
+                <TouchableNativeFeedback onPress={pickImage}>
+                    <View style={styles.button}>
+                        <Text
+                            style={{
+                                textAlign: "center",
+                            }}
+                        >
+                            Pick image
+                        </Text>
+                    </View>
+                </TouchableNativeFeedback>
                 <TouchableNativeFeedback onPress={handleSubmitForm}>
                     <View style={styles.button}>
                         <Text

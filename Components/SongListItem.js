@@ -20,13 +20,14 @@ export default function SongListItem(
         handleOpenPress();
     };
     const handlePress = () => {
-        router.push("/player/" + item.id);
+        router.push("/(player)/" + item.id);
     };
 
     return (
         <TouchableNativeFeedback
             onPress={handlePress}
             onLongPress={handleLongPress}
+            delayLongPress={250}
         >
             <View style={styles.listItem}>
                 <Text

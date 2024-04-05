@@ -1,6 +1,4 @@
-import { Stack, Tabs, router } from "expo-router";
-import { Text, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -19,9 +17,17 @@ export default function DefaultLayout() {
                     <Stack.Screen
                         name="(playlist)"
                         options={{
+                            headerShown: false,
+                            navigationBarColor: "transparent",
+                        }}
+                    />
+                    <Stack.Screen
+                        name="(player)"
+                        options={{
                             presentation: "modal",
                             headerShown: false,
                             navigationBarColor: "transparent",
+                            gestureEnabled: true,
                         }}
                     />
                 </Stack>

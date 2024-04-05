@@ -1,12 +1,12 @@
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef } from "react";
-import { Dimensions, View } from "react-native";
+import { Button, Dimensions, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
 import { useSongsStore } from "../../store/songs";
 import SongListItem from "../../Components/SongListItem";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
-import { MusicInfo } from "expo-music-info-2";
+import PlaybackControls from "../../Components/PlaybackControls";
 
 export default function LocalFilesTab() {
     const {
@@ -33,10 +33,6 @@ export default function LocalFilesTab() {
             const { assets } = await MediaLibrary.getAssetsAsync({
                 mediaType: MediaLibrary.MediaType.audio,
             });
-
-            console.log(assets[5].uri);
-            let metadata = await MusicInfo.getMusicInfoAsync(assets[5].uri);
-            console.log(metadata);
 
             // check if there are new songs
             const newSongs = assets.filter(
@@ -87,6 +83,7 @@ export default function LocalFilesTab() {
                 }
                 keyExtractor={(item) => item.id} // Ensure unique keys
             />
+            <PlaybackControls isMini={true} />
             <EditSongBottomSheet ref={bottomSheetRef} />
         </View>
     );
