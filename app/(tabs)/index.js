@@ -1,5 +1,11 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
+import {
+    Image,
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    View,
+} from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../store/songs";
@@ -13,8 +19,9 @@ import {
     useFonts,
 } from "@expo-google-fonts/poppins";
 import PlaybackControls from "../../Components/PlaybackControls";
-import { LinearGradient } from "expo-linear-gradient";
 import { Appbar } from "react-native-paper";
+import AlbumArt from "../../Components/AlbumArt";
+
 const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
     const handleLongPress = () => {
         setSelectedPlaylist(item);
@@ -35,18 +42,14 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
             <View
                 style={{
                     margin: 8,
+                    rowGap: 4,
                 }}
             >
-                <LinearGradient
-                    colors={["pink", "lightblue"]}
-                    start={{ x: -0.5, y: 0 }}
-                    end={{ x: 1, y: 1.5 }}
-                    style={{
-                        width: "100%",
-                        aspectRatio: 1,
-                        borderRadius: 7,
-                        marginBottom: 4,
-                    }}
+                <AlbumArt
+                    image={item.image}
+                    width={"100%"}
+                    aspectRatio={1}
+                    borderRadius={7}
                 />
                 <View>
                     <Text
@@ -75,20 +78,11 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
 };
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, setSongs, setPlaylists } =
+    const { playlists, setSelectedPlaylist, setSongs, setPlaylists, resetAll } =
         useSongsStore();
     useEffect(() => {
         console.log("playlists renew");
-
-        // setSongs([]);
-        // setPlaylists([
-        //     {
-        //         id: "1",
-        //         name: "Liked songs",
-        //         description: "Your songs that you liked.",
-        //         songs: [],
-        //     },
-        // ]);
+        // resetAll();
     }, []);
 
     const bottomSheetRef = useRef(null);

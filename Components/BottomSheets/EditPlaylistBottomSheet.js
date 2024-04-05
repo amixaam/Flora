@@ -16,7 +16,7 @@ import { useSongsStore } from "../../store/songs";
 import * as ImagePicker from "expo-image-picker";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
-    const snapPoints = useMemo(() => ["25%", "50%"], []);
+    const snapPoints = useMemo(() => ["25%", "75%", "90%"], []);
     const renderBackdrop = useCallback((props) => (
         <BottomSheetBackdrop
             appearsOnIndex={0}
@@ -27,35 +27,34 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
 
     // TODO: add a confirmation modal for deleting things
     const { selectedPlaylist, editPlaylist } = useSongsStore();
+    const [image, setImage] = useState(selectedPlaylist.image);
+    const [name, setName] = useState(selectedPlaylist.name);
+    const [description, setDescription] = useState(
+        selectedPlaylist.description
+    );
 
     const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
+        await ImagePicker.getMediaLibraryPermissionsAsync();
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4, 3],
+            aspect: [1, 1],
             quality: 1,
         });
 
-        console.log(result);
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
+        console.log(result.assets[0].uri);
+        if (!result.canceled) setImage(result.assets[0].uri);
     };
 
     const handleSubmitForm = () => {
         if (selectedPlaylist.id == 1) return;
 
-        editPlaylist(selectedPlaylist.id, name, description);
+        editPlaylist(selectedPlaylist.id, name, description, image);
         ref.current.dismiss();
         setImage(null);
         setName("");
         setDescription("");
     };
-    const [image, setImage] = useState(null);
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
 
     if (selectedPlaylist === null) return;
     return (
@@ -81,6 +80,16 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                         Edit {selectedPlaylist.name}
                     </Text>
                 </BottomSheetView>
+                <Image
+                    source={{ uri: image }}
+                    style={{
+                        alignSelf: "center",
+                        width: "50%",
+                        aspectRatio: 1,
+                        backgroundColor: "gray",
+                        borderRadius: 7,
+                    }}
+                />
                 <BottomSheetTextInput
                     style={styles.textInput}
                     placeholder="Name"
@@ -93,9 +102,7 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     value={description}
                     onChangeText={setDescription}
                 />
-                {image && (
-                    <Image source={{ uri: image }} style={styles.image} />
-                )}
+
                 <TouchableNativeFeedback onPress={pickImage}>
                     <View style={styles.button}>
                         <Text

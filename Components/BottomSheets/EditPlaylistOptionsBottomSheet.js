@@ -113,9 +113,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: 12,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        columnGap: 16,
+        borderColor: "#F3EDF6",
     },
 });
 

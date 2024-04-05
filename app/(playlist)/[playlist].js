@@ -8,11 +8,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSongsStore } from "../../store/songs";
 import { Appbar } from "react-native-paper";
 import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import AlbumArt from "../../Components/AlbumArt";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
-    const { getPlaylist, addSongLike, removeSongLike, setSelectedSong } =
-        useSongsStore();
+    const {
+        getPlaylist,
+        addSongLike,
+        removeSongLike,
+        setSelectedSong,
+        currentTrack,
+    } = useSongsStore();
 
     const playlistData = getPlaylist(playlist);
 
@@ -29,16 +35,11 @@ export default function PlaylistList() {
                 <Appbar.Action icon="cog" onPress={handleEditPlaylist} />
             </Appbar.Header>
             <View style={{ padding: 16, alignItems: "center", rowGap: 4 }}>
-                <LinearGradient
-                    colors={["pink", "lightblue"]}
-                    start={{ x: -0.5, y: 0 }}
-                    end={{ x: 1, y: 1.5 }}
-                    style={{
-                        height: 250,
-                        aspectRatio: 1,
-                        borderRadius: 7,
-                        backgroundColor: "gray",
-                    }}
+                <AlbumArt
+                    image={playlistData.image}
+                    width={250}
+                    aspectRatio={1}
+                    borderRadius={7}
                 />
                 <Text
                     style={{
@@ -63,7 +64,8 @@ export default function PlaylistList() {
                             addSongLike,
                             removeSongLike,
                             handleEditSong,
-                            setSelectedSong
+                            setSelectedSong,
+                            item.id === currentTrack.id ? true : false
                         )
                     }
                     keyExtractor={(item) => item.id}

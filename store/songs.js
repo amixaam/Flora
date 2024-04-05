@@ -15,6 +15,7 @@ export const useSongsStore = create(
                     id: "1",
                     name: "Liked songs",
                     description: "Your songs that you liked.",
+                    image: null,
                     songs: [], //contains only id's
                 },
             ],
@@ -31,6 +32,21 @@ export const useSongsStore = create(
 
             trackDuration: 0,
             trackPosition: 0,
+
+            resetAll: () => {
+                set({
+                    songs: [], //full data (such as the uri)
+                    playlists: [
+                        {
+                            id: "1",
+                            name: "Liked songs",
+                            description: "Your songs that you liked.",
+                            image: null,
+                            songs: [], //contains only id's
+                        },
+                    ],
+                });
+            },
 
             // Init & cleanup for playback
             loadTrack: async (song, playlist = null) => {
@@ -49,6 +65,15 @@ export const useSongsStore = create(
                         currentTrack: song,
                         playlist: playlist ? playlist : get().playlist,
                         isPlaying: true,
+                        songs: get().songs.map((s) =>
+                            s.id === song.id
+                                ? {
+                                      ...s,
+                                      timesPlayed: s.timesPlayed + 1,
+                                      lastPlayed: new Date(),
+                                  }
+                                : s
+                        ),
                     });
                 } catch (error) {
                     console.error("Error loading audio:", error);
@@ -232,7 +257,7 @@ export const useSongsStore = create(
                 }));
             },
 
-            editPlaylist: (id, name, description) => {
+            editPlaylist: (id, name, description, image) => {
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === id
@@ -242,6 +267,7 @@ export const useSongsStore = create(
                                   ...(description !== ""
                                       ? { description }
                                       : {}),
+                                  ...(image !== null ? { image } : {}),
                               }
                             : playlist
                     ),

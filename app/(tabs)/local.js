@@ -12,12 +12,11 @@ import { Appbar } from "react-native-paper";
 export default function LocalFilesTab() {
     const {
         songs,
-        setPlaylists,
-        createPlaylist,
         setSongs,
         addSongLike,
         removeSongLike,
         setSelectedSong,
+        currentTrack,
     } = useSongsStore();
 
     const getFiles = async () => {
@@ -83,7 +82,8 @@ export default function LocalFilesTab() {
                         addSongLike,
                         removeSongLike,
                         handleOpenPress,
-                        setSelectedSong
+                        setSelectedSong,
+                        item.id === currentTrack.id ? true : false
                     )
                 }
                 keyExtractor={(item) => item.id} // Ensure unique keys

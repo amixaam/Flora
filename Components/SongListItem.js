@@ -9,13 +9,14 @@ import {
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text } from "react-native-paper";
 
-export default function SongListItem(
+const SongListItem = (
     { item },
     addSongLike,
     removeSongLike,
     handleOpenPress,
-    setSelectedSong
-) {
+    setSelectedSong,
+    isCurrentTrack
+) => {
     const handleEditSong = () => {
         setSelectedSong(item);
         handleOpenPress();
@@ -30,7 +31,16 @@ export default function SongListItem(
             onLongPress={handleEditSong}
             delayLongPress={250}
         >
-            <View style={styles.listItem}>
+            <View
+                style={[isCurrentTrack ? styles.currentTrack : styles.listItem]}
+            >
+                {isCurrentTrack && (
+                    <MaterialCommunityIcons
+                        name="volume-high"
+                        size={24}
+                        color="black"
+                    />
+                )}
                 <Text
                     style={{
                         flex: 1,
@@ -74,7 +84,9 @@ export default function SongListItem(
             </View>
         </TouchableNativeFeedback>
     );
-}
+};
+
+export default SongListItem;
 
 const styles = StyleSheet.create({
     listItem: {
@@ -86,5 +98,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         columnGap: 16,
         borderColor: "#F3EDF6",
+    },
+    currentTrack: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        borderBottomWidth: 1,
+        columnGap: 16,
+        backgroundColor: "#f6f2f7",
+        borderColor: "#e2d5e6",
     },
 });

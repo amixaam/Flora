@@ -10,6 +10,7 @@ import Slider from "@react-native-community/slider";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import AlbumArt from "./AlbumArt";
 
 const MiniPlaybackControls = () => {
     const {
@@ -22,6 +23,7 @@ const MiniPlaybackControls = () => {
         trackPosition,
         trackDuration,
         currentTrack,
+        playlist,
     } = useSongsStore();
 
     const hanldePlayPausePress = () => {
@@ -52,11 +54,11 @@ const MiniPlaybackControls = () => {
                         columnGap: 8,
                     }}
                 >
-                    <LinearGradient
-                        style={styles.GradientContainer}
-                        colors={["pink", "lightblue"]}
-                        start={{ x: -0.5, y: 0 }}
-                        end={{ x: 1, y: 1.5 }}
+                    <AlbumArt
+                        image={playlist.image}
+                        height={48}
+                        aspectRatio={1}
+                        borderRadius={5}
                     />
                     <View
                         style={{
@@ -205,11 +207,7 @@ const PlaybackControls = ({ isMini = false }) => {
                     <MaterialCommunityIcons name="skip-next" size={48} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleShufflePress}>
-                    <MaterialCommunityIcons
-                        name="repeat"
-                        size={32}
-                        color={"lightgray"}
-                    />
+                    <MaterialCommunityIcons name="repeat" size={32} />
                 </TouchableOpacity>
             </View>
             <Slider
@@ -236,11 +234,6 @@ const styles = StyleSheet.create({
     smallText: {
         fontSize: 12,
         textAlign: "center",
-    },
-    GradientContainer: {
-        height: 38,
-        aspectRatio: 1,
-        borderRadius: 5,
     },
 });
 

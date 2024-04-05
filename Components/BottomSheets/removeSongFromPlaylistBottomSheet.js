@@ -14,6 +14,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
+import AlbumArt from "../AlbumArt";
 
 const RemoveSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -95,7 +96,12 @@ const PlaylistListItem = (
             }}
         >
             <View style={styles.listItem}>
-                <BottomSheetView style={styles.playlistIcon} />
+                <AlbumArt
+                    image={item.image}
+                    width={64}
+                    aspectRatio={1}
+                    borderRadius={5}
+                />
                 <Text>{item.name}</Text>
             </View>
         </TouchableNativeFeedback>

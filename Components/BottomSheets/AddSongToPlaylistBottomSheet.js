@@ -14,6 +14,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
+import AlbumArt from "../AlbumArt";
 
 const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -50,7 +51,9 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         >
             <BottomSheetView style={{ paddingHorizontal: 16 }}>
                 <BottomSheetView style={styles.sheetHeader}>
-                    <Text style={styles.headerText}>Save song to playlist</Text>
+                    <Text style={styles.headerText}>
+                        Save {selectedSong.name} to playlist
+                    </Text>
                 </BottomSheetView>
                 <BottomSheetView style={{ height: "100%" }}>
                     {playlists.length === 0 && (
@@ -93,7 +96,12 @@ const PlaylistListItem = (
             }}
         >
             <View style={styles.listItem}>
-                <BottomSheetView style={styles.playlistIcon} />
+                <AlbumArt
+                    image={item.image}
+                    width={64}
+                    aspectRatio={1}
+                    borderRadius={5}
+                />
                 <Text>{item.name}</Text>
             </View>
         </TouchableNativeFeedback>
