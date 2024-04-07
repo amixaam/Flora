@@ -1,4 +1,11 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+    Button,
+    StyleSheet,
+    Text,
+    TouchableNativeFeedback,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import {
     BottomSheetBackdrop,
@@ -7,17 +14,10 @@ import {
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
+import SheetLayout from "./SheetLayout";
+import { mainStyles } from "../styles";
 
 const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
-    const snapPoints = useMemo(() => ["25%", "50%"], []);
-    const renderBackdrop = useCallback((props) => (
-        <BottomSheetBackdrop
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            {...props}
-        />
-    ));
-
     // TODO: add a confirmation modal for deleting things
     const { createPlaylist } = useSongsStore();
     const [name, setName] = useState("");
@@ -31,37 +31,36 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
     };
 
     return (
-        <BottomSheetModal
-            ref={ref}
-            index={1}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            handleIndicatorStyle={{
-                borderRadius: 50,
-            }}
-            backdropComponent={renderBackdrop}
-        >
-            <BottomSheetView style={{ paddingHorizontal: 16, rowGap: 8 }}>
-                <BottomSheetView style={styles.sheetHeader}>
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                        Create playlist
-                    </Text>
-                </BottomSheetView>
+        <SheetLayout ref={ref} title={"Create playlist"}>
+            <BottomSheetView style={{ rowGap: 8, flex: 1 }}>
                 <BottomSheetTextInput
-                    style={styles.textInput}
-                    placeholder="Name"
-                    onChangeText={setName}
+                    style={mainStyles.textInput}
+                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
                     value={name}
+                    onChangeText={setName}
+                    placeholder="Name"
                 />
                 <BottomSheetTextInput
-                    style={styles.textInput}
+                    style={mainStyles.textInput}
+                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
                     placeholder="Description"
                     onChangeText={setDescription}
                     value={description}
                 />
-                <Button title="Create" onPress={handleSubmit} />
+                <TouchableNativeFeedback onPress={handleSubmit}>
+                    <View style={mainStyles.formButton}>
+                        <Text
+                            style={[
+                                mainStyles.text_16,
+                                { textAlign: "center" },
+                            ]}
+                        >
+                            Create
+                        </Text>
+                    </View>
+                </TouchableNativeFeedback>
             </BottomSheetView>
-        </BottomSheetModal>
+        </SheetLayout>
     );
 });
 

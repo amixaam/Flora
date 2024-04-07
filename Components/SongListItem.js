@@ -8,6 +8,7 @@ import {
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text } from "react-native-paper";
+import { mainStyles } from "./styles";
 
 const SongListItem = (
     { item },
@@ -32,21 +33,28 @@ const SongListItem = (
             delayLongPress={250}
         >
             <View
-                style={[isCurrentTrack ? styles.currentTrack : styles.listItem]}
+                style={[
+                    isCurrentTrack
+                        ? mainStyles.selectedSongListItem
+                        : mainStyles.songListItem,
+                    item.isHidden ? mainStyles.hiddenListItem : {},
+                ]}
             >
                 {isCurrentTrack && (
                     <MaterialCommunityIcons
                         name="volume-high"
                         size={24}
-                        color="black"
+                        style={mainStyles.color_text}
                     />
                 )}
                 <Text
-                    style={{
-                        flex: 1,
-                        overflow: "hidden",
-                        color: item.isHidden ? "gray" : "black",
-                    }}
+                    style={[
+                        {
+                            flex: 1,
+                            overflow: "hidden",
+                        },
+                        mainStyles.text_16,
+                    ]}
                     numberOfLines={1}
                 >
                     {item.isHidden ? "(Hidden) " : ""}
@@ -70,14 +78,7 @@ const SongListItem = (
                         <MaterialCommunityIcons
                             name={item.isLiked ? "heart" : "heart-outline"}
                             size={24}
-                            color="black"
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleEditSong}>
-                        <MaterialCommunityIcons
-                            name="dots-vertical"
-                            size={24}
-                            color="black"
+                            style={mainStyles.color_text}
                         />
                     </TouchableOpacity>
                 </View>
@@ -87,27 +88,3 @@ const SongListItem = (
 };
 
 export default SongListItem;
-
-const styles = StyleSheet.create({
-    listItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        columnGap: 16,
-        borderColor: "#F3EDF6",
-    },
-    currentTrack: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        columnGap: 16,
-        backgroundColor: "#f6f2f7",
-        borderColor: "#e2d5e6",
-    },
-});

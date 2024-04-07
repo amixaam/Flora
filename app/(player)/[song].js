@@ -1,14 +1,16 @@
 import { useLocalSearchParams } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BlurView } from "expo-blur";
 
 import { useSongsStore } from "../../store/songs";
 import { useEffect } from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import PlaybackControls from "../../Components/PlaybackControls";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AlbumArt from "../../Components/AlbumArt";
 
-import { BlurView } from "expo-blur";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
+import PlaybackControls from "../../Components/PlaybackControls";
+import AlbumArt from "../../Components/AlbumArt";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { mainStyles } from "../../Components/styles";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
@@ -37,30 +39,37 @@ export default function PlayerTab() {
         }
     };
 
+    // TODO: try linear gradient
     return (
-        <>
-            <AlbumArt
+        <View style={mainStyles.container}>
+            {/* <AlbumArt
                 image={playlist.image}
                 width={"100%"}
-                height={"45%"}
+                height={"40%"}
                 position={"absolute"}
-            />
-
-            <BlurView
+            /> */}
+            <View
                 style={styles.playerContainer}
-                blurReductionFactor={1}
-                intensity={40}
-                experimentalBlurMethod="dimezisBlurView"
+                // tint="dark"
+                // intensity={70}
+                // blurReductionFactor={1}
+                // experimentalBlurMethod="dimezisBlurView"
+                entering={FadeInDown.duration(300)}
             >
-                <AlbumArt
-                    image={playlist.image}
-                    width={"100%"}
-                    aspectRatio={1}
-                    borderRadius={7}
-                />
-                <View style={{ marginBottom: 8 }}>
+                <View>
+                    <AlbumArt
+                        image={playlist.image}
+                        width={"100%"}
+                        aspectRatio={1}
+                        borderRadius={7}
+                    />
+                </View>
+                <Animated.View
+                    style={{ marginBottom: 8 }}
+                    entering={FadeInDown.duration(200)}
+                >
                     <View style={styles.titleContainer}>
-                        <Text style={styles.boldText} numberOfLines={1}>
+                        <Text style={mainStyles.text_24} numberOfLines={1}>
                             {currentTrack.name ? currentTrack.name : "No name"}
                         </Text>
                         <TouchableOpacity onPress={handleLikeButtonPress}>
@@ -71,20 +80,20 @@ export default function PlayerTab() {
                                         : "heart-outline"
                                 }
                                 size={24}
-                                color="black"
+                                style={mainStyles.color_text}
                             />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.centerText}>
+                    <Text style={[mainStyles.text_12, { textAlign: "center" }]}>
                         {currentTrack.author
                             ? currentTrack.author
                             : "No author"}
                         , {currentTrack.date ? currentTrack.date : "No date"}
                     </Text>
-                </View>
+                </Animated.View>
                 <PlaybackControls />
-            </BlurView>
-        </>
+            </View>
+        </View>
     );
 }
 

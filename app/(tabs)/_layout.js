@@ -3,12 +3,26 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import LocalFilesTab from "./local";
 import PlaylistsTab from ".";
+import CustomTopBar from "../../Components/CustomTopBar";
+import PlaylistList from "../(playlist)/[playlist]";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export default function TabLayout() {
     return (
-        <Tab.Navigator shifting={true}>
+        <Tab.Navigator
+            activeColor="#E8DEF8"
+            style={{
+                backgroundColor: "#16151B",
+            }}
+            shifting={true}
+            theme={{
+                colors: {
+                    secondaryContainer: "#2B2931",
+                    elevation: "black",
+                },
+            }}
+        >
             <Tab.Screen
                 name="index"
                 component={PlaylistsTab}

@@ -1,26 +1,15 @@
 import { router } from "expo-router";
-import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableNativeFeedback,
-    View,
-} from "react-native";
+import { Image, Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../store/songs";
 import { useEffect, useRef, useState } from "react";
 import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
-import CreatePlaylistBottomSheet from "../../Components/BottomSheets/CreatePlaylistBottomSheet";
-import {
-    Poppins_600SemiBold,
-    Poppins_700Bold,
-    Poppins_500Medium,
-    useFonts,
-} from "@expo-google-fonts/poppins";
+
 import PlaybackControls from "../../Components/PlaybackControls";
-import { Appbar } from "react-native-paper";
 import AlbumArt from "../../Components/AlbumArt";
+import { mainStyles } from "../../Components/styles";
+import SheetLayout from "../../Components/BottomSheets/SheetLayout";
 
 const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
     const handleLongPress = () => {
@@ -53,21 +42,23 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
                 />
                 <View>
                     <Text
-                        style={{
-                            fontSize: 24,
-                            fontFamily: "Poppins_600SemiBold",
-                            lineHeight: 28,
-                        }}
+                        style={[
+                            {
+                                lineHeight: 28,
+                            },
+                            mainStyles.text_24,
+                        ]}
                         numberOfLines={1}
                     >
                         {item.name}
                     </Text>
                     <Text
-                        style={{
-                            fontSize: 12,
-                            fontFamily: "Poppins_500Medium",
-                            marginTop: -4,
-                        }}
+                        style={[
+                            {
+                                marginTop: -4,
+                            },
+                            mainStyles.text_12,
+                        ]}
                     >
                         {item.songs.length} songs
                     </Text>
@@ -78,8 +69,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
 };
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, setSongs, setPlaylists, resetAll } =
-        useSongsStore();
+    const { playlists, setSelectedPlaylist, resetAll } = useSongsStore();
     useEffect(() => {
         console.log("playlists renew");
         // resetAll();
@@ -88,24 +78,12 @@ export default function PlaylistsTab() {
     const bottomSheetRef = useRef(null);
     const handleOpenPress = () => bottomSheetRef.current.present();
 
-    const addNewPlaylistBSR = useRef(null);
-    const handleCreatePlaylist = () => addNewPlaylistBSR.current.present();
-
-    let [fontsLoaded, fontError] = useFonts({
-        Poppins_600SemiBold,
-        Poppins_700Bold,
-        Poppins_500Medium,
-    });
-
-    if (!fontsLoaded && !fontError) {
-        return null;
-    }
     return (
-        <View style={styles.container}>
-            <Appbar.Header>
-                <Appbar.Content title="Playlists" />
-                <Appbar.Action icon="plus" onPress={handleCreatePlaylist} />
-            </Appbar.Header>
+        <View style={mainStyles.container}>
+            <Image
+                style={mainStyles.backgroundBlur}
+                source={require("../../assets/indexBlur.png")}
+            />
             <View style={{ margin: 8, flex: 1, height: "100%" }}>
                 <FlashList
                     numColumns={2}
@@ -122,19 +100,7 @@ export default function PlaylistsTab() {
                 />
             </View>
             <PlaybackControls isMini={true} />
-            <CreatePlaylistBottomSheet ref={addNewPlaylistBSR} />
             <EditPlaylistOptionsBottomSheet ref={bottomSheetRef} />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        height: "100%",
-        flex: 1,
-    },
-    greetingMessage: {
-        fontFamily: "Poppins_600SemiBold",
-        fontSize: 24,
-    },
-});

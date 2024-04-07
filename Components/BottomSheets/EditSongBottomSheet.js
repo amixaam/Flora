@@ -15,6 +15,9 @@ import {
 import { useSongsStore } from "../../store/songs";
 import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
 import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
+import SheetLayout from "./SheetLayout";
+import { mainStyles } from "../styles";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const EditSongBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -45,57 +48,63 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
     if (selectedSong === null) return;
     return (
         <>
-            <BottomSheetModal
-                ref={ref}
-                index={1}
-                snapPoints={snapPoints}
-                enablePanDownToClose={true}
-                handleIndicatorStyle={{
-                    borderRadius: 50,
-                }}
-                backdropComponent={renderBackdrop}
-            >
-                <BottomSheetView style={{ paddingHorizontal: 16 }}>
-                    <BottomSheetView style={styles.sheetHeader}>
-                        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                            {selectedSong.name}
-                        </Text>
-                    </BottomSheetView>
-                    <TouchableNativeFeedback
+            <SheetLayout ref={ref} title={"Edit " + selectedSong.name}>
+                <BottomSheetView style={{ marginHorizontal: -18 }}>
+                    <OptionsButton
+                        icon="playlist-plus"
+                        buttonContent={"Add to playlist"}
                         onPress={() => {
                             ref.current.dismiss();
                             handleOpenAddSongBottomSheet();
                         }}
-                    >
-                        <View style={styles.listItem}>
-                            <Text>Add to Playlist</Text>
-                        </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback
+                    />
+                    <OptionsButton
+                        icon="playlist-minus"
+                        buttonContent={"Remove from playlist"}
                         onPress={() => {
                             ref.current.dismiss();
                             handleRemoveSongBottomSheet();
                         }}
-                    >
-                        <View style={styles.listItem}>
-                            <Text>Remove from Playlist</Text>
-                        </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback onPress={handleHideSongPress}>
-                        <View style={styles.listItem}>
-                            <Text>
-                                {selectedSong.isHidden ? "Show" : "Hide"} this
-                                song
-                            </Text>
-                        </View>
-                    </TouchableNativeFeedback>
+                    />
+                    <OptionsButton
+                        icon={selectedSong.isHidden ? "eye" : "eye-off"}
+                        buttonContent={
+                            selectedSong.isHidden ? "Show song" : "Hide song"
+                        }
+                        onPress={handleHideSongPress}
+                    />
                 </BottomSheetView>
-            </BottomSheetModal>
+            </SheetLayout>
             <AddSongToPlaylistBottomSheet ref={addSongBottomSheetRef} />
             <RemoveSongToPlaylistBottomSheet ref={removeSongBottomSheetRef} />
         </>
     );
 });
+
+const OptionsButton = ({
+    icon = "arrow-right",
+    buttonContent,
+    onPress,
+    isDisabled = false,
+}) => {
+    return (
+        <TouchableNativeFeedback disabled={isDisabled} onPress={onPress}>
+            <View
+                style={[
+                    mainStyles.textListItem,
+                    isDisabled ? mainStyles.hiddenListItem : undefined,
+                ]}
+            >
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={24}
+                    style={[mainStyles.color_text]}
+                />
+                <Text style={[mainStyles.text_16]}>{buttonContent}</Text>
+            </View>
+        </TouchableNativeFeedback>
+    );
+};
 
 const styles = StyleSheet.create({
     sheetHeader: {

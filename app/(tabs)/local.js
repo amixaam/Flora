@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef } from "react";
-import { Button, Dimensions, View } from "react-native";
+import { Button, Dimensions, Image, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
 import { useSongsStore } from "../../store/songs";
@@ -8,6 +8,7 @@ import SongListItem from "../../Components/SongListItem";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 import PlaybackControls from "../../Components/PlaybackControls";
 import { Appbar } from "react-native-paper";
+import { mainStyles } from "../../Components/styles";
 
 export default function LocalFilesTab() {
     const {
@@ -64,18 +65,14 @@ export default function LocalFilesTab() {
     const handleOpenPress = () => bottomSheetRef.current.present();
 
     return (
-        <View
-            style={{
-                height: "100%",
-            }}
-        >
-            <Appbar.Header>
-                <Appbar.Content title="Local files" />
-                <Appbar.Action icon="refresh" onPress={getFiles} />
-            </Appbar.Header>
+        <View style={mainStyles.container}>
+            <Image
+                style={mainStyles.backgroundBlur}
+                source={require("../../assets/indexBlur.png")}
+            />
             <FlashList
                 data={songs}
-                estimatedItemSize={80} // Adjust based on your item size
+                estimatedItemSize={80}
                 renderItem={({ item }) =>
                     SongListItem(
                         { item },
@@ -86,7 +83,7 @@ export default function LocalFilesTab() {
                         item.id === currentTrack.id ? true : false
                     )
                 }
-                keyExtractor={(item) => item.id} // Ensure unique keys
+                keyExtractor={(item) => item.id}
             />
             <PlaybackControls isMini={true} />
             <EditSongBottomSheet ref={bottomSheetRef} />

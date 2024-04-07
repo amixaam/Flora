@@ -1,31 +1,13 @@
-import {
-    StyleSheet,
-    Text,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { forwardRef, useCallback, useMemo } from "react";
-import {
-    BottomSheetBackdrop,
-    BottomSheetModal,
-    BottomSheetModalProvider,
-    BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { Text, TouchableNativeFeedback, View } from "react-native";
+import { forwardRef, useMemo } from "react";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
 import AlbumArt from "../AlbumArt";
+import SheetLayout from "./SheetLayout";
+import { mainStyles } from "../styles";
 
 const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
-    const snapPoints = useMemo(() => ["25%", "50%"], []);
-    const renderBackdrop = useCallback((props) => (
-        <BottomSheetBackdrop
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            {...props}
-        />
-    ));
-
     const { selectedSong, getPlaylistsFromSongID, addSongToPlaylist } =
         useSongsStore();
 
@@ -34,107 +16,53 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         [selectedSong]
     );
 
-    const handleDismissPress = () => {
+    const handlePress = (playlistId) => {
         ref.current.dismiss();
+        addSongToPlaylist(playlistId, selectedSong.id);
     };
 
     return (
-        <BottomSheetModal
-            ref={ref}
-            index={1}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            handleIndicatorStyle={{
-                borderRadius: 50,
-            }}
-            backdropComponent={renderBackdrop}
-        >
-            <BottomSheetView style={{ paddingHorizontal: 16 }}>
-                <BottomSheetView style={styles.sheetHeader}>
-                    <Text style={styles.headerText}>
-                        Save {selectedSong.name} to playlist
-                    </Text>
-                </BottomSheetView>
+        <SheetLayout ref={ref} title={`Add ${selectedSong.name} to playlist`}>
+            <BottomSheetView style={{ marginHorizontal: -18 }}>
                 <BottomSheetView style={{ height: "100%" }}>
                     {playlists.length === 0 && (
                         <Text
-                            style={{ textAlign: "center", paddingVertical: 8 }}
+                            style={[
+                                mainStyles.text_16,
+                                { textAlign: "center" },
+                            ]}
                         >
-                            No new playlists
+                            No playlists
                         </Text>
                     )}
                     <FlashList
                         data={playlists}
                         renderItem={({ item }) =>
-                            PlaylistListItem(
-                                { item },
-                                { selectedSong },
-                                addSongToPlaylist,
-                                handleDismissPress
-                            )
+                            PlaylistListItem({ item, handlePress })
                         }
                         estimatedItemSize={50}
                         keyExtractor={(item) => item.id}
                     />
                 </BottomSheetView>
             </BottomSheetView>
-        </BottomSheetModal>
+        </SheetLayout>
     );
 });
 
-const PlaylistListItem = (
-    { item },
-    { selectedSong },
-    addSongToPlaylist,
-    handleDismissPress
-) => {
+const PlaylistListItem = ({ item, handlePress }) => {
     return (
-        <TouchableNativeFeedback
-            onPress={() => {
-                addSongToPlaylist(item.id, selectedSong.id);
-                handleDismissPress();
-            }}
-        >
-            <View style={styles.listItem}>
+        <TouchableNativeFeedback onPress={() => handlePress(item.id)}>
+            <View style={mainStyles.textListItem}>
                 <AlbumArt
                     image={item.image}
-                    width={64}
+                    width={48}
                     aspectRatio={1}
                     borderRadius={5}
                 />
-                <Text>{item.name}</Text>
+                <Text style={mainStyles.text_16}>{item.name}</Text>
             </View>
         </TouchableNativeFeedback>
     );
 };
-
-const styles = StyleSheet.create({
-    sheetHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        borderBottomWidth: 1,
-        borderColor: "lightgray",
-        width: "100%",
-        paddingBottom: 4,
-    },
-    headerText: {
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    listItem: {
-        flexDirection: "row",
-        columnGap: 16,
-        alignItems: "center",
-        paddingVertical: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
-    },
-    playlistIcon: {
-        height: 64,
-        aspectRatio: 1,
-        borderRadius: 4,
-        backgroundColor: "gray",
-    },
-});
 
 export default AddSongToPlaylistBottomSheet;

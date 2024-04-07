@@ -11,6 +11,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import AlbumArt from "./AlbumArt";
+import { mainStyles } from "./styles";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 const MiniPlaybackControls = () => {
     const {
@@ -36,17 +38,7 @@ const MiniPlaybackControls = () => {
         <TouchableNativeFeedback
             onPress={() => router.push("/(player)/" + currentTrack.id)}
         >
-            <View
-                style={{
-                    flexDirection: "column",
-                    rowGap: 4,
-                    margin: 8,
-                    marginTop: 0,
-                    padding: 8,
-                    backgroundColor: "#F3EDF6",
-                    borderRadius: 10,
-                }}
-            >
+            <View style={mainStyles.miniPlayer}>
                 <View
                     style={{
                         flexDirection: "row",
@@ -77,13 +69,10 @@ const MiniPlaybackControls = () => {
                                 width: "100%",
                             }}
                         >
-                            <Text
-                                style={{ fontWeight: "bold", fontSize: 16 }}
-                                numberOfLines={1}
-                            >
+                            <Text style={mainStyles.text_16} numberOfLines={1}>
                                 {currentTrack.name}
                             </Text>
-                            <Text style={{ fontSize: 12 }} numberOfLines={1}>
+                            <Text style={mainStyles.text_10} numberOfLines={1}>
                                 {currentTrack.artist
                                     ? currentTrack.artist
                                     : "No artist"}
@@ -98,18 +87,21 @@ const MiniPlaybackControls = () => {
                                 <MaterialCommunityIcons
                                     name="skip-previous"
                                     size={36}
+                                    style={mainStyles.color_text}
                                 />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={hanldePlayPausePress}>
                                 <MaterialCommunityIcons
                                     name={isPlaying ? "pause" : "play"}
                                     size={36}
+                                    style={mainStyles.color_text}
                                 />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={next}>
                                 <MaterialCommunityIcons
                                     name="skip-next"
                                     size={36}
+                                    style={mainStyles.color_text}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -124,8 +116,9 @@ const MiniPlaybackControls = () => {
                     onSlidingComplete={async (value) => {
                         await skipPosition(value);
                     }}
-                    thumbTintColor="black"
-                    minimumTrackTintColor="black"
+                    thumbTintColor="#E8DEF8"
+                    minimumTrackTintColor="#E8DEF8"
+                    maximumTrackTintColor="#E8DEF8"
                 />
             </View>
         </TouchableNativeFeedback>
@@ -176,14 +169,17 @@ const PlaybackControls = ({ isMini = false }) => {
     };
 
     return (
-        <View
+        <Animated.View
+            entering={FadeInDown.duration(200)}
             style={{
                 flexDirection: "column",
                 justifyContent: "center",
                 rowGap: 8,
             }}
         >
-            <Text style={{ textAlign: "center" }}>{playlist.name}</Text>
+            <Text style={[mainStyles.text_12, { textAlign: "center" }]}>
+                {playlist.name}
+            </Text>
             <View
                 style={{
                     flexDirection: "row",
@@ -192,22 +188,39 @@ const PlaybackControls = ({ isMini = false }) => {
                 }}
             >
                 <TouchableOpacity onPress={handleShufflePress}>
-                    <MaterialCommunityIcons name="shuffle" size={32} />
+                    <MaterialCommunityIcons
+                        name="shuffle"
+                        size={32}
+                        style={mainStyles.color_text}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSkipPreviousPress}>
-                    <MaterialCommunityIcons name="skip-previous" size={48} />
+                    <MaterialCommunityIcons
+                        name="skip-previous"
+                        size={48}
+                        style={mainStyles.color_text}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={hanldePlayPausePress}>
                     <MaterialCommunityIcons
                         name={isPlaying ? "pause-circle" : "play-circle"}
                         size={64}
+                        style={mainStyles.color_text}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSkipNextPress}>
-                    <MaterialCommunityIcons name="skip-next" size={48} />
+                    <MaterialCommunityIcons
+                        name="skip-next"
+                        size={48}
+                        style={mainStyles.color_text}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleShufflePress}>
-                    <MaterialCommunityIcons name="repeat" size={32} />
+                    <MaterialCommunityIcons
+                        name="repeat"
+                        size={32}
+                        style={mainStyles.color_text}
+                    />
                 </TouchableOpacity>
             </View>
             <Slider
@@ -219,22 +232,16 @@ const PlaybackControls = ({ isMini = false }) => {
                 onSlidingComplete={async (value) => {
                     await skipPosition(value);
                 }}
-                thumbTintColor="black"
-                minimumTrackTintColor="black"
+                thumbTintColor="#E8DEF8"
+                minimumTrackTintColor="#E8DEF8"
+                maximumTrackTintColor="#E8DEF8"
             />
-            <Text style={styles.smallText}>
+            <Text style={[mainStyles.text_10, { textAlign: "center" }]}>
                 {formatMilliseconds(trackPosition)} /{" "}
                 {formatMilliseconds(trackDuration)}
             </Text>
-        </View>
+        </Animated.View>
     );
 };
-
-const styles = StyleSheet.create({
-    smallText: {
-        fontSize: 12,
-        textAlign: "center",
-    },
-});
 
 export default PlaybackControls;

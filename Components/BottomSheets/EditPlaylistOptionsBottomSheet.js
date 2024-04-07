@@ -1,23 +1,13 @@
-import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
-import { forwardRef, useCallback, useMemo, useRef } from "react";
-import {
-    BottomSheetBackdrop,
-    BottomSheetModal,
-    BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { Text, TouchableNativeFeedback, View } from "react-native";
+import { forwardRef, useRef } from "react";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
+import SheetLayout from "./SheetLayout";
+import { mainStyles } from "../styles";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
-    const snapPoints = useMemo(() => ["25%", "50%"], []);
-    const renderBackdrop = useCallback((props) => (
-        <BottomSheetBackdrop
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            {...props}
-        />
-    ));
-
     // TODO: add a confirmation modal for deleting things
     const { selectedPlaylist, deletePlaylist } = useSongsStore();
 
@@ -42,83 +32,67 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     if (selectedPlaylist === null) return;
     return (
         <>
-            <BottomSheetModal
-                ref={ref}
-                index={1}
-                snapPoints={snapPoints}
-                enablePanDownToClose={true}
-                handleIndicatorStyle={{
-                    borderRadius: 50,
-                }}
-                backdropComponent={renderBackdrop}
-            >
-                <BottomSheetView style={{ paddingHorizontal: 16 }}>
-                    <BottomSheetView style={styles.sheetHeader}>
-                        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                            {selectedPlaylist.name}
-                        </Text>
-                    </BottomSheetView>
-
-                    <TouchableNativeFeedback
-                        disabled={selectedPlaylist.id == 1}
-                        activeOpacity={selectedPlaylist.id == 1 ? 0.5 : 1}
+            <SheetLayout ref={ref} title={"Edit " + selectedPlaylist.name}>
+                <BottomSheetView style={{ marginHorizontal: -18 }}>
+                    <OptionsButton
+                        data={selectedPlaylist}
+                        icon="shuffle"
+                        buttonContent={"Shuffle play"}
                         onPress={handleEditPlaylist}
-                    >
-                        <View style={styles.listItem}>
-                            <Text
-                                style={
-                                    selectedPlaylist.id == 1
-                                        ? { opacity: 0.5 }
-                                        : undefined
-                                }
-                            >
-                                Edit playlist
-                            </Text>
-                        </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback
-                        disabled={selectedPlaylist.id == 1}
-                        activeOpacity={selectedPlaylist.id == 1 ? 0.5 : 1}
+                        enabledForLikes={true}
+                    />
+                    <OptionsButton
+                        data={selectedPlaylist}
+                        icon="playlist-plus"
+                        buttonContent={"Add songs to playlist"}
+                        onPress={handleEditPlaylist}
+                        enabledForLikes={true}
+                    />
+                    <OptionsButton
+                        data={selectedPlaylist}
+                        icon="playlist-edit"
+                        buttonContent={"Edit playlist"}
+                        onPress={handleEditPlaylist}
+                    />
+                    <OptionsButton
+                        data={selectedPlaylist}
+                        icon="playlist-remove"
+                        buttonContent={"Delete playlist"}
                         onPress={handleDeletePlaylist}
-                    >
-                        <View style={styles.listItem}>
-                            <Text
-                                style={
-                                    selectedPlaylist.id == 1
-                                        ? { opacity: 0.5 }
-                                        : undefined
-                                }
-                            >
-                                Delete playlist
-                            </Text>
-                        </View>
-                    </TouchableNativeFeedback>
+                    />
                 </BottomSheetView>
-            </BottomSheetModal>
+            </SheetLayout>
             <EditPlaylistBottomSheet ref={editPlaylistBottomSheetRef} />
         </>
     );
 });
 
-const styles = StyleSheet.create({
-    sheetHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        borderBottomWidth: 1,
-        borderColor: "lightgray",
-        width: "100%",
-        paddingBottom: 4,
-    },
-    listItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        columnGap: 16,
-        borderColor: "#F3EDF6",
-    },
-});
+const OptionsButton = ({
+    data,
+    icon = "arrow-right",
+    buttonContent,
+    onPress,
+    enabledForLikes = false,
+}) => {
+    const isDisabled = enabledForLikes || data.id != 1;
+
+    return (
+        <TouchableNativeFeedback disabled={!isDisabled} onPress={onPress}>
+            <View
+                style={[
+                    mainStyles.textListItem,
+                    !isDisabled ? mainStyles.hiddenListItem : undefined,
+                ]}
+            >
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={24}
+                    style={[mainStyles.color_text]}
+                />
+                <Text style={[mainStyles.text_16]}>{buttonContent}</Text>
+            </View>
+        </TouchableNativeFeedback>
+    );
+};
 
 export default EditPlaylistOptionsBottomSheet;

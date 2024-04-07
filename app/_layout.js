@@ -1,8 +1,7 @@
-import { Stack, Tabs, router } from "expo-router";
-import { Text, TouchableOpacity } from "react-native";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-
+import CustomTopBar from "../Components/CustomTopBar";
 export default function DefaultLayout() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -11,22 +10,25 @@ export default function DefaultLayout() {
                     <Stack.Screen
                         name="(tabs)"
                         options={{
-                            headerShown: false,
+                            header: () => <CustomTopBar addPlaylist={true} />,
                             navigationBarColor: "transparent",
+                            statusBarStyle: "inverted",
                         }}
                     />
                     <Stack.Screen
                         name="(playlist)"
                         options={{
-                            headerShown: false,
+                            header: () => <CustomTopBar editPlaylist={true} />,
                             navigationBarColor: "transparent",
                         }}
                     />
                     <Stack.Screen
                         name="(player)"
                         options={{
-                            presentation: "modal",
+                            animation: "fade_from_bottom",
                             headerShown: false,
+                            presentation: "transparentModal",
+                            header: () => <CustomTopBar />,
                             navigationBarColor: "transparent",
                         }}
                     />

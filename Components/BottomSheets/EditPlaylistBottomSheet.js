@@ -5,26 +5,27 @@ import {
     TouchableNativeFeedback,
     View,
 } from "react-native";
-import { forwardRef, useCallback, useMemo, useRef, useState } from "react";
+import {
+    forwardRef,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import {
     BottomSheetBackdrop,
     BottomSheetModal,
     BottomSheetTextInput,
     BottomSheetView,
+    TouchableOpacity,
 } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import * as ImagePicker from "expo-image-picker";
+import SheetLayout from "./SheetLayout";
+import { mainStyles } from "../styles";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
-    const snapPoints = useMemo(() => ["25%", "75%", "90%"], []);
-    const renderBackdrop = useCallback((props) => (
-        <BottomSheetBackdrop
-            appearsOnIndex={0}
-            disappearsOnIndex={-1}
-            {...props}
-        />
-    ));
-
     // TODO: add a confirmation modal for deleting things
     const { selectedPlaylist, editPlaylist } = useSongsStore();
     const [image, setImage] = useState(selectedPlaylist.image);
@@ -46,87 +47,71 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         if (!result.canceled) setImage(result.assets[0].uri);
     };
 
+    useEffect(() => {
+        if (selectedPlaylist === null) return;
+        setImage(selectedPlaylist.image);
+        setName(selectedPlaylist.name);
+        setDescription(selectedPlaylist.description);
+    }, [selectedPlaylist]);
+
     const handleSubmitForm = () => {
         if (selectedPlaylist.id == 1) return;
 
         editPlaylist(selectedPlaylist.id, name, description, image);
         ref.current.dismiss();
-        setImage(null);
-        setName("");
-        setDescription("");
     };
 
     if (selectedPlaylist === null) return;
     return (
-        <BottomSheetModal
-            ref={ref}
-            index={1}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            handleIndicatorStyle={{
-                borderRadius: 50,
-            }}
-            backdropComponent={renderBackdrop}
-        >
+        <SheetLayout ref={ref} title={"Edit " + selectedPlaylist.name}>
             <BottomSheetView
                 style={{
-                    paddingHorizontal: 16,
                     rowGap: 8,
-                    justifyContent: "center",
+                    flex: 1,
                 }}
             >
-                <BottomSheetView style={styles.sheetHeader}>
-                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                        Edit {selectedPlaylist.name}
-                    </Text>
-                </BottomSheetView>
-                <Image
-                    source={{ uri: image }}
-                    style={{
-                        alignSelf: "center",
-                        width: "50%",
-                        aspectRatio: 1,
-                        backgroundColor: "gray",
-                        borderRadius: 7,
-                    }}
-                />
+                <TouchableOpacity onPress={pickImage}>
+                    <Image
+                        source={{ uri: image }}
+                        style={{
+                            alignSelf: "center",
+                            width: "50%",
+                            aspectRatio: 1,
+                            backgroundColor: "gray",
+                            borderRadius: 7,
+                        }}
+                    />
+                </TouchableOpacity>
                 <BottomSheetTextInput
-                    style={styles.textInput}
+                    style={mainStyles.textInput}
+                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
                     placeholder="Name"
                     value={name}
                     onChangeText={setName}
                 />
                 <BottomSheetTextInput
-                    style={styles.textInput}
+                    style={mainStyles.textInput}
+                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
                     placeholder="Description"
                     value={description}
                     onChangeText={setDescription}
                 />
-
-                <TouchableNativeFeedback onPress={pickImage}>
-                    <View style={styles.button}>
-                        <Text
-                            style={{
-                                textAlign: "center",
-                            }}
-                        >
-                            Pick image
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
                 <TouchableNativeFeedback onPress={handleSubmitForm}>
-                    <View style={styles.button}>
+                    <View style={mainStyles.formButton}>
                         <Text
-                            style={{
-                                textAlign: "center",
-                            }}
+                            style={[
+                                mainStyles.text_16,
+                                {
+                                    textAlign: "center",
+                                },
+                            ]}
                         >
                             Save
                         </Text>
                     </View>
                 </TouchableNativeFeedback>
             </BottomSheetView>
-        </BottomSheetModal>
+        </SheetLayout>
     );
 });
 
