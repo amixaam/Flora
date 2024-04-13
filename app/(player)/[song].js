@@ -42,18 +42,18 @@ export default function PlayerTab() {
     // TODO: try linear gradient
     return (
         <View style={mainStyles.container}>
-            {/* <AlbumArt
+            <AlbumArt
                 image={playlist.image}
                 width={"100%"}
-                height={"40%"}
+                height={"80%"}
                 position={"absolute"}
-            /> */}
-            <View
+            />
+            <BlurView
                 style={styles.playerContainer}
-                // tint="dark"
-                // intensity={70}
-                // blurReductionFactor={1}
-                // experimentalBlurMethod="dimezisBlurView"
+                tint="dark"
+                intensity={70}
+                blurReductionFactor={1}
+                experimentalBlurMethod="dimezisBlurView"
                 entering={FadeInDown.duration(300)}
             >
                 <View>
@@ -92,7 +92,7 @@ export default function PlayerTab() {
                     </Text>
                 </Animated.View>
                 <PlaybackControls />
-            </View>
+            </BlurView>
         </View>
     );
 }

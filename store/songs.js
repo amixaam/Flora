@@ -2,7 +2,6 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { Audio } from "expo-av";
-import { useEffect } from "react";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -129,6 +128,7 @@ export const useSongsStore = create(
             },
 
             next: async () => {
+                // TODO: make hidden songs affect next, previous
                 const audioRef = get().audioRef;
                 if (!audioRef) return;
 
@@ -188,18 +188,39 @@ export const useSongsStore = create(
             },
 
             shuffle: () => {
-                const playlists = get().playlists;
-                if (playlists.length < 2) return;
+                const playlist = get().playlist;
+                const currentSongId = get().currentTrack.id;
+                if (playlist.length < 2) return;
 
-                const shuffledPlaylists = [...playlists].sort(
-                    () => 0.5 - Math.random()
-                );
-                set({ playlists: shuffledPlaylists });
+                const shuffledSongs = [...playlist.songs];
+                const currentSongIndex = shuffledSongs.indexOf(currentSongId);
+                shuffledSongs.splice(currentSongIndex, 1);
+
+                for (let i = shuffledSongs.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffledSongs[i], shuffledSongs[j]] = [
+                        shuffledSongs[j],
+                        shuffledSongs[i],
+                    ];
+                }
+                shuffledSongs.unshift(currentSongId);
+                set({ playlist: { ...playlist, songs: shuffledSongs } });
             },
 
             turnOnRepeat: () => {
                 const audioRef = get().audioRef;
                 if (!audioRef) return;
+
+                audioRef.setIsLoopingAsync(true);
+                set({ repeat: true });
+            },
+
+            turnOffRepeat: () => {
+                const audioRef = get().audioRef;
+                if (!audioRef) return;
+
+                audioRef.setIsLoopingAsync(false);
+                set({ repeat: false });
             },
 
             // songs, selectedSong

@@ -45,7 +45,8 @@ export const mainStyles = StyleSheet.create({
         marginHorizontal: 18,
     },
     container: {
-        height: "100%",
+        // height: "100%",
+        flex: 1,
         backgroundColor: "#050506",
     },
     topbarContainer: {

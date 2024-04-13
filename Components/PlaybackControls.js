@@ -140,6 +140,9 @@ const PlaybackControls = ({ isMini = false }) => {
         shuffle,
         playlist,
         currentTrack,
+        repeat,
+        turnOnRepeat,
+        turnOffRepeat,
     } = useSongsStore();
 
     const hanldePlayPausePress = () => {
@@ -157,6 +160,11 @@ const PlaybackControls = ({ isMini = false }) => {
 
     const handleShufflePress = () => {
         shuffle();
+    };
+
+    const handleRepeatPress = () => {
+        if (repeat) turnOffRepeat();
+        else turnOnRepeat();
     };
 
     const formatMilliseconds = (milliseconds) => {
@@ -215,9 +223,9 @@ const PlaybackControls = ({ isMini = false }) => {
                         style={mainStyles.color_text}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleShufflePress}>
+                <TouchableOpacity onPress={handleRepeatPress}>
                     <MaterialCommunityIcons
-                        name="repeat"
+                        name={repeat ? "repeat-once" : "repeat-off"}
                         size={32}
                         style={mainStyles.color_text}
                     />

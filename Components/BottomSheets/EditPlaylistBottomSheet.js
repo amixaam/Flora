@@ -43,7 +43,6 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
             quality: 1,
         });
 
-        console.log(result.assets[0].uri);
         if (!result.canceled) setImage(result.assets[0].uri);
     };
 

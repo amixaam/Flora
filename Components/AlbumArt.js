@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 const AlbumArt = ({
@@ -23,11 +23,13 @@ const AlbumArt = ({
 
     if (image) {
         return (
-            <Animated.Image
-                sharedTransitionTag={image}
-                source={{ uri: image }}
-                style={[style]}
-            />
+            <View style={[[style], { elevation: 5 }]}>
+                <Animated.Image
+                    sharedTransitionTag={image}
+                    source={{ uri: image }}
+                    style={[style]}
+                />
+            </View>
         );
     } else {
         return (

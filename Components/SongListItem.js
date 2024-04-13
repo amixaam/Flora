@@ -1,10 +1,5 @@
 import { router } from "expo-router";
-import {
-    StyleSheet,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text } from "react-native-paper";
