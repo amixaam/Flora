@@ -25,10 +25,25 @@ export default function LocalFilesTab() {
             alert("Permission to access media library was denied");
             return;
         }
-        // get audio assets
-        const { assets } = await MediaLibrary.getAssetsAsync({
-            mediaType: MediaLibrary.MediaType.audio,
-        });
+        // get all audio assets
+        let assets = [];
+        let endCursor;
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            const {
+                assets: batchAssets,
+                endCursor: batchEndCursor,
+                hasNextPage: batchHasNextPage,
+            } = await MediaLibrary.getAssetsAsync({
+                mediaType: MediaLibrary.MediaType.audio,
+                after: endCursor,
+            });
+
+            assets.push(...batchAssets);
+            endCursor = batchEndCursor;
+            hasNextPage = batchHasNextPage;
+        }
 
         // check if there are new songs
         const newSongs = assets.filter(
