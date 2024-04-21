@@ -16,7 +16,7 @@ import { useSongsStore } from "../../store/songs";
 import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
 import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
-import { mainStyles } from "../styles";
+import { mainStyles, textStyles } from "../styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const EditSongBottomSheet = forwardRef(({ props }, ref) => {
@@ -97,10 +97,10 @@ const OptionsButton = ({
             >
                 <MaterialCommunityIcons
                     name={icon}
-                    size={24}
+                    size={16}
                     style={[mainStyles.color_text]}
                 />
-                <Text style={[mainStyles.text_16]}>{buttonContent}</Text>
+                <Text style={[textStyles.text]}>{buttonContent}</Text>
             </View>
         </TouchableNativeFeedback>
     );

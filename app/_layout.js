@@ -4,13 +4,13 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomTopBar from "../Components/CustomTopBar";
 export default function DefaultLayout() {
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#050506" }}>
             <BottomSheetModalProvider>
                 <Stack>
                     <Stack.Screen
                         name="(tabs)"
                         options={{
-                            header: () => <CustomTopBar addPlaylist={true} />,
+                            header: () => <CustomTopBar />,
                             navigationBarColor: "transparent",
                             statusBarStyle: "inverted",
                         }}
@@ -18,8 +18,14 @@ export default function DefaultLayout() {
                     <Stack.Screen
                         name="(playlist)"
                         options={{
-                            header: () => <CustomTopBar editPlaylist={true} />,
+                            header: () => (
+                                <CustomTopBar
+                                    editPlaylist={true}
+                                    backButton={true}
+                                />
+                            ),
                             navigationBarColor: "transparent",
+                            statusBarStyle: "inverted",
                         }}
                     />
                     <Stack.Screen
@@ -30,6 +36,7 @@ export default function DefaultLayout() {
                             presentation: "transparentModal",
                             header: () => <CustomTopBar />,
                             navigationBarColor: "transparent",
+                            statusBarStyle: "inverted",
                         }}
                     />
                 </Stack>

@@ -3,8 +3,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import LocalFilesTab from "./local";
 import PlaylistsTab from ".";
-import CustomTopBar from "../../Components/CustomTopBar";
-import PlaylistList from "../(playlist)/[playlist]";
+import YTmp3Tab from "./ytmp3";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -45,14 +44,24 @@ export default function TabLayout() {
                 name="local"
                 component={LocalFilesTab}
                 options={{
-                    tabBarLabel: "Local files",
+                    tabBarLabel: "Songs",
                     tabBarIcon: ({ focused, color }) => (
                         <MaterialCommunityIcons
-                            name={
-                                focused
-                                    ? "folder-search"
-                                    : "folder-search-outline"
-                            }
+                            name={focused ? "music-note" : "music-note-outline"}
+                            size={24}
+                            color={color}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="ytmp3"
+                component={YTmp3Tab}
+                options={{
+                    tabBarLabel: "YTmp3",
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons
+                            name={focused ? "download" : "download-outline"}
                             size={24}
                             color={color}
                         />

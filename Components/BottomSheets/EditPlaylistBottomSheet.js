@@ -23,7 +23,10 @@ import {
 import { useSongsStore } from "../../store/songs";
 import * as ImagePicker from "expo-image-picker";
 import SheetLayout from "./SheetLayout";
-import { mainStyles } from "../styles";
+import { mainStyles, textStyles } from "../styles";
+import SubmitButton from "../UI/SubmitButton";
+import CancelButton from "../UI/CancelButton";
+import TextInput from "../UI/TextInput";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
@@ -81,34 +84,25 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                         }}
                     />
                 </TouchableOpacity>
-                <BottomSheetTextInput
-                    style={mainStyles.textInput}
-                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
+                <TextInput
+                    bottomSheet={true}
                     placeholder="Name"
                     value={name}
-                    onChangeText={setName}
+                    setValue={setName}
                 />
-                <BottomSheetTextInput
-                    style={mainStyles.textInput}
-                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
+                <TextInput
+                    bottomSheet={true}
                     placeholder="Description"
                     value={description}
-                    onChangeText={setDescription}
+                    setValue={setDescription}
                 />
-                <TouchableNativeFeedback onPress={handleSubmitForm}>
-                    <View style={mainStyles.formButton}>
-                        <Text
-                            style={[
-                                mainStyles.text_16,
-                                {
-                                    textAlign: "center",
-                                },
-                            ]}
-                        >
-                            Save
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
+                <View style={{ flexDirection: "row", columnGap: 8 }}>
+                    <SubmitButton
+                        handleSubmitForm={handleSubmitForm}
+                        text="Edit"
+                    />
+                    <CancelButton />
+                </View>
             </BottomSheetView>
         </SheetLayout>
     );

@@ -1,6 +1,7 @@
+import React from "react";
 import { Stack } from "expo-router";
 
-export default function DefaultLayout() {
+const playlistLayout = () => {
     return (
         <Stack
             screenOptions={{
@@ -11,4 +12,6 @@ export default function DefaultLayout() {
             <Stack.Screen name="[playlist]" />
         </Stack>
     );
-}
+};
+
+export default playlistLayout;

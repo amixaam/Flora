@@ -5,7 +5,7 @@ import {
     BottomSheetModal,
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { mainStyles } from "../styles";
+import { mainStyles, textStyles } from "../styles";
 
 const SheetLayout = forwardRef(({ props, title, children }, ref) => {
     // sheet defaults
@@ -32,8 +32,8 @@ const SheetLayout = forwardRef(({ props, title, children }, ref) => {
             handleIndicatorStyle={mainStyles.color_primary}
             backgroundStyle={mainStyles.color_secondary}
         >
-            <BottomSheetView style={{ marginHorizontal: 18 }}>
-                <Text style={[[mainStyles.text_16], { marginBottom: 12 }]}>
+            <BottomSheetView style={{ marginHorizontal: 16 }}>
+                <Text style={[[textStyles.h5], { marginBottom: 8 }]}>
                     {title ? title : "Bottom sheet"}
                 </Text>
                 <BottomSheetView style={{ height: "100%" }}>

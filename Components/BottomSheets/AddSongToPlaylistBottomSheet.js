@@ -5,7 +5,7 @@ import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
 import AlbumArt from "../AlbumArt";
 import SheetLayout from "./SheetLayout";
-import { mainStyles } from "../styles";
+import { mainStyles, textStyles } from "../styles";
 
 const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { selectedSong, getPlaylistsFromSongID, addSongToPlaylist } =
@@ -28,11 +28,14 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     {playlists.length === 0 && (
                         <Text
                             style={[
-                                mainStyles.text_16,
-                                { textAlign: "center" },
+                                textStyles.text,
+                                {
+                                    textAlign: "center",
+                                    marginVertical: 32,
+                                },
                             ]}
                         >
-                            No playlists
+                            Create more playlists to add this song to one.
                         </Text>
                     )}
                     <FlashList
@@ -55,11 +58,11 @@ const PlaylistListItem = ({ item, handlePress }) => {
             <View style={mainStyles.textListItem}>
                 <AlbumArt
                     image={item.image}
-                    width={48}
+                    width={36}
                     aspectRatio={1}
                     borderRadius={5}
                 />
-                <Text style={mainStyles.text_16}>{item.name}</Text>
+                <Text style={textStyles.text}>{item.name}</Text>
             </View>
         </TouchableNativeFeedback>
     );

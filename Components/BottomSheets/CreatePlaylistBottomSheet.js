@@ -84,12 +84,7 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
                 />
                 <TouchableNativeFeedback onPress={handleSubmit}>
                     <View style={mainStyles.formButton}>
-                        <Text
-                            style={[
-                                mainStyles.text_16,
-                                { textAlign: "center" },
-                            ]}
-                        >
+                        <Text style={[mainStyles.h4, { textAlign: "center" }]}>
                             Create
                         </Text>
                     </View>

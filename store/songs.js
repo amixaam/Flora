@@ -48,7 +48,7 @@ export const useSongsStore = create(
             },
 
             // Init & cleanup for playback
-            loadTrack: async (song, playlist = null) => {
+            loadTrack: async (song, playlist = null, shuffle = false) => {
                 await get().unloadTrack();
                 try {
                     const { sound } = await Audio.Sound.createAsync(
@@ -74,6 +74,7 @@ export const useSongsStore = create(
                                 : s
                         ),
                     });
+                    if (shuffle) get().shuffle();
                 } catch (error) {
                     console.error("Error loading audio:", error);
                 }

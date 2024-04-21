@@ -11,7 +11,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import AlbumArt from "./AlbumArt";
-import { mainStyles } from "./styles";
+import { mainStyles, textStyles } from "./styles";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 const MiniPlaybackControls = () => {
@@ -69,10 +69,10 @@ const MiniPlaybackControls = () => {
                                 width: "100%",
                             }}
                         >
-                            <Text style={mainStyles.text_16} numberOfLines={1}>
+                            <Text style={textStyles.h6} numberOfLines={1}>
                                 {currentTrack.name}
                             </Text>
-                            <Text style={mainStyles.text_10} numberOfLines={1}>
+                            <Text style={textStyles.small} numberOfLines={1}>
                                 {currentTrack.artist
                                     ? currentTrack.artist
                                     : "No artist"}
@@ -185,7 +185,7 @@ const PlaybackControls = ({ isMini = false }) => {
                 rowGap: 8,
             }}
         >
-            <Text style={[mainStyles.text_12, { textAlign: "center" }]}>
+            <Text style={[textStyles.small, { textAlign: "center" }]}>
                 {playlist.name}
             </Text>
             <View
@@ -244,7 +244,7 @@ const PlaybackControls = ({ isMini = false }) => {
                 minimumTrackTintColor="#E8DEF8"
                 maximumTrackTintColor="#E8DEF8"
             />
-            <Text style={[mainStyles.text_10, { textAlign: "center" }]}>
+            <Text style={[textStyles.detail, { textAlign: "center" }]}>
                 {formatMilliseconds(trackPosition)} /{" "}
                 {formatMilliseconds(trackDuration)}
             </Text>

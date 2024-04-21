@@ -4,12 +4,13 @@ import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
-import { mainStyles } from "../styles";
+import { mainStyles, textStyles } from "../styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
-    const { selectedPlaylist, deletePlaylist } = useSongsStore();
+    const { selectedPlaylist, deletePlaylist, loadTrack, getSong, shuffle } =
+        useSongsStore();
 
     const handleDeletePlaylist = () => {
         if (selectedPlaylist.id == 1) return;
@@ -25,6 +26,11 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
         editPlaylistBottomSheetRef.current.present();
     };
 
+    const handleShufflePlay = () => {
+        loadTrack(getSong(selectedPlaylist.songs[0]), selectedPlaylist, true);
+        ref.current.dismiss();
+    };
+
     const editPlaylistBottomSheetRef = useRef(null);
     const handleRemoveSongBottomSheet = () =>
         editPlaylistBottomSheetRef.current.present();
@@ -38,7 +44,7 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                         data={selectedPlaylist}
                         icon="shuffle"
                         buttonContent={"Shuffle play"}
-                        onPress={handleEditPlaylist}
+                        onPress={handleShufflePlay}
                         enabledForLikes={true}
                     />
                     <OptionsButton
@@ -86,10 +92,10 @@ const OptionsButton = ({
             >
                 <MaterialCommunityIcons
                     name={icon}
-                    size={24}
+                    size={16}
                     style={[mainStyles.color_text]}
                 />
-                <Text style={[mainStyles.text_16]}>{buttonContent}</Text>
+                <Text style={[textStyles.text]}>{buttonContent}</Text>
             </View>
         </TouchableNativeFeedback>
     );

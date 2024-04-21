@@ -3,7 +3,7 @@ import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text } from "react-native-paper";
-import { mainStyles } from "./styles";
+import { mainStyles, textStyles } from "./styles";
 
 const SongListItem = (
     { item },
@@ -29,54 +29,54 @@ const SongListItem = (
         >
             <View
                 style={[
-                    isCurrentTrack
-                        ? mainStyles.selectedSongListItem
-                        : mainStyles.songListItem,
+                    mainStyles.songListItem,
+                    isCurrentTrack ? mainStyles.selectedSongListItem : {},
                     item.isHidden ? mainStyles.hiddenListItem : {},
                 ]}
             >
-                {isCurrentTrack && (
-                    <MaterialCommunityIcons
-                        name="volume-high"
-                        size={24}
-                        style={mainStyles.color_text}
-                    />
-                )}
-                <Text
-                    style={[
-                        {
-                            flex: 1,
-                            overflow: "hidden",
-                        },
-                        mainStyles.text_16,
-                    ]}
-                    numberOfLines={1}
-                >
-                    {item.isHidden ? "(Hidden) " : ""}
-                    {item.name}
-                </Text>
-
                 <View
                     style={{
+                        columnGap: 16,
                         flexDirection: "row",
-                        columnGap: 8,
+                        flex: 1,
                         alignItems: "center",
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() =>
-                            item.isLiked
-                                ? removeSongLike(item.id)
-                                : addSongLike(item.id)
-                        }
-                    >
+                    {isCurrentTrack && (
                         <MaterialCommunityIcons
-                            name={item.isLiked ? "heart" : "heart-outline"}
+                            name="volume-high"
                             size={24}
                             style={mainStyles.color_text}
                         />
-                    </TouchableOpacity>
+                    )}
+                    <Text
+                        style={[
+                            {
+                                flex: 1,
+                                overflow: "hidden",
+                            },
+                            textStyles.text,
+                        ]}
+                        numberOfLines={1}
+                    >
+                        {item.isHidden ? "(Hidden) " : ""}
+                        {item.name}
+                    </Text>
                 </View>
+
+                <TouchableOpacity
+                    onPress={() =>
+                        item.isLiked
+                            ? removeSongLike(item.id)
+                            : addSongLike(item.id)
+                    }
+                >
+                    <MaterialCommunityIcons
+                        name={item.isLiked ? "heart" : "heart-outline"}
+                        size={24}
+                        style={mainStyles.color_text}
+                    />
+                </TouchableOpacity>
             </View>
         </TouchableNativeFeedback>
     );

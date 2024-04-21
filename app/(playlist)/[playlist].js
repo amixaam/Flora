@@ -6,12 +6,13 @@ import { useEffect, useRef } from "react";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 import { useSongsStore } from "../../store/songs";
 import AlbumArt from "../../Components/AlbumArt";
-import { mainStyles } from "../../Components/styles";
+import { mainStyles, textStyles } from "../../Components/styles";
 import Animated from "react-native-reanimated";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native-gesture-handler";
 // import { getColors } from "react-native-image-colors";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -86,8 +87,9 @@ export default function PlaylistList() {
             <View
                 style={{
                     padding: 16,
+
                     alignItems: "center",
-                    rowGap: 4,
+                    rowGap: 8,
                 }}
             >
                 <AlbumArt
@@ -96,22 +98,54 @@ export default function PlaylistList() {
                     aspectRatio={1}
                     borderRadius={7}
                 />
-                <Animated.Text
-                    sharedTransitionTag={playlistData.name}
-                    style={mainStyles.text_24}
+                <View
+                    style={{
+                        marginVertical: 4,
+                        rowGap: 4,
+                        flex: 1,
+                        flexDirection: "column",
+                        justifyContent: "center",
+                    }}
                 >
-                    {playlistData.name}
-                </Animated.Text>
-                <Text style={mainStyles.text_12}>
-                    {playlistData.description}
-                </Text>
+                    <Text style={[textStyles.h4, { textAlign: "center" }]}>
+                        {playlistData.name}
+                    </Text>
+                    <Text
+                        style={[
+                            textStyles.text,
+                            { textAlign: "center", opacity: 0.7 },
+                        ]}
+                    >
+                        {playlistData.description}
+                    </Text>
+                </View>
             </View>
             {playlistData.songs.length === 0 && (
-                <Text style={[mainStyles.text_16, { textAlign: "center" }]}>
-                    Add songs to this playlist to view them!
-                </Text>
+                <View
+                    style={{
+                        marginTop: 32,
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="playlist-remove"
+                        size={48}
+                        style={mainStyles.color_text}
+                    />
+                    <Text
+                        style={[
+                            textStyles.text,
+                            { textAlign: "center", width: "75%" },
+                        ]}
+                    >
+                        Add songs to this playlist by holding the song you want
+                        and selecting this playlist!
+                    </Text>
+                </View>
             )}
-            <View style={{ flex: 1, minHeight: 200 }}>
+            <View style={{ flex: 1, minHeight: 5 }}>
                 <FlashList
                     data={playlistData.songs}
                     estimatedItemSize={100}
@@ -127,6 +161,11 @@ export default function PlaylistList() {
                     }
                     keyExtractor={(item) => item.id}
                 />
+            </View>
+            <View style={{ padding: 16, paddingBottom: 64 }}>
+                <Text style={[textStyles.small, { textAlign: "center" }]}>
+                    {playlistData.songs.length} songs
+                </Text>
             </View>
             <EditSongBottomSheet ref={bottomSheetRef} />
         </ScrollView>

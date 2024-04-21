@@ -10,7 +10,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import PlaybackControls from "../../Components/PlaybackControls";
 import AlbumArt from "../../Components/AlbumArt";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { mainStyles } from "../../Components/styles";
+import { mainStyles, textStyles } from "../../Components/styles";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
@@ -34,7 +34,7 @@ export default function PlayerTab() {
 
     const handleLikeButtonPress = () => {
         if (currentTrack) {
-            if (currentTrack.isLiked) removeSongLike(currentTrack.id);
+            if (songData.isLiked) removeSongLike(currentTrack.id);
             else addSongLike(currentTrack.id);
         }
     };
@@ -49,7 +49,12 @@ export default function PlayerTab() {
                 position={"absolute"}
             />
             <BlurView
-                style={styles.playerContainer}
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 32,
+                    rowGap: 16,
+                }}
                 tint="dark"
                 intensity={70}
                 blurReductionFactor={1}
@@ -65,26 +70,29 @@ export default function PlayerTab() {
                     />
                 </View>
                 <Animated.View
-                    style={{ marginBottom: 8 }}
+                    style={{ rowGap: 4, marginBottom: 32 }}
                     entering={FadeInDown.duration(200)}
                 >
                     <View style={styles.titleContainer}>
-                        <Text style={mainStyles.text_24} numberOfLines={1}>
+                        <Text style={textStyles.h4} numberOfLines={1}>
                             {currentTrack.name ? currentTrack.name : "No name"}
                         </Text>
                         <TouchableOpacity onPress={handleLikeButtonPress}>
                             <MaterialCommunityIcons
                                 name={
-                                    currentTrack.isLiked
-                                        ? "heart"
-                                        : "heart-outline"
+                                    songData.isLiked ? "heart" : "heart-outline"
                                 }
                                 size={24}
                                 style={mainStyles.color_text}
                             />
                         </TouchableOpacity>
                     </View>
-                    <Text style={[mainStyles.text_12, { textAlign: "center" }]}>
+                    <Text
+                        style={[
+                            textStyles.text,
+                            { textAlign: "center", opacity: 0.7 },
+                        ]}
+                    >
                         {currentTrack.author
                             ? currentTrack.author
                             : "No author"}
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
     playerContainer: {
         flex: 1,
         justifyContent: "center",
-        paddingHorizontal: 32,
+        padding: 32,
         rowGap: 16,
     },
     titleContainer: {

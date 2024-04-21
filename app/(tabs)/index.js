@@ -1,15 +1,14 @@
 import { router } from "expo-router";
-import { Image, Text, TouchableNativeFeedback, View } from "react-native";
+import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useSongsStore } from "../../store/songs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import { useSongsStore } from "../../store/songs";
 
-import PlaybackControls from "../../Components/PlaybackControls";
 import AlbumArt from "../../Components/AlbumArt";
-import { mainStyles } from "../../Components/styles";
-import SheetLayout from "../../Components/BottomSheets/SheetLayout";
+import PlaybackControls from "../../Components/PlaybackControls";
+import { mainStyles, textStyles } from "../../Components/styles";
 
 const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
     const handleLongPress = () => {
@@ -46,7 +45,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
                             {
                                 lineHeight: 28,
                             },
-                            mainStyles.text_24,
+                            textStyles.h5,
                         ]}
                         numberOfLines={1}
                     >
@@ -57,7 +56,7 @@ const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
                             {
                                 marginTop: -4,
                             },
-                            mainStyles.text_12,
+                            textStyles.small,
                         ]}
                     >
                         {item.songs.length} songs
@@ -80,10 +79,6 @@ export default function PlaylistsTab() {
 
     return (
         <View style={mainStyles.container}>
-            <Image
-                style={mainStyles.backgroundBlur}
-                source={require("../../assets/indexBlur.png")}
-            />
             <View style={{ margin: 8, flex: 1, height: "100%" }}>
                 <FlashList
                     numColumns={2}

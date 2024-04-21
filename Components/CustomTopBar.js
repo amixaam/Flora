@@ -1,18 +1,28 @@
-import { View, Text, TouchableNativeFeedback } from "react-native";
-import React, { useRef } from "react";
-import { mainStyles } from "./styles";
+import React, { useEffect, useRef } from "react";
+import { Text, TouchableNativeFeedback, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { mainStyles, textStyles } from "./styles";
 
+import { usePathname, router } from "expo-router";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import CreatePlaylistBottomSheet from "./BottomSheets/CreatePlaylistBottomSheet";
 import EditPlaylistOptionsBottomSheet from "./BottomSheets/EditPlaylistOptionsBottomSheet";
 
-const CustomTopBar = ({
-    addPlaylist = false,
-    editPlaylist = false,
-    settings = true,
-}) => {
+const CustomTopBar = ({ editPlaylist = false, backButton = false }) => {
     const { top } = useSafeAreaInsets();
+    const pathname = usePathname();
+
+    const getHeaderText = () => {
+        if (pathname === "/local") {
+            return "Songs";
+        } else if (pathname === "/") {
+            return "Playlists";
+        } else if (pathname === "/ytmp3") {
+            return "YTmp3";
+        } else {
+            return "";
+        }
+    };
 
     const settingsSheetRef = useRef(null);
     const presentSettings = () => settingsSheetRef.current.present();
@@ -25,9 +35,20 @@ const CustomTopBar = ({
     return (
         <>
             <View style={[{ paddingTop: top + 8 }, mainStyles.topbarContainer]}>
-                <Text style={mainStyles.topBarText}>Flora</Text>
+                {backButton && (
+                    <TouchableNativeFeedback onPress={() => router.back()}>
+                        <View style={mainStyles.roundButton}>
+                            <MaterialCommunityIcons
+                                name="arrow-left"
+                                style={mainStyles.color_text}
+                                size={24}
+                            />
+                        </View>
+                    </TouchableNativeFeedback>
+                )}
+                <Text style={textStyles.h3}>{getHeaderText()}</Text>
                 <View>
-                    {addPlaylist && (
+                    {pathname === "/" && (
                         <TouchableNativeFeedback onPress={createPlaylistPress}>
                             <View style={mainStyles.roundButton}>
                                 <MaterialCommunityIcons

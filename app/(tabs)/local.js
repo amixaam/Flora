@@ -1,14 +1,13 @@
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef } from "react";
-import { Button, Dimensions, Image, View } from "react-native";
+import { Image, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
-import { useSongsStore } from "../../store/songs";
-import SongListItem from "../../Components/SongListItem";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 import PlaybackControls from "../../Components/PlaybackControls";
-import { Appbar } from "react-native-paper";
+import SongListItem from "../../Components/SongListItem";
 import { mainStyles } from "../../Components/styles";
+import { useSongsStore } from "../../store/songs";
 
 export default function LocalFilesTab() {
     const {
@@ -66,10 +65,6 @@ export default function LocalFilesTab() {
 
     return (
         <View style={mainStyles.container}>
-            <Image
-                style={mainStyles.backgroundBlur}
-                source={require("../../assets/indexBlur.png")}
-            />
             <FlashList
                 data={songs}
                 estimatedItemSize={80}
