@@ -1,5 +1,6 @@
 import {
     Button,
+    Image,
     StyleSheet,
     Text,
     TouchableNativeFeedback,
@@ -12,6 +13,9 @@ import { useSongsStore } from "../../store/songs";
 import SheetLayout from "./SheetLayout";
 import { mainStyles } from "../styles";
 import * as ImagePicker from "expo-image-picker";
+import TextInput from "../UI/TextInput";
+import SubmitButton from "../UI/SubmitButton";
+import CancelButton from "../UI/CancelButton";
 
 const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
@@ -33,7 +37,7 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
     };
 
     const handleSubmit = () => {
-        createPlaylist(name, description);
+        createPlaylist(name, description, image);
         ref.current.dismiss();
         setDescription("");
         setName("");
@@ -42,53 +46,51 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
 
     return (
         <SheetLayout ref={ref} title={"Create playlist"}>
-            <TouchableOpacity onPress={pickImage}>
-                {image && (
+            <BottomSheetView
+                style={{
+                    rowGap: 8,
+                    flex: 1,
+                }}
+            >
+                <TouchableOpacity onPress={pickImage}>
                     <Image
                         source={{ uri: image }}
-                        style={{
-                            alignSelf: "center",
-                            width: "50%",
-                            aspectRatio: 1,
-                            backgroundColor: "gray",
-                            borderRadius: 7,
-                        }}
+                        style={[
+                            mainStyles.color_bg_input,
+                            {
+                                alignSelf: "center",
+                                width: "50%",
+                                aspectRatio: 1,
+                                borderRadius: 7,
+                            },
+                        ]}
                     />
-                )}
-                {!image && (
-                    <View
-                        style={{
-                            alignSelf: "center",
-                            width: "50%",
-                            aspectRatio: 1,
-                            backgroundColor: "gray",
-                            borderRadius: 7,
-                        }}
+                </TouchableOpacity>
+                <BottomSheetView style={{ rowGap: 8, flex: 1 }}>
+                    <TextInput
+                        bottomSheet={true}
+                        placeholder="Name"
+                        value={name}
+                        setValue={setName}
                     />
-                )}
-            </TouchableOpacity>
-            <BottomSheetView style={{ rowGap: 8, flex: 1 }}>
-                <BottomSheetTextInput
-                    style={mainStyles.textInput}
-                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Name"
-                />
-                <BottomSheetTextInput
-                    style={mainStyles.textInput}
-                    placeholderTextColor={"rgba(74, 68, 88, 1)"}
-                    placeholder="Description"
-                    onChangeText={setDescription}
-                    value={description}
-                />
-                <TouchableNativeFeedback onPress={handleSubmit}>
-                    <View style={mainStyles.formButton}>
-                        <Text style={[mainStyles.h4, { textAlign: "center" }]}>
-                            Create
-                        </Text>
+                    <TextInput
+                        bottomSheet={true}
+                        placeholder="Description"
+                        value={description}
+                        setValue={setDescription}
+                    />
+                    <View style={{ flexDirection: "row", columnGap: 8 }}>
+                        <SubmitButton
+                            handleSubmitForm={handleSubmit}
+                            text="Create"
+                        />
+                        <CancelButton
+                            handlePress={() => {
+                                ref.current.dismiss();
+                            }}
+                        />
                     </View>
-                </TouchableNativeFeedback>
+                </BottomSheetView>
             </BottomSheetView>
         </SheetLayout>
     );

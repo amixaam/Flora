@@ -264,7 +264,7 @@ export const useSongsStore = create(
             setSelectedPlaylist: (playlist) =>
                 set({ selectedPlaylist: playlist }),
 
-            createPlaylist: (name, description) => {
+            createPlaylist: (name, description, image = null) => {
                 const newPlaylist = {
                     id: (
                         Date.now().toString(36) +
@@ -272,6 +272,7 @@ export const useSongsStore = create(
                     ).toUpperCase(),
                     name,
                     description,
+                    image,
                     songs: [],
                 };
                 set((state) => ({

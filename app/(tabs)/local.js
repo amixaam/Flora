@@ -44,6 +44,7 @@ export default function LocalFilesTab() {
                 author: null,
                 date: null,
                 duration: asset.duration,
+                image: null,
                 isLiked: false,
                 isHidden: false,
                 lastPlayed: null,
@@ -54,6 +55,7 @@ export default function LocalFilesTab() {
         // append new songs
         setSongs([...songs, ...newSongsWithInfo]);
     };
+
     // process new songs
     useEffect(() => {
         console.log("local renew");

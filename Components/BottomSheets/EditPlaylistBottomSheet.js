@@ -75,13 +75,15 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                 <TouchableOpacity onPress={pickImage}>
                     <Image
                         source={{ uri: image }}
-                        style={{
-                            alignSelf: "center",
-                            width: "50%",
-                            aspectRatio: 1,
-                            backgroundColor: "gray",
-                            borderRadius: 7,
-                        }}
+                        style={[
+                            mainStyles.color_bg_input,
+                            {
+                                alignSelf: "center",
+                                width: "50%",
+                                aspectRatio: 1,
+                                borderRadius: 7,
+                            },
+                        ]}
                     />
                 </TouchableOpacity>
                 <TextInput
@@ -101,7 +103,11 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                         handleSubmitForm={handleSubmitForm}
                         text="Edit"
                     />
-                    <CancelButton />
+                    <CancelButton
+                        handlePress={() => {
+                            ref.current.dismiss();
+                        }}
+                    />
                 </View>
             </BottomSheetView>
         </SheetLayout>
