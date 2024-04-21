@@ -15,6 +15,7 @@ export const useSongsStore = create(
                     name: "Liked songs",
                     description: "Your songs that you liked.",
                     image: null,
+                    year: null,
                     songs: [], //contains only id's
                 },
             ],

@@ -1,10 +1,10 @@
-import { Text } from "react-native";
-import { forwardRef, useCallback, useMemo } from "react";
 import {
     BottomSheetBackdrop,
     BottomSheetModal,
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { forwardRef, useCallback, useMemo } from "react";
+import { Text } from "react-native";
 import { mainStyles, textStyles } from "../styles";
 
 const SheetLayout = forwardRef(({ props, title, children }, ref) => {
@@ -17,10 +17,6 @@ const SheetLayout = forwardRef(({ props, title, children }, ref) => {
             {...props}
         />
     ));
-
-    const handleDismissPress = () => {
-        ref.current.dismiss();
-    };
 
     return (
         <BottomSheetModal

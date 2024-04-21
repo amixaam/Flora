@@ -84,7 +84,7 @@ export default function LocalFilesTab() {
         <View style={mainStyles.container}>
             <FlashList
                 data={songs}
-                estimatedItemSize={80}
+                estimatedItemSize={100}
                 renderItem={({ item }) =>
                     SongListItem(
                         { item },

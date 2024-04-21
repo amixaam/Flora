@@ -6,6 +6,7 @@ import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
 import { mainStyles, textStyles } from "../styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import ChangeMultipleSongPlaylistStatus from "./ChangeMultipleSongPlaylistStatus";
 
 const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
@@ -26,14 +27,18 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
         editPlaylistBottomSheetRef.current.present();
     };
 
+    const handleAddSongsToPlaylist = () => {
+        ref.current.dismiss();
+        changeMultipleSongPlaylistStatusBottomSheetRef.current.present();
+    };
+
     const handleShufflePlay = () => {
         loadTrack(getSong(selectedPlaylist.songs[0]), selectedPlaylist, true);
         ref.current.dismiss();
     };
 
     const editPlaylistBottomSheetRef = useRef(null);
-    const handleRemoveSongBottomSheet = () =>
-        editPlaylistBottomSheetRef.current.present();
+    const changeMultipleSongPlaylistStatusBottomSheetRef = useRef(null);
 
     if (selectedPlaylist === null) return;
     return (
@@ -51,7 +56,7 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                         data={selectedPlaylist}
                         icon="playlist-plus"
                         buttonContent={"Add songs to playlist"}
-                        onPress={handleEditPlaylist}
+                        onPress={handleAddSongsToPlaylist}
                         enabledForLikes={true}
                     />
                     <OptionsButton
@@ -69,6 +74,10 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                 </BottomSheetView>
             </SheetLayout>
             <EditPlaylistBottomSheet ref={editPlaylistBottomSheetRef} />
+            <ChangeMultipleSongPlaylistStatus
+                ref={changeMultipleSongPlaylistStatusBottomSheetRef}
+                mode="add"
+            />
         </>
     );
 });
