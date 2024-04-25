@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid } from "expo-av";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -52,6 +52,12 @@ export const useSongsStore = create(
             loadTrack: async (song, playlist = null, shuffle = false) => {
                 await get().unloadTrack();
                 try {
+                    Audio.setAudioModeAsync({
+                        staysActiveInBackground: true,
+                        playsInSilentModeIOS: true,
+                        interruptionModeAndroid:
+                            InterruptionModeAndroid.DoNotMix,
+                    });
                     const { sound } = await Audio.Sound.createAsync(
                         { uri: song.uri },
                         { shouldPlay: true }

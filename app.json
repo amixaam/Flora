@@ -22,7 +22,8 @@
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#050506"
             },
-            "package": "com.anonymous.Flora"
+            "package": "com.anonymous.Flora",
+            "permissions": ["WAKE_LOCK"]
         },
         "web": {
             "favicon": "./assets/favicon.png"

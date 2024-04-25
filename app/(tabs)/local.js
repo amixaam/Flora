@@ -85,16 +85,16 @@ export default function LocalFilesTab() {
             <FlashList
                 data={songs}
                 estimatedItemSize={100}
-                renderItem={({ item }) =>
-                    SongListItem(
-                        { item },
-                        addSongLike,
-                        removeSongLike,
-                        handleOpenPress,
-                        setSelectedSong,
-                        item.id === currentTrack.id ? true : false
-                    )
-                }
+                renderItem={({ item }) => (
+                    <SongListItem
+                        item={item}
+                        addSongLike={addSongLike}
+                        removeSongLike={removeSongLike}
+                        handleOpenPress={handleOpenPress}
+                        setSelectedSong={setSelectedSong}
+                        isCurrent={item.id === currentTrack.id ? true : false}
+                    />
+                )}
                 keyExtractor={(item) => item.id}
             />
             <PlaybackControls isMini={true} />

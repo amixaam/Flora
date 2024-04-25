@@ -10,7 +10,7 @@ import AlbumArt from "../../Components/AlbumArt";
 import PlaybackControls from "../../Components/PlaybackControls";
 import { mainStyles, textStyles } from "../../Components/styles";
 
-const PlaylistItem = ({ item }, handleOpenPress, setSelectedPlaylist) => {
+const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
     const handleLongPress = () => {
         setSelectedPlaylist(item);
         handleOpenPress();
@@ -85,13 +85,13 @@ export default function PlaylistsTab() {
                     data={playlists}
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={100}
-                    renderItem={({ item }) =>
-                        PlaylistItem(
-                            { item },
-                            handleOpenPress,
-                            setSelectedPlaylist
-                        )
-                    }
+                    renderItem={({ item }) => (
+                        <PlaylistItem
+                            item={item}
+                            handleOpenPress={handleOpenPress}
+                            setSelectedPlaylist={setSelectedPlaylist}
+                        />
+                    )}
                 />
             </View>
             <PlaybackControls isMini={true} />

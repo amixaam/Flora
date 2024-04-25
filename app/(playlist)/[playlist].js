@@ -149,16 +149,18 @@ export default function PlaylistList() {
                 <FlashList
                     data={playlistData.songs}
                     estimatedItemSize={100}
-                    renderItem={({ item }) =>
-                        SongListItem(
-                            { item },
-                            addSongLike,
-                            removeSongLike,
-                            handleEditSong,
-                            setSelectedSong,
-                            item.id === currentTrack.id ? true : false
-                        )
-                    }
+                    renderItem={({ item }) => (
+                        <SongListItem
+                            item={item}
+                            addSongLike={addSongLike}
+                            removeSongLike={removeSongLike}
+                            handleOpenPress={handleEditSong}
+                            setSelectedSong={setSelectedSong}
+                            isCurrent={
+                                item.id === currentTrack.id ? true : false
+                            }
+                        />
+                    )}
                     keyExtractor={(item) => item.id}
                 />
             </View>
