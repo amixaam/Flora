@@ -156,7 +156,7 @@ export default function PlaylistList() {
                             removeSongLike={removeSongLike}
                             handleOpenPress={handleEditSong}
                             setSelectedSong={setSelectedSong}
-                            isCurrent={
+                            isCurrentTrack={
                                 item.id === currentTrack.id ? true : false
                             }
                         />

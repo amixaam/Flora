@@ -92,7 +92,9 @@ export default function LocalFilesTab() {
                         removeSongLike={removeSongLike}
                         handleOpenPress={handleOpenPress}
                         setSelectedSong={setSelectedSong}
-                        isCurrent={item.id === currentTrack.id ? true : false}
+                        isCurrentTrack={
+                            item.id === currentTrack.id ? true : false
+                        }
                     />
                 )}
                 keyExtractor={(item) => item.id}
