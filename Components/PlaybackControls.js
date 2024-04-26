@@ -1,31 +1,42 @@
+import Slider from "@react-native-community/slider";
+import { router } from "expo-router";
 import {
-    StyleSheet,
     Text,
     TouchableNativeFeedback,
     TouchableOpacity,
     View,
 } from "react-native";
-import { useSongsStore } from "../store/songs";
-import Slider from "@react-native-community/slider";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { useSongsStore } from "../store/songs";
 import AlbumArt from "./AlbumArt";
 import { mainStyles, textStyles } from "./styles";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { useEffect, useState } from "react";
+
+const formatMilliseconds = (milliseconds) => {
+    const minutes = Math.floor(milliseconds / (1000 * 60));
+    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+};
 
 const MiniPlaybackControls = () => {
     const {
+        isPlaying,
+        playlist,
+
         play,
         pause,
-        isPlaying,
         next,
         previous,
+
         skipPosition,
         trackPosition,
         trackDuration,
+
         currentTrack,
-        playlist,
+        getSong,
     } = useSongsStore();
 
     const hanldePlayPausePress = () => {
@@ -33,10 +44,15 @@ const MiniPlaybackControls = () => {
         else play();
     };
 
-    if (currentTrack.length === 0) return;
+    const [songData, setSongData] = useState(getSong(currentTrack));
+    useEffect(() => {
+        setSongData(getSong(currentTrack));
+    }, [currentTrack]);
+
+    if (currentTrack === null || !songData) return;
     return (
         <TouchableNativeFeedback
-            onPress={() => router.push("/(player)/" + currentTrack.id)}
+            onPress={() => router.push("/(player)/" + currentTrack)}
         >
             <View style={mainStyles.miniPlayer}>
                 <View
@@ -70,16 +86,13 @@ const MiniPlaybackControls = () => {
                             }}
                         >
                             <Text style={textStyles.h6} numberOfLines={1}>
-                                {currentTrack.name}
+                                {songData.name}
                             </Text>
                             <Text style={textStyles.small} numberOfLines={1}>
-                                {currentTrack.artist
-                                    ? currentTrack.artist
+                                {songData.artist
+                                    ? songData.artist
                                     : "No artist"}
-                                ,{" "}
-                                {currentTrack.date
-                                    ? currentTrack.date
-                                    : "no date"}
+                                , {songData.date ? songData.date : "no date"}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row", columnGap: 16 }}>
@@ -129,17 +142,19 @@ const PlaybackControls = ({ isMini = false }) => {
     if (isMini) return <MiniPlaybackControls />;
 
     const {
+        isPlaying,
+        playlist,
+
         play,
         pause,
-        isPlaying,
         next,
         previous,
+
         skipPosition,
         trackPosition,
         trackDuration,
+
         shuffle,
-        playlist,
-        currentTrack,
         repeat,
         turnOnRepeat,
         turnOffRepeat,
@@ -150,35 +165,13 @@ const PlaybackControls = ({ isMini = false }) => {
         else play();
     };
 
-    const handleSkipNextPress = () => {
-        next();
-    };
-
-    const handleSkipPreviousPress = () => {
-        previous();
-    };
-
-    const handleShufflePress = () => {
-        shuffle();
-    };
-
     const handleRepeatPress = () => {
         if (repeat) turnOffRepeat();
         else turnOnRepeat();
     };
 
-    const formatMilliseconds = (milliseconds) => {
-        const minutes = Math.floor(milliseconds / (1000 * 60));
-        const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-
-        return `${minutes.toString().padStart(2, "0")}:${seconds
-            .toString()
-            .padStart(2, "0")}`;
-    };
-
     return (
-        <Animated.View
-            entering={FadeInDown.duration(200)}
+        <View
             style={{
                 flexDirection: "column",
                 justifyContent: "center",
@@ -195,14 +188,14 @@ const PlaybackControls = ({ isMini = false }) => {
                     alignItems: "center",
                 }}
             >
-                <TouchableOpacity onPress={handleShufflePress}>
+                <TouchableOpacity onPress={shuffle}>
                     <MaterialCommunityIcons
                         name="shuffle"
                         size={32}
                         style={mainStyles.color_text}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleSkipPreviousPress}>
+                <TouchableOpacity onPress={previous}>
                     <MaterialCommunityIcons
                         name="skip-previous"
                         size={48}
@@ -216,7 +209,7 @@ const PlaybackControls = ({ isMini = false }) => {
                         style={mainStyles.color_text}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleSkipNextPress}>
+                <TouchableOpacity onPress={next}>
                     <MaterialCommunityIcons
                         name="skip-next"
                         size={48}
@@ -248,7 +241,7 @@ const PlaybackControls = ({ isMini = false }) => {
                 {formatMilliseconds(trackPosition)} /{" "}
                 {formatMilliseconds(trackDuration)}
             </Text>
-        </Animated.View>
+        </View>
     );
 };
 

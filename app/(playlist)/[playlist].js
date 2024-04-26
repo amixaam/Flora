@@ -7,12 +7,13 @@ import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomShe
 import { useSongsStore } from "../../store/songs";
 import AlbumArt from "../../Components/AlbumArt";
 import { mainStyles, textStyles } from "../../Components/styles";
-import Animated from "react-native-reanimated";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { ScrollView } from "react-native-gesture-handler";
-// import { getColors } from "react-native-image-colors";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
+import SecondaryRoundIconButton from "../../Components/UI/SecondaryRoundIconButton";
+import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -22,16 +23,26 @@ export default function PlaylistList() {
         removeSongLike,
         setSelectedSong,
         currentTrack,
+        loadTrack,
+        getSongDataFromPlaylist,
     } = useSongsStore();
 
     const playlistData = getPlaylist(playlist);
+    const songData = getSongDataFromPlaylist(playlist);
 
-    useEffect(() => {
-        console.log("[playlist] renew");
-    }, []);
+    const editSongSheetRef = useRef(null);
+    const handleEditSong = () => editSongSheetRef.current.present();
 
-    const bottomSheetRef = useRef(null);
-    const handleEditSong = () => bottomSheetRef.current.present();
+    const editPlaylistSheetRef = useRef(null);
+    const handleEditPlaylist = () => editPlaylistSheetRef.current.present();
+
+    const handleShufflePress = () => {
+        loadTrack(songData[0], playlistData, true);
+    };
+
+    const handlePlayPress = () => {
+        loadTrack(songData[0], playlistData, false);
+    };
 
     return (
         <ScrollView style={mainStyles.container}>
@@ -110,14 +121,37 @@ export default function PlaylistList() {
                     <Text style={[textStyles.h4, { textAlign: "center" }]}>
                         {playlistData.name}
                     </Text>
-                    <Text
-                        style={[
-                            textStyles.text,
-                            { textAlign: "center", opacity: 0.7 },
-                        ]}
-                    >
-                        {playlistData.description}
-                    </Text>
+                    {playlistData.description && (
+                        <Text
+                            style={[
+                                textStyles.text,
+                                { textAlign: "center", opacity: 0.7 },
+                            ]}
+                        >
+                            {playlistData.description}
+                        </Text>
+                    )}
+                </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        flex: 1,
+                        columnGap: 16,
+                        alignItems: "center",
+                    }}
+                >
+                    <SecondaryRoundIconButton
+                        onPress={handleShufflePress}
+                        icon="play"
+                    />
+                    <PrimaryRoundIconButton
+                        size={40}
+                        onPress={handlePlayPress}
+                    />
+                    <SecondaryRoundIconButton
+                        icon="pencil"
+                        onPress={handleEditPlaylist}
+                    />
                 </View>
             </View>
             {playlistData.songs.length === 0 && (
@@ -147,7 +181,7 @@ export default function PlaylistList() {
             )}
             <View style={{ flex: 1, minHeight: 5 }}>
                 <FlashList
-                    data={playlistData.songs}
+                    data={songData}
                     estimatedItemSize={100}
                     renderItem={({ item }) => (
                         <SongListItem
@@ -157,7 +191,7 @@ export default function PlaylistList() {
                             handleOpenPress={handleEditSong}
                             setSelectedSong={setSelectedSong}
                             isCurrentTrack={
-                                item.id === currentTrack.id ? true : false
+                                item.id === currentTrack ? true : false
                             }
                         />
                     )}
@@ -169,7 +203,8 @@ export default function PlaylistList() {
                     {playlistData.songs.length} songs
                 </Text>
             </View>
-            <EditSongBottomSheet ref={bottomSheetRef} />
+            <EditSongBottomSheet ref={editSongSheetRef} />
+            <EditPlaylistOptionsBottomSheet ref={editPlaylistSheetRef} />
         </ScrollView>
     );
 }

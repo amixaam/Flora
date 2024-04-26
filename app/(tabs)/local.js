@@ -52,14 +52,16 @@ export default function LocalFilesTab() {
 
         const newSongsWithInfo = newSongs.map((asset) => {
             return {
+                id: asset.id,
                 uri: asset.uri,
                 filename: asset.filename,
-                id: asset.id,
+                duration: asset.duration,
+
                 name: asset.filename, //default
                 author: null,
                 date: null,
-                duration: asset.duration,
                 image: null,
+
                 isLiked: false,
                 isHidden: false,
                 lastPlayed: null,
@@ -92,9 +94,7 @@ export default function LocalFilesTab() {
                         removeSongLike={removeSongLike}
                         handleOpenPress={handleOpenPress}
                         setSelectedSong={setSelectedSong}
-                        isCurrentTrack={
-                            item.id === currentTrack.id ? true : false
-                        }
+                        isCurrentTrack={item.id === currentTrack ? true : false}
                     />
                 )}
                 keyExtractor={(item) => item.id}

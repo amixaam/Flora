@@ -1,65 +1,125 @@
 import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { BlurView } from "expo-blur";
+import {
+    ImageBackground,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
+import { useEffect, useState } from "react";
 import { useSongsStore } from "../../store/songs";
-import { useEffect } from "react";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import PlaybackControls from "../../Components/PlaybackControls";
+import { LinearGradient } from "expo-linear-gradient";
 import AlbumArt from "../../Components/AlbumArt";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import PlaybackControls from "../../Components/PlaybackControls";
 import { mainStyles, textStyles } from "../../Components/styles";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
     const {
-        getSong,
-        selectedPlaylist,
-        loadTrack,
         currentTrack,
+        playlist,
+        selectedPlaylist,
+        getSong,
+        loadTrack,
         addSongLike,
         removeSongLike,
-        playlist,
     } = useSongsStore();
 
-    const songData = getSong(song);
+    const [songData, setSongData] = useState(() => getSong(song));
+    useEffect(() => {
+        setSongData(getSong(currentTrack));
+    }, [currentTrack]);
 
     useEffect(() => {
-        if (songData.id !== currentTrack.id) {
+        if (
+            songData.id !== currentTrack ||
+            selectedPlaylist.id !== playlist.id
+        ) {
             loadTrack(songData, selectedPlaylist);
         }
     }, []);
 
     const handleLikeButtonPress = () => {
-        if (currentTrack) {
-            if (songData.isLiked) removeSongLike(currentTrack.id);
-            else addSongLike(currentTrack.id);
+        if (songData && currentTrack) {
+            if (songData.isLiked) {
+                removeSongLike(songData.id);
+                songData.isLiked = false;
+            } else {
+                addSongLike(songData.id);
+                songData.isLiked = true;
+            }
         }
     };
 
-    // TODO: try linear gradient
     return (
-        <View style={mainStyles.container}>
-            <AlbumArt
-                image={playlist.image}
-                width={"100%"}
-                height={"80%"}
-                position={"absolute"}
-            />
-            <BlurView
+        <View style={[mainStyles.container]}>
+            <View
                 style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
                     flex: 1,
+                }}
+            >
+                <View
+                    style={{
+                        position: "relative",
+                        height: "100%",
+                        flex: 1,
+                    }}
+                >
+                    {!playlist.image && (
+                        <LinearGradient
+                            colors={["pink", "lightblue"]}
+                            start={{ x: -0.5, y: 0 }}
+                            end={{ x: 1, y: 1.5 }}
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                position: "absolute",
+                                opacity: 0.5,
+                            }}
+                        />
+                    )}
+                    <ImageBackground
+                        source={{ uri: playlist.image }}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            position: "absolute",
+                            opacity: 0.8,
+                        }}
+                        resizeMode="stretch"
+                        blurRadius={30}
+                    />
+                    <LinearGradient
+                        colors={[
+                            "#050506",
+                            "#05050666",
+                            "#05050655",
+                            "#05050699",
+                            "#050506",
+                            "#050506",
+                        ]}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            position: "absolute",
+                        }}
+                    />
+                </View>
+            </View>
+            <View
+                style={{
                     justifyContent: "center",
                     padding: 32,
                     rowGap: 16,
+                    flex: 1,
                 }}
-                tint="dark"
-                intensity={70}
-                blurReductionFactor={1}
-                experimentalBlurMethod="dimezisBlurView"
-                entering={FadeInDown.duration(300)}
             >
                 <View>
                     <AlbumArt
@@ -69,38 +129,41 @@ export default function PlayerTab() {
                         borderRadius={7}
                     />
                 </View>
-                <Animated.View
-                    style={{ rowGap: 4, marginBottom: 32 }}
-                    entering={FadeInDown.duration(200)}
-                >
+                <View style={{ rowGap: 4, marginBottom: 32 }}>
                     <View style={styles.titleContainer}>
                         <Text style={textStyles.h4} numberOfLines={1}>
-                            {currentTrack.name ? currentTrack.name : "No name"}
+                            {songData && songData.name
+                                ? songData.name
+                                : "No name"}
                         </Text>
                         <TouchableOpacity onPress={handleLikeButtonPress}>
                             <MaterialCommunityIcons
                                 name={
-                                    songData.isLiked ? "heart" : "heart-outline"
+                                    songData && songData.isLiked
+                                        ? "heart"
+                                        : "heart-outline"
                                 }
                                 size={24}
                                 style={mainStyles.color_text}
                             />
                         </TouchableOpacity>
                     </View>
+
                     <Text
                         style={[
                             textStyles.text,
                             { textAlign: "center", opacity: 0.7 },
                         ]}
                     >
-                        {currentTrack.author
-                            ? currentTrack.author
+                        {songData && songData.author
+                            ? songData.author
                             : "No author"}
-                        , {currentTrack.date ? currentTrack.date : "No date"}
+                        ,{" "}
+                        {songData && songData.date ? songData.date : "No date"}
                     </Text>
-                </Animated.View>
+                </View>
                 <PlaybackControls />
-            </BlurView>
+            </View>
         </View>
     );
 }

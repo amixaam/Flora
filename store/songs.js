@@ -19,15 +19,16 @@ export const useSongsStore = create(
                     songs: [], //contains only id's
                 },
             ],
+
             // for menus, ect..
             selectedSong: null,
             selectedPlaylist: null,
 
             // for music playback
-            currentTrack: [],
-            isPlaying: false,
+            currentTrack: null, //song id
             playlist: [],
             audioRef: null,
+            isPlaying: false,
             repeat: false,
 
             trackDuration: 0,
@@ -50,6 +51,8 @@ export const useSongsStore = create(
 
             // Init & cleanup for playback
             loadTrack: async (song, playlist = null, shuffle = false) => {
+                if (!song) return console.log("No song provided.");
+
                 await get().unloadTrack();
                 try {
                     Audio.setAudioModeAsync({
@@ -68,7 +71,7 @@ export const useSongsStore = create(
 
                     set({
                         audioRef: sound,
-                        currentTrack: song,
+                        currentTrack: song.id,
                         playlist: playlist ? playlist : get().playlist,
                         isPlaying: true,
                         songs: get().songs.map((s) =>
@@ -136,26 +139,21 @@ export const useSongsStore = create(
             },
 
             next: async () => {
-                // TODO: make hidden songs affect next, previous
                 const audioRef = get().audioRef;
                 if (!audioRef) return;
 
                 const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack.id;
+                const currentTrack = get().currentTrack;
 
                 const index = playlist.indexOf(currentTrack);
-                const nextSongId = playlist[index + 1];
+                const nextSongs = playlist.slice(index + 1);
+                const nextSong = nextSongs.find(
+                    (songId) => !get().getSong(songId).isHidden
+                );
 
-                if (nextSongId) {
-                    const nextSong = get().getSong(nextSongId);
-                    if (nextSong) {
-                        await get().loadTrack(nextSong);
-                    } else {
-                        console.error(
-                            "Next song not found in song data: ",
-                            nextSongId
-                        );
-                    }
+                if (nextSong) {
+                    const nextSongData = get().getSong(nextSong);
+                    await get().loadTrack(nextSongData);
                 } else {
                     await get().unloadTrack();
                 }
@@ -165,24 +163,23 @@ export const useSongsStore = create(
                 const audioRef = get().audioRef;
                 if (!audioRef) return;
 
-                if (get().positionMillis > 2000) {
-                    await audioRef.replayAsync();
-                }
                 const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack.id;
+                const currentTrack = get().currentTrack;
+                const currentSong = get().getSong(currentTrack);
 
                 const index = playlist.indexOf(currentTrack);
-                const previousSongId = playlist[index - 1];
+                const previousSongs = playlist.slice(0, index).reverse();
+                const previousSong = previousSongs.find(
+                    (songId) => !get().getSong(songId).isHidden
+                );
 
-                if (previousSongId) {
-                    const previousSong = get().getSong(previousSongId);
-                    if (previousSong) {
-                        await get().loadTrack(previousSong);
+                if (previousSong) {
+                    const previousSongData = get().getSong(previousSong);
+                    const { positionMillis } = await audioRef.getStatusAsync();
+                    if (positionMillis >= 1000) {
+                        await audioRef.setPositionAsync(0);
                     } else {
-                        console.error(
-                            "Previous song not found in song data: ",
-                            previousSongId
-                        );
+                        await get().loadTrack(previousSongData);
                     }
                 }
             },
@@ -197,7 +194,8 @@ export const useSongsStore = create(
 
             shuffle: () => {
                 const playlist = get().playlist;
-                const currentSongId = get().currentTrack.id;
+
+                const currentSongId = get().currentTrack;
                 if (playlist.length < 2) return;
 
                 const shuffledSongs = [...playlist.songs];
@@ -323,14 +321,20 @@ export const useSongsStore = create(
                 const playlists = get().playlists;
                 const playlist = playlists.find((p) => p.id === id);
 
-                const songs = playlist.songs.map((songId) =>
+                return {
+                    ...playlist,
+                };
+            },
+
+            getSongDataFromPlaylist: (id) => {
+                const playlists = get().playlists;
+                const playlist = playlists.find((p) => p.id === id);
+
+                const songData = playlist.songs.map((songId) =>
                     get().songs.find((s) => s.id === songId)
                 );
 
-                return {
-                    ...playlist,
-                    songs,
-                };
+                return songData;
             },
 
             addSongToPlaylist: (playlistId, songId) => {
