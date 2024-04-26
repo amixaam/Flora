@@ -1,8 +1,9 @@
 import { router } from "expo-router";
-import { TouchableNativeFeedback, TouchableOpacity, View } from "react-native";
+import { TouchableNativeFeedback, View } from "react-native";
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Text } from "react-native-paper";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import IconButton from "./UI/IconButton";
 import { mainStyles, textStyles } from "./styles";
 
 const SongListItem = ({
@@ -55,17 +56,14 @@ const SongListItem = ({
                         />
                     )}
                     {isSelectMode && (
-                        <TouchableOpacity onPress={() => onSelect(item.id)}>
-                            <MaterialCommunityIcons
-                                name={
-                                    isSelected
-                                        ? "checkbox-marked"
-                                        : "checkbox-blank-outline"
-                                }
-                                size={24}
-                                style={mainStyles.color_text}
-                            />
-                        </TouchableOpacity>
+                        <IconButton
+                            onPress={() => onSelect(item.id)}
+                            icon={
+                                isSelected
+                                    ? "checkbox-marked"
+                                    : "checkbox-blank-outline"
+                            }
+                        />
                     )}
                     <Text
                         style={[
@@ -82,19 +80,14 @@ const SongListItem = ({
                     </Text>
                 </View>
 
-                <TouchableOpacity
+                <IconButton
                     onPress={() =>
                         item.isLiked
                             ? removeSongLike(item.id)
                             : addSongLike(item.id)
                     }
-                >
-                    <MaterialCommunityIcons
-                        name={item.isLiked ? "heart" : "heart-outline"}
-                        size={24}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
+                    icon={item.isLiked ? "heart" : "heart-outline"}
+                />
             </View>
         </TouchableNativeFeedback>
     );

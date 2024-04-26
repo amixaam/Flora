@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef } from "react";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";

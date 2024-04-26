@@ -1,24 +1,37 @@
 import Slider from "@react-native-community/slider";
 import { router } from "expo-router";
-import {
-    Text,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useEffect, useState } from "react";
+import { Text, TouchableNativeFeedback, View } from "react-native";
 import { useSongsStore } from "../store/songs";
 import AlbumArt from "./AlbumArt";
+import IconButton from "./UI/IconButton";
 import { mainStyles, textStyles } from "./styles";
-import { useEffect, useState } from "react";
 
-const formatMilliseconds = (milliseconds) => {
+const FormatMillis = (milliseconds) => {
     const minutes = Math.floor(milliseconds / (1000 * 60));
     const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
 
     return `${minutes.toString().padStart(2, "0")}:${seconds
         .toString()
         .padStart(2, "0")}`;
+};
+
+const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
+    return (
+        <Slider
+            value={
+                trackPosition && trackDuration
+                    ? trackPosition / trackDuration
+                    : 0
+            }
+            onSlidingComplete={async (value) => {
+                await skipPosition(value);
+            }}
+            thumbTintColor="#E8DEF8"
+            minimumTrackTintColor="#E8DEF8"
+            maximumTrackTintColor="#E8DEF8"
+        />
+    );
 };
 
 const MiniPlaybackControls = () => {
@@ -96,42 +109,28 @@ const MiniPlaybackControls = () => {
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row", columnGap: 16 }}>
-                            <TouchableOpacity onPress={previous}>
-                                <MaterialCommunityIcons
-                                    name="skip-previous"
-                                    size={36}
-                                    style={mainStyles.color_text}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={hanldePlayPausePress}>
-                                <MaterialCommunityIcons
-                                    name={isPlaying ? "pause" : "play"}
-                                    size={36}
-                                    style={mainStyles.color_text}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={next}>
-                                <MaterialCommunityIcons
-                                    name="skip-next"
-                                    size={36}
-                                    style={mainStyles.color_text}
-                                />
-                            </TouchableOpacity>
+                            <IconButton
+                                onPress={previous}
+                                icon="skip-previous"
+                                size={36}
+                            />
+                            <IconButton
+                                onPress={hanldePlayPausePress}
+                                icon={isPlaying ? "pause" : "play"}
+                                size={36}
+                            />
+                            <IconButton
+                                onPress={next}
+                                icon="skip-next"
+                                size={36}
+                            />
                         </View>
                     </View>
                 </View>
-                <Slider
-                    value={
-                        trackPosition && trackDuration
-                            ? trackPosition / trackDuration
-                            : 0
-                    }
-                    onSlidingComplete={async (value) => {
-                        await skipPosition(value);
-                    }}
-                    thumbTintColor="#E8DEF8"
-                    minimumTrackTintColor="#E8DEF8"
-                    maximumTrackTintColor="#E8DEF8"
+                <PlaybackSlider
+                    trackDuration={trackDuration}
+                    trackPosition={trackPosition}
+                    skipPosition={skipPosition}
                 />
             </View>
         </TouchableNativeFeedback>
@@ -188,61 +187,33 @@ const PlaybackControls = ({ isMini = false }) => {
                     alignItems: "center",
                 }}
             >
-                <TouchableOpacity onPress={shuffle}>
-                    <MaterialCommunityIcons
-                        name="shuffle"
-                        size={32}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={previous}>
-                    <MaterialCommunityIcons
-                        name="skip-previous"
-                        size={48}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={hanldePlayPausePress}>
-                    <MaterialCommunityIcons
-                        name={isPlaying ? "pause-circle" : "play-circle"}
-                        size={64}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={next}>
-                    <MaterialCommunityIcons
-                        name="skip-next"
-                        size={48}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleRepeatPress}>
-                    <MaterialCommunityIcons
-                        name={repeat ? "repeat-once" : "repeat-off"}
-                        size={32}
-                        style={mainStyles.color_text}
-                    />
-                </TouchableOpacity>
+                <IconButton onPress={shuffle} icon={"shuffle"} size={32} />
+                <IconButton
+                    onPress={previous}
+                    icon={"skip-previous"}
+                    size={48}
+                />
+                <IconButton
+                    onPress={hanldePlayPausePress}
+                    icon={isPlaying ? "pause-circle" : "play-circle"}
+                    size={64}
+                />
+                <IconButton onPress={next} icon={"skip-next"} size={48} />
+                <IconButton
+                    onPress={handleRepeatPress}
+                    icon={repeat ? "repeat-once" : "repeat-off"}
+                    size={32}
+                />
             </View>
-            <Slider
-                value={
-                    trackPosition && trackDuration
-                        ? trackPosition / trackDuration
-                        : 0
-                }
-                onSlidingComplete={async (value) => {
-                    await skipPosition(value);
-                }}
-                thumbTintColor="#E8DEF8"
-                minimumTrackTintColor="#E8DEF8"
-                maximumTrackTintColor="#E8DEF8"
+            <PlaybackSlider
+                trackDuration={trackDuration}
+                trackPosition={trackPosition}
+                skipPosition={skipPosition}
             />
             <Text style={[textStyles.detail, { textAlign: "center" }]}>
-                {formatMilliseconds(trackPosition)} /{" "}
-                {formatMilliseconds(trackDuration)}
+                {FormatMillis(trackPosition)} / {FormatMillis(trackDuration)}
             </Text>
         </View>
     );
 };
-
 export default PlaybackControls;

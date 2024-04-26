@@ -7,7 +7,7 @@ import SongListItem from "../SongListItem";
 import { textStyles } from "../styles";
 import SheetLayout from "./SheetLayout";
 
-const ChangeMultipleSongPlaylistStatus = forwardRef(({ props, mode }, ref) => {
+const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     const {
         songs,
         selectedPlaylist,

@@ -10,6 +10,7 @@ const ModalLayout = ({
     },
     visible = false,
 }) => {
+    // modal defaults
     return (
         <Modal visible={visible} transparent={true} animationType="fade">
             <TouchableWithoutFeedback onPress={dismiss}>

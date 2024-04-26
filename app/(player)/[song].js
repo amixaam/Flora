@@ -1,24 +1,21 @@
 import { useLocalSearchParams } from "expo-router";
 import {
-    ImageBackground,
     StyleSheet,
     Text,
-    TouchableOpacity,
-    View,
+    View
 } from "react-native";
 
 import { useEffect, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { LinearGradient } from "expo-linear-gradient";
 import AlbumArt from "../../Components/AlbumArt";
 import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import ImageBlurBackground from "../../Components/ImageBlurBackground";
 import PlaybackControls from "../../Components/PlaybackControls";
+import IconButton from "../../Components/UI/IconButton";
 import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
 import { mainStyles, textStyles } from "../../Components/styles";
-import ImageBlurBackground from "../../Components/ImageBlurBackground";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
@@ -100,17 +97,14 @@ export default function PlayerTab() {
                                 ? songData.name
                                 : "No name"}
                         </Text>
-                        <TouchableOpacity onPress={handleLikeButtonPress}>
-                            <MaterialCommunityIcons
-                                name={
-                                    songData && songData.isLiked
-                                        ? "heart"
-                                        : "heart-outline"
-                                }
-                                size={24}
-                                style={mainStyles.color_text}
-                            />
-                        </TouchableOpacity>
+                        <IconButton
+                            onPress={handleLikeButtonPress}
+                            icon={
+                                songData && songData.isLiked
+                                    ? "heart"
+                                    : "heart-outline"
+                            }
+                        />
                     </View>
 
                     <Text

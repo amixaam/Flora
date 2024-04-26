@@ -1,20 +1,18 @@
-import { useLocalSearchParams } from "expo-router";
-import { ImageBackground, Text, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import SongListItem from "../../Components/SongListItem";
-import { useEffect, useRef } from "react";
-import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
-import { useSongsStore } from "../../store/songs";
-import AlbumArt from "../../Components/AlbumArt";
-import { mainStyles, textStyles } from "../../Components/styles";
-import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams } from "expo-router";
+import React, { useRef } from "react";
+import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import AlbumArt from "../../Components/AlbumArt";
+import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import ImageBlurBackground from "../../Components/ImageBlurBackground";
+import SongListItem from "../../Components/SongListItem";
 import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
 import SecondaryRoundIconButton from "../../Components/UI/SecondaryRoundIconButton";
-import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
-import ImageBlurBackground from "../../Components/ImageBlurBackground";
+import { mainStyles, textStyles } from "../../Components/styles";
+import { useSongsStore } from "../../store/songs";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -38,7 +36,8 @@ export default function PlaylistList() {
     const handleEditPlaylist = () => editPlaylistSheetRef.current.present();
 
     const handleShufflePress = () => {
-        loadTrack(songData[0], playlistData, true);
+        const randomSongIndex = Math.floor(Math.random() * songData.length);
+        loadTrack(songData[randomSongIndex], playlistData, true);
     };
 
     const handlePlayPress = () => {
@@ -96,12 +95,12 @@ export default function PlaylistList() {
                     }}
                 >
                     <SecondaryRoundIconButton
-                        onPress={handleShufflePress}
+                        onPress={handlePlayPress}
                         icon="play"
                     />
                     <PrimaryRoundIconButton
                         size={36}
-                        onPress={handlePlayPress}
+                        onPress={handleShufflePress}
                     />
                     <SecondaryRoundIconButton
                         icon="pencil"

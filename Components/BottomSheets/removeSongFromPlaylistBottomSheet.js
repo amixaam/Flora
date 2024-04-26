@@ -1,11 +1,11 @@
-import { Text, TouchableNativeFeedback, View } from "react-native";
-import { forwardRef, useMemo } from "react";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useSongsStore } from "../../store/songs";
 import { FlashList } from "@shopify/flash-list";
-import AlbumArt from "../AlbumArt";
+import { forwardRef, useMemo } from "react";
+import { Text } from "react-native";
+import { useSongsStore } from "../../store/songs";
+import SheetPlaylistOptionsButton from "../UI/SheetPlaylistOptionsButton";
+import { textStyles } from "../styles";
 import SheetLayout from "./SheetLayout";
-import { mainStyles, textStyles } from "../styles";
 
 const RemoveSongFromPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { selectedSong, getPlaylistsFromSongID, removeSongFromPlaylist } =
@@ -43,9 +43,12 @@ const RemoveSongFromPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     )}
                     <FlashList
                         data={playlists}
-                        renderItem={({ item }) =>
-                            PlaylistListItem({ item, handlePress })
-                        }
+                        renderItem={({ item }) => (
+                            <SheetPlaylistOptionsButton
+                                data={item}
+                                onPress={handlePress}
+                            />
+                        )}
                         estimatedItemSize={50}
                         keyExtractor={(item) => item.id}
                     />
@@ -54,21 +57,5 @@ const RemoveSongFromPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         </SheetLayout>
     );
 });
-
-const PlaylistListItem = ({ item, handlePress }) => {
-    return (
-        <TouchableNativeFeedback onPress={() => handlePress(item.id)}>
-            <View style={mainStyles.textListItem}>
-                <AlbumArt
-                    image={item.image}
-                    width={36}
-                    aspectRatio={1}
-                    borderRadius={5}
-                />
-                <Text style={textStyles.text}>{item.name}</Text>
-            </View>
-        </TouchableNativeFeedback>
-    );
-};
 
 export default RemoveSongFromPlaylistBottomSheet;
