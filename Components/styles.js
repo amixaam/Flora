@@ -124,7 +124,7 @@ export const mainStyles = StyleSheet.create({
         borderColor: "rgba(74, 68, 88, 0.2)",
     },
     selectedSongListItem: {
-        backgroundColor: "rgba(74, 68, 88, 0.2)",
+        backgroundColor: "rgba(74, 68, 88, 0.3)",
     },
 
     textListItem: {
@@ -150,5 +150,11 @@ export const mainStyles = StyleSheet.create({
         opacity: 0.5,
         resizeMode: "cover",
         position: "absolute",
+    },
+    modal: {
+        borderRadius: 5,
+        padding: 16,
+        margin: 32,
+        rowGap: 8,
     },
 });

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { Audio, InterruptionModeAndroid } from "expo-av";
+import * as FileSystem from "expo-file-system";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -14,7 +15,7 @@ export const useSongsStore = create(
                     id: "1",
                     name: "Liked songs",
                     description: "Your songs that you liked.",
-                    image: null,
+                    image: require("../assets/liked-songs-cover.png"),
                     year: null,
                     songs: [], //contains only id's
                 },
@@ -233,6 +234,24 @@ export const useSongsStore = create(
             setSongs: (songs) => set({ songs }),
             getSong: (id) => get().songs.find((song) => song.id === id),
             setSelectedSong: (song) => set({ selectedSong: song }),
+
+            // deleteSongFromDevice: async (id) => {
+            //     set((state) => ({
+            //         songs: state.songs.filter((song) => song.id !== id),
+            //     }));
+
+            //     const songUri = get().getSong(id).uri;
+            //     const playlists = get().playlists;
+            //     set({
+            //         playlists: playlists.map((playlist) => ({
+            //             ...playlist,
+            //             songs: playlist.songs.filter((songId) => songId !== id),
+            //         })),
+            //     });
+            //     await FileSystem.deleteAsync(songUri).catch((e) =>
+            //         console.log("error deleting song", e)
+            //     );
+            // },
 
             // like, unlike
             addSongLike: (id) => {

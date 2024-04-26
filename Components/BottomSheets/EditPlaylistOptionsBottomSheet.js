@@ -1,5 +1,5 @@
 import { Text, TouchableNativeFeedback, View } from "react-native";
-import { forwardRef, useRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSongsStore } from "../../store/songs";
 import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
@@ -7,6 +7,7 @@ import SheetLayout from "./SheetLayout";
 import { mainStyles, textStyles } from "../styles";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ChangeMultipleSongPlaylistStatus from "./ChangeMultipleSongPlaylistStatus";
+import DeletePlaylistConfirm from "../Modals/DeletePlaylistConfirm";
 
 const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     // TODO: add a confirmation modal for deleting things
@@ -17,6 +18,8 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
         if (selectedPlaylist.id == 1) return;
 
         ref.current.dismiss();
+        setDeleteConfirm(false);
+
         deletePlaylist(selectedPlaylist.id);
     };
 
@@ -39,6 +42,9 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
 
     const editPlaylistBottomSheetRef = useRef(null);
     const changeMultipleSongPlaylistStatusBottomSheetRef = useRef(null);
+
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const handleDeleteConfirm = () => setDeleteConfirm(!deleteConfirm);
 
     if (selectedPlaylist === null) return;
     return (
@@ -69,10 +75,15 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                         data={selectedPlaylist}
                         icon="playlist-remove"
                         buttonContent={"Delete playlist"}
-                        onPress={handleDeletePlaylist}
+                        onPress={handleDeleteConfirm}
                     />
                 </BottomSheetView>
             </SheetLayout>
+            <DeletePlaylistConfirm
+                visible={deleteConfirm}
+                dismiss={handleDeleteConfirm}
+                deletePlaylist={handleDeletePlaylist}
+            />
             <EditPlaylistBottomSheet ref={editPlaylistBottomSheetRef} />
             <ChangeMultipleSongPlaylistStatus
                 ref={changeMultipleSongPlaylistStatusBottomSheetRef}

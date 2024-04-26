@@ -14,6 +14,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
 import SecondaryRoundIconButton from "../../Components/UI/SecondaryRoundIconButton";
 import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import ImageBlurBackground from "../../Components/ImageBlurBackground";
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -46,59 +47,13 @@ export default function PlaylistList() {
 
     return (
         <ScrollView style={mainStyles.container}>
-            <View
-                style={{
-                    width: "100%",
-                    height: 360,
-                    position: "absolute",
-                    flex: 1,
-                }}
-            >
-                <View style={{ position: "relative", height: "100%", flex: 1 }}>
-                    {!playlistData.image && (
-                        <LinearGradient
-                            colors={["pink", "lightblue"]}
-                            start={{ x: -0.5, y: 0 }}
-                            end={{ x: 1, y: 1.5 }}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                position: "absolute",
-                                opacity: 0.5,
-                            }}
-                        />
-                    )}
-                    <ImageBackground
-                        source={{ uri: playlistData.image }}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            position: "absolute",
-                            opacity: 0.8,
-                        }}
-                        resizeMode="cover"
-                        blurRadius={30}
-                    />
-                    <LinearGradient
-                        colors={[
-                            "#050506",
-                            "#05050666",
-                            "#05050655",
-                            "#05050699",
-                            "#050506",
-                        ]}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            position: "absolute",
-                        }}
-                    />
-                </View>
-            </View>
+            <ImageBlurBackground
+                image={playlistData.image}
+                styles={{ height: 360 }}
+            />
             <View
                 style={{
                     padding: 16,
-
                     alignItems: "center",
                     rowGap: 8,
                 }}
@@ -145,7 +100,7 @@ export default function PlaylistList() {
                         icon="play"
                     />
                     <PrimaryRoundIconButton
-                        size={40}
+                        size={36}
                         onPress={handlePlayPress}
                     />
                     <SecondaryRoundIconButton

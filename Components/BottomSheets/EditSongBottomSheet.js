@@ -1,23 +1,12 @@
-import {
-    StyleSheet,
-    Text,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useCallback, useMemo, useRef } from "react";
-import {
-    BottomSheetBackdrop,
-    BottomSheetModal,
-    BottomSheetModalProvider,
-    BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { useSongsStore } from "../../store/songs";
-import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
-import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
-import SheetLayout from "./SheetLayout";
-import { mainStyles, textStyles } from "../styles";
+import { StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useSongsStore } from "../../store/songs";
+import { mainStyles, textStyles } from "../styles";
+import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
+import SheetLayout from "./SheetLayout";
+import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
 
 const EditSongBottomSheet = forwardRef(({ props }, ref) => {
     const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -44,6 +33,11 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
         if (selectedSong.isHidden) unhideSong(selectedSong.id);
         else hideSong(selectedSong.id);
     };
+
+    // const handleDeleteSongPress = () => {
+    //     ref.current.dismiss();
+    //     deleteSongFromDevice(selectedSong.id);
+    // };
 
     if (selectedSong === null) return;
     return (
@@ -73,6 +67,11 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
                         }
                         onPress={handleHideSongPress}
                     />
+                    {/* <OptionsButton
+                        icon={"trash-can"}
+                        buttonContent={"Delete song from device"}
+                        onPress={handleDeleteSongPress}
+                    /> */}
                 </BottomSheetView>
             </SheetLayout>
             <AddSongToPlaylistBottomSheet ref={addSongBottomSheetRef} />

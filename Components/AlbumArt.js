@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { Image, StyleSheet, View } from "react-native";
 
 const AlbumArt = ({
     image,
@@ -21,26 +20,18 @@ const AlbumArt = ({
     if (aspectRatio) style.aspectRatio = aspectRatio;
     if (position) style.position = position;
 
-    if (image) {
-        return (
-            <View style={[[style], { elevation: 5 }]}>
-                <Animated.Image
-                    sharedTransitionTag={image}
-                    source={{ uri: image }}
-                    style={[style]}
-                />
-            </View>
-        );
-    } else {
-        return (
-            <LinearGradient
-                colors={["pink", "lightblue"]}
-                start={{ x: -0.5, y: 0 }}
-                end={{ x: 1, y: 1.5 }}
-                style={[style]}
+    return (
+        <View style={[[style], { elevation: 10 }]}>
+            <Image
+                source={
+                    image
+                        ? { uri: image }
+                        : require("../assets/empty-cover.png")
+                }
+                style={[style, { flex: 1 }]}
             />
-        );
-    }
+        </View>
+    );
 };
 
 export default AlbumArt;

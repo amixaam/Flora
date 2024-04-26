@@ -7,15 +7,18 @@ import {
     View,
 } from "react-native";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { LinearGradient } from "expo-linear-gradient";
 import AlbumArt from "../../Components/AlbumArt";
+import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
 import PlaybackControls from "../../Components/PlaybackControls";
+import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
 import { mainStyles, textStyles } from "../../Components/styles";
+import ImageBlurBackground from "../../Components/ImageBlurBackground";
 
 export default function PlayerTab() {
     const { song } = useLocalSearchParams();
@@ -23,6 +26,7 @@ export default function PlayerTab() {
         currentTrack,
         playlist,
         selectedPlaylist,
+        setSelectedSong,
         getSong,
         loadTrack,
         addSongLike,
@@ -55,64 +59,15 @@ export default function PlayerTab() {
         }
     };
 
+    const editSongBottomSheetRef = useRef(null);
+    const handleEditSong = () => {
+        setSelectedSong(songData);
+        editSongBottomSheetRef.current.present();
+    };
+
     return (
         <View style={[mainStyles.container]}>
-            <View
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    flex: 1,
-                }}
-            >
-                <View
-                    style={{
-                        position: "relative",
-                        height: "100%",
-                        flex: 1,
-                    }}
-                >
-                    {!playlist.image && (
-                        <LinearGradient
-                            colors={["pink", "lightblue"]}
-                            start={{ x: -0.5, y: 0 }}
-                            end={{ x: 1, y: 1.5 }}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                position: "absolute",
-                                opacity: 0.5,
-                            }}
-                        />
-                    )}
-                    <ImageBackground
-                        source={{ uri: playlist.image }}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            position: "absolute",
-                            opacity: 0.8,
-                        }}
-                        resizeMode="stretch"
-                        blurRadius={30}
-                    />
-                    <LinearGradient
-                        colors={[
-                            "#050506",
-                            "#05050666",
-                            "#05050655",
-                            "#05050699",
-                            "#050506",
-                            "#050506",
-                        ]}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            position: "absolute",
-                        }}
-                    />
-                </View>
-            </View>
+            <ImageBlurBackground image={playlist.image} />
             <View
                 style={{
                     justifyContent: "center",
@@ -127,6 +82,15 @@ export default function PlayerTab() {
                         width={"100%"}
                         aspectRatio={1}
                         borderRadius={7}
+                    />
+                    <PrimaryRoundIconButton
+                        icon="pencil"
+                        onPress={handleEditSong}
+                        style={{
+                            position: "absolute",
+                            bottom: 16,
+                            right: 16,
+                        }}
                     />
                 </View>
                 <View style={{ rowGap: 4, marginBottom: 32 }}>
@@ -164,6 +128,7 @@ export default function PlayerTab() {
                 </View>
                 <PlaybackControls />
             </View>
+            <EditSongBottomSheet ref={editSongBottomSheetRef} />
         </View>
     );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableNativeFeedback } from "react-native";
+import { TouchableNativeFeedback, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { mainStyles } from "../styles";
 
@@ -10,6 +10,7 @@ const PrimaryRoundIconButton = ({
     onPress = () => {
         console.log("pressed button!");
     },
+    style = {},
 }) => {
     return (
         <TouchableNativeFeedback onPress={onPress}>
@@ -21,6 +22,7 @@ const PrimaryRoundIconButton = ({
                     mainStyles.color_text_bg,
                     mainStyles.color_bg_primary,
                     { padding: padding },
+                    style,
                 ]}
             />
         </TouchableNativeFeedback>

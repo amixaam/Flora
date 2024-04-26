@@ -10,6 +10,7 @@ const SecondaryRoundIconButton = ({
     onPress = () => {
         console.log("pressed button!");
     },
+    style = {},
 }) => {
     return (
         <TouchableNativeFeedback onPress={onPress}>
@@ -20,6 +21,7 @@ const SecondaryRoundIconButton = ({
                     mainStyles.roundButton,
                     mainStyles.color_text,
                     { padding: padding },
+                    style,
                 ]}
             />
         </TouchableNativeFeedback>

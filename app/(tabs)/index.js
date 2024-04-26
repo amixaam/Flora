@@ -9,6 +9,7 @@ import { useSongsStore } from "../../store/songs";
 import AlbumArt from "../../Components/AlbumArt";
 import PlaybackControls from "../../Components/PlaybackControls";
 import { mainStyles, textStyles } from "../../Components/styles";
+import DeletePlaylistConfirm from "../../Components/Modals/DeletePlaylistConfirm";
 
 const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
     const handleLongPress = () => {
@@ -94,6 +95,7 @@ export default function PlaylistsTab() {
                     )}
                 />
             </View>
+            <DeletePlaylistConfirm />
             <PlaybackControls isMini={true} />
             <EditPlaylistOptionsBottomSheet ref={bottomSheetRef} />
         </View>
