@@ -3,6 +3,8 @@ import React from "react";
 import { ImageBackground, View } from "react-native";
 
 const ImageBlurBackground = ({ image, styles }) => {
+    const url = image ? { uri: image } : require("../assets/empty-cover.png");
+
     return (
         <View
             style={[
@@ -23,9 +25,7 @@ const ImageBlurBackground = ({ image, styles }) => {
                 }}
             >
                 <ImageBackground
-                    source={
-                        image ? { uri: image } : require("../assets/empty-cover.png")
-                    }
+                    source={url}
                     style={{
                         width: "100%",
                         height: "100%",

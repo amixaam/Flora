@@ -7,19 +7,26 @@ import ImagePickerButton from "../UI/ImagePickerButton";
 import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
 import SheetLayout from "./SheetLayout";
+import DatePickerInput from "../UI/DatePickerInput";
 
 const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { createPlaylist } = useSongsStore();
     const [name, setName] = useState("");
     const [image, setImage] = useState(null);
     const [description, setDescription] = useState("");
+    const [date, setDate] = useState(null);
+    const [artist, setArtist] = useState("");
+
+    const [showPicker, setShowPicker] = useState(false);
 
     const handleSubmit = () => {
-        createPlaylist(name, description, image);
+        createPlaylist(name, description, image, artist, date);
         ref.current.dismiss();
         setDescription("");
         setName("");
         setImage(null);
+        setArtist("");
+        setDate(new Date());
     };
 
     return (
@@ -44,6 +51,27 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
                         value={description}
                         setValue={setDescription}
                     />
+                    <View style={{ flexDirection: "row", columnGap: 8 }}>
+                        <TextInput
+                            bottomSheet={true}
+                            placeholder="Artist"
+                            value={artist}
+                            setValue={setArtist}
+                        />
+                        <CancelButton
+                            handlePress={() => {
+                                setDate(new Date());
+                                setShowPicker(!showPicker);
+                            }}
+                            text={date ? date.getFullYear() : "No date"}
+                        />
+                        <DatePickerInput
+                            value={date}
+                            setValue={setDate}
+                            visibility={showPicker}
+                            dismiss={() => setShowPicker(false)}
+                        />
+                    </View>
                     <View style={{ flexDirection: "row", columnGap: 8 }}>
                         <SubmitButton
                             handleSubmitForm={handleSubmit}

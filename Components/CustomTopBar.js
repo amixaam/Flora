@@ -6,7 +6,7 @@ import { mainStyles, textStyles } from "./styles";
 import { usePathname, router } from "expo-router";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import CreatePlaylistBottomSheet from "./BottomSheets/CreatePlaylistBottomSheet";
-import EditPlaylistOptionsBottomSheet from "./BottomSheets/EditPlaylistOptionsBottomSheet";
+import PlaylistSheet from "./BottomSheets/PlaylistSheet";
 
 const CustomTopBar = ({ editPlaylist = false, backButton = false }) => {
     const { top } = useSafeAreaInsets();
@@ -73,7 +73,7 @@ const CustomTopBar = ({ editPlaylist = false, backButton = false }) => {
                 </View>
             </View>
             <CreatePlaylistBottomSheet ref={createPlaylistSheetRef} />
-            <EditPlaylistOptionsBottomSheet ref={editPlaylistSheetRef} />
+            <PlaylistSheet ref={editPlaylistSheetRef} />
         </>
     );
 };

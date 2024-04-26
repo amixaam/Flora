@@ -5,7 +5,7 @@ import { textStyles } from "../styles";
 import SubmitButton from "../UI/SubmitButton";
 import CancelButton from "../UI/CancelButton";
 
-const DeletePlaylistConfirm = ({
+const UpdateAlbumsConfirm = ({
     dismiss = () => {
         console.log("dismissed!");
     },
@@ -17,19 +17,19 @@ const DeletePlaylistConfirm = ({
     return (
         <ModalLayout
             visible={visible}
-            title="Delete playlist?"
+            title="Update song covers?"
             dismiss={dismiss}
         >
             <Text style={[textStyles.text, { textAlign: "center" }]}>
-                Are you sure you want to delete this playlist? You cannot undo
-                this action.
+                This action will update the covers for all songs in this
+                playlist to the playlist cover.
             </Text>
             <View style={{ marginTop: 8, rowGap: 8 }}>
-                <SubmitButton text="Delete" handleSubmitForm={confirm} />
+                <SubmitButton text="Update" handleSubmitForm={confirm} />
                 <CancelButton handlePress={dismiss} />
             </View>
         </ModalLayout>
     );
 };
 
-export default DeletePlaylistConfirm;
+export default UpdateAlbumsConfirm;

@@ -6,15 +6,7 @@ import { useSongsStore } from "../store/songs";
 import AlbumArt from "./AlbumArt";
 import IconButton from "./UI/IconButton";
 import { mainStyles, textStyles } from "./styles";
-
-const FormatMillis = (milliseconds) => {
-    const minutes = Math.floor(milliseconds / (1000 * 60));
-    const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
-};
+import FormatMillis from "./FormatMillis";
 
 const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
     return (
@@ -43,6 +35,8 @@ const MiniPlaybackControls = () => {
         pause,
         next,
         previous,
+        addSongLike,
+        removeSongLike,
 
         skipPosition,
         trackPosition,
@@ -51,6 +45,16 @@ const MiniPlaybackControls = () => {
         currentTrack,
         getSong,
     } = useSongsStore();
+
+    const handleLikeButtonPress = () => {
+        if (songData.isLiked) {
+            removeSongLike(songData.id);
+            songData.isLiked = false;
+        } else {
+            addSongLike(songData.id);
+            songData.isLiked = true;
+        }
+    };
 
     const hanldePlayPausePress = () => {
         if (isPlaying) pause();
@@ -76,10 +80,12 @@ const MiniPlaybackControls = () => {
                     }}
                 >
                     <AlbumArt
-                        image={playlist.image}
-                        height={48}
-                        aspectRatio={1}
-                        borderRadius={5}
+                        image={songData.image}
+                        style={{
+                            height: 48,
+                            aspectRatio: 1,
+                            borderRadius: 5,
+                        }}
                     />
                     <View
                         style={{
@@ -101,12 +107,22 @@ const MiniPlaybackControls = () => {
                             <Text style={textStyles.h6} numberOfLines={1}>
                                 {songData.name}
                             </Text>
-                            <Text style={textStyles.small} numberOfLines={1}>
+                            <Text style={textStyles.detail} numberOfLines={1}>
                                 {songData.artist
                                     ? songData.artist
                                     : "No artist"}
-                                , {songData.date ? songData.date : "no date"}
+                                {"  •  "}
+                                {songData.date ? songData.date : "No date"}
                             </Text>
+                        </View>
+                        <View style={{ marginTop: -13, marginLeft: -13 }}>
+                            <IconButton
+                                onPress={handleLikeButtonPress}
+                                icon={
+                                    songData.isLiked ? "heart" : "heart-outline"
+                                }
+                                size={18}
+                            />
                         </View>
                         <View style={{ flexDirection: "row", columnGap: 16 }}>
                             <IconButton

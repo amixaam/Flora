@@ -1,16 +1,11 @@
 import { useLocalSearchParams } from "expo-router";
-import {
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { useEffect, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
 
-
 import AlbumArt from "../../Components/AlbumArt";
-import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import SongSheet from "../../Components/BottomSheets/SongSheet";
 import ImageBlurBackground from "../../Components/ImageBlurBackground";
 import PlaybackControls from "../../Components/PlaybackControls";
 import IconButton from "../../Components/UI/IconButton";
@@ -56,15 +51,15 @@ export default function PlayerTab() {
         }
     };
 
-    const editSongBottomSheetRef = useRef(null);
+    const SongSheetRef = useRef(null);
     const handleEditSong = () => {
         setSelectedSong(songData);
-        editSongBottomSheetRef.current.present();
+        SongSheetRef.current.present();
     };
 
     return (
         <View style={[mainStyles.container]}>
-            <ImageBlurBackground image={playlist.image} />
+            <ImageBlurBackground image={songData ? songData.image : null} />
             <View
                 style={{
                     justifyContent: "center",
@@ -75,10 +70,12 @@ export default function PlayerTab() {
             >
                 <View>
                     <AlbumArt
-                        image={playlist.image}
-                        width={"100%"}
-                        aspectRatio={1}
-                        borderRadius={7}
+                        image={songData ? songData.image : null}
+                        style={{
+                            width: "100%",
+                            aspectRatio: 1,
+                            borderRadius: 7,
+                        }}
                     />
                     <PrimaryRoundIconButton
                         icon="pencil"
@@ -113,16 +110,16 @@ export default function PlayerTab() {
                             { textAlign: "center", opacity: 0.7 },
                         ]}
                     >
-                        {songData && songData.author
-                            ? songData.author
-                            : "No author"}
-                        ,{" "}
+                        {songData && songData.artist
+                            ? songData.artist
+                            : "No artist"}
+                        {"  •  "}
                         {songData && songData.date ? songData.date : "No date"}
                     </Text>
                 </View>
                 <PlaybackControls />
             </View>
-            <EditSongBottomSheet ref={editSongBottomSheetRef} />
+            <SongSheet ref={SongSheetRef} />
         </View>
     );
 }

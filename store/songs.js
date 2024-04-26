@@ -15,8 +15,10 @@ export const useSongsStore = create(
                     id: "1",
                     name: "Liked songs",
                     description: "Your songs that you liked.",
-                    image: require("../assets/liked-songs-cover.png"),
+                    image: null,
                     year: null,
+                    artist: null,
+                    date: null,
                     songs: [], //contains only id's
                 },
             ],
@@ -44,6 +46,9 @@ export const useSongsStore = create(
                             name: "Liked songs",
                             description: "Your songs that you liked.",
                             image: null,
+                            year: null,
+                            artist: null,
+                            date: null,
                             songs: [], //contains only id's
                         },
                     ],
@@ -235,6 +240,19 @@ export const useSongsStore = create(
             getSong: (id) => get().songs.find((song) => song.id === id),
             setSelectedSong: (song) => set({ selectedSong: song }),
 
+            copyPlaylistImageToSongImage: (playlistId) => {
+                const playlist = get().getPlaylist(playlistId);
+                const image = playlist.image;
+
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        playlist.songs.includes(song.id)
+                            ? { ...song, image }
+                            : song
+                    ),
+                }));
+            },
+
             // deleteSongFromDevice: async (id) => {
             //     set((state) => ({
             //         songs: state.songs.filter((song) => song.id !== id),
@@ -288,7 +306,8 @@ export const useSongsStore = create(
             setSelectedPlaylist: (playlist) =>
                 set({ selectedPlaylist: playlist }),
 
-            createPlaylist: (name, description, image = null) => {
+            createPlaylist: (name, description, image = null, artist, date) => {
+                name = name ? name : "Unnamed playlist";
                 const newPlaylist = {
                     id: (
                         Date.now().toString(36) +
@@ -297,6 +316,8 @@ export const useSongsStore = create(
                     name,
                     description,
                     image,
+                    artist,
+                    date,
                     songs: [],
                 };
                 set((state) => ({
@@ -304,17 +325,20 @@ export const useSongsStore = create(
                 }));
             },
 
-            editPlaylist: (id, name, description, image) => {
+            editPlaylist: (id, name, description, image, artist, date) => {
+                name = name ? name : "Unnamed playlist";
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === id
                             ? {
                                   ...playlist,
-                                  ...(name !== "" ? { name } : {}),
+                                  ...name,
                                   ...(description !== ""
                                       ? { description }
                                       : {}),
                                   ...(image !== null ? { image } : {}),
+                                  ...(artist !== null ? { artist } : {}),
+                                  ...date,
                               }
                             : playlist
                     ),

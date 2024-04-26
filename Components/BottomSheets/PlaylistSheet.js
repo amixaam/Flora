@@ -6,11 +6,16 @@ import SheetOptionsButton from "../UI/SheetOptionsButton";
 import ChangeMultipleSongPlaylistStatus from "./ChangeMultipleSongPlaylistStatus";
 import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
+import UpdateAlbumsConfirm from "../Modals/UpdateAlbumsConfirm";
 
 const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
-    // TODO: add a confirmation modal for deleting things
-    const { selectedPlaylist, deletePlaylist, loadTrack, getSong } =
-        useSongsStore();
+    const {
+        selectedPlaylist,
+        deletePlaylist,
+        loadTrack,
+        getSong,
+        copyPlaylistImageToSongImage,
+    } = useSongsStore();
 
     const handleDeletePlaylist = () => {
         if (selectedPlaylist.id == 1) return;
@@ -46,11 +51,21 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
         ref.current.dismiss();
     };
 
+    const hanldeUpdateSongCovers = () => {
+        copyPlaylistImageToSongImage(selectedPlaylist.id);
+        ref.current.dismiss();
+        setUpdateCoversConfirm(false);
+    };
+
     const editPlaylistBottomSheetRef = useRef(null);
     const changeMultipleSongPlaylistStatusBottomSheetRef = useRef(null);
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const handleDeleteConfirm = () => setDeleteConfirm(!deleteConfirm);
+
+    const [updateCoversConfirm, setUpdateCoversConfirm] = useState(false);
+    const handleUpdateCoversConfirm = () =>
+        setUpdateCoversConfirm(!updateCoversConfirm);
 
     if (selectedPlaylist === null) return;
     return (
@@ -71,6 +86,13 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                     />
                     <SheetOptionsButton
                         data={selectedPlaylist}
+                        icon="checkbox-multiple-blank"
+                        buttonContent={"Update song covers from playlist"}
+                        onPress={handleUpdateCoversConfirm}
+                        isDisabled={selectedPlaylist.id == 1}
+                    />
+                    <SheetOptionsButton
+                        data={selectedPlaylist}
                         icon="playlist-edit"
                         buttonContent={"Edit playlist"}
                         onPress={handleEditPlaylist}
@@ -85,10 +107,15 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                     />
                 </BottomSheetView>
             </SheetLayout>
+            <UpdateAlbumsConfirm
+                visible={updateCoversConfirm}
+                dismiss={handleUpdateCoversConfirm}
+                confirm={hanldeUpdateSongCovers}
+            />
             <DeletePlaylistConfirm
                 visible={deleteConfirm}
                 dismiss={handleDeleteConfirm}
-                deletePlaylist={handleDeletePlaylist}
+                confirm={handleDeletePlaylist}
             />
             <EditPlaylistBottomSheet ref={editPlaylistBottomSheetRef} />
             <ChangeMultipleSongPlaylistStatus

@@ -23,9 +23,11 @@ const SheetPlaylistOptionsButton = ({
             >
                 <AlbumArt
                     image={data.image}
-                    width={56}
-                    aspectRatio={1}
-                    borderRadius={5}
+                    style={{
+                        width: 56,
+                        aspectRatio: 1,
+                        borderRadius: 5,
+                    }}
                 />
                 <Text style={textStyles.text}>{data.name}</Text>
             </View>

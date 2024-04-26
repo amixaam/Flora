@@ -111,12 +111,15 @@ export const mainStyles = StyleSheet.create({
         borderRadius: 5,
     },
     text_input_skeleton: {
+        flex: 1,
+        maxHeight: 45,
         borderRadius: 5,
         paddingHorizontal: 16,
         paddingVertical: 8,
     },
 
     songListItem: {
+        flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
         padding: 16,

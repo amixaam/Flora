@@ -3,7 +3,7 @@ import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useEffect, useRef } from "react";
-import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
+import PlaylistSheet from "../../Components/BottomSheets/PlaylistSheet";
 import { useSongsStore } from "../../store/songs";
 
 import AlbumArt from "../../Components/AlbumArt";
@@ -36,9 +36,7 @@ const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
             >
                 <AlbumArt
                     image={item.image}
-                    width={"100%"}
-                    aspectRatio={1}
-                    borderRadius={7}
+                    style={{ width: "100%", aspectRatio: 1, borderRadius: 7 }}
                 />
                 <View>
                     <Text
@@ -97,7 +95,7 @@ export default function PlaylistsTab() {
             </View>
             <DeletePlaylistConfirm />
             <PlaybackControls isMini={true} />
-            <EditPlaylistOptionsBottomSheet ref={bottomSheetRef} />
+            <PlaylistSheet ref={bottomSheetRef} />
         </View>
     );
 }

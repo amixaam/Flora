@@ -5,14 +5,23 @@ import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AlbumArt from "../../Components/AlbumArt";
-import EditPlaylistOptionsBottomSheet from "../../Components/BottomSheets/EditPlaylistOptionsBottomSheet";
-import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import PlaylistSheet from "../../Components/BottomSheets/PlaylistSheet";
+import SongSheet from "../../Components/BottomSheets/SongSheet";
 import ImageBlurBackground from "../../Components/ImageBlurBackground";
 import SongListItem from "../../Components/SongListItem";
 import PrimaryRoundIconButton from "../../Components/UI/PrimaryRoundIconButton";
 import SecondaryRoundIconButton from "../../Components/UI/SecondaryRoundIconButton";
 import { mainStyles, textStyles } from "../../Components/styles";
 import { useSongsStore } from "../../store/songs";
+import { FormatSecs } from "../../Components/FormatMillis";
+
+const CalculateTotalDuration = (songs) => {
+    let totalDuration = 0;
+    songs.forEach((song) => {
+        totalDuration += song.duration;
+    });
+    return FormatSecs(totalDuration);
+};
 
 export default function PlaylistList() {
     const { playlist } = useLocalSearchParams();
@@ -59,9 +68,7 @@ export default function PlaylistList() {
             >
                 <AlbumArt
                     image={playlistData.image}
-                    width={250}
-                    aspectRatio={1}
-                    borderRadius={7}
+                    style={{ width: 250, aspectRatio: 1, borderRadius: 7 }}
                 />
                 <View
                     style={{
@@ -90,7 +97,7 @@ export default function PlaylistList() {
                     style={{
                         flexDirection: "row",
                         flex: 1,
-                        columnGap: 16,
+                        columnGap: 20,
                         alignItems: "center",
                     }}
                 >
@@ -137,9 +144,10 @@ export default function PlaylistList() {
                 <FlashList
                     data={songData}
                     estimatedItemSize={100}
-                    renderItem={({ item }) => (
+                    renderItem={({ item, index }) => (
                         <SongListItem
                             item={item}
+                            index={index}
                             addSongLike={addSongLike}
                             removeSongLike={removeSongLike}
                             handleOpenPress={handleEditSong}
@@ -147,6 +155,8 @@ export default function PlaylistList() {
                             isCurrentTrack={
                                 item.id === currentTrack ? true : false
                             }
+                            showNumeration={playlistData.id == 1 ? false : true}
+                            showImage={playlistData.id == 1 ? true : false}
                         />
                     )}
                     keyExtractor={(item) => item.id}
@@ -154,11 +164,12 @@ export default function PlaylistList() {
             </View>
             <View style={{ padding: 16, paddingBottom: 64 }}>
                 <Text style={[textStyles.small, { textAlign: "center" }]}>
-                    {playlistData.songs.length} songs
+                    {playlistData.songs.length} songs{"  •  "}
+                    {CalculateTotalDuration(songData)}
                 </Text>
             </View>
-            <EditSongBottomSheet ref={editSongSheetRef} />
-            <EditPlaylistOptionsBottomSheet ref={editPlaylistSheetRef} />
+            <SongSheet ref={editSongSheetRef} />
+            <PlaylistSheet ref={editPlaylistSheetRef} />
         </ScrollView>
     );
 }

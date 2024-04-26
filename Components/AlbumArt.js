@@ -1,35 +1,11 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, View } from "react-native";
 
-const AlbumArt = ({
-    image,
-    width,
-    height,
-    borderRadius,
-    aspectRatio,
-    position,
-}) => {
-    const styles = StyleSheet.create({
-        AlbumContainer: {},
-    });
-
-    const style = {};
-    if (width) style.width = width;
-    if (height) style.height = height;
-    if (borderRadius) style.borderRadius = borderRadius;
-    if (aspectRatio) style.aspectRatio = aspectRatio;
-    if (position) style.position = position;
+const AlbumArt = ({ image, style }) => {
+    const url = image ? { uri: image } : require("../assets/empty-cover.png");
 
     return (
-        <View style={[[style], { elevation: 10 }]}>
-            <Image
-                source={
-                    image
-                        ? { uri: image }
-                        : require("../assets/empty-cover.png")
-                }
-                style={[style, { flex: 1 }]}
-            />
+        <View style={[style, { elevation: 10 }]}>
+            <Image source={url} style={[style, { flex: 1 }]} />
         </View>
     );
 };

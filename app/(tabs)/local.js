@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
-import EditSongBottomSheet from "../../Components/BottomSheets/EditSongBottomSheet";
+import SongSheet from "../../Components/BottomSheets/SongSheet";
 import PlaybackControls from "../../Components/PlaybackControls";
 import SongListItem from "../../Components/SongListItem";
 import { mainStyles } from "../../Components/styles";
@@ -58,7 +58,7 @@ export default function LocalFilesTab() {
                 duration: asset.duration,
 
                 name: asset.filename, //default
-                author: null,
+                artist: null,
                 date: null,
                 image: null,
 
@@ -95,12 +95,13 @@ export default function LocalFilesTab() {
                         handleOpenPress={handleOpenPress}
                         setSelectedSong={setSelectedSong}
                         isCurrentTrack={item.id === currentTrack ? true : false}
+                        showImage={true}
                     />
                 )}
                 keyExtractor={(item) => item.id}
             />
             <PlaybackControls isMini={true} />
-            <EditSongBottomSheet ref={bottomSheetRef} />
+            <SongSheet ref={bottomSheetRef} />
         </View>
     );
 }

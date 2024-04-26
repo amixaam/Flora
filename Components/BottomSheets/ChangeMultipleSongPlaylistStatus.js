@@ -11,8 +11,7 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     const {
         songs,
         selectedPlaylist,
-        addSongLike,
-        removeSongLike,
+        currentTrack,
         addSongToPlaylist,
         removeSongFromPlaylist,
     } = useSongsStore();
@@ -36,7 +35,7 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     return (
         <SheetLayout ref={ref} title={`Add songs to ${selectedPlaylist.name}`}>
             <BottomSheetView style={{ marginHorizontal: -16 }}>
-                <BottomSheetView style={{ height: "100%" }}>
+                <BottomSheetView style={{ height: "100%", marginBottom: -64 }}>
                     {songs.length === 0 && (
                         <Text
                             style={[
@@ -51,17 +50,19 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
                         </Text>
                     )}
                     <FlatList
-                        data={songs}
+                        data={songs.filter((song) => !song.isHidden)}
                         extraData={selectedSongs}
                         estimatedItemSize={100}
                         renderItem={({ item }) => (
                             <SongListItem
                                 item={item}
-                                isSelectMode={true}
                                 isSelected={selectedSongs.includes(item.id)}
-                                onSelect={changeList}
-                                addSongLike={addSongLike}
-                                removeSongLike={removeSongLike}
+                                onSelect={() => changeList(item.id)}
+                                isCurrentTrack={
+                                    item.id === currentTrack ? true : false
+                                }
+                                isSelectMode={true}
+                                showImage={true}
                             />
                         )}
                         keyExtractor={(item) => item.id}
