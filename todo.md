@@ -1,3 +1,5 @@
+# Things to do before adding anything completely new
+
 ## bugfixes
 
 -   [x] Remove expo-blur, replace with alternative - ImageBackground & LinearGradient
@@ -9,7 +11,6 @@
 -   [x] Fixed shuffle playing when theres no songs in the playlist
 -   [x] Default album art change to image, instead of linear gradient
 -   [ ] Fix music playback, when selecting a song in local files, instead of a playlist
--   [ ] Fix music stopping playing while in background
 -   [ ] Fix shuffle playing from bottom sheet always playing first song
 
 ## New features
@@ -22,10 +23,11 @@
 -   [ ] Refresh song list button in local
 -   [ ] Display song image in player
 -   [ ] Artist and date fields for playlists
--   [ ] notifications / lockscreen music controller
 -   [ ] haptics
--   [ ] Read audio file metadata to automatically insert album cover, artist ect..
 
 ## Postponed
 
 -   [ ] Delete song option in edit song bottom sheet
+-   [ ] Fix music stopping playing while in background
+-   [ ] notifications / lockscreen music controller
+-   [ ] Read audio file metadata to automatically insert album cover, artist ect..
