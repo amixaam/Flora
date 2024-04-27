@@ -14,7 +14,7 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
         deletePlaylist,
         loadTrack,
         getSong,
-        copyPlaylistImageToSongImage,
+        inheritPlatlistDataToSongs,
     } = useSongsStore();
 
     const handleDeletePlaylist = () => {
@@ -52,7 +52,7 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     };
 
     const hanldeUpdateSongCovers = () => {
-        copyPlaylistImageToSongImage(selectedPlaylist.id);
+        inheritPlatlistDataToSongs(selectedPlaylist.id);
         ref.current.dismiss();
         setUpdateCoversConfirm(false);
     };
@@ -87,7 +87,7 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
                     <SheetOptionsButton
                         data={selectedPlaylist}
                         icon="checkbox-multiple-blank"
-                        buttonContent={"Update song covers from playlist"}
+                        buttonContent={"Update songs with playlist metadata"}
                         onPress={handleUpdateCoversConfirm}
                         isDisabled={selectedPlaylist.id == 1}
                     />

@@ -113,8 +113,10 @@ export default function PlayerTab() {
                         {songData && songData.artist
                             ? songData.artist
                             : "No artist"}
-                        {"  •  "}
-                        {songData && songData.date ? songData.date : "No date"}
+                        {" • "}
+                        {songData && songData.date
+                            ? new Date(songData.date).getFullYear()
+                            : "No date"}
                     </Text>
                 </View>
                 <PlaybackControls />

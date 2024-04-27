@@ -6,7 +6,7 @@ import { useSongsStore } from "../store/songs";
 import AlbumArt from "./AlbumArt";
 import IconButton from "./UI/IconButton";
 import { mainStyles, textStyles } from "./styles";
-import FormatMillis from "./FormatMillis";
+import { FormatMillis } from "./FormatMillis";
 
 const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
     return (
@@ -111,11 +111,13 @@ const MiniPlaybackControls = () => {
                                 {songData.artist
                                     ? songData.artist
                                     : "No artist"}
-                                {"  •  "}
-                                {songData.date ? songData.date : "No date"}
+                                {" • "}
+                                {songData && songData.date
+                                    ? new Date(songData.date).getFullYear()
+                                    : "No date"}
                             </Text>
                         </View>
-                        <View style={{ marginTop: -13, marginLeft: -13 }}>
+                        <View style={{ marginTop: -10, marginLeft: -13 }}>
                             <IconButton
                                 onPress={handleLikeButtonPress}
                                 icon={

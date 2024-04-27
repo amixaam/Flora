@@ -32,21 +32,20 @@ const SongListItem = ({
     setSelectedSong = () => {
         console.log("Set selected song!");
     },
+    onPress = (id) => {
+        router.push("/(player)/" + id);
+    },
 }) => {
     const handleEditSong = () => {
         if (isSelectMode) return;
         setSelectedSong(item);
         handleOpenPress();
     };
-    const handleRedirectToPlayer = () => {
-        if (isSelectMode) return;
-        router.push("/(player)/" + item.id);
-    };
 
     const name = item.isHidden ? "(Hidden) " + item.name : item.name;
     return (
         <TouchableNativeFeedback
-            onPress={handleRedirectToPlayer}
+            onPress={() => onPress(item.id)}
             onLongPress={handleEditSong}
             delayLongPress={250}
         >
@@ -84,8 +83,10 @@ const SongListItem = ({
                         </Text>
                         <Text numberOfLines={1} style={[textStyles.small]}>
                             {item.artist ? item.artist : "No artist"}
-                            {"  •  "}
-                            {item.date ? item.date : "No date"}
+                            {" • "}
+                            {item.date
+                                ? new Date(item.date).getFullYear()
+                                : "No date"}
                         </Text>
                     </View>
                 </View>

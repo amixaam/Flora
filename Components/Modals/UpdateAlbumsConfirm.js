@@ -21,8 +21,8 @@ const UpdateAlbumsConfirm = ({
             dismiss={dismiss}
         >
             <Text style={[textStyles.text, { textAlign: "center" }]}>
-                This action will update the covers for all songs in this
-                playlist to the playlist cover.
+                This action will update the saved metadata for all songs in this
+                playlist, to match the playlist. (album cover, artist, year)
             </Text>
             <View style={{ marginTop: 8, rowGap: 8 }}>
                 <SubmitButton text="Update" handleSubmitForm={confirm} />

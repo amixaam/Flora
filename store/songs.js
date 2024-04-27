@@ -240,14 +240,16 @@ export const useSongsStore = create(
             getSong: (id) => get().songs.find((song) => song.id === id),
             setSelectedSong: (song) => set({ selectedSong: song }),
 
-            copyPlaylistImageToSongImage: (playlistId) => {
+            inheritPlatlistDataToSongs: (playlistId) => {
                 const playlist = get().getPlaylist(playlistId);
                 const image = playlist.image;
+                const artist = playlist.artist;
+                const date = playlist.date;
 
                 set((state) => ({
                     songs: state.songs.map((song) =>
                         playlist.songs.includes(song.id)
-                            ? { ...song, image }
+                            ? { ...song, image, artist, date }
                             : song
                     ),
                 }));

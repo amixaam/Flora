@@ -58,6 +58,7 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
                                 item={item}
                                 isSelected={selectedSongs.includes(item.id)}
                                 onSelect={() => changeList(item.id)}
+                                onPress={changeList}
                                 isCurrentTrack={
                                     item.id === currentTrack ? true : false
                                 }
