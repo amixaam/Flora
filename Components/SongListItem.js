@@ -74,7 +74,6 @@ const SongListItem = ({
                         style={{
                             flexDirection: "column",
                             justifyContent: "center",
-                            rowGap: 4,
                             flex: 1,
                         }}
                     >

@@ -53,7 +53,7 @@ const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
                     <Text
                         style={[
                             {
-                                marginTop: -4,
+                                marginTop: -6,
                             },
                             textStyles.small,
                         ]}

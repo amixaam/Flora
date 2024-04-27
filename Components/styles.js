@@ -1,47 +1,41 @@
 import { StyleSheet } from "react-native";
-import {
-    Poppins_600SemiBold,
-    Poppins_700Bold,
-    Poppins_500Medium,
-    useFonts,
-} from "@expo-google-fonts/poppins";
 
 export const textStyles = StyleSheet.create({
     h3: {
+        fontFamily: "Poppins-Bold",
         color: "#E8DEF8",
-        fontWeight: "700",
         fontSize: 29.86,
     },
     h4: {
+        fontFamily: "Poppins-Bold",
         color: "#E8DEF8",
-        fontWeight: "700",
         fontSize: 20.74,
     },
     h5: {
+        fontFamily: "Poppins-Bold",
         color: "#E8DEF8",
-        fontWeight: "700",
         fontSize: 17.28,
     },
     h6: {
+        fontFamily: "Poppins-Medium",
         color: "#E8DEF8",
-        fontWeight: "700",
         fontSize: 14.4,
     },
     text: {
+        fontFamily: "Poppins-Medium",
         color: "#E8DEF8",
-        fontWeight: "500",
         fontSize: 12,
     },
     small: {
+        fontFamily: "Poppins-Regular",
         color: "#E8DEF8",
         opacity: 0.7,
-        fontWeight: "400",
         fontSize: 10,
     },
     detail: {
+        fontFamily: "Poppins-Regular",
         color: "#E8DEF8",
         opacity: 0.7,
-        fontWeight: "400",
         fontSize: 8.33,
     },
 });

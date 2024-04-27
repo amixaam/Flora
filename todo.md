@@ -15,6 +15,7 @@
 -   [x] [26.04.24] Update code, modularize
 -   [x] [26.04.24] Hide hidden songs in "add songs to playlist" sheet
 -   [x] [27.04.24] Pressing on the whole song list item in "add songs to playlist" now selects the song, instead of needing to press the checkbox
+-   [ ] Fix font styling
 -   [ ] Fix music playback, when selecting a song in Songs screen, instead of a Playlist screen
 
 ## New features
@@ -28,6 +29,8 @@
 -   [x] [26.04.24] Extra detail at the bottom of a playlist screen
 -   [x] [26.04.24] Artist and date fields for playlists
 -   [x] [27.04.24] Inherit playlist metadata to playlist songs option (bottom sheet option to apply)
+-   [x] [27.04.24] Splash screen, IOS and Android icons
+-   [x] [27.04.24] Change font
 -   [ ] Playlist, Song sorting
 -   [ ] Refresh song list button in local
 -   [ ] Edit specific song metadata

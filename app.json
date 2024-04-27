@@ -3,10 +3,10 @@
         "scheme": "flora",
         "name": "Flora",
         "slug": "Flora",
-        "version": "1.0.0",
+        "version": "0.2.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
-        "userInterfaceStyle": "light",
+        "userInterfaceStyle": "dark",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
@@ -20,7 +20,7 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#050506"
+                "backgroundColor": "#000000"
             },
             "package": "com.anonymous.Flora",
             "permissions": ["WAKE_LOCK"]
@@ -28,7 +28,19 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "plugins": [["expo-font"], "expo-router"],
+        "plugins": [
+            [
+                "expo-font",
+                {
+                    "fonts": [
+                        "./assets/fonts/Poppins-Bold.ttf",
+                        "./assets/fonts/Poppins-Medium.ttf",
+                        "./assets/fonts/Poppins-Regular.ttf"
+                    ]
+                }
+            ],
+            "expo-router"
+        ],
         "extra": {
             "router": {
                 "origin": false
