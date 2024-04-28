@@ -1,4 +1,4 @@
-# Things to do before adding anything completely new
+# Things to do before adding anything completely new (v0.2.0 Roadmap)
 
 ## bugfixes
 
@@ -15,8 +15,6 @@
 -   [x] [26.04.24] Update code, modularize
 -   [x] [26.04.24] Hide hidden songs in "add songs to playlist" sheet
 -   [x] [27.04.24] Pressing on the whole song list item in "add songs to playlist" now selects the song, instead of needing to press the checkbox
--   [ ] Fix font styling
--   [ ] Fix music playback, when selecting a song in Songs screen, instead of a Playlist screen
 
 ## New features
 
@@ -30,20 +28,65 @@
 -   [x] [26.04.24] Artist and date fields for playlists
 -   [x] [27.04.24] Inherit playlist metadata to playlist songs option (bottom sheet option to apply)
 -   [x] [27.04.24] Splash screen, IOS and Android icons
--   [x] [27.04.24] Change font
--   [ ] Playlist, Song sorting
--   [ ] Refresh song list button in local
--   [ ] Edit specific song metadata
--   [ ] Haptics
+-   [x] [27.04.24] New font
 
 ## Some other time
 
 -   [ ] YTmp3 tab
--   [ ] Difference between playlists and albums
 -   [ ] Mini player in playlist screen
 -   [ ] Delete song option in edit song bottom sheet
--   [ ] Fix music stopping playing while in background
 -   [ ] notifications / lockscreen music controller
--   [ ] Read audio file metadata to automatically insert album cover, artist ect..
+-   [ ] Haptics
+-   [ ] Sleep timer
 
 ## Requests from testers
+
+-   [ ] FEATURE: Add new playlist button on add song to playlist bottom sheet
+
+## Bugs from testers
+
+-   [ ] FIX: When playlist ends, playback controlls do nothing
+-   [ ] FIX: Image edit crash??
+-   [ ] FIX: Undefined variable when clicking on edit button (when you havent long-pressed a song list item first)
+-   [ ] FIX: Song list shenanigens
+
+# v0.3.0 Roadmap
+
+## New features
+
+-   [ ] (backend) Move from asyncStorage to Sqlite (sql injection safe)
+-   [ ] Albums and Singles (Album tab)
+-   [ ] Playing queue (Add songs, playlists, albums to playing queue)
+-   [ ] Background music playback
+-   [ ] Read audio file metadata from downloads
+-   [ ] Edit specific song metadata
+
+-   [ ] View song statistics (& more statistics)
+-   [ ] Refresh song list function
+-   [ ] Ask to update song metadata from playlist when editing playlist
+-   [ ] Dynamic top bar
+-   [ ] Playlist, Song and Album sorting
+-   [ ] Apply audio file metadata option in bottom sheet (1 time thing)
+
+-   [ ] TESTER REQ: Add new playlist option to add song to playlist bottom sheet
+-   [ ] (backend) Variable bottom sheet sizes
+
+## Bug fixes
+
+-   [ ] Playback from song screen fully working
+-   [ ] Song names are set appropriately (instead of file name)
+-   [ ] Make bottom sheets dissapear on universal back button
+-   [ ] Check for deleted audio files, and removing them from app storage
+-   [ ] Remove date picker, in favor of a regular text input
+
+-   [ ] TESTER REQ: Playback controls not working when playlist ends
+-   [ ] TESTER REQ: state timing, shows error for undefined or null items
+
+## Teaks
+
+-   [ ] "Shuffle play", "Edit playlist" and "Add songs to playlist" options are box shaped and at the top
+-   [ ] Removed "Update songs with playlist metadata" option
+-   [ ] Playback scrollbar is thicker and aligns with content horizontally
+-   [ ] "Delete playlist" option icon is a trash can
+-   [ ] Font styling
+-   [ ] Margin error fix on tab bar when mini player is not shown

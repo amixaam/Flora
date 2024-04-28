@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { Text, TouchableNativeFeedback, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mainStyles, textStyles } from "./styles";
 
-import { usePathname, router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import CreatePlaylistBottomSheet from "./BottomSheets/CreatePlaylistBottomSheet";
 import PlaylistSheet from "./BottomSheets/PlaylistSheet";
