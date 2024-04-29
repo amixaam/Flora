@@ -53,7 +53,7 @@ export const useSongsStore = create(
                     autoHandleInterruptions: true,
                 });
                 await TrackPlayer.updateOptions({
-                    progressUpdateInterval: 1000,
+                    progressUpdateInterval: 500,
                     android: {
                         appKilledPlaybackBehavior:
                             AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
@@ -86,11 +86,14 @@ export const useSongsStore = create(
             pause: async () => {
                 await TrackPlayer.pause();
             },
-            nextTrack: async () => {
+            next: async () => {
                 await TrackPlayer.skipToNext();
             },
-            previousTrack: async () => {
+            previous: async () => {
                 await TrackPlayer.skipToPrevious();
+            },
+            seekToPosition: async (position = 0) => {
+                await TrackPlayer.seekTo(position);
             },
 
             logQueue: async () => {
@@ -207,51 +210,51 @@ export const useSongsStore = create(
             //     }
             // },
 
-            next: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // next: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack;
+            //     const playlist = get().playlist.songs;
+            //     const currentTrack = get().currentTrack;
 
-                const index = playlist.indexOf(currentTrack);
-                const nextSongs = playlist.slice(index + 1);
-                const nextSong = nextSongs.find(
-                    (songId) => !get().getSong(songId).isHidden
-                );
+            //     const index = playlist.indexOf(currentTrack);
+            //     const nextSongs = playlist.slice(index + 1);
+            //     const nextSong = nextSongs.find(
+            //         (songId) => !get().getSong(songId).isHidden
+            //     );
 
-                if (nextSong) {
-                    const nextSongData = get().getSong(nextSong);
-                    await get().loadTrack(nextSongData);
-                } else {
-                    await get().unloadTrack();
-                }
-            },
+            //     if (nextSong) {
+            //         const nextSongData = get().getSong(nextSong);
+            //         await get().loadTrack(nextSongData);
+            //     } else {
+            //         await get().unloadTrack();
+            //     }
+            // },
 
-            previous: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // previous: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack;
-                const currentSong = get().getSong(currentTrack);
+            //     const playlist = get().playlist.songs;
+            //     const currentTrack = get().currentTrack;
+            //     const currentSong = get().getSong(currentTrack);
 
-                const index = playlist.indexOf(currentTrack);
-                const previousSongs = playlist.slice(0, index).reverse();
-                const previousSong = previousSongs.find(
-                    (songId) => !get().getSong(songId).isHidden
-                );
+            //     const index = playlist.indexOf(currentTrack);
+            //     const previousSongs = playlist.slice(0, index).reverse();
+            //     const previousSong = previousSongs.find(
+            //         (songId) => !get().getSong(songId).isHidden
+            //     );
 
-                if (previousSong) {
-                    const previousSongData = get().getSong(previousSong);
-                    const { positionMillis } = await audioRef.getStatusAsync();
-                    if (positionMillis >= 1000) {
-                        await audioRef.setPositionAsync(0);
-                    } else {
-                        await get().loadTrack(previousSongData);
-                    }
-                }
-            },
+            //     if (previousSong) {
+            //         const previousSongData = get().getSong(previousSong);
+            //         const { positionMillis } = await audioRef.getStatusAsync();
+            //         if (positionMillis >= 1000) {
+            //             await audioRef.setPositionAsync(0);
+            //         } else {
+            //             await get().loadTrack(previousSongData);
+            //         }
+            //     }
+            // },
 
             skipPosition: async (position) => {
                 const audioRef = get().audioRef;

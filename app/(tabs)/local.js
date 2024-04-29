@@ -96,23 +96,6 @@ export default function LocalFilesTab() {
 
     return (
         <View style={mainStyles.container}>
-            <Text style={textStyles.text}>
-                playback state: {JSON.stringify(playbackState)}
-            </Text>
-            <View style={{ flexDirection: "row", columnGap: 8 }}>
-                <TouchableOpacity onPress={pause}>
-                    <Text style={textStyles.h5}>pause</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={play}>
-                    <Text style={textStyles.h5}>play</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={nextTrack}>
-                    <Text style={textStyles.h5}>next</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={previousTrack}>
-                    <Text style={textStyles.h5}>previous</Text>
-                </TouchableOpacity>
-            </View>
             <FlashList
                 data={songs}
                 estimatedItemSize={100}

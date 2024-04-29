@@ -19,6 +19,7 @@
 -   [ ] Background music playback
 -   [ ] Read audio file metadata from downloads
 -   [ ] Edit specific song metadata
+-   [ ] Song title (if too long) in mini player, will loop horizontally
 
 -   [ ] View song statistics
 -   [ ] Refresh song list function

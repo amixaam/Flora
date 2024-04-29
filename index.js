@@ -9,4 +9,4 @@ import { ModuleExports } from "./PlaybackService";
 // the environment is set up appropriately
 registerRootComponent(DefaultLayout);
 // AppRegistry.registerComponent(...);
-TrackPlayer.registerPlaybackService(() => ModuleExports());
+TrackPlayer.registerPlaybackService(() => ModuleExports);
