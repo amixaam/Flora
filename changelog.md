@@ -13,14 +13,14 @@
 
 ## New features
 
--   [ ] (backend) Move from asyncStorage to Sqlite (sql injection safe)
 -   [ ] Albums and Singles (Album tab)
 -   [ ] Playing queue (Add songs, playlists, albums to playing queue)
+-   [ ] Last played history
 -   [ ] Background music playback
 -   [ ] Read audio file metadata from downloads
 -   [ ] Edit specific song metadata
 
--   [ ] View song statistics (& more statistics)
+-   [ ] View song statistics
 -   [ ] Refresh song list function
 -   [ ] Ask to update song metadata from playlist when editing playlist
 -   [ ] Dynamic top bar
@@ -47,5 +47,12 @@
 -   [ ] Removed "Update songs with playlist metadata" option
 -   [ ] Playback scrollbar is thicker and aligns with content horizontally
 -   [ ] "Delete playlist" option icon is a trash can
+-   [ ] Proper item seperator in lists
+-   [ ] Flip list order in playlists (descending)
 -   [ ] Font styling
 -   [ ] Margin error fix on tab bar when mini player is not shown
+
+## for v0.4.0
+
+-   [ ] (backend) Move from asyncStorage to Sqlite (sql injection safe)
+-   [ ] More statistics

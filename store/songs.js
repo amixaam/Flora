@@ -3,6 +3,12 @@ import { Audio, InterruptionModeAndroid } from "expo-av";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import TrackPlayer, {
+    AppKilledPlaybackBehavior,
+    Capability,
+    RepeatMode,
+} from "react-native-track-player";
+
 const MARKED_SONGS_KEY = "MarkedSongs";
 
 export const useSongsStore = create(
@@ -35,6 +41,64 @@ export const useSongsStore = create(
 
             trackDuration: 0,
             trackPosition: 0,
+
+            isSetup: false,
+            playbackState: null, // would be nice for me to use this variable as a check in other components to change the ui
+            setPlaybackState: (state) => set({ playbackState: state }),
+
+            setup: async () => {
+                if (get().isSetup) return console.log("already setup");
+
+                await TrackPlayer.setupPlayer({
+                    autoHandleInterruptions: true,
+                });
+                await TrackPlayer.updateOptions({
+                    progressUpdateInterval: 1000,
+                    android: {
+                        appKilledPlaybackBehavior:
+                            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+                    },
+                    capabilities: [
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                        Capability.SkipToPrevious,
+                        Capability.SeekTo,
+                    ],
+                    compactCapabilities: [
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                    ],
+                });
+                await TrackPlayer.setRepeatMode(RepeatMode.Off);
+                set({ isSetup: true });
+            },
+            addToQueue: async (song) => {
+                await TrackPlayer.add(song);
+            },
+            resetPlayer: async () => {
+                await TrackPlayer.reset();
+            },
+            play: async () => {
+                await TrackPlayer.play();
+            },
+            pause: async () => {
+                await TrackPlayer.pause();
+            },
+            nextTrack: async () => {
+                await TrackPlayer.skipToNext();
+            },
+            previousTrack: async () => {
+                await TrackPlayer.skipToPrevious();
+            },
+
+            logQueue: async () => {
+                console.log(await TrackPlayer.getQueue());
+            },
+            logCurrentTrack: async () => {
+                console.log(await TrackPlayer.getActiveTrack());
+            },
 
             resetAll: () => {
                 set({
@@ -120,28 +184,28 @@ export const useSongsStore = create(
             },
 
             // Playback & controls
-            play: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // play: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                try {
-                    await audioRef.playAsync();
-                    set({ isPlaying: true });
-                } catch (error) {
-                    console.error("Error playing audio:", error);
-                }
-            },
-            pause: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            //     try {
+            //         await audioRef.playAsync();
+            //         set({ isPlaying: true });
+            //     } catch (error) {
+            //         console.error("Error playing audio:", error);
+            //     }
+            // },
+            // pause: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                try {
-                    await audioRef.pauseAsync();
-                    set({ isPlaying: false });
-                } catch (error) {
-                    console.error("Error pausing audio:", error);
-                }
-            },
+            //     try {
+            //         await audioRef.pauseAsync();
+            //         set({ isPlaying: false });
+            //     } catch (error) {
+            //         console.error("Error pausing audio:", error);
+            //     }
+            // },
 
             next: async () => {
                 const audioRef = get().audioRef;

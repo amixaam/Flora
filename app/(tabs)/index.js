@@ -7,9 +7,45 @@ import PlaylistSheet from "../../Components/BottomSheets/PlaylistSheet";
 import { useSongsStore } from "../../store/songs";
 
 import AlbumArt from "../../Components/AlbumArt";
+import DeletePlaylistConfirm from "../../Components/Modals/DeletePlaylistConfirm";
 import PlaybackControls from "../../Components/PlaybackControls";
 import { mainStyles, textStyles } from "../../Components/styles";
-import DeletePlaylistConfirm from "../../Components/Modals/DeletePlaylistConfirm";
+
+export default function PlaylistsTab() {
+    const { playlists, setSelectedPlaylist, resetAll, setup } = useSongsStore();
+
+    useEffect(() => {
+        console.log("playlists renew");
+        setup();
+        // resetAll();
+    }, []);
+
+    const bottomSheetRef = useRef(null);
+    const handleOpenPress = () => bottomSheetRef.current.present();
+
+    return (
+        <View style={mainStyles.container}>
+            <View style={{ margin: 8, flex: 1, height: "100%" }}>
+                <FlashList
+                    numColumns={2}
+                    data={playlists}
+                    keyExtractor={(item) => item.id}
+                    estimatedItemSize={100}
+                    renderItem={({ item }) => (
+                        <PlaylistItem
+                            item={item}
+                            handleOpenPress={handleOpenPress}
+                            setSelectedPlaylist={setSelectedPlaylist}
+                        />
+                    )}
+                />
+            </View>
+            <DeletePlaylistConfirm />
+            <PlaybackControls isMini={true} />
+            <PlaylistSheet ref={bottomSheetRef} />
+        </View>
+    );
+}
 
 const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
     const handleLongPress = () => {
@@ -65,37 +101,3 @@ const PlaylistItem = ({ item, handleOpenPress, setSelectedPlaylist }) => {
         </TouchableNativeFeedback>
     );
 };
-
-export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, resetAll } = useSongsStore();
-    useEffect(() => {
-        console.log("playlists renew");
-        // resetAll();
-    }, []);
-
-    const bottomSheetRef = useRef(null);
-    const handleOpenPress = () => bottomSheetRef.current.present();
-
-    return (
-        <View style={mainStyles.container}>
-            <View style={{ margin: 8, flex: 1, height: "100%" }}>
-                <FlashList
-                    numColumns={2}
-                    data={playlists}
-                    keyExtractor={(item) => item.id}
-                    estimatedItemSize={100}
-                    renderItem={({ item }) => (
-                        <PlaylistItem
-                            item={item}
-                            handleOpenPress={handleOpenPress}
-                            setSelectedPlaylist={setSelectedPlaylist}
-                        />
-                    )}
-                />
-            </View>
-            <DeletePlaylistConfirm />
-            <PlaybackControls isMini={true} />
-            <PlaylistSheet ref={bottomSheetRef} />
-        </View>
-    );
-}
