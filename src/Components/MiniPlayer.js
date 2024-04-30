@@ -53,7 +53,7 @@ export const MiniPlayer = ({ style }) => {
 
     if (!activeTrack) return;
     return (
-        <TouchableNativeFeedback
+        <View
             onPress={() => router.push("/player")}
             style={[style, mainStyles.color_bg]}
         >
@@ -90,7 +90,7 @@ export const MiniPlayer = ({ style }) => {
                                 width: "100%",
                             }}
                         >
-                            <Text style={textStyles.h6} numberOfLines={1}>
+                            <Text style={textStyles.h4} numberOfLines={1}>
                                 {activeTrack.title}
                             </Text>
                             <Text style={textStyles.detail} numberOfLines={1}>
@@ -141,7 +141,7 @@ export const MiniPlayer = ({ style }) => {
                     skipPosition={seekToPosition}
                 />
             </View>
-        </TouchableNativeFeedback>
+        </View>
     );
 };
 export default MiniPlayer;

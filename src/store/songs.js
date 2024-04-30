@@ -8,6 +8,7 @@ import TrackPlayer, {
     Capability,
     RepeatMode,
 } from "react-native-track-player";
+import { router } from "expo-router";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -43,6 +44,7 @@ export const useSongsStore = create(
             trackDuration: 0,
             trackPosition: 0,
 
+            playingFrom: null,
             isSetup: false,
             playbackState: null, // would be nice for me to use this variable as a check in other components to change the ui
             setPlaybackState: (state) => set({ playbackState: state }),
@@ -77,6 +79,23 @@ export const useSongsStore = create(
             },
             addToQueue: async (song) => {
                 await TrackPlayer.add(song);
+            },
+            addListToQueue: async (list, selectedSong, redirect = false) => {
+                await TrackPlayer.setQueue(list);
+                if (selectedSong) {
+                    const currentIndex = list.findIndex(
+                        (song) => song.id === selectedSong.id
+                    );
+                    await TrackPlayer.skip(currentIndex);
+                }
+                await TrackPlayer.play();
+                if (redirect) router.push("/player");
+            },
+            shuffleList: async (list, redirect = false) => {
+                const shuffledList = [...list].sort(() => Math.random() - 0.5);
+                await TrackPlayer.setQueue(shuffledList);
+                await TrackPlayer.play();
+                if (redirect) router.push("/player");
             },
             resetPlayer: async () => {
                 await TrackPlayer.reset();

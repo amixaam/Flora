@@ -7,7 +7,7 @@ import SheetLayout from "./SheetLayout";
 import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
 import { spacing } from "../../styles/constants";
 
-const EditSongBottomSheet = forwardRef(({ props }, ref) => {
+const SongSheet = forwardRef(({ props }, ref) => {
     const { selectedSong, hideSong, unhideSong } = useSongsStore();
 
     const addSongBottomSheetRef = useRef(null);
@@ -72,4 +72,4 @@ const EditSongBottomSheet = forwardRef(({ props }, ref) => {
     );
 });
 
-export default EditSongBottomSheet;
+export default SongSheet;

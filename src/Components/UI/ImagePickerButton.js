@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { mainStyles } from "../../styles/styles";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import { colors } from "../../styles/constants";
 
 const ImagePickerButton = ({ image, setImage }) => {
@@ -20,18 +20,32 @@ const ImagePickerButton = ({ image, setImage }) => {
 
     return (
         <TouchableOpacity onPress={pickImage}>
-            <Image
-                source={{ uri: image }}
-                style={[
-                    {
-                        backgroundColor: colors.input,
-                        alignSelf: "center",
-                        width: "50%",
-                        aspectRatio: 1,
-                        borderRadius: 7,
-                    },
-                ]}
-            />
+            {image ? (
+                <Image
+                    source={{ uri: image }}
+                    style={[
+                        {
+                            backgroundColor: colors.input,
+                            alignSelf: "center",
+                            width: "50%",
+                            aspectRatio: 1,
+                            borderRadius: 7,
+                        },
+                    ]}
+                />
+            ) : (
+                <View
+                    style={[
+                        {
+                            backgroundColor: colors.input,
+                            alignSelf: "center",
+                            width: "50%",
+                            aspectRatio: 1,
+                            borderRadius: 7,
+                        },
+                    ]}
+                />
+            )}
         </TouchableOpacity>
     );
 };

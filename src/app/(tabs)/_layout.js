@@ -1,12 +1,16 @@
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import { withLayoutContext } from "expo-router";
+import { iconSizes } from "../../styles/constants";
+import MiniPlayer from "../../Components/MiniPlayer";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { Navigator } = createMaterialBottomTabNavigator();
 
 export const MaterialBottomTabs = withLayoutContext(Navigator);
 
 export default function TabLayout() {
+    const insets = useSafeAreaInsets();
     return (
         <>
             <MaterialBottomTabs
@@ -33,14 +37,14 @@ export default function TabLayout() {
                                         ? "playlist-music"
                                         : "playlist-music-outline"
                                 }
-                                size={24}
+                                size={iconSizes.md}
                                 color={color}
                             />
                         ),
                     }}
                 />
                 <MaterialBottomTabs.Screen
-                    name="local"
+                    name="songs"
                     options={{
                         tabBarLabel: "Songs",
                         tabBarIcon: ({ focused, color }) => (
@@ -50,13 +54,21 @@ export default function TabLayout() {
                                         ? "music-note"
                                         : "music-note-outline"
                                 }
-                                size={24}
+                                size={iconSizes.md}
                                 color={color}
                             />
                         ),
                     }}
                 />
             </MaterialBottomTabs>
+            <MiniPlayer
+                style={{
+                    position: "absolute",
+                    bottom: insets.bottom * 4.3,
+                    left: 0,
+                    right: 0,
+                }}
+            />
         </>
     );
 }

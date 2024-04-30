@@ -8,7 +8,7 @@ import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
 import UpdateAlbumsConfirm from "../Modals/UpdateAlbumsConfirm";
 
-const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
+const PlaylistSheet = forwardRef(({ props }, ref) => {
     const {
         selectedPlaylist,
         deletePlaylist,
@@ -126,4 +126,4 @@ const EditPlaylistOptionsBottomSheet = forwardRef(({ props }, ref) => {
     );
 });
 
-export default EditPlaylistOptionsBottomSheet;
+export default PlaylistSheet;

@@ -1,7 +1,6 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import CustomTopBar from "../Components/CustomTopBar";
 import { colors } from "../styles/constants";
 
 export default function App() {
@@ -21,12 +20,14 @@ function DefaultLayout() {
                 headerShown: false,
                 statusBarStyle: "light",
                 navigationBarColor: "transparent",
+                statusBarColor: "transparent",
             }}
         >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen
                 name="player"
                 options={{
+                    gestureDirection: "vertical",
                     animation: "slide_from_bottom",
                 }}
             />

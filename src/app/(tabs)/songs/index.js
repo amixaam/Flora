@@ -1,19 +1,23 @@
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useRef } from "react";
-import { Text, View } from "react-native";
+import React, { useEffect, useMemo, useRef } from "react";
+import { View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
-import SongSheet from "../../Components/BottomSheets/SongSheet";
-import MiniPlayer from "../../Components/MiniPlayer";
-import SongListItem from "../../Components/SongListItem";
-import SecondaryRoundIconButton from "../../Components/UI/SecondaryRoundIconButton";
-import { useSongsStore } from "../../store/songs";
-import { spacing } from "../../styles/constants";
-import { mainStyles } from "../../styles/styles";
-import { textStyles } from "../../styles/text";
+import {
+    SafeAreaView,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import SongSheet from "../../../Components/BottomSheets/SongSheet";
+import MiniPlayer from "../../../Components/MiniPlayer";
+import SongListItem from "../../../Components/SongListItem";
+import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
+import useSearchBar from "../../../hooks/useSearchBar";
+import { useSongsStore } from "../../../store/songs";
+import { spacing } from "../../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { ScrollView } from "react-native-gesture-handler";
 import { router } from "expo-router";
-
-export default function LocalFilesTab() {
+export default function SongsTab() {
     const {
         songs,
         setSongs,
@@ -21,9 +25,18 @@ export default function LocalFilesTab() {
         removeSongLike,
         setSelectedSong,
         currentTrack,
-        addToQueue,
-        play,
+        addListToQueue,
     } = useSongsStore();
+
+    const search = useSearchBar("Search songs or artists...");
+
+    const filteredSongs = useMemo(() => {
+        return songs.filter(
+            (song) =>
+                song.title.toLowerCase().includes(search.toLowerCase()) ||
+                song.artist.toLowerCase().includes(search.toLowerCase())
+        );
+    });
 
     const getFiles = async () => {
         const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -86,30 +99,23 @@ export default function LocalFilesTab() {
     const bottomSheetRef = useRef(null);
     const handleOpenPress = () => bottomSheetRef.current.present();
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <View style={mainStyles.container}>
+        <ScrollView style={[mainStyles.container]}>
             <FlashList
-                data={songs}
+                data={filteredSongs}
                 estimatedItemSize={700}
-                ListEmptyComponent={() => (
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            columnGap: spacing.md,
-                            marginTop: spacing.xl,
-                        }}
-                    >
-                        <SecondaryRoundIconButton
-                            icon="refresh"
-                            onPress={getFiles}
-                        />
-                        <Text style={[textStyles.h6, { textAlign: "center" }]}>
-                            No songs found!
-                        </Text>
-                    </View>
-                )}
+                ListEmptyComponent={
+                    <ListItemsNotFound
+                        text={`Search "${search}" didn't find any results!`}
+                        icon="magnify"
+                    />
+                }
+                contentContainerStyle={{
+                    paddingTop: insets.top * 2,
+                    paddingBottom: insets.bottom * 2,
+                }}
                 renderItem={({ item }) => (
                     <SongListItem
                         item={item}
@@ -117,6 +123,11 @@ export default function LocalFilesTab() {
                         removeSongLike={removeSongLike}
                         handleOpenPress={handleOpenPress}
                         setSelectedSong={setSelectedSong}
+                        onPress={() => {
+                            setSelectedSong(item);
+                            addListToQueue(songs, item);
+                            router.push("/player");
+                        }}
                         isCurrentTrack={item.id === currentTrack ? true : false}
                         showImage={true}
                     />
@@ -124,7 +135,6 @@ export default function LocalFilesTab() {
                 keyExtractor={(item) => item.id}
             />
             <SongSheet ref={bottomSheetRef} />
-            <MiniPlayer />
-        </View>
+        </ScrollView>
     );
 }

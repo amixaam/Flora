@@ -11,13 +11,13 @@ import DatePickerInput from "../UI/DatePickerInput";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { selectedPlaylist, editPlaylist } = useSongsStore();
-    const [image, setImage] = useState(selectedPlaylist.image);
-    const [name, setName] = useState(selectedPlaylist.name);
+    const [image, setImage] = useState(selectedPlaylist?.image);
+    const [name, setName] = useState(selectedPlaylist?.name);
     const [description, setDescription] = useState(
-        selectedPlaylist.description
+        selectedPlaylist?.description
     );
-    const [date, setDate] = useState(selectedPlaylist.date);
-    const [artist, setArtist] = useState(selectedPlaylist.artist);
+    const [date, setDate] = useState(selectedPlaylist?.date);
+    const [artist, setArtist] = useState(selectedPlaylist?.artist);
 
     const [showPicker, setShowPicker] = useState(false);
 
@@ -44,9 +44,9 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         ref.current.dismiss();
     };
 
-    if (selectedPlaylist === null) return;
+    if (!selectedPlaylist) return;
     return (
-        <SheetLayout ref={ref} title={"Edit " + selectedPlaylist.name}>
+        <SheetLayout ref={ref} name={"Edit " + selectedPlaylist.name}>
             <BottomSheetView
                 style={{
                     rowGap: 8,

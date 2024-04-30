@@ -7,6 +7,8 @@ import IconButton from "./UI/IconButton";
 import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { useSongsStore } from "../store/songs";
+import { useActiveTrack } from "react-native-track-player";
+import { colors, iconSizes, spacing } from "../styles/constants";
 
 const SongListItem = ({
     item,
@@ -17,7 +19,6 @@ const SongListItem = ({
     index = 0,
 
     isSelected = false,
-    isCurrentTrack = false,
 
     onSelect = () => {
         console.log("On select!");
@@ -26,7 +27,7 @@ const SongListItem = ({
         console.log("Open song options!");
     },
     onPress = (id) => {
-        router.push("/player");
+        console.log("On press! ", id);
     },
 }) => {
     const { setSelectedSong } = useSongsStore();
@@ -35,6 +36,8 @@ const SongListItem = ({
         setSelectedSong(item);
         handleOpenPress();
     };
+
+    const activeTrack = useActiveTrack();
 
     const name = item.isHidden ? "(Hidden) " + item.title : item.title;
     return (
@@ -46,13 +49,15 @@ const SongListItem = ({
             <View
                 style={[
                     mainStyles.songListItem,
-                    isCurrentTrack ? mainStyles.selectedSongListItem : {},
+                    activeTrack?.id === item.id
+                        ? mainStyles.selectedSongListItem
+                        : {},
                     item.isHidden ? mainStyles.hiddenListItem : {},
                 ]}
             >
                 <View
                     style={{
-                        columnGap: 16,
+                        columnGap: spacing.md,
                         flexDirection: "row",
                         flex: 1,
                         alignItems: "center",
@@ -60,8 +65,8 @@ const SongListItem = ({
                 >
                     <Numeration index={index} showNumeration={showNumeration} />
                     <PlayingIndicator
-                        image={item.image}
-                        isCurrentTrack={isCurrentTrack}
+                        image={item.artwork}
+                        isCurrentTrack={activeTrack?.id === item.id}
                         showImage={showImage}
                     />
                     <View
@@ -85,7 +90,7 @@ const SongListItem = ({
                     style={{
                         height: "100%",
                         justifyContent: "center",
-                        paddingLeft: 16,
+                        paddingLeft: spacing.appPadding,
                     }}
                 >
                     <Checkboxes
@@ -107,7 +112,7 @@ const SongListItem = ({
 const Numeration = ({ index, showNumeration }) => {
     if (!showNumeration) return;
     return (
-        <View style={{ width: 16, opacity: 0.7 }}>
+        <View style={{ width: spacing.md, opacity: 0.7 }}>
             <Text
                 style={[
                     textStyles.small,
@@ -156,7 +161,7 @@ const PlayingIndicator = ({ isCurrentTrack, showImage, image = null }) => {
                     aspectRatio: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    borderRadius: 5,
+                    borderRadius: spacing.radius,
                 }}
             />
         );
@@ -172,7 +177,7 @@ const PlayingIndicator = ({ isCurrentTrack, showImage, image = null }) => {
                     aspectRatio: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    borderRadius: 5,
+                    borderRadius: spacing.radius,
                 }}
             >
                 <View
@@ -185,8 +190,8 @@ const PlayingIndicator = ({ isCurrentTrack, showImage, image = null }) => {
                 />
                 <MaterialCommunityIcons
                     name="volume-high"
-                    size={24}
-                    style={[mainStyles.color_text]}
+                    size={iconSizes.md}
+                    color={colors.primary}
                 />
             </ImageBackground>
         );
@@ -195,8 +200,8 @@ const PlayingIndicator = ({ isCurrentTrack, showImage, image = null }) => {
     return (
         <MaterialCommunityIcons
             name="volume-high"
-            size={24}
-            style={mainStyles.color_text}
+            size={iconSizes.md}
+            color={colors.primary}
         />
     );
 };

@@ -2,10 +2,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { ImageBackground, View } from "react-native";
 
-const ImageBlurBackground = ({ image, styles }) => {
+const ImageBlurBackground = ({ image, styles, gradientColors }) => {
     const url = image
         ? { uri: image }
         : require("../../assets/images/empty-cover.png");
+
+    if (!gradientColors)
+        gradientColors = ["#050506", "#05050666", "#05050655", "#05050699", "#050506"];
 
     return (
         <View
@@ -38,13 +41,7 @@ const ImageBlurBackground = ({ image, styles }) => {
                     blurRadius={30}
                 />
                 <LinearGradient
-                    colors={[
-                        "#050506",
-                        "#05050666",
-                        "#05050655",
-                        "#05050699",
-                        "#050506",
-                    ]}
+                    colors={gradientColors}
                     style={{
                         width: "100%",
                         height: "100%",

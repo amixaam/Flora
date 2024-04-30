@@ -5,8 +5,15 @@ import IconButton from "./UI/IconButton";
 import { textStyles } from "../styles/text";
 import { FormatMillis } from "../utils/FormatMillis";
 import PlaybackSlider from "./PlaybackSlider";
+import {
+    Event,
+    useActiveTrack,
+    usePlaybackState,
+    useProgress,
+    useTrackPlayerEvents,
+} from "react-native-track-player";
 
-const PlaybackControls = ({ isMini = false }) => {
+const PlaybackControls = () => {
     const {
         isPlaying,
         playlist,
@@ -24,10 +31,14 @@ const PlaybackControls = ({ isMini = false }) => {
         repeat,
         turnOnRepeat,
         turnOffRepeat,
+
+        seekToPosition,
     } = useSongsStore();
+    const playbackState = usePlaybackState();
+    const progress = useProgress();
 
     const hanldePlayPausePress = () => {
-        if (isPlaying) pause();
+        if (playbackState.state === "playing") pause();
         else play();
     };
 
@@ -54,7 +65,12 @@ const PlaybackControls = ({ isMini = false }) => {
                     alignItems: "center",
                 }}
             >
-                <IconButton onPress={shuffle} icon={"shuffle"} size={32} />
+                <IconButton
+                    onPress={shuffle}
+                    icon={"shuffle"}
+                    size={32}
+                    isDisabled={true}
+                />
                 <IconButton
                     onPress={previous}
                     icon={"skip-previous"}
@@ -62,7 +78,11 @@ const PlaybackControls = ({ isMini = false }) => {
                 />
                 <IconButton
                     onPress={hanldePlayPausePress}
-                    icon={isPlaying ? "pause-circle" : "play-circle"}
+                    icon={
+                        playbackState.state === "playing"
+                            ? "pause-circle"
+                            : "play-circle"
+                    }
                     size={64}
                 />
                 <IconButton onPress={next} icon={"skip-next"} size={48} />
@@ -70,12 +90,13 @@ const PlaybackControls = ({ isMini = false }) => {
                     onPress={handleRepeatPress}
                     icon={repeat ? "repeat-once" : "repeat-off"}
                     size={32}
+                    isDisabled={true}
                 />
             </View>
             <PlaybackSlider
-                trackDuration={trackDuration}
-                trackPosition={trackPosition}
-                skipPosition={skipPosition}
+                trackDuration={progress.duration}
+                trackPosition={progress.position}
+                skipPosition={seekToPosition}
             />
             <Text style={[textStyles.detail, { textAlign: "center" }]}>
                 {FormatMillis(trackPosition)} / {FormatMillis(trackDuration)}

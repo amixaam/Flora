@@ -23,6 +23,7 @@
 
 -   [ ] Playlist, Song and Album sorting
 -   [ ] "Add as single" option for songs
+-   [ ] Select multiple in song lists
 -   [ ] View song statistics
 -   [ ] Refresh song list function
 -   [ ] Ask to update song metadata from playlist when editing playlist
