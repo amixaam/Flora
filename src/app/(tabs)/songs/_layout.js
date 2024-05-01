@@ -17,6 +17,13 @@ const SongsLayout = () => {
                     headerShadowVisible: false,
                     headerTransparent: true,
                     headerTintColor: colors.primary,
+                    headerSearchBarOptions: {
+                        headerIconColor: colors.primary,
+                        textColor: colors.primary,
+                        barTintColor: colors.secondary,
+                        hintTextColor: colors.primary90,
+                        shouldShowHintSearchIcon: false,
+                    },
                 }}
             >
                 <Stack.Screen name="index" />

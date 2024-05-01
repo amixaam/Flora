@@ -7,9 +7,11 @@ export const spacing = {
     appPadding: 16,
     radius: 5,
     round: 9999,
+    miniPlayer: 90,
 };
 
 export const iconSizes = {
+    defaultIcon: "help-circle",
     sm: 20,
     md: 24, //default
     lg: 30,

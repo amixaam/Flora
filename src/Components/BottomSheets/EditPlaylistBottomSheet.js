@@ -11,7 +11,7 @@ import DatePickerInput from "../UI/DatePickerInput";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { selectedPlaylist, editPlaylist } = useSongsStore();
-    const [image, setImage] = useState(selectedPlaylist?.image);
+    const [image, setImage] = useState(selectedPlaylist?.artwork);
     const [name, setName] = useState(selectedPlaylist?.name);
     const [description, setDescription] = useState(
         selectedPlaylist?.description
@@ -23,7 +23,7 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
 
     useEffect(() => {
         if (selectedPlaylist === null) return;
-        setImage(selectedPlaylist.image);
+        setImage(selectedPlaylist.artwork);
         setName(selectedPlaylist.name);
         setDescription(selectedPlaylist.description);
         setArtist(selectedPlaylist.artist);

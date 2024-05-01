@@ -30,7 +30,10 @@ const SheetLayout = forwardRef(({ props, title, children }, ref) => {
             backgroundStyle={{ backgroundColor: colors.secondary }}
         >
             <BottomSheetView style={{ marginHorizontal: spacing.appPadding }}>
-                <Text style={[[textStyles.h5], { marginBottom: spacing.sm }]}>
+                <Text
+                    style={[[textStyles.h5], { marginBottom: spacing.md }]}
+                    numberOfLines={1}
+                >
                     {title ? title : "Bottom sheet"}
                 </Text>
                 <BottomSheetView style={{ height: "100%" }}>

@@ -3,29 +3,25 @@ import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useEffect, useRef } from "react";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore, useStoredSafeAreaInsets } from "../../../store/songs";
 
-import {
-    SafeAreaView,
-    useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { ScrollView } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
-import MiniPlayer from "../../../Components/MiniPlayer";
-import { mainStyles } from "../../../styles/styles";
-import { textStyles } from "../../../styles/text";
-import IconButton from "../../../Components/UI/IconButton";
 import CreatePlaylistBottomSheet from "../../../Components/BottomSheets/CreatePlaylistBottomSheet";
 import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
-import { ScrollView } from "react-native-gesture-handler";
+import IconButton from "../../../Components/UI/IconButton";
 import { spacing } from "../../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
 export default function PlaylistsTab() {
     const { playlists, setSelectedPlaylist, resetAll, setup } = useSongsStore();
     useEffect(() => {
         setup();
     }, []);
     const insets = useSafeAreaInsets();
-    const navigation = useNavigation();
 
+    const navigation = useNavigation();
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
@@ -41,14 +37,16 @@ export default function PlaylistsTab() {
     const openPlaylistOptions = () => PlaylistOptionsRef.current.present();
 
     return (
-        <ScrollView
-            style={[mainStyles.container, { paddingTop: insets.top * 2 }]}
-            contentInsetAdjustmentBehavior="automatic"
-        >
+        <View style={[mainStyles.container]}>
             <FlashList
                 numColumns={2}
                 data={playlists}
                 keyExtractor={(item) => item.id}
+                contentContainerStyle={{
+                    paddingTop: insets.top * 2,
+                    paddingBottom: insets.bottom + spacing.miniPlayer,
+                    paddingHorizontal: spacing.appPadding - spacing.sm,
+                }}
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
                     <PlaylistItem
@@ -68,7 +66,7 @@ export default function PlaylistsTab() {
             />
             <CreatePlaylistBottomSheet ref={newPlaylistRef} />
             <PlaylistSheet ref={PlaylistOptionsRef} />
-        </ScrollView>
+        </View>
     );
 }
 
@@ -79,14 +77,9 @@ const PlaylistItem = ({ item = {}, onPress, onLongPress }) => {
             onLongPress={onLongPress}
             delayLongPress={250}
         >
-            <View
-                style={{
-                    margin: spacing.sm,
-                    rowGap: spacing.xs,
-                }}
-            >
+            <View style={{ rowGap: spacing.xs, margin: spacing.sm }}>
                 <AlbumArt
-                    image={item.image}
+                    image={item.artwork}
                     style={{ width: "100%", aspectRatio: 1, borderRadius: 7 }}
                 />
                 <View>

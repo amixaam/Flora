@@ -24,6 +24,7 @@
 -   [ ] Playlist, Song and Album sorting
 -   [ ] "Add as single" option for songs
 -   [ ] Select multiple in song lists
+-   [ ] Go to Album, Artist options in song bottom sheet
 -   [ ] View song statistics
 -   [ ] Refresh song list function
 -   [ ] Ask to update song metadata from playlist when editing playlist
@@ -41,14 +42,16 @@
 -   [ ] Check for deleted audio files, and removing them from app storage
 -   [ ] Remove date picker, in favor of a regular text input
 
--   [ ] TESTER REQ: Playback controls not working when playlist ends
+-   [x] TESTER REQ: Playback controls not working when playlist ends
 -   [ ] TESTER REQ: state timing, shows error for undefined or null items
 
 ## Teaks
 
+-   [x] Aligned playlist list correctly to the app's margin
+-   [x] Playback scrollbar aligns with content horizontally
 -   [ ] "Shuffle play", "Edit playlist" and "Add songs to playlist" options are box shaped and at the top
+-   [x] "Add to queue", "Add to playlist" and "(Un)like song" options are box shaped and at the top
 -   [ ] Removed "Update songs with playlist metadata" option
--   [ ] Playback scrollbar is thicker and aligns with content horizontally
 -   [ ] "Delete playlist" option icon is a trash can
 -   [ ] Proper item seperator in lists
 -   [ ] You can't like/unlike hidden songs

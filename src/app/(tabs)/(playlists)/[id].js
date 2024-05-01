@@ -39,14 +39,14 @@ export default function PlaylistScreen() {
         addListToQueue,
     } = useSongsStore();
 
-    const navigation = useNavigation();
-    useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <IconButton icon="pencil" onPress={handleEditPlaylist} />
-            ),
-        });
-    }, [navigation]);
+    // const navigation = useNavigation();
+    // useEffect(() => {
+    //     navigation.setOptions({
+    //         headerRight: () => (
+    //             <IconButton icon="pencil" onPress={handleEditPlaylist} />
+    //         ),
+    //     });
+    // }, [navigation]);
 
     const playlistData = getPlaylist(id);
     const songData = getSongDataFromPlaylist(id);
@@ -65,7 +65,7 @@ export default function PlaylistScreen() {
     return (
         <ScrollView style={[mainStyles.container]}>
             <ImageBlurBackground
-                image={playlistData.image}
+                image={playlistData.artwork}
                 styles={{ height: 520 }}
                 gradientColors={[
                     "transparent",
@@ -83,7 +83,7 @@ export default function PlaylistScreen() {
                 }}
             >
                 <AlbumArt
-                    image={playlistData.image}
+                    image={playlistData.artwork}
                     style={{ width: 250, aspectRatio: 1, borderRadius: 7 }}
                 />
                 <View
@@ -156,6 +156,9 @@ export default function PlaylistScreen() {
                             </View>
                         ) : null
                     }
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + spacing.miniPlayer,
+                    }}
                     renderItem={({ item, index }) => (
                         <SongListItem
                             item={item}

@@ -1,34 +1,43 @@
 import TrackPlayer, { Event } from "react-native-track-player";
 
-export const ModuleExports = async () => {
-    TrackPlayer.addEventListener(Event.RemotePause, () => {
-        console.log("Event.RemotePause");
-        TrackPlayer.pause();
-    });
+export const PlaybackService = async function () {
 
     TrackPlayer.addEventListener(Event.RemotePlay, () => {
-        console.log("Event.RemotePlay");
         TrackPlayer.play();
     });
 
+    TrackPlayer.addEventListener(Event.RemotePause, () => {
+        TrackPlayer.pause();
+    });
+
+    TrackPlayer.addEventListener(Event.RemoteStop, () => {
+        TrackPlayer.stop();
+    });
+
     TrackPlayer.addEventListener(Event.RemoteNext, () => {
-        console.log("Event.RemoteNext");
         TrackPlayer.skipToNext();
     });
 
     TrackPlayer.addEventListener(Event.RemotePrevious, () => {
-        console.log("Event.RemotePrevious");
         TrackPlayer.skipToPrevious();
+    });
+
+    TrackPlayer.addEventListener(Event.RemoteLike, (event) => {
+        console.log("Event.RemoteLike", event);
+    });
+
+    TrackPlayer.addEventListener(Event.RemoteDislike, (event) => {
+        console.log("Event.RemoteDislike", event);
     });
 
     TrackPlayer.addEventListener(Event.RemoteJumpForward, async (event) => {
         console.log("Event.RemoteJumpForward", event);
-        TrackPlayer.seekBy(event.interval);
+        await TrackPlayer.seekBy(event.interval);
     });
 
     TrackPlayer.addEventListener(Event.RemoteJumpBackward, async (event) => {
         console.log("Event.RemoteJumpBackward", event);
-        TrackPlayer.seekBy(-event.interval);
+        await TrackPlayer.seekBy(-event.interval);
     });
 
     TrackPlayer.addEventListener(Event.RemoteSeek, (event) => {
@@ -77,9 +86,5 @@ export const ModuleExports = async () => {
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
         console.log("Event.PlaybackProgressUpdated", event);
-    });
-    TrackPlayer.addEventListener(Event.PlaybackState, async (state) => {
-        setPlaybackState(state);
-        console.log("changed state");
     });
 };

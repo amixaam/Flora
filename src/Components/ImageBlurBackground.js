@@ -8,7 +8,13 @@ const ImageBlurBackground = ({ image, styles, gradientColors }) => {
         : require("../../assets/images/empty-cover.png");
 
     if (!gradientColors)
-        gradientColors = ["#050506", "#05050666", "#05050655", "#05050699", "#050506"];
+        gradientColors = [
+            "#050506",
+            "#05050699",
+            "#05050655",
+            "#05050699",
+            "#050506",
+        ];
 
     return (
         <View

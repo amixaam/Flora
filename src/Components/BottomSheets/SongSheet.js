@@ -6,9 +6,17 @@ import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
 import RemoveSongToPlaylistBottomSheet from "./removeSongFromPlaylistBottomSheet";
 import { spacing } from "../../styles/constants";
+import LargeOptionButton from "../UI/LargeOptionButton";
 
 const SongSheet = forwardRef(({ props }, ref) => {
-    const { selectedSong, hideSong, unhideSong } = useSongsStore();
+    const {
+        selectedSong,
+        hideSong,
+        unhideSong,
+        addSongLike,
+        removeSongLike,
+        addToQueue,
+    } = useSongsStore();
 
     const addSongBottomSheetRef = useRef(null);
     const handleOpenAddSongBottomSheet = () =>
@@ -28,6 +36,20 @@ const SongSheet = forwardRef(({ props }, ref) => {
         ref.current.dismiss();
     };
 
+    const handleToggleLikePress = () => {
+        if (selectedSong.isLiked) {
+            removeSongLike(selectedSong.id);
+            selectedSong.isLiked = false;
+        } else {
+            addSongLike(selectedSong.id);
+            selectedSong.isLiked = true;
+        }
+    };
+
+    const handleAddToQueuePress = () => {
+        addToQueue(selectedSong);
+    };
+
     if (selectedSong === null) return;
     return (
         <>
@@ -35,12 +57,56 @@ const SongSheet = forwardRef(({ props }, ref) => {
                 <BottomSheetView
                     style={{ marginHorizontal: -spacing.appPadding }}
                 >
+                    <BottomSheetView
+                        style={{
+                            flexDirection: "row",
+                            columnGap: spacing.md,
+                            marginHorizontal: spacing.appPadding,
+                        }}
+                    >
+                        <LargeOptionButton
+                            icon="album"
+                            text="Add to queue"
+                            onPress={() => {
+                                ref.current.dismiss();
+                                handleAddToQueuePress();
+                            }}
+                        />
+                        <LargeOptionButton
+                            icon="playlist-plus"
+                            text="Add to playlist"
+                            onPress={() => {
+                                ref.current.dismiss();
+                                handleOpenAddSongBottomSheet();
+                            }}
+                        />
+
+                        <LargeOptionButton
+                            icon={
+                                selectedSong.isLiked ? "heart" : "heart-outline"
+                            }
+                            text={
+                                selectedSong.isLiked
+                                    ? "Remove favourite"
+                                    : "Add favourite"
+                            }
+                            onPress={() => {
+                                handleToggleLikePress();
+                            }}
+                        />
+                    </BottomSheetView>
                     <SheetOptionsButton
-                        icon="playlist-plus"
-                        buttonContent={"Add to playlist"}
+                        icon="pencil"
+                        buttonContent={"Edit tags"}
                         onPress={() => {
                             ref.current.dismiss();
-                            handleOpenAddSongBottomSheet();
+                        }}
+                    />
+                    <SheetOptionsButton
+                        icon="chart-timeline-variant-shimmer"
+                        buttonContent={"View statistics"}
+                        onPress={() => {
+                            ref.current.dismiss();
                         }}
                     />
                     <SheetOptionsButton
@@ -60,7 +126,9 @@ const SongSheet = forwardRef(({ props }, ref) => {
                     />
                     <SheetOptionsButton
                         icon={"trash-can"}
-                        buttonContent={"Delete song from device"}
+                        buttonContent={
+                            "Delete song from device (not available)"
+                        }
                         onPress={handleDeleteSongPress}
                         isDisabled={true}
                     />

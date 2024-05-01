@@ -1,22 +1,22 @@
 import { FlashList } from "@shopify/flash-list";
-import React, { useEffect, useMemo, useRef } from "react";
-import { View } from "react-native";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
+import { RefreshControl, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
-import {
-    SafeAreaView,
-    useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SongSheet from "../../../Components/BottomSheets/SongSheet";
-import MiniPlayer from "../../../Components/MiniPlayer";
 import SongListItem from "../../../Components/SongListItem";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
-import useSearchBar from "../../../hooks/useSearchBar";
 import { useSongsStore } from "../../../store/songs";
-import { spacing } from "../../../styles/constants";
+import { colors, spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { ScrollView } from "react-native-gesture-handler";
-import { router } from "expo-router";
 export default function SongsTab() {
     const {
         songs,
@@ -28,8 +28,8 @@ export default function SongsTab() {
         addListToQueue,
     } = useSongsStore();
 
-    const search = useSearchBar("Search songs or artists...");
-
+    // const search = useSearchBar("Search songs or artists...");
+    const search = "";
     const filteredSongs = useMemo(() => {
         return songs.filter(
             (song) =>
@@ -101,10 +101,30 @@ export default function SongsTab() {
 
     const insets = useSafeAreaInsets();
 
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await getFiles();
+        setRefreshing(false);
+    }, []);
+
+    const onEndReached = () => {};
     return (
-        <ScrollView style={[mainStyles.container]}>
+        <View style={mainStyles.container}>
             <FlashList
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        progressViewOffset={insets.top * 2}
+                        onRefresh={onRefresh}
+                        colors={[colors.bg]}
+                        progressBackgroundColor={colors.primary}
+                    />
+                }
+                refreshing={refreshing}
                 data={filteredSongs}
+                onEndReached={() => console.log("end reached!")}
+                onRefresh={() => console.log("refreshed!")}
                 estimatedItemSize={700}
                 ListEmptyComponent={
                     <ListItemsNotFound
@@ -114,7 +134,7 @@ export default function SongsTab() {
                 }
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
-                    paddingBottom: insets.bottom * 2,
+                    paddingBottom: insets.bottom + spacing.miniPlayer,
                 }}
                 renderItem={({ item }) => (
                     <SongListItem
@@ -135,6 +155,6 @@ export default function SongsTab() {
                 keyExtractor={(item) => item.id}
             />
             <SongSheet ref={bottomSheetRef} />
-        </ScrollView>
+        </View>
     );
 }

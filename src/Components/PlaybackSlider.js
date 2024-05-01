@@ -14,10 +14,10 @@ const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
             thumbTintColor="#E8DEF8"
             minimumTrackTintColor="#E8DEF8"
             maximumTrackTintColor="#E8DEF8"
-            
             style={{
                 marginHorizontal: -15,
             }}
+            
         />
     );
 };

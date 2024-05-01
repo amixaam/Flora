@@ -23,7 +23,7 @@ const SheetPlaylistOptionsButton = ({
                 ]}
             >
                 <AlbumArt
-                    image={data.image}
+                    image={data.artwork}
                     style={{
                         width: 56,
                         aspectRatio: 1,

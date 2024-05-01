@@ -3,7 +3,7 @@ import React from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
-import { colors } from "../../styles/constants";
+import { colors, iconSizes } from "../../styles/constants";
 const SheetOptionsButton = ({
     icon = "arrow-right",
     buttonContent,
@@ -22,7 +22,7 @@ const SheetOptionsButton = ({
             >
                 <MaterialCommunityIcons
                     name={icon}
-                    size={16}
+                    size={iconSizes.sm}
                     style={{ color: colors.primary }}
                 />
                 <Text style={[textStyles.text]}>{buttonContent}</Text>
