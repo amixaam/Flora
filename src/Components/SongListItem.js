@@ -9,6 +9,7 @@ import { textStyles } from "../styles/text";
 import { useSongsStore } from "../store/songs";
 import { useActiveTrack } from "react-native-track-player";
 import { colors, iconSizes, spacing } from "../styles/constants";
+import Checkbox from "./UI/Checkbox";
 
 const SongListItem = ({
     item,
@@ -93,11 +94,9 @@ const SongListItem = ({
                         paddingLeft: spacing.appPadding,
                     }}
                 >
-                    <Checkboxes
-                        onPress={onSelect}
-                        isSelected={isSelected}
-                        isSelectMode={isSelectMode}
-                    />
+                    {isSelectMode && (
+                        <Checkbox onPress={onSelect} isSelected={isSelected} />
+                    )}
                     <LikeButton
                         isLiked={item.isLiked}
                         id={item.id}
@@ -123,17 +122,6 @@ const Numeration = ({ index, showNumeration }) => {
                 {index + 1}
             </Text>
         </View>
-    );
-};
-
-const Checkboxes = ({ onPress, isSelected, isSelectMode }) => {
-    if (!isSelectMode) return;
-
-    return (
-        <IconButton
-            onPress={onPress}
-            icon={isSelected ? "checkbox-marked" : "checkbox-blank-outline"}
-        />
     );
 };
 

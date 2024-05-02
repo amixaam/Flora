@@ -7,6 +7,8 @@ import ChangeMultipleSongPlaylistStatus from "./ChangeMultipleSongPlaylistStatus
 import EditPlaylistBottomSheet from "./EditPlaylistBottomSheet";
 import SheetLayout from "./SheetLayout";
 import UpdateAlbumsConfirm from "../Modals/UpdateAlbumsConfirm";
+import LargeOptionButton from "../UI/LargeOptionButton";
+import { spacing } from "../../styles/constants";
 
 const PlaylistSheet = forwardRef(({ props }, ref) => {
     const {
@@ -15,6 +17,8 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
         loadTrack,
         getSong,
         inheritPlatlistDataToSongs,
+        addToQueue,
+        getSongDataFromPlaylist,
     } = useSongsStore();
 
     const handleDeletePlaylist = () => {
@@ -67,45 +71,62 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
     const handleUpdateCoversConfirm = () =>
         setUpdateCoversConfirm(!updateCoversConfirm);
 
+    const handleAddToQueuePress = () => {
+        addToQueue(getSongDataFromPlaylist(selectedPlaylist.id));
+    };
+
     if (selectedPlaylist === null) return;
     return (
         <>
             <SheetLayout ref={ref} title={"Edit " + selectedPlaylist.name}>
-                <BottomSheetView style={{ marginHorizontal: -18 }}>
-                    <SheetOptionsButton
-                        data={selectedPlaylist}
+                <BottomSheetView
+                    style={{
+                        flexDirection: "row",
+                        columnGap: spacing.md,
+                        marginHorizontal: spacing.appPadding,
+                    }}
+                >
+                    <LargeOptionButton
+                        icon="album"
+                        text="Add to queue"
+                        onPress={() => {
+                            ref.current.dismiss();
+                            handleAddToQueuePress();
+                        }}
+                    />
+                    <LargeOptionButton
                         icon="shuffle"
-                        buttonContent={"Shuffle play"}
+                        text="Shuffle play"
                         onPress={handleShufflePlay}
                     />
-                    <SheetOptionsButton
-                        data={selectedPlaylist}
+
+                    <LargeOptionButton
                         icon="playlist-plus"
-                        buttonContent={"Add songs to playlist"}
+                        text="Add songs"
                         onPress={handleAddSongsToPlaylist}
                     />
-                    <SheetOptionsButton
-                        data={selectedPlaylist}
-                        icon="checkbox-multiple-blank"
-                        buttonContent={"Update songs with playlist metadata"}
-                        onPress={handleUpdateCoversConfirm}
-                        isDisabled={selectedPlaylist.id == 1}
-                    />
-                    <SheetOptionsButton
-                        data={selectedPlaylist}
-                        icon="playlist-edit"
-                        buttonContent={"Edit playlist"}
-                        onPress={handleEditPlaylist}
-                        isDisabled={selectedPlaylist.id == 1}
-                    />
-                    <SheetOptionsButton
-                        data={selectedPlaylist}
-                        icon="playlist-remove"
-                        buttonContent={"Delete playlist"}
-                        onPress={handleDeleteConfirm}
-                        isDisabled={selectedPlaylist.id == 1}
-                    />
                 </BottomSheetView>
+                <SheetOptionsButton
+                    data={selectedPlaylist}
+                    icon="checkbox-multiple-blank"
+                    buttonContent={"Update songs with playlist metadata"}
+                    onPress={handleUpdateCoversConfirm}
+                    isDisabled={selectedPlaylist.id == 1}
+                />
+                <SheetOptionsButton
+                    data={selectedPlaylist}
+                    icon="playlist-edit"
+                    buttonContent={"Edit playlist"}
+                    onPress={handleEditPlaylist}
+                    isDisabled={selectedPlaylist.id == 1}
+                />
+                <SheetOptionsButton
+                    data={selectedPlaylist}
+                    icon="trash-can"
+                    buttonContent={"Delete playlist"}
+                    onPress={handleDeleteConfirm}
+                    isDisabled={selectedPlaylist.id == 1}
+                />
             </SheetLayout>
             <UpdateAlbumsConfirm
                 visible={updateCoversConfirm}
@@ -120,7 +141,6 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
             <EditPlaylistBottomSheet ref={editPlaylistBottomSheetRef} />
             <ChangeMultipleSongPlaylistStatus
                 ref={changeMultipleSongPlaylistStatusBottomSheetRef}
-                mode="add"
             />
         </>
     );

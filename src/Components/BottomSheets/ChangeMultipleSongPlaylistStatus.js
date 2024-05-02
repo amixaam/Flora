@@ -1,4 +1,4 @@
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useEffect, useState } from "react";
 import { Text } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -6,6 +6,8 @@ import { useSongsStore } from "../../store/songs";
 import { textStyles } from "../../styles/text";
 import SongListItem from "../SongListItem";
 import SheetLayout from "./SheetLayout";
+import ListItemsNotFound from "../UI/ListItemsNotFound";
+import { spacing } from "../../styles/constants";
 
 const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     const {
@@ -33,43 +35,35 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     };
 
     return (
-        <SheetLayout ref={ref} title={`Add songs to ${selectedPlaylist.name}`}>
-            <BottomSheetView style={{ marginHorizontal: -16 }}>
-                <BottomSheetView style={{ height: "100%", marginBottom: -64 }}>
-                    {songs.length === 0 && (
-                        <Text
-                            style={[
-                                textStyles.text,
-                                {
-                                    textAlign: "center",
-                                    marginVertical: 32,
-                                },
-                            ]}
-                        >
-                            There aren't any songs, Download some!
-                        </Text>
-                    )}
-                    <FlatList
-                        data={songs.filter((song) => !song.isHidden)}
-                        extraData={selectedSongs}
-                        estimatedItemSize={100}
-                        renderItem={({ item }) => (
-                            <SongListItem
-                                item={item}
-                                isSelected={selectedSongs.includes(item.id)}
-                                onSelect={() => changeList(item.id)}
-                                onPress={changeList}
-                                isCurrentTrack={
-                                    item.id === currentTrack ? true : false
-                                }
-                                isSelectMode={true}
-                                showImage={true}
-                            />
-                        )}
-                        keyExtractor={(item) => item.id}
+        <SheetLayout
+            ref={ref}
+            title={`Add songs to ${selectedPlaylist.name}`}
+            index={3}
+        >
+            <FlatList
+                data={songs.filter((song) => !song.isHidden)}
+                ListEmptyComponent={
+                    <ListItemsNotFound
+                        text="No songs found!"
+                        icon="music-note"
                     />
-                </BottomSheetView>
-            </BottomSheetView>
+                }
+                contentContainerStyle={{
+                    paddingBottom: spacing.xl,
+                }}
+                renderItem={({ item }) => (
+                    <SongListItem
+                        item={item}
+                        isSelected={selectedSongs.includes(item.id)}
+                        onSelect={() => changeList(item.id)}
+                        onPress={changeList}
+                        isCurrentTrack={item.id === currentTrack ? true : false}
+                        isSelectMode={true}
+                        showImage={true}
+                    />
+                )}
+                keyExtractor={(item) => item.id}
+            />
         </SheetLayout>
     );
 });

@@ -46,7 +46,7 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
 
     if (!selectedPlaylist) return;
     return (
-        <SheetLayout ref={ref} name={"Edit " + selectedPlaylist.name}>
+        <SheetLayout ref={ref} name={"Edit " + selectedPlaylist.name} index={2}>
             <BottomSheetView
                 style={{
                     rowGap: 8,

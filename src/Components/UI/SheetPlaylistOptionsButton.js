@@ -3,23 +3,28 @@ import React from "react";
 import AlbumArt from "../AlbumArt";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
+import Checkbox from "./Checkbox";
+import { spacing } from "../../styles/constants";
 
 const SheetPlaylistOptionsButton = ({
     data,
     onPress = () => {
         console.log("Pressed!");
     },
+
+    isSelected = false,
     isDisabled = false,
 }) => {
     return (
         <TouchableNativeFeedback
-            onPress={() => onPress(data.id)}
+            onPress={() => onPress(data)}
             disabled={isDisabled}
         >
             <View
                 style={[
                     mainStyles.textListItem,
                     isDisabled ? mainStyles.hiddenListItem : {},
+                    { justifyContent: "space-between" },
                 ]}
             >
                 <AlbumArt
@@ -30,7 +35,28 @@ const SheetPlaylistOptionsButton = ({
                         borderRadius: 5,
                     }}
                 />
-                <Text style={textStyles.text}>{data.name}</Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flex: 1,
+                        columnGap: spacing.md,
+                    }}
+                >
+                    <View style={{ flexDirection: "column", flex: 1 }}>
+                        <Text style={[textStyles.text]} numberOfLines={1}>
+                            {data.name}
+                        </Text>
+                        <Text style={textStyles.small}>
+                            {data.songs.length} songs
+                        </Text>
+                    </View>
+                    <Checkbox
+                        onPress={() => onPress(data)}
+                        isSelected={isSelected}
+                    />
+                </View>
             </View>
         </TouchableNativeFeedback>
     );

@@ -5,7 +5,7 @@ import { colors, iconSizes, spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 
 const ListItemsNotFound = ({
-    icon = "question",
+    icon = iconSizes.defaultIcon,
     text = "Items not found!",
 }) => {
     return (
