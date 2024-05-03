@@ -76,7 +76,7 @@ export default function SongsTab() {
 
                 title: asset.filename,
                 artist: "No artist",
-                date: "No date",
+                year: "No year",
                 artwork: null,
                 duration: asset.duration,
 
@@ -84,6 +84,7 @@ export default function SongsTab() {
                 isHidden: false,
                 lastPlayed: null,
                 timesPlayed: 0,
+                createdAt: asset.creationTime,
             };
         });
 

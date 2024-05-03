@@ -9,7 +9,7 @@ import TrackPlayer, {
     RatingType,
     RepeatMode,
 } from "react-native-track-player";
-import { PlaybackService } from "../../PlaybackService";
+// import { PlaybackService } from "../../PlaybackService";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -23,9 +23,6 @@ export const useSongsStore = create(
                     name: "Liked songs",
                     description: "Your songs that you liked.",
                     artwork: null,
-                    year: null,
-                    artist: null,
-                    date: null,
                     songs: [], //contains only id's
                 },
             ],
@@ -34,6 +31,7 @@ export const useSongsStore = create(
             // for menus, ect..
             selectedSong: null,
             selectedPlaylist: null,
+            selectedAlbum: null,
             activeBottomSheets: [], // would be cool maybe?
             safeAreaInsets: 0,
             setSafeAreaInsets: (insets) => {
@@ -51,7 +49,7 @@ export const useSongsStore = create(
                 try {
                     await TrackPlayer.getActiveTrack();
                 } catch (error) {
-                    TrackPlayer.registerPlaybackService(() => PlaybackService);
+                    // TrackPlayer.registerPlaybackService(() => PlaybackService);
 
                     await TrackPlayer.setupPlayer({
                         autoHandleInterruptions: true,
@@ -131,12 +129,10 @@ export const useSongsStore = create(
                             name: "Liked songs",
                             description: "Your songs that you liked.",
                             artwork: null,
-                            year: null,
-                            artist: null,
-                            date: null,
                             songs: [], //contains only id's
                         },
                     ],
+                    albums: [],
                 });
             },
 
@@ -144,21 +140,6 @@ export const useSongsStore = create(
             setSongs: (songs) => set({ songs }),
             getSong: (id) => get().songs.find((song) => song.id === id),
             setSelectedSong: (song) => set({ selectedSong: song }),
-
-            inheritPlatlistDataToSongs: (playlistId) => {
-                const playlist = get().getPlaylist(playlistId);
-                const artwork = playlist.artwork;
-                const artist = playlist.artist;
-                const date = playlist.date;
-
-                set((state) => ({
-                    songs: state.songs.map((song) =>
-                        playlist.songs.includes(song.id)
-                            ? { ...song, artwork, artist, date }
-                            : song
-                    ),
-                }));
-            },
 
             // like, unlike
             addSongLike: (id) => {
@@ -190,18 +171,28 @@ export const useSongsStore = create(
                 }));
             },
 
+            updateStatistics: (songId) => {
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        song.id === songId
+                            ? {
+                                  ...song,
+                                  timesPlayed: song.timesPlayed + 1,
+                                  lastPlayed: new Date(),
+                              }
+                            : song
+                    ),
+                }));
+            },
+
+            updateSongTags: (songId, tags) => {},
+
             // playlists
             setPlaylists: (playlists) => set({ playlists }),
             setSelectedPlaylist: (playlist) =>
                 set({ selectedPlaylist: playlist }),
 
-            createPlaylist: (
-                name,
-                description,
-                artwork = null,
-                artist,
-                date
-            ) => {
+            createPlaylist: (name, description, artwork = null) => {
                 name = name ? name : "Unnamed playlist";
                 const newPlaylist = {
                     id: (
@@ -211,8 +202,6 @@ export const useSongsStore = create(
                     name,
                     description,
                     artwork,
-                    artist,
-                    date,
                     songs: [],
                 };
                 set((state) => ({
@@ -220,7 +209,7 @@ export const useSongsStore = create(
                 }));
             },
 
-            editPlaylist: (id, name, description, artwork, artist, date) => {
+            editPlaylist: (id, name, description, artwork) => {
                 name = name ? name : "Unnamed playlist";
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
@@ -232,8 +221,6 @@ export const useSongsStore = create(
                                       ? { description }
                                       : {}),
                                   ...(artwork !== null ? { artwork } : {}),
-                                  ...(artist !== null ? { artist } : {}),
-                                  ...date,
                               }
                             : playlist
                     ),
@@ -259,9 +246,7 @@ export const useSongsStore = create(
                 const playlists = get().playlists;
                 const playlist = playlists.find((p) => p.id === id);
 
-                return {
-                    ...playlist,
-                };
+                return playlist;
             },
 
             getSongDataFromPlaylist: (id) => {
@@ -326,6 +311,126 @@ export const useSongsStore = create(
                         ),
                     }));
                 }
+            },
+
+            // Albums
+            createAlbum: (formInputs) => {
+                const newAlbum = {
+                    id: (
+                        Date.now().toString(36) +
+                        Math.random().toString(36).substr(2, 5)
+                    ).toUpperCase(),
+                    ...formInputs,
+
+                    title: formInputs.title
+                        ? formInputs.title
+                        : "Unnamed album",
+                    artist: formInputs.artist ? formInputs.artist : "No artist",
+                    year: formInputs.year ? formInputs.year : "No year",
+                    songs: [],
+                };
+
+                set((state) => ({
+                    albums: [...state.albums, newAlbum],
+                }));
+            },
+
+            setSelectedAlbum: (album) => {
+                set({ selectedAlbum: album });
+            },
+
+            deleteAlbum: (id) => {
+                set((state) => ({
+                    albums: state.albums.filter((a) => a.id !== id),
+                }));
+            },
+
+            editAlbum: (id, formInputs) => {
+                set((state) => ({
+                    albums: state.albums.map((album) =>
+                        album.id === id
+                            ? {
+                                  ...album,
+                                  ...formInputs,
+                                  title: formInputs.title
+                                      ? formInputs.title
+                                      : "Unnamed album",
+                                  artist: formInputs.artist
+                                      ? formInputs.artist
+                                      : "No artist",
+                                  year: formInputs.year
+                                      ? formInputs.year
+                                      : "No year",
+                              }
+                            : album
+                    ),
+                }));
+            },
+
+            getAlbumByID: (albumId) => {
+                const albums = get().albums;
+                const album = albums.find((a) => a.id === albumId);
+
+                return album;
+            },
+
+            getAlbumSongData: (albumId) => {
+                const albums = get().albums;
+                const album = albums.find((a) => a.id === albumId);
+
+                const songData = album.songs.map((songId) =>
+                    get().songs.find((s) => s.id === songId)
+                );
+
+                return songData;
+            },
+
+            addSongToAlbum: (albumId, songId) => {
+                const album = get().getAlbumByID(albumId);
+
+                if (!album.songs.includes(songId)) {
+                    set((state) => ({
+                        albums: state.albums.map((a) =>
+                            a.id === albumId
+                                ? { ...a, songs: [...a.songs, songId] }
+                                : a
+                        ),
+                    }));
+                }
+            },
+
+            removeSongFromAlbum: (albumId, songId) => {
+                const album = get().getAlbumByID(albumId);
+
+                if (album.songs.includes(songId)) {
+                    set((state) => ({
+                        albums: state.albums.map((a) =>
+                            a.id === albumId
+                                ? {
+                                      ...a,
+                                      songs: a.songs.filter(
+                                          (id) => id !== songId
+                                      ),
+                                  }
+                                : a
+                        ),
+                    }));
+                }
+            },
+
+            copyAlbumTagsToSongs: (albumId) => {
+                const album = get().getAlbumByID(albumId);
+                const artwork = album.artwork;
+                const artist = album.artist;
+                const year = album.year;
+
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        album.songs.includes(song.id)
+                            ? { ...song, artwork, artist, year }
+                            : song
+                    ),
+                }));
             },
         }),
         {

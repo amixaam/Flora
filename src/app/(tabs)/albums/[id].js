@@ -18,15 +18,12 @@ import { spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
+import AlbumSheet from "../../../Components/BottomSheets/AlbumSheet";
 
-export default function PlaylistScreen() {
+export default function AlbumScreen() {
     const { id } = useLocalSearchParams();
-    const {
-        getPlaylist,
-        getSongDataFromPlaylist,
-        shuffleList,
-        addListToQueue,
-    } = useSongsStore();
+    const { getAlbumByID, getAlbumSongData, shuffleList, addListToQueue } =
+        useSongsStore();
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -37,28 +34,34 @@ export default function PlaylistScreen() {
         });
     }, [navigation]);
 
-    const playlistData = getPlaylist(id);
-    console.log(playlistData);
-    const songData = getSongDataFromPlaylist(id);
+    const album = getAlbumByID(id);
+    const songs = getAlbumSongData(album.id);
+    console.log(album);
 
     const editSongSheetRef = useRef(null);
     const handleEditSong = () => editSongSheetRef.current.present();
 
-    const editPlaylistSheetRef = useRef(null);
-    const handleEditPlaylist = () => editPlaylistSheetRef.current.present();
+    const editAlbumSheetRef = useRef(null);
+    const handleEditPlaylist = () => editAlbumSheetRef.current.present();
+
+    const handleShufflePress = () => {};
+
+    const handlePlayPress = () => {};
 
     const insets = useSafeAreaInsets();
 
+    if (!album || !songs) return;
     return (
         <ScrollView style={[mainStyles.container]}>
             <ImageBlurBackground
-                image={playlistData.artwork}
+                image={album.artwork}
                 styles={{ height: 520 }}
                 gradientColors={[
                     "transparent",
                     "#05050655",
                     "#05050699",
                     "#050506",
+                    
                 ]}
             />
             <View
@@ -70,31 +73,28 @@ export default function PlaylistScreen() {
                 }}
             >
                 <AlbumArt
-                    image={playlistData.artwork}
+                    image={album.artwork}
                     style={{ width: 250, aspectRatio: 1, borderRadius: 7 }}
                 />
                 <View
                     style={{
                         marginVertical: 4,
-                        rowGap: 4,
                         flex: 1,
                         flexDirection: "column",
                         justifyContent: "center",
                     }}
                 >
                     <Text style={[textStyles.h4, { textAlign: "center" }]}>
-                        {playlistData.name}
+                        {album.title}
                     </Text>
-                    {playlistData.description && (
-                        <Text
-                            style={[
-                                textStyles.text,
-                                { textAlign: "center", opacity: 0.7 },
-                            ]}
-                        >
-                            {playlistData.description}
-                        </Text>
-                    )}
+                    <Text
+                        style={[
+                            textStyles.text,
+                            { textAlign: "center", opacity: 0.7 },
+                        ]}
+                    >
+                        {`${album.artist} • ${album.year}`}
+                    </Text>
                 </View>
                 <View
                     style={{
@@ -105,12 +105,12 @@ export default function PlaylistScreen() {
                     }}
                 >
                     <SecondaryRoundIconButton
-                        onPress={() => addListToQueue(songData, null, true)}
+                        onPress={() => addListToQueue(songs, null, true)}
                         icon="play"
                     />
                     <PrimaryRoundIconButton
                         size={36}
-                        onPress={() => shuffleList(songData, true)}
+                        onPress={() => shuffleList(songs, true)}
                     />
                     <SecondaryRoundIconButton
                         icon="pencil"
@@ -120,7 +120,7 @@ export default function PlaylistScreen() {
             </View>
             <View style={{ flex: 1, minHeight: 5 }}>
                 <FlashList
-                    data={songData}
+                    data={songs}
                     estimatedItemSize={100}
                     ListEmptyComponent={
                         <ListItemsNotFound
@@ -129,7 +129,7 @@ export default function PlaylistScreen() {
                         />
                     }
                     ListFooterComponent={
-                        songData.length ? (
+                        songs.length ? (
                             <View style={{ padding: spacing.md }}>
                                 <Text
                                     style={[
@@ -137,8 +137,8 @@ export default function PlaylistScreen() {
                                         { textAlign: "center" },
                                     ]}
                                 >
-                                    {playlistData.songs.length} songs{"  •  "}
-                                    {CalculateTotalDuration(songData)}
+                                    {album.songs.length} songs{"  •  "}
+                                    {CalculateTotalDuration(songs)}
                                 </Text>
                             </View>
                         ) : null
@@ -150,18 +150,21 @@ export default function PlaylistScreen() {
                         <SongListItem
                             item={item}
                             index={index}
-                            showImage={true}
                             handleOpenPress={handleEditSong}
                             onPress={() => {
-                                addListToQueue(songData, item, true);
+                                addListToQueue(songs, item, true);
                             }}
+                            showNumeration={
+                                album.type == "Album" ? false : true
+                            }
+                            showImage={album.type == "Album" ? true : false}
                         />
                     )}
                     keyExtractor={(item) => item.id}
                 />
             </View>
             <SongSheet ref={editSongSheetRef} />
-            <PlaylistSheet ref={editPlaylistSheetRef} />
+            <AlbumSheet ref={editAlbumSheetRef} />
         </ScrollView>
     );
 }

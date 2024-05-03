@@ -10,6 +10,7 @@ const LargeOptionButton = ({
     onPress = () => {
         console.log("Pressed!");
     },
+    disabled = false,
 }) => {
     return (
         <View
@@ -20,7 +21,7 @@ const LargeOptionButton = ({
                 marginBottom: spacing.md,
             }}
         >
-            <TouchableNativeFeedback onPress={onPress}>
+            <TouchableNativeFeedback onPress={onPress} disabled={disabled}>
                 <View
                     style={{
                         width: "100%",
@@ -28,6 +29,7 @@ const LargeOptionButton = ({
                         borderRadius: spacing.radius,
                         padding: spacing.md,
                         backgroundColor: colors.input,
+                        opacity: disabled ? 0.5 : 1,
                     }}
                 >
                     <MaterialCommunityIcons
@@ -37,7 +39,9 @@ const LargeOptionButton = ({
                     />
                 </View>
             </TouchableNativeFeedback>
-            <Text style={textStyles.text}>{text}</Text>
+            <Text style={[textStyles.text, { opacity: disabled ? 0.5 : 1 }]}>
+                {text}
+            </Text>
         </View>
     );
 };

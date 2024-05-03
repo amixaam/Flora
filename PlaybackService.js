@@ -1,7 +1,7 @@
 import TrackPlayer, { Event } from "react-native-track-player";
+// import { useSongsStore } from "./src/store/songs";
 
 export const PlaybackService = async function () {
-
     TrackPlayer.addEventListener(Event.RemotePlay, () => {
         TrackPlayer.play();
     });
@@ -55,6 +55,7 @@ export const PlaybackService = async function () {
 
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
         console.log("Event.PlaybackActiveTrackChanged", event);
+        // useSongsStore.getState().updateStatistics(event.track.id);
     });
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {

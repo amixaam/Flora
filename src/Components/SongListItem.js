@@ -81,9 +81,9 @@ const SongListItem = ({
                             {name}
                         </Text>
                         <Text numberOfLines={1} style={[textStyles.small]}>
-                            {item.artist ? item.artist : "No artist"}
-                            {" • "}
-                            {new Date(item.date).getFullYear()}
+                            {`${item.artist ? item.artist : "No artist"} • ${
+                                item.year ? item.year : "No year"
+                            }`}
                         </Text>
                     </View>
                 </View>

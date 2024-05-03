@@ -11,7 +11,7 @@ const PlaylistsLayout = () => {
         <SafeAreaProvider>
             <Stack
                 screenOptions={{
-                    headerTitle: "Playlists",
+                    headerTitle: "Albums",
                     headerTitleStyle: textStyles.h3,
                     headerBackground: () => <Header />,
                     headerShadowVisible: false,

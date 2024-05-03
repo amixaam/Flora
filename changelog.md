@@ -13,20 +13,20 @@
 
 ## New features
 
--   [ ] Playing queue (Add songs, playlists, albums to playing queue)
--   [ ] Background music playback
+-   [ ] Playing queue (Add songs, playlists, albums to playing queue, view queue)
+-   [x] Background music playback
 -   [ ] Albums and Singles (Album tab)
 -   [ ] Last played history
 -   [ ] Read audio file metadata from downloads
 -   [ ] Edit specific song metadata
 -   [ ] Song title (if too long) in mini player, will loop horizontally
+-   [ ] Dismiss player by swiping down
 
 -   [ ] Playlist, Song and Album sorting
 -   [ ] "Add as single" option for songs
--   [ ] Select multiple in song lists
 -   [ ] Go to Album, Artist options in song bottom sheet
 -   [ ] View song statistics
--   [ ] Refresh song list function
+-   [x] Refresh song list function
 -   [ ] Ask to update song metadata from playlist when editing playlist
 -   [ ] Dynamic top bar
 -   [ ] Apply audio file metadata option in bottom sheet (1 time thing)
@@ -52,16 +52,20 @@
 -   [x] Playback scrollbar aligns with content horizontally
 -   [x] "Add to queue", "Edit playlist" and "Add songs" options are box shaped and at the top
 -   [x] "Add to queue", "Add to playlist" and "(Un)like song" options are box shaped and at the top
--   [ ] Removed "Update songs with playlist metadata" option
+-   [ ] "Update songs with playlist metadata" option only shows up for albums
 -   [x] "Delete playlist" option icon is a trash can
 -   [ ] Proper item seperator in lists
 -   [ ] You can't like/unlike hidden songs
 -   [ ] Flip list order in playlists (descending)
 -   [ ] Font styling
 -   [x] Margin error fix on tab bar when mini player is not shown
+-   [x] "Select artwork" text on image picker
 
 ## for v0.4.0
 
--   [ ] (backend) Move from asyncStorage to Sqlite (sql injection safe)
+-   [ ] (backend) Move from asyncStorage to Sqlite
 -   [ ] More statistics
 -   [ ] Change song order in playlists / albums
+-   [ ] Select multiple in song lists
+-   [ ] Delete song from device option
+-   [ ] Display album/playlist name in player, instead of "placeholder text"

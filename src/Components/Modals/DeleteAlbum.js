@@ -5,31 +5,27 @@ import { textStyles } from "../../styles/text";
 import SubmitButton from "../UI/SubmitButton";
 import CancelButton from "../UI/CancelButton";
 
-const UpdateAlbumsConfirm = ({
+const DeleteAlbum = ({
+    visible = false,
     dismiss = () => {
         console.log("dismissed!");
     },
-    visible = false,
     confirm = () => {
         console.log("confirmed!");
     },
 }) => {
     return (
-        <ModalLayout
-            visible={visible}
-            title="Update song tags?"
-            dismiss={dismiss}
-        >
+        <ModalLayout visible={visible} title="Delete album?" dismiss={dismiss}>
             <Text style={[textStyles.text, { textAlign: "center" }]}>
-                This action will update the saved metadata for all songs in this
-                album, to match the album. (artwork, artist, year)
+                Are you sure you want to delete this album? You cannot undo this
+                action.
             </Text>
             <View style={{ marginTop: 8, rowGap: 8 }}>
-                <SubmitButton text="Update" handleSubmitForm={confirm} />
+                <SubmitButton text="Delete" handleSubmitForm={confirm} />
                 <CancelButton handlePress={dismiss} />
             </View>
         </ModalLayout>
     );
 };
 
-export default UpdateAlbumsConfirm;
+export default DeleteAlbum;

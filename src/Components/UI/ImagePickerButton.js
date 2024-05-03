@@ -2,8 +2,9 @@ import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { mainStyles } from "../../styles/styles";
-import { Image, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { colors } from "../../styles/constants";
+import { textStyles } from "../../styles/text";
 
 const ImagePickerButton = ({ image, setImage }) => {
     const pickImage = async () => {
@@ -42,9 +43,17 @@ const ImagePickerButton = ({ image, setImage }) => {
                             width: "50%",
                             aspectRatio: 1,
                             borderRadius: 7,
+                            justifyContent: "center",
+                            alignItems: "center",
                         },
                     ]}
-                />
+                >
+                    <Text
+                        style={[textStyles.text, { color: colors.primary90 }]}
+                    >
+                        Select artwork
+                    </Text>
+                </View>
             )}
         </TouchableOpacity>
     );

@@ -14,33 +14,32 @@ import IconButton from "../../../Components/UI/IconButton";
 import { spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, resetAll, setup } = useSongsStore();
-    useEffect(() => {
-        setup();
-    }, []);
+import CreateAlbum from "../../../Components/BottomSheets/CreateAlbum";
+import AlbumSheet from "../../../Components/BottomSheets/AlbumSheet";
+export default function AlbumsTab() {
+    const { albums, setSelectedAlbum } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const navigation = useNavigation();
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="plus" onPress={handleOpenPress} />
+                <IconButton icon="plus" onPress={handleOpenCreateAlbum} />
             ),
         });
     }, [navigation]);
 
-    const newPlaylistRef = useRef(null);
-    const handleOpenPress = () => newPlaylistRef.current.present();
+    const newAlbumSheetRef = useRef(null);
+    const handleOpenCreateAlbum = () => newAlbumSheetRef.current.present();
 
-    const PlaylistOptionsRef = useRef(null);
-    const openPlaylistOptions = () => PlaylistOptionsRef.current.present();
+    const AlbumSheetRef = useRef(null);
+    const handleOpenAlbumSheet = () => AlbumSheetRef.current.present();
 
     return (
         <View style={[mainStyles.container]}>
             <FlashList
                 numColumns={2}
-                data={playlists}
+                data={albums}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
@@ -49,28 +48,28 @@ export default function PlaylistsTab() {
                 }}
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
-                    <PlaylistItem
+                    <AlbumItem
                         item={item}
-                        handleOpenPress={handleOpenPress}
-                        setSelectedPlaylist={setSelectedPlaylist}
+                        handleOpenPress={handleOpenCreateAlbum}
+                        setSelectedPlaylist={setSelectedAlbum}
                         onPress={() => {
-                            setSelectedPlaylist(item);
-                            router.push(`./${item.id}`);
+                            setSelectedAlbum(item);
+                            router.push(`(tabs)/albums/${item.id}`);
                         }}
                         onLongPress={() => {
-                            setSelectedPlaylist(item);
-                            openPlaylistOptions();
+                            setSelectedAlbum(item);
+                            handleOpenAlbumSheet();
                         }}
                     />
                 )}
             />
-            <CreatePlaylistBottomSheet ref={newPlaylistRef} />
-            <PlaylistSheet ref={PlaylistOptionsRef} />
+            <CreateAlbum ref={newAlbumSheetRef} />
+            <AlbumSheet ref={AlbumSheetRef} />
         </View>
     );
 }
 
-const PlaylistItem = ({ item = {}, onPress, onLongPress }) => {
+const AlbumItem = ({ item = {}, onPress, onLongPress }) => {
     return (
         <TouchableNativeFeedback
             onPress={onPress}
@@ -84,19 +83,12 @@ const PlaylistItem = ({ item = {}, onPress, onLongPress }) => {
                 />
                 <View>
                     <Text style={[textStyles.h5]} numberOfLines={1}>
-                        {item.name}
+                        {item.title}
                     </Text>
                     <Text
-                        style={[
-                            {
-                                marginTop: -spacing.xs,
-                            },
-                            textStyles.small,
-                        ]}
+                        style={[{ marginTop: -spacing.xs }, textStyles.small]}
                     >
-                        {item.songs.length === 0 ? "No" : item.songs.length}{" "}
-                        song
-                        {item.songs.length !== 1 && "s"}
+                        {`${item.artist} • ${item.year}`}
                     </Text>
                 </View>
             </View>

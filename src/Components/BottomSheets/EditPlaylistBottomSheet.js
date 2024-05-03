@@ -7,7 +7,6 @@ import ImagePickerButton from "../UI/ImagePickerButton";
 import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
 import SheetLayout from "./SheetLayout";
-import DatePickerInput from "../UI/DatePickerInput";
 
 const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { selectedPlaylist, editPlaylist } = useSongsStore();
@@ -16,37 +15,28 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const [description, setDescription] = useState(
         selectedPlaylist?.description
     );
-    const [date, setDate] = useState(selectedPlaylist?.date);
-    const [artist, setArtist] = useState(selectedPlaylist?.artist);
-
-    const [showPicker, setShowPicker] = useState(false);
 
     useEffect(() => {
         if (selectedPlaylist === null) return;
         setImage(selectedPlaylist.artwork);
         setName(selectedPlaylist.name);
         setDescription(selectedPlaylist.description);
-        setArtist(selectedPlaylist.artist);
-        setDate(new Date(selectedPlaylist.date));
     }, [selectedPlaylist]);
 
     const handleSubmitForm = () => {
         if (selectedPlaylist.id == 1) return;
 
-        editPlaylist(
-            selectedPlaylist.id,
-            name,
-            description,
-            image,
-            artist,
-            date
-        );
+        editPlaylist(selectedPlaylist.id, name, description, image);
         ref.current.dismiss();
     };
 
     if (!selectedPlaylist) return;
     return (
-        <SheetLayout ref={ref} name={"Edit " + selectedPlaylist.name} index={2}>
+        <SheetLayout
+            ref={ref}
+            title={"Edit " + selectedPlaylist.name}
+            index={2}
+        >
             <BottomSheetView
                 style={{
                     rowGap: 8,
@@ -66,31 +56,7 @@ const EditPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     value={description}
                     setValue={setDescription}
                 />
-                <View style={{ flexDirection: "row", columnGap: 8 }}>
-                    <TextInput
-                        bottomSheet={true}
-                        placeholder="Artist"
-                        value={artist}
-                        setValue={setArtist}
-                    />
-                    <CancelButton
-                        handlePress={() => {
-                            setDate(new Date());
-                            setShowPicker(!showPicker);
-                        }}
-                        text={
-                            date instanceof Date
-                                ? date.getFullYear()
-                                : "No date"
-                        }
-                    />
-                    <DatePickerInput
-                        value={date}
-                        setValue={setDate}
-                        visibility={showPicker}
-                        dismiss={() => setShowPicker(false)}
-                    />
-                </View>
+
                 <View style={{ flexDirection: "row", columnGap: 8 }}>
                     <SubmitButton
                         handleSubmitForm={handleSubmitForm}

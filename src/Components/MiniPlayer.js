@@ -98,15 +98,7 @@ export const MiniPlayer = ({ style }) => {
                                     style={textStyles.detail}
                                     numberOfLines={1}
                                 >
-                                    {activeTrack.artist
-                                        ? activeTrack.artist
-                                        : "No artist"}
-                                    {" • "}
-                                    {activeTrack.date
-                                        ? new Date(
-                                              activeTrack.date
-                                          ).getFullYear()
-                                        : "No date"}
+                                    {`${activeTrack?.artist} • ${activeTrack?.year}`}
                                 </Text>
                             </View>
                             <View

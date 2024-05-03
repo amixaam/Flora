@@ -15,4 +15,12 @@ const FormatSecs = (seconds) => {
         .padStart(2, "0")}`;
 };
 
-export { FormatMillis, FormatSecs };
+const CalculateTotalDuration = (songs) => {
+    let totalDuration = 0;
+    songs.forEach((song) => {
+        totalDuration += song.duration;
+    });
+    return FormatSecs(totalDuration);
+};
+
+export { FormatMillis, FormatSecs, CalculateTotalDuration };

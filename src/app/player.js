@@ -41,7 +41,7 @@ const PlayerScreen = () => {
                 image={activeTrack?.artwork}
                 styles={{ height: "85%", top: 0 }}
             />
-            <DismissPill insets={insets} />
+            {/* <DismissPill insets={insets} /> */}
             <View
                 style={{
                     flex: 1,
@@ -76,6 +76,7 @@ const PlayerScreen = () => {
                             alignItems: "center",
                             justifyContent: "center",
                             width: "100%",
+                            columnGap: spacing.sm,
                         }}
                     >
                         <Text style={[textStyles.h4]} numberOfLines={1}>
@@ -95,9 +96,7 @@ const PlayerScreen = () => {
                             { textAlign: "center", opacity: 0.7 },
                         ]}
                     >
-                        {activeTrack?.artist}
-                        {" • "}
-                        {activeTrack?.date}
+                        {`${activeTrack?.artist} • ${activeTrack?.year}`}
                     </Text>
                 </View>
                 <PlaybackControls />

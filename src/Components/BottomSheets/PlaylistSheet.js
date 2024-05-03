@@ -14,7 +14,8 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
     const {
         selectedPlaylist,
         deletePlaylist,
-        loadTrack,
+
+        shuffleList,
         getSong,
         inheritPlatlistDataToSongs,
         addToQueue,
@@ -43,22 +44,8 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
     };
 
     const handleShufflePlay = () => {
-        loadTrack(
-            getSong(
-                selectedPlaylist.songs[
-                    Math.floor(Math.random() * selectedPlaylist.songs.length)
-                ]
-            ),
-            selectedPlaylist,
-            true
-        );
+        shuffleList(getSongDataFromPlaylist(selectedPlaylist.id));
         ref.current.dismiss();
-    };
-
-    const hanldeUpdateSongCovers = () => {
-        inheritPlatlistDataToSongs(selectedPlaylist.id);
-        ref.current.dismiss();
-        setUpdateCoversConfirm(false);
     };
 
     const editPlaylistBottomSheetRef = useRef(null);
@@ -67,10 +54,6 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const handleDeleteConfirm = () => setDeleteConfirm(!deleteConfirm);
 
-    const [updateCoversConfirm, setUpdateCoversConfirm] = useState(false);
-    const handleUpdateCoversConfirm = () =>
-        setUpdateCoversConfirm(!updateCoversConfirm);
-
     const handleAddToQueuePress = () => {
         addToQueue(getSongDataFromPlaylist(selectedPlaylist.id));
     };
@@ -78,7 +61,7 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
     if (selectedPlaylist === null) return;
     return (
         <>
-            <SheetLayout ref={ref} title={"Edit " + selectedPlaylist.name}>
+            <SheetLayout ref={ref} title={selectedPlaylist.name}>
                 <BottomSheetView
                     style={{
                         flexDirection: "row",
@@ -108,13 +91,6 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
                 </BottomSheetView>
                 <SheetOptionsButton
                     data={selectedPlaylist}
-                    icon="checkbox-multiple-blank"
-                    buttonContent={"Update songs with playlist metadata"}
-                    onPress={handleUpdateCoversConfirm}
-                    isDisabled={selectedPlaylist.id == 1}
-                />
-                <SheetOptionsButton
-                    data={selectedPlaylist}
                     icon="playlist-edit"
                     buttonContent={"Edit playlist"}
                     onPress={handleEditPlaylist}
@@ -128,11 +104,6 @@ const PlaylistSheet = forwardRef(({ props }, ref) => {
                     isDisabled={selectedPlaylist.id == 1}
                 />
             </SheetLayout>
-            <UpdateAlbumsConfirm
-                visible={updateCoversConfirm}
-                dismiss={handleUpdateCoversConfirm}
-                confirm={hanldeUpdateSongCovers}
-            />
             <DeletePlaylistConfirm
                 visible={deleteConfirm}
                 dismiss={handleDeleteConfirm}

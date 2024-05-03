@@ -6,35 +6,31 @@ import SongListItem from "../SongListItem";
 import ListItemsNotFound from "../UI/ListItemsNotFound";
 import SheetLayout from "./SheetLayout";
 
-const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
-    const {
-        songs,
-        selectedPlaylist,
-        currentTrack,
-        addSongToPlaylist,
-        removeSongFromPlaylist,
-    } = useSongsStore();
-    const [selectedSongs, setselectedSongs] = useState(selectedPlaylist.songs);
+const AddSongsToAlbum = forwardRef(({ props }, ref) => {
+    const { songs, selectedAlbum, addSongToAlbum, removeSongFromAlbum } =
+        useSongsStore();
+
+    const [selectedSongs, setselectedSongs] = useState([]);
 
     useEffect(() => {
-        setselectedSongs(selectedPlaylist.songs);
-    }, [selectedPlaylist]);
+        setselectedSongs(selectedAlbum.songs);
+    }, [selectedAlbum]);
 
     const changeList = (songId) => {
         if (selectedSongs.includes(songId)) {
             setselectedSongs(selectedSongs.filter((id) => id !== songId));
-            removeSongFromPlaylist(selectedPlaylist.id, songId);
+            removeSongFromAlbum(selectedAlbum.id, songId);
             return;
         }
         setselectedSongs([...selectedSongs, songId]);
-        addSongToPlaylist(selectedPlaylist.id, songId);
+        addSongToAlbum(selectedAlbum.id, songId);
         console.log(selectedSongs);
     };
 
     return (
         <SheetLayout
             ref={ref}
-            title={`Add songs to ${selectedPlaylist.name}`}
+            title={`Add songs to ${selectedAlbum.title}`}
             index={3}
         >
             <FlatList
@@ -51,12 +47,11 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
                 renderItem={({ item }) => (
                     <SongListItem
                         item={item}
+                        isSelectMode={true}
+                        showImage={true}
                         isSelected={selectedSongs.includes(item.id)}
                         onSelect={() => changeList(item.id)}
                         onPress={changeList}
-                        isCurrentTrack={item.id === currentTrack ? true : false}
-                        isSelectMode={true}
-                        showImage={true}
                     />
                 )}
                 keyExtractor={(item) => item.id}
@@ -65,4 +60,4 @@ const ChangeMultipleSongPlaylistStatus = forwardRef(({ props }, ref) => {
     );
 });
 
-export default ChangeMultipleSongPlaylistStatus;
+export default AddSongsToAlbum;

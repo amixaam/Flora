@@ -23,8 +23,13 @@ const SongSheet = forwardRef(({ props }, ref) => {
 
     const handleHideSongPress = () => {
         ref.current.dismiss();
-        if (selectedSong.isHidden) unhideSong(selectedSong.id);
-        else hideSong(selectedSong.id);
+        if (selectedSong.isHidden) {
+            selectedSong.isHidden = false;
+            unhideSong(selectedSong.id);
+        } else {
+            selectedSong.isHidden = true;
+            hideSong(selectedSong.id);
+        }
     };
 
     const handleDeleteSongPress = () => {
@@ -33,11 +38,11 @@ const SongSheet = forwardRef(({ props }, ref) => {
 
     const handleToggleLikePress = () => {
         if (selectedSong.isLiked) {
-            removeSongLike(selectedSong.id);
             selectedSong.isLiked = false;
+            removeSongLike(selectedSong.id);
         } else {
-            addSongLike(selectedSong.id);
             selectedSong.isLiked = true;
+            addSongLike(selectedSong.id);
         }
     };
 
@@ -48,7 +53,7 @@ const SongSheet = forwardRef(({ props }, ref) => {
     if (selectedSong === null) return;
     return (
         <>
-            <SheetLayout ref={ref} title={"Edit " + selectedSong.title}>
+            <SheetLayout ref={ref} title={selectedSong.title}>
                 <BottomSheetView
                     style={{
                         flexDirection: "row",
@@ -63,6 +68,7 @@ const SongSheet = forwardRef(({ props }, ref) => {
                             ref.current.dismiss();
                             handleAddToQueuePress();
                         }}
+                        disabled={selectedSong.isHidden}
                     />
                     <LargeOptionButton
                         icon="playlist-plus"
@@ -71,6 +77,7 @@ const SongSheet = forwardRef(({ props }, ref) => {
                             ref.current.dismiss();
                             handleOpenAddSongBottomSheet();
                         }}
+                        disabled={selectedSong.isHidden}
                     />
 
                     <LargeOptionButton
@@ -83,22 +90,40 @@ const SongSheet = forwardRef(({ props }, ref) => {
                         onPress={() => {
                             handleToggleLikePress();
                         }}
+                        disabled={selectedSong.isHidden}
                     />
                 </BottomSheetView>
                 <SheetOptionsButton
-                    icon="pencil"
-                    buttonContent={"Edit tags (NOT DONE)"}
+                    icon="album"
+                    buttonContent="Go to album (NOT DONE)"
+                    onPress={() => {
+                        ref.current.dismiss();
+                    }}
+                    isDisabled={selectedSong.isHidden}
+                />
+                <SheetOptionsButton
+                    icon="chart-timeline-variant-shimmer"
+                    buttonContent="View statistics (NOT DONE)"
                     onPress={() => {
                         ref.current.dismiss();
                     }}
                 />
                 <SheetOptionsButton
-                    icon="chart-timeline-variant-shimmer"
-                    buttonContent={"View statistics (NOT DONE)"}
+                    icon="plus"
+                    buttonContent="Add as single (NOT DONE)"
+                    onPress={() => {
+                        ref.current.dismiss();
+                    }}
+                    isDisabled={selectedSong.isHidden}
+                />
+                <SheetOptionsButton
+                    icon="pencil"
+                    buttonContent="Edit tags (NOT DONE)"
                     onPress={() => {
                         ref.current.dismiss();
                     }}
                 />
+
                 <SheetOptionsButton
                     icon={selectedSong.isHidden ? "eye" : "eye-off"}
                     buttonContent={

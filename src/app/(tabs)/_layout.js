@@ -44,6 +44,19 @@ export default function TabLayout() {
                     }}
                 />
                 <MaterialBottomTabs.Screen
+                    name="albums"
+                    options={{
+                        tabBarLabel: "Albums",
+                        tabBarIcon: ({ color }) => (
+                            <MaterialCommunityIcons
+                                name="album"
+                                size={iconSizes.md}
+                                color={color}
+                            />
+                        ),
+                    }}
+                />
+                <MaterialBottomTabs.Screen
                     name="songs"
                     options={{
                         tabBarLabel: "Songs",
