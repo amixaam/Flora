@@ -13,6 +13,8 @@
 
 ## New features
 
+## ATGADINAT LEONAM, VAI TS IR FIRE OR NAH
+
 -   [ ] Playing queue (Add songs, playlists, albums to playing queue, view queue)
 -   [x] Background music playback
 -   [ ] Albums and Singles (Album tab)
