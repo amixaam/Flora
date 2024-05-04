@@ -1,12 +1,18 @@
 import { forwardRef } from "react";
 import { FlatList } from "react-native";
 import { useSongsStore } from "../../store/songs";
-import { Spacing } from "../../styles/constants";
+import { SnapPoints, Spacing } from "../../styles/constants";
 import ListItemsNotFound from "../UI/ListItemsNotFound";
 import SheetPlaylistOptionsButton from "../UI/SheetPlaylistOptionsButton";
-import SheetLayout from "./SheetLayout";
+import { SheetModalLayout } from "./SheetModalLayout";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetProps } from "../../types/other";
+import { Playlist } from "../../types/song";
 
-const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
+const AddSongToPlaylistBottomSheet = forwardRef<
+    BottomSheetModal,
+    BottomSheetProps
+>((props, ref) => {
     const {
         playlists,
         selectedSong,
@@ -14,7 +20,9 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
         removeSongFromPlaylist,
     } = useSongsStore();
 
-    const handleAddPress = (item) => {
+    if (!selectedSong) return;
+
+    const handleAddPress = (item: Playlist) => {
         if (item.songs.includes(selectedSong.id)) {
             removeSongFromPlaylist(item.id, selectedSong.id);
         } else {
@@ -23,10 +31,10 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
     };
 
     return (
-        <SheetLayout
+        <SheetModalLayout
             ref={ref}
             title={`Add ${selectedSong.title} to playlist`}
-            index={2}
+            snapPoints={[SnapPoints.full]}
         >
             <FlatList
                 data={playlists}
@@ -48,7 +56,7 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                 )}
                 keyExtractor={(item) => item.id}
             />
-        </SheetLayout>
+        </SheetModalLayout>
     );
 });
 

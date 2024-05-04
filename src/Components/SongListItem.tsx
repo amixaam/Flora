@@ -21,7 +21,7 @@ interface SongListItemProps {
     isSelected?: boolean;
 
     onSelect?: () => void;
-    handleOpenPress?: () => void;
+    onLongPress?: () => void;
     onPress?: () => void;
 }
 
@@ -35,23 +35,16 @@ const SongListItem = ({
     isSelected = false,
 
     onSelect = () => {},
-    handleOpenPress = () => {},
+    onLongPress = () => {},
     onPress = () => {},
 }: SongListItemProps) => {
-    const { setSelectedSong } = useSongsStore();
-    const handleEditSong = () => {
-        if (isSelectMode) return;
-        setSelectedSong(item);
-        handleOpenPress();
-    };
-
     const activeTrack = useActiveTrack();
 
     const name = item.isHidden ? "(Hidden) " + item.title : item.title;
     return (
         <TouchableNativeFeedback
             onPress={onPress}
-            onLongPress={handleEditSong}
+            onLongPress={isSelectMode ? undefined : onLongPress}
             delayLongPress={250}
         >
             <View
@@ -159,19 +152,20 @@ const LikeButton = ({
 const PlayingIndicator = ({
     isCurrentTrack = false,
     showImage = false,
-    image = require("../../assets/images/empty-cover.png"),
+    image,
 }: {
     isCurrentTrack: boolean;
     showImage: boolean;
     image?: string;
 }) => {
-    const url = image
-        ? { uri: image }
-        : require("../../assets/images/empty-cover.png");
     if (!isCurrentTrack && showImage) {
         return (
             <ImageBackground
-                source={url}
+                source={
+                    image
+                        ? { uri: image }
+                        : require("../../assets/images/empty-cover.png")
+                }
                 style={{
                     height: 48,
                     aspectRatio: 1,
@@ -187,7 +181,11 @@ const PlayingIndicator = ({
     if (showImage) {
         return (
             <ImageBackground
-                source={url}
+                source={
+                    image
+                        ? { uri: image }
+                        : require("../../assets/images/empty-cover.png")
+                }
                 style={{
                     height: 48,
                     aspectRatio: 1,

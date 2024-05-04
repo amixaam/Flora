@@ -8,38 +8,34 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SheetModalLayout } from "./SheetModalLayout";
 import { BottomSheetProps } from "../../types/other";
 
-const AddSongsToPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
+const AddSongsToAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const {
-            songs,
-            selectedPlaylist,
-            addSongToPlaylist,
-            removeSongFromPlaylist,
-        } = useSongsStore();
+        const { songs, selectedAlbum, addSongToAlbum, removeSongFromAlbum } =
+            useSongsStore();
         const [selectedSongs, setselectedSongs] = useState<string[]>([]);
 
         useEffect(() => {
-            if (!selectedPlaylist) return;
-            setselectedSongs(selectedPlaylist.songs);
-        }, [selectedPlaylist]);
+            if (!selectedAlbum) return;
+            setselectedSongs(selectedAlbum.songs);
+        }, [selectedAlbum]);
 
-        if (!selectedPlaylist) return;
+        if (!selectedAlbum) return;
 
         const changeList = (songId: string) => {
             if (selectedSongs.includes(songId)) {
                 setselectedSongs(selectedSongs.filter((id) => id !== songId));
-                removeSongFromPlaylist(selectedPlaylist.id, songId);
+                removeSongFromAlbum(selectedAlbum.id, songId);
                 return;
             }
             setselectedSongs([...selectedSongs, songId]);
-            addSongToPlaylist(selectedPlaylist.id, songId);
+            addSongToAlbum(selectedAlbum.id, songId);
             console.log(selectedSongs);
         };
 
         return (
             <SheetModalLayout
                 ref={ref}
-                title={`Add songs to ${selectedPlaylist.title}`}
+                title={`Add songs to ${selectedAlbum.title}`}
                 snapPoints={[SnapPoints.full]}
             >
                 <FlatList
@@ -72,4 +68,4 @@ const AddSongsToPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
     }
 );
 
-export default AddSongsToPlaylist;
+export default AddSongsToAlbum;

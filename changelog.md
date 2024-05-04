@@ -56,6 +56,7 @@
 -   [x] "Add to queue", "Add to playlist" and "(Un)like song" options are box shaped and at the top
 -   [ ] "Update songs with playlist metadata" option only shows up for albums
 -   [x] "Delete playlist" option icon is a trash can
+-   [ ] Liked songs playlist has a special cover
 -   [ ] Proper item seperator in lists
 -   [ ] You can't like/unlike hidden songs
 -   [ ] Flip list order in playlists (descending)

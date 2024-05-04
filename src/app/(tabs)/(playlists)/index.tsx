@@ -8,15 +8,13 @@ import { useSongsStore } from "../../../store/songs";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
-import CreatePlaylistBottomSheet from "../../../Components/BottomSheets/CreatePlaylistBottomSheet";
 import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
 import IconButton from "../../../Components/UI/IconButton";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Playlist } from "../../../types/song";
-import { SheetModalLayout } from "../../../Components/BottomSheets/SheetModalLayout";
-import TsBottomSheetAddon from "../../../Components/BottomSheets/TsBottomSheetAddon";
+import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
 
 export default function PlaylistsTab() {
     const { playlists, setSelectedPlaylist, setup } = useSongsStore();
@@ -34,21 +32,23 @@ export default function PlaylistsTab() {
         });
     }, [navigation]);
 
-    const newPlaylistRef = useRef<BottomSheetModal>(null);
-    const openCreatePlaylist = () => newPlaylistRef.current?.present();
-    const dismissCreatePlaylist = () => newPlaylistRef.current?.dismiss();
+    const CreatePlaylistRef = useRef<BottomSheetModal>(null);
+    const openCreatePlaylist = useCallback(
+        () => CreatePlaylistRef.current?.present(),
+        []
+    );
+    const dismissCreatePlaylist = useCallback(
+        () => CreatePlaylistRef.current?.dismiss(),
+        []
+    );
 
     const PlaylistOptionsRef = useRef<BottomSheetModal>(null);
-    const openPlaylistOptions = () => PlaylistOptionsRef.current?.present();
-    const dismissPlaylistOptions = () => PlaylistOptionsRef.current?.dismiss();
-
-    const sheetModalRef = useRef<BottomSheetModal>(null);
-    const openSheet = useCallback(() => {
-        sheetModalRef.current?.present();
+    const openPlaylistOptions = useCallback(() => {
+        PlaylistOptionsRef.current?.present();
     }, []);
 
-    const closeSheet = useCallback(() => {
-        sheetModalRef.current?.dismiss();
+    const dismissPlaylistOptions = useCallback(() => {
+        PlaylistOptionsRef.current?.dismiss();
     }, []);
 
     return (
@@ -77,17 +77,13 @@ export default function PlaylistsTab() {
                     />
                 )}
             />
-            <TouchableNativeFeedback onPress={openSheet}>
-                <View>
-                    <Text style={[textStyles.h5]}>Open sheet</Text>
-                </View>
-            </TouchableNativeFeedback>
-            {/* <TsBottomSheet ref={sheetModalRef} dismiss={closeSheet} /> */}
-            <TsBottomSheetAddon ref={sheetModalRef} dismiss={closeSheet} />
-            {/* <CreatePlaylistBottomSheet ref={newPlaylistRef} /> */}
             <PlaylistSheet
                 ref={PlaylistOptionsRef}
                 dismiss={dismissPlaylistOptions}
+            />
+            <CreatePlaylist
+                ref={CreatePlaylistRef}
+                dismiss={dismissCreatePlaylist}
             />
         </View>
     );

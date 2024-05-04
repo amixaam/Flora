@@ -64,11 +64,7 @@ type SongsStore = {
     // // statistics
 
     // // playlists
-    createPlaylist: (
-        title: string,
-        description: string | undefined,
-        artwork: string | undefined
-    ) => void;
+    createPlaylist: (inputFields: Partial<Playlist>) => void;
     editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
     deletePlaylist: (id: string) => void;
 
@@ -79,12 +75,7 @@ type SongsStore = {
     removeSongFromPlaylist: (playlistId: string, songId: string) => void;
 
     // // albums
-    createAlbum: (
-        title: string,
-        artist: string,
-        year: number | string,
-        artwork: string | undefined
-    ) => void;
+    createAlbum: (inputFields: Partial<Album>) => void;
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
@@ -249,19 +240,21 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             // playlists ----------------------------------------------------------
-            createPlaylist: (
-                title = "Unnamed playlist",
-                description = undefined,
-                artwork = undefined
-            ) => {
+            createPlaylist: (inputFields) => {
                 const newPlaylist: Playlist = {
                     id: (
                         Date.now().toString(36) +
                         Math.random().toString(36).substr(2, 5)
                     ).toUpperCase(),
-                    title,
-                    description,
-                    artwork,
+                    title: inputFields.title
+                        ? inputFields.title
+                        : "Unnamed playlist",
+                    description: inputFields.description
+                        ? inputFields.description
+                        : undefined,
+                    artwork: inputFields.artwork
+                        ? inputFields.artwork
+                        : undefined,
                     songs: [],
                 };
 
@@ -276,7 +269,7 @@ export const useSongsStore = create<SongsStore>()(
                         playlist.id === id
                             ? {
                                   ...playlist,
-                                  inputFields,
+                                  ...inputFields,
                               }
                             : playlist
                     ),
@@ -309,29 +302,28 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addSongToPlaylist: (playlistId, songId) => {
-                set((state) => {
-                    const playlist = state.playlists.find(
-                        (p) => p.id === playlistId
-                    );
+                const playlist = get().getPlaylist(playlistId);
 
-                    if (playlistId === "1") {
+                if (playlist?.songs.includes(songId)) return;
+
+                if (playlistId === "1") {
+                    set((state) => {
                         const song = state.songs.find((s) => s.id === songId);
                         if (song) song.isLiked = true;
-                    }
+                        return state;
+                    });
+                }
 
-                    if (playlist?.songs.includes(songId)) return state;
-
-                    return {
-                        playlists: state.playlists.map((playlist) =>
-                            playlist.id === playlistId
-                                ? {
-                                      ...playlist,
-                                      songs: [...playlist.songs, songId],
-                                  }
-                                : playlist
-                        ),
-                    };
-                });
+                set((state) => ({
+                    playlists: state.playlists.map((playlist) =>
+                        playlist.id === playlistId
+                            ? {
+                                  ...playlist,
+                                  songs: [...playlist.songs, songId],
+                              }
+                            : playlist
+                    ),
+                }));
             },
 
             removeSongFromPlaylist: (playlistId, songId) => {
@@ -363,22 +355,23 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             // Albums ----------------------------------------------------------
-            createAlbum: (
-                title = "Unnamed album",
-                artist = "No artist",
-                year = "No year",
-                artwork = undefined
-            ) => {
+            createAlbum: (inputFields) => {
                 const newAlbum: Album = {
                     id: (
                         Date.now().toString(36) +
                         Math.random().toString(36).substr(2, 5)
                     ).toUpperCase(),
-                    title,
-                    artist,
-                    year,
-                    artwork,
                     songs: [],
+                    title: inputFields.title
+                        ? inputFields.title
+                        : "Unnamed album",
+                    artist: inputFields.artist
+                        ? inputFields.artist
+                        : "No artist",
+                    year: inputFields.year ? inputFields.year : "No year",
+                    artwork: inputFields.artwork
+                        ? inputFields.artwork
+                        : undefined,
                 };
 
                 set((state) => ({

@@ -1,15 +1,15 @@
-import BottomSheetModal, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { forwardRef, useRef } from "react";
+import { forwardRef, useCallback, useRef } from "react";
 import { useSongsStore } from "../../store/songs";
-import { Spacing } from "../../styles/constants";
+import { SnapPoints, Spacing } from "../../styles/constants";
 import LargeOptionButton from "../UI/LargeOptionButton";
 import SheetOptionsButton from "../UI/SheetOptionsButton";
-import AddSongToPlaylistBottomSheet from "./AddSongToPlaylistBottomSheet";
-import SheetLayout from "./SheetLayout";
+import AddSongToPlaylistBottomSheet from "./AddSongToPlaylist";
+import { SheetModalLayout } from "./SheetModalLayout";
+import { BottomSheetProps } from "../../types/other";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
-const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
-    ({ dismiss }, ref) => {
+const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
+    (props, ref) => {
         const {
             selectedSong,
             hideSong,
@@ -20,43 +20,42 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
         } = useSongsStore();
 
         const addSongBottomSheetRef = useRef<BottomSheetModal>(null);
-        const handleOpenAddSongBottomSheet = () =>
+        const handleOpenAddSongBottomSheet = useCallback(() => {
             addSongBottomSheetRef.current?.expand();
+        }, []);
 
-        if (selectedSong === null || ref === null) return;
+        if (selectedSong === null) return;
 
-        const handleHideSongPress = () => {
-            dismiss();
+        const handleHideSong = () => {
+            props.dismiss?.();
             if (selectedSong.isHidden) {
-                selectedSong.isHidden = false;
                 unhideSong(selectedSong.id);
             } else {
-                selectedSong.isHidden = true;
                 hideSong(selectedSong.id);
             }
         };
 
-        const handleDeleteSongPress = () => {
-            dismiss();
-        };
-
-        const handleToggleLikePress = () => {
+        const handleToggleLike = () => {
+            props.dismiss?.();
             if (selectedSong.isLiked) {
-                selectedSong.isLiked = false;
                 unlikeSong(selectedSong.id);
             } else {
-                selectedSong.isLiked = true;
                 likeSong(selectedSong.id);
             }
         };
 
-        const handleAddToQueuePress = () => {
+        const handleAddToQueue = () => {
+            props.dismiss?.();
             addToQueue(selectedSong);
         };
 
         return (
             <>
-                <SheetLayout ref={ref} title={selectedSong.title}>
+                <SheetModalLayout
+                    ref={ref}
+                    title={selectedSong.title}
+                    snapPoints={[SnapPoints.lg]}
+                >
                     <BottomSheetView
                         style={{
                             flexDirection: "row",
@@ -68,9 +67,8 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                             icon="album"
                             text="Add to queue"
                             onPress={() => {
-                                dismiss();
-
-                                handleAddToQueuePress();
+                                props.dismiss?.();
+                                handleAddToQueue();
                             }}
                             disabled={selectedSong.isHidden}
                         />
@@ -78,8 +76,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                             icon="playlist-plus"
                             text="Add to playlist"
                             onPress={() => {
-                                dismiss();
-
+                                props.dismiss?.();
                                 handleOpenAddSongBottomSheet();
                             }}
                             disabled={selectedSong.isHidden}
@@ -95,7 +92,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                                     : "Add favourite"
                             }
                             onPress={() => {
-                                handleToggleLikePress();
+                                handleToggleLike();
                             }}
                             disabled={selectedSong.isHidden}
                         />
@@ -104,7 +101,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                         icon="album"
                         buttonContent="Go to album (NOT DONE)"
                         onPress={() => {
-                            dismiss();
+                            props.dismiss?.();
                         }}
                         isDisabled={selectedSong.isHidden}
                     />
@@ -112,14 +109,14 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                         icon="chart-timeline-variant-shimmer"
                         buttonContent="View statistics (NOT DONE)"
                         onPress={() => {
-                            dismiss();
+                            props.dismiss?.();
                         }}
                     />
                     <SheetOptionsButton
                         icon="plus"
                         buttonContent="Add as single (NOT DONE)"
                         onPress={() => {
-                            dismiss();
+                            props.dismiss?.();
                         }}
                         isDisabled={selectedSong.isHidden}
                     />
@@ -127,7 +124,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                         icon="pencil"
                         buttonContent="Edit tags (NOT DONE)"
                         onPress={() => {
-                            dismiss();
+                            props.dismiss?.();
                         }}
                     />
 
@@ -136,17 +133,16 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetModalMethods>(
                         buttonContent={
                             selectedSong.isHidden ? "Show song" : "Hide song"
                         }
-                        onPress={handleHideSongPress}
+                        onPress={handleHideSong}
                     />
                     <SheetOptionsButton
                         icon={"trash-can"}
                         buttonContent={
                             "Delete song from device (not available)"
                         }
-                        onPress={handleDeleteSongPress}
                         isDisabled={true}
                     />
-                </SheetLayout>
+                </SheetModalLayout>
                 <AddSongToPlaylistBottomSheet ref={addSongBottomSheetRef} />
             </>
         );

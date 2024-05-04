@@ -151,7 +151,7 @@ export default function AlbumScreen() {
                             index={index}
                             showNumeration={true}
                             showImage={false}
-                            handleOpenPress={handleEditSong}
+                            onLongPress={handleEditSong}
                             onPress={() => {
                                 addListToQueue(songs, item, true);
                             }}

@@ -36,3 +36,11 @@ export enum Colors {
     input = "#2B2931",
     input60 = "#2B293160",
 }
+
+export enum SnapPoints {
+    full = "93%",
+    xl = "80%",
+    lg = "65%",
+    md = "50%", // default
+    sm = "35%",
+}

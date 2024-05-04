@@ -5,7 +5,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { Text } from "react-native";
-import { Colors, Spacing } from "../../styles/constants";
+import { Colors, SnapPoints, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 
 interface Props {
@@ -16,7 +16,10 @@ interface Props {
 export const SheetModalLayout = forwardRef<BottomSheetModal, Props>(
     (props, ref) => {
         const snapPoints = useMemo(
-            () => (props.snapPoints ? props.snapPoints : ["50%", "75%"]),
+            () =>
+                props.snapPoints
+                    ? props.snapPoints
+                    : [SnapPoints.md, SnapPoints.lg],
             [props.snapPoints]
         );
         const renderBackdrop = useCallback(

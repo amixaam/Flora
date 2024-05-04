@@ -149,7 +149,7 @@ export default function PlaylistScreen() {
                             item={item}
                             index={index}
                             showImage={true}
-                            handleOpenPress={handleEditSong}
+                            onLongPress={handleEditSong}
                             onPress={() => {
                                 addListToQueue(songData, item, true);
                             }}

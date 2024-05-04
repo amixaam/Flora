@@ -6,19 +6,17 @@ import CancelButton from "../UI/CancelButton";
 import ImagePickerButton from "../UI/ImagePickerButton";
 import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
-import SheetLayout from "./SheetLayout";
 import { Playlist } from "../../types/song";
+import { BottomSheetProps } from "../../types/other";
+import { SheetModalLayout } from "./SheetModalLayout";
+import { SnapPoints, Spacing } from "../../styles/constants";
 
-interface DismissProps {
-    dismiss: () => void;
-}
-
-const EditPlaylistBottomSheet = forwardRef<BottomSheetModal, DismissProps>(
+const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { selectedPlaylist, editPlaylist } = useSongsStore();
         const [inputFields, setInputFields] = useState<Partial<Playlist>>({
             title: "",
-            description: "",
+            description: undefined,
             artwork: undefined,
         });
 
@@ -34,19 +32,20 @@ const EditPlaylistBottomSheet = forwardRef<BottomSheetModal, DismissProps>(
         if (!selectedPlaylist) return;
 
         const handleSubmitForm = () => {
+            if (!inputFields.title) inputFields.title = "Unnamed playlist";
             editPlaylist(selectedPlaylist.id, inputFields);
-            props.dismiss();
+            props.dismiss?.();
         };
 
         return (
-            <SheetLayout
+            <SheetModalLayout
                 ref={ref}
-                title={"Edit " + selectedPlaylist.title}
-                index={2}
+                title={`Edit ${selectedPlaylist.title}`}
+                snapPoints={[SnapPoints.lg]}
             >
                 <BottomSheetView
                     style={{
-                        rowGap: 8,
+                        rowGap: Spacing.sm,
                         flex: 1,
                     }}
                 >
@@ -76,21 +75,23 @@ const EditPlaylistBottomSheet = forwardRef<BottomSheetModal, DismissProps>(
                         }
                     />
 
-                    <View style={{ flexDirection: "row", columnGap: 8 }}>
+                    <View
+                        style={{ flexDirection: "row", columnGap: Spacing.sm }}
+                    >
                         <SubmitButton
                             handleSubmitForm={handleSubmitForm}
                             text="Edit"
                         />
                         <CancelButton
                             handlePress={() => {
-                                props.dismiss();
+                                props.dismiss?.();
                             }}
                         />
                     </View>
                 </BottomSheetView>
-            </SheetLayout>
+            </SheetModalLayout>
         );
     }
 );
 
-export default EditPlaylistBottomSheet;
+export default EditPlaylist;

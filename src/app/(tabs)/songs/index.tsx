@@ -87,16 +87,19 @@ export default function SongsTab() {
         setSongs([...songs, ...newSongsWithInfo]);
     };
 
-    // process new songs
     useEffect(() => {
-        console.log("local renew");
         getFiles();
     }, []);
 
-    const bottomSheetRef = useRef<BottomSheetModal>(null);
-    const handleOpenPress = () => bottomSheetRef.current?.expand();
-
-    const insets = useSafeAreaInsets();
+    const SongOptionsRef = useRef<BottomSheetModal>(null);
+    const openSongOptions = useCallback(
+        () => SongOptionsRef.current?.present(),
+        []
+    );
+    const closeSongOptions = useCallback(
+        () => SongOptionsRef.current?.dismiss(),
+        []
+    );
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
@@ -104,10 +107,12 @@ export default function SongsTab() {
         await getFiles();
         setRefreshing(false);
     }, []);
+    const insets = useSafeAreaInsets();
 
     return (
         <View style={mainStyles.container}>
             <FlashList
+                data={filteredSongs}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -117,11 +122,8 @@ export default function SongsTab() {
                         progressBackgroundColor={Colors.primary}
                     />
                 }
-                refreshing={refreshing}
-                data={filteredSongs}
                 onEndReached={() => console.log("end reached!")}
-                onRefresh={() => console.log("refreshed!")}
-                estimatedItemSize={700}
+                estimatedItemSize={1000}
                 ListEmptyComponent={
                     <ListItemsNotFound
                         text={`Search "${search}" didn't find any results!`}
@@ -132,21 +134,28 @@ export default function SongsTab() {
                     paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
                 }}
-                renderItem={({ item }) => (
-                    <SongListItem
-                        item={item}
-                        showImage={true}
-                        handleOpenPress={handleOpenPress}
-                        onPress={() => {
-                            setSelectedSong(item);
-                            addListToQueue(songs, item);
-                            router.push("/player");
-                        }}
-                    />
-                )}
+                renderItem={({ item }) => {
+                    return (
+                        <SongListItem
+                            item={item}
+                            showImage={true}
+                            onLongPress={() => {
+                                console.log("long press");
+
+                                setSelectedSong(item);
+                                openSongOptions();
+                            }}
+                            onPress={() => {
+                                setSelectedSong(item);
+                                addListToQueue(songs, item);
+                                router.push("/player");
+                            }}
+                        />
+                    );
+                }}
                 keyExtractor={(item) => item.id}
             />
-            <SongSheet ref={bottomSheetRef} />
+            <SongSheet ref={SongOptionsRef} dismiss={closeSongOptions} />
         </View>
     );
 }

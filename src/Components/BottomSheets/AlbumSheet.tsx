@@ -10,26 +10,27 @@ import { BottomSheetProps } from "../../types/other";
 import { SheetModalLayout } from "./SheetModalLayout";
 import EditPlaylist from "./EditPlaylist";
 import AddSongsToPlaylist from "./AddSongsToPlaylist";
+import DeleteAlbum from "../Modals/DeleteAlbum";
 
-const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
+const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const {
-            selectedPlaylist,
-            deletePlaylist,
+            selectedAlbum,
+            deleteAlbum,
+            getSongsFromAlbum,
             shuffleList,
             addToQueue,
-            getSongsFromPlaylist,
         } = useSongsStore();
 
         const [deleteConfirmModal, setDeleteConfirmModal] =
             useState<boolean>(false);
 
-        const EditPlaylistRef = useRef<BottomSheetModal>(null);
-        const openEditPlaylist = useCallback(() => {
-            EditPlaylistRef.current?.present();
+        const EditAlbumRef = useRef<BottomSheetModal>(null);
+        const openEditAlbum = useCallback(() => {
+            EditAlbumRef.current?.present();
         }, []);
-        const dismissEditPlaylist = useCallback(() => {
-            EditPlaylistRef.current?.dismiss();
+        const dismissEditAlbum = useCallback(() => {
+            EditAlbumRef.current?.dismiss();
         }, []);
 
         const AddSongsRef = useRef<BottomSheetModal>(null);
@@ -37,28 +38,28 @@ const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             AddSongsRef.current?.present();
         }, []);
 
-        if (selectedPlaylist === null) return null;
+        if (selectedAlbum === null) return null;
 
-        const handleDeletePlaylist = () => {
+        const handleDeleteAlbum = () => {
             props.dismiss?.();
             setDeleteConfirmModal(false);
 
-            deletePlaylist(selectedPlaylist.id);
+            deleteAlbum(selectedAlbum.id);
         };
 
         const handleShufflePlay = () => {
             props.dismiss?.();
-            shuffleList(getSongsFromPlaylist(selectedPlaylist.id));
+            shuffleList(getSongsFromAlbum(selectedAlbum.id));
         };
 
         const handleAddToQueue = () => {
             props.dismiss?.();
-            addToQueue(getSongsFromPlaylist(selectedPlaylist.id));
+            addToQueue(getSongsFromAlbum(selectedAlbum.id));
         };
 
         return (
             <>
-                <SheetModalLayout ref={ref} title={selectedPlaylist.title}>
+                <SheetModalLayout ref={ref} title={selectedAlbum.title}>
                     <BottomSheetView
                         style={{
                             flexDirection: "row",
@@ -85,30 +86,25 @@ const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     </BottomSheetView>
                     <SheetOptionsButton
                         icon="playlist-edit"
-                        buttonContent={"Edit playlist"}
-                        isDisabled={selectedPlaylist.id === "1"}
-                        onPress={openEditPlaylist}
+                        buttonContent={"Edit album"}
+                        onPress={openEditAlbum}
                     />
                     <SheetOptionsButton
                         icon="trash-can"
-                        buttonContent={"Delete playlist"}
-                        isDisabled={selectedPlaylist.id === "1"}
+                        buttonContent={"Delete album"}
                         onPress={() => setDeleteConfirmModal(true)}
                     />
                 </SheetModalLayout>
-                <DeletePlaylist
+                <DeleteAlbum
                     visible={deleteConfirmModal}
                     dismiss={() => setDeleteConfirmModal(false)}
-                    confirm={handleDeletePlaylist}
+                    confirm={handleDeleteAlbum}
                 />
-                <EditPlaylist
-                    ref={EditPlaylistRef}
-                    dismiss={dismissEditPlaylist}
-                />
-                <AddSongsToPlaylist ref={AddSongsRef}/>
+                <EditPlaylist ref={EditAlbumRef} dismiss={dismissEditAlbum} />
+                <AddSongsToPlaylist ref={AddSongsRef} />
             </>
         );
     }
 );
 
-export default PlaylistSheet;
+export default AlbumSheet;
