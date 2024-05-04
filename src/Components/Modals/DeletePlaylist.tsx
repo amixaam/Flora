@@ -5,7 +5,7 @@ import { textStyles } from "../../styles/text";
 import SubmitButton from "../UI/SubmitButton";
 import CancelButton from "../UI/CancelButton";
 
-const DeletePlaylistConfirm = ({
+const DeletePlaylist = ({
     dismiss = () => {
         console.log("dismissed!");
     },
@@ -32,4 +32,4 @@ const DeletePlaylistConfirm = ({
     );
 };
 
-export default DeletePlaylistConfirm;
+export default DeletePlaylist;

@@ -7,7 +7,6 @@ import ImagePickerButton from "../UI/ImagePickerButton";
 import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
 import SheetLayout from "./SheetLayout";
-import DatePickerInput from "../UI/DatePickerInput";
 import { Spacing } from "../../styles/constants";
 
 const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {

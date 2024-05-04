@@ -2,7 +2,7 @@ import { router, useNavigation } from "expo-router";
 import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -15,6 +15,8 @@ import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Playlist } from "../../../types/song";
+import { SheetModalLayout } from "../../../Components/BottomSheets/SheetModalLayout";
+import TsBottomSheetAddon from "../../../Components/BottomSheets/TsBottomSheetAddon";
 
 export default function PlaylistsTab() {
     const { playlists, setSelectedPlaylist, setup } = useSongsStore();
@@ -39,6 +41,15 @@ export default function PlaylistsTab() {
     const PlaylistOptionsRef = useRef<BottomSheetModal>(null);
     const openPlaylistOptions = () => PlaylistOptionsRef.current?.present();
     const dismissPlaylistOptions = () => PlaylistOptionsRef.current?.dismiss();
+
+    const sheetModalRef = useRef<BottomSheetModal>(null);
+    const openSheet = useCallback(() => {
+        sheetModalRef.current?.present();
+    }, []);
+
+    const closeSheet = useCallback(() => {
+        sheetModalRef.current?.dismiss();
+    }, []);
 
     return (
         <View style={[mainStyles.container]}>
@@ -66,6 +77,13 @@ export default function PlaylistsTab() {
                     />
                 )}
             />
+            <TouchableNativeFeedback onPress={openSheet}>
+                <View>
+                    <Text style={[textStyles.h5]}>Open sheet</Text>
+                </View>
+            </TouchableNativeFeedback>
+            {/* <TsBottomSheet ref={sheetModalRef} dismiss={closeSheet} /> */}
+            <TsBottomSheetAddon ref={sheetModalRef} dismiss={closeSheet} />
             {/* <CreatePlaylistBottomSheet ref={newPlaylistRef} /> */}
             <PlaylistSheet
                 ref={PlaylistOptionsRef}
