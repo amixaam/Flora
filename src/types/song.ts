@@ -5,7 +5,7 @@ interface Statistics {
 }
 
 interface Song {
-    readonly id: number;
+    readonly id: string;
     url: string;
     title: string;
     artist: string;
@@ -23,7 +23,7 @@ interface Playlist {
     title: string;
     description: string | undefined;
     artwork: string | undefined;
-    songs: number[];
+    songs: string[];
 }
 
 interface Album {
@@ -32,7 +32,7 @@ interface Album {
     artist: string;
     year: number | string;
     artwork: string | undefined;
-    songs: number[];
+    songs: string[];
 }
 
 export type { Song, Playlist, Album };

@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { FlatList } from "react-native";
 import { useSongsStore } from "../../store/songs";
-import { spacing } from "../../styles/constants";
+import { Spacing } from "../../styles/constants";
 import ListItemsNotFound from "../UI/ListItemsNotFound";
 import SheetPlaylistOptionsButton from "../UI/SheetPlaylistOptionsButton";
 import SheetLayout from "./SheetLayout";
@@ -37,7 +37,7 @@ const AddSongToPlaylistBottomSheet = forwardRef(({ props }, ref) => {
                     />
                 }
                 contentContainerStyle={{
-                    paddingBottom: spacing.xl,
+                    paddingBottom: Spacing.xl,
                 }}
                 renderItem={({ item }) => (
                     <SheetPlaylistOptionsButton

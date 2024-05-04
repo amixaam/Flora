@@ -1,7 +1,7 @@
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
-import { spacing } from "../../styles/constants";
+import { Spacing } from "../../styles/constants";
 import UpdateAlbumsConfirm from "../Modals/UpdateAlbumsConfirm";
 import LargeOptionButton from "../UI/LargeOptionButton";
 import SheetOptionsButton from "../UI/SheetOptionsButton";
@@ -71,8 +71,8 @@ const AlbumSheet = forwardRef(({ props }, ref) => {
                 <BottomSheetView
                     style={{
                         flexDirection: "row",
-                        columnGap: spacing.md,
-                        marginHorizontal: spacing.appPadding,
+                        columnGap: Spacing.md,
+                        marginHorizontal: Spacing.appPadding,
                     }}
                 >
                     <LargeOptionButton

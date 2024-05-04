@@ -42,7 +42,7 @@ type SongsStore = {
 
     setRepeatMode: (mode: RepeatMode) => Promise<void>;
 
-    addToQueue: (song: Song) => Promise<void>;
+    addToQueue: (song: Song | Song[]) => Promise<void>;
     addListToQueue: (
         list: Song[],
         selectedSong?: Song,
@@ -54,11 +54,11 @@ type SongsStore = {
 
     // // songs
     setSongs: (songs: Song[]) => void;
-    getSong: (id: number) => Song | undefined;
-    likeSong: (id: number) => void;
-    unlikeSong: (id: number) => void;
-    hideSong: (id: number) => void;
-    unhideSong: (id: number) => void;
+    getSong: (id: string) => Song | undefined;
+    likeSong: (id: string) => void;
+    unlikeSong: (id: string) => void;
+    hideSong: (id: string) => void;
+    unhideSong: (id: string) => void;
     // // UPDATE SONG TAGS
 
     // // statistics
@@ -69,19 +69,14 @@ type SongsStore = {
         description: string | undefined,
         artwork: string | undefined
     ) => void;
-    editPlaylist: (
-        id: string,
-        title: string,
-        description: string | undefined,
-        artwork: string | undefined
-    ) => void;
+    editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
     deletePlaylist: (id: string) => void;
 
     getPlaylist: (id: string) => Playlist | undefined;
     getSongsFromPlaylist: (id: string) => Song[];
 
-    addSongToPlaylist: (playlistId: string, songId: number) => void;
-    removeSongFromPlaylist: (playlistId: string, songId: number) => void;
+    addSongToPlaylist: (playlistId: string, songId: string) => void;
+    removeSongFromPlaylist: (playlistId: string, songId: string) => void;
 
     // // albums
     createAlbum: (
@@ -90,20 +85,14 @@ type SongsStore = {
         year: number | string,
         artwork: string | undefined
     ) => void;
-    editAlbum: (
-        id: string,
-        title: string,
-        artist: string,
-        year: number | string,
-        artwork: string | undefined
-    ) => void;
+    editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
     getAlbum: (id: string) => Album | undefined;
     getSongsFromAlbum: (id: string) => Song[];
 
-    addSongToAlbum: (albumId: string, songId: number) => void;
-    removeSongFromAlbum: (albumId: string, songId: number) => void;
+    addSongToAlbum: (albumId: string, songId: string) => void;
+    removeSongFromAlbum: (albumId: string, songId: string) => void;
 
     copyAlbumTagsToSongs: (albumId: string) => void;
 };
@@ -208,7 +197,8 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addToQueue: async (song) => {
-                await TrackPlayer.add([song]);
+                if (Array.isArray(song)) await TrackPlayer.add(song);
+                else await TrackPlayer.add([song]);
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
@@ -280,20 +270,13 @@ export const useSongsStore = create<SongsStore>()(
                 }));
             },
 
-            editPlaylist: (
-                id,
-                title = "Unnamed playlist",
-                description = undefined,
-                artwork = undefined
-            ) => {
+            editPlaylist: (id, inputFields) => {
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === id
                             ? {
                                   ...playlist,
-                                  title,
-                                  description,
-                                  artwork,
+                                  inputFields,
                               }
                             : playlist
                     ),
@@ -403,22 +386,13 @@ export const useSongsStore = create<SongsStore>()(
                 }));
             },
 
-            editAlbum: (
-                id,
-                title = "Unnamed album",
-                artist = "No artist",
-                year = "No year",
-                artwork = undefined
-            ) => {
+            editAlbum: (id, inputFields) => {
                 set((state) => ({
                     albums: state.albums.map((album) =>
                         album.id === id
                             ? {
                                   ...album,
-                                  title,
-                                  artist,
-                                  year,
-                                  artwork,
+                                  inputFields,
                               }
                             : album
                     ),

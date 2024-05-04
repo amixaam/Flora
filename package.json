@@ -16,6 +16,7 @@
     "@react-native-community/slider": "4.4.2",
     "@shopify/flash-list": "1.6.3",
     "@types/react": "~18.2.45",
+    "@types/react-native-vector-icons": "^6.4.18",
     "expo": "~50.0.15",
     "expo-av": "~13.10.5",
     "expo-constants": "~15.4.5",

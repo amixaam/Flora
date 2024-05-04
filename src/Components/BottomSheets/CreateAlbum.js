@@ -3,7 +3,7 @@ import { useSongsStore } from "../../store/songs";
 import SheetLayout from "./SheetLayout";
 import ImagePickerButton from "../UI/ImagePickerButton";
 import TextInput from "../UI/TextInput";
-import { spacing } from "../../styles/constants";
+import { Spacing } from "../../styles/constants";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import SubmitButton from "../UI/SubmitButton";
 import CancelButton from "../UI/CancelButton";
@@ -37,9 +37,9 @@ const CreateAlbum = forwardRef(({ props }, ref) => {
         <SheetLayout ref={ref} title={"Create album"} index={2}>
             <BottomSheetView
                 style={{
-                    rowGap: spacing.sm,
+                    rowGap: Spacing.sm,
                     flex: 1,
-                    marginHorizontal: spacing.appPadding,
+                    marginHorizontal: Spacing.appPadding,
                 }}
             >
                 <ImagePickerButton
@@ -58,7 +58,7 @@ const CreateAlbum = forwardRef(({ props }, ref) => {
                 />
                 <BottomSheetView
                     style={{
-                        columnGap: spacing.sm,
+                        columnGap: Spacing.sm,
                         flexDirection: "row",
                     }}
                 >
@@ -81,7 +81,7 @@ const CreateAlbum = forwardRef(({ props }, ref) => {
                 </BottomSheetView>
                 <BottomSheetView
                     style={{
-                        columnGap: spacing.sm,
+                        columnGap: Spacing.sm,
                         flexDirection: "row",
                     }}
                 >

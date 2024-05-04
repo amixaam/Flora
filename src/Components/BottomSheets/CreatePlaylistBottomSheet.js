@@ -8,7 +8,7 @@ import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
 import SheetLayout from "./SheetLayout";
 import DatePickerInput from "../UI/DatePickerInput";
-import { spacing } from "../../styles/constants";
+import { Spacing } from "../../styles/constants";
 
 const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
     const { createPlaylist } = useSongsStore();
@@ -32,7 +32,7 @@ const CreatePlaylistBottomSheet = forwardRef(({ props }, ref) => {
                 style={{
                     rowGap: 8,
                     flex: 1,
-                    marginHorizontal: spacing.appPadding,
+                    marginHorizontal: Spacing.appPadding,
                 }}
             >
                 <ImagePickerButton image={image} setImage={setImage} />
