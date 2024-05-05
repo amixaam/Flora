@@ -1,11 +1,5 @@
 import { FlashList } from "@shopify/flash-list";
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -20,20 +14,18 @@ import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Song } from "../../../types/song";
 import useSearchBar from "../../../hooks/useSearchBar";
-
+import { MusicInfo } from "expo-music-info-2";
 export default function SongsTab() {
     const { songs, addSongs, setSelectedSong, addListToQueue } =
         useSongsStore();
 
     const search = useSearchBar();
 
-    const filteredSongs = useMemo(() => {
-        return songs.filter(
-            (song) =>
-                song.title.toLowerCase().includes(search.toLowerCase()) ||
-                song.artist.toLowerCase().includes(search.toLowerCase())
-        );
-    }, [search]);
+    const filteredSongs = songs.filter(
+        (song) =>
+            song.title.toLowerCase().includes(search.toLowerCase()) ||
+            song.artist.toLowerCase().includes(search.toLowerCase())
+    );
 
     const getFiles = async () => {
         const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -66,9 +58,15 @@ export default function SongsTab() {
             (asset) => !songs.some((song) => song.id === asset.id)
         );
 
-        console.log("newSongs: ", newSongs);
-
-        if (newSongs.length === 0) return;
+        const getMetadataFrom = assets[20];
+        try {
+            const metadata = await MusicInfo.getMusicInfoAsync(
+                getMetadataFrom.uri
+            );
+            console.log("metadata: ", metadata);
+        } catch (error) {
+            console.log(error);
+        }
 
         const newSongsWithInfo = newSongs.map((asset): Song => {
             return {
@@ -90,8 +88,7 @@ export default function SongsTab() {
                 },
             };
         });
-
-        addSongs(newSongsWithInfo);
+        if (newSongsWithInfo) addSongs(newSongsWithInfo);
     };
 
     useEffect(() => {
@@ -120,6 +117,7 @@ export default function SongsTab() {
         <View style={mainStyles.container}>
             <FlashList
                 data={filteredSongs}
+                estimatedItemSize={1000}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -129,8 +127,6 @@ export default function SongsTab() {
                         progressBackgroundColor={Colors.primary}
                     />
                 }
-                onEndReached={() => console.log("end reached!")}
-                estimatedItemSize={1000}
                 ListEmptyComponent={
                     <ListItemsNotFound
                         text={`Search "${search}" didn't find any results!`}

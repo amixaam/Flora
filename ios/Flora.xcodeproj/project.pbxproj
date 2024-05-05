@@ -14,10 +14,10 @@
 		96905EF65AED1B983A6B3ABC /* libPods-Flora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Flora.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		1A92674E9FC944BFA7F65E5C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259F17A5C16F45FA96B509CA /* noop-file.swift */; };
-		7971EB86E334446CA0E77F09 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD8BF51EF1E6437E9DEBE813 /* Poppins-Bold.ttf */; };
-		4C7A3C3D3E7B49A0B2B95410 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 77DF9D7C157A45E5841B0304 /* Poppins-Medium.ttf */; };
-		E7463C7BCD5A43BF9867CE22 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01B59FF483EF4E0A965DE3CD /* Poppins-Regular.ttf */; };
+		F4DF74AAB37D46C3A04B414F /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4F95BE4F6C4AE9AF151415 /* noop-file.swift */; };
+		0014B2B65ED34BB79ABB6CD6 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 83A71583EAE243028DD32B49 /* Poppins-Bold.ttf */; };
+		591A6CC5FE0F46EDB820E9AE /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C30B70189B040D2ACA7C6A6 /* Poppins-Medium.ttf */; };
+		E14EB12DE2E049F285B749AF /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF3933830F8F43E6AEFA19D8 /* Poppins-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,11 +34,11 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Flora/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		259F17A5C16F45FA96B509CA /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "Flora/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		1BBD38F28813406880E94C90 /* Flora-Bridging-Header.h */ = {isa = PBXFileReference; name = "Flora-Bridging-Header.h"; path = "Flora/Flora-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		CD8BF51EF1E6437E9DEBE813 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; name = "Poppins-Bold.ttf"; path = "../assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		77DF9D7C157A45E5841B0304 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		01B59FF483EF4E0A965DE3CD /* Poppins-Regular.ttf */ = {isa = PBXFileReference; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2D4F95BE4F6C4AE9AF151415 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "Flora/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		9C12FBEA30754CA4AA76AB39 /* Flora-Bridging-Header.h */ = {isa = PBXFileReference; name = "Flora-Bridging-Header.h"; path = "Flora/Flora-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		83A71583EAE243028DD32B49 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; name = "Poppins-Bold.ttf"; path = "../assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2C30B70189B040D2ACA7C6A6 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EF3933830F8F43E6AEFA19D8 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,8 +63,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				259F17A5C16F45FA96B509CA /* noop-file.swift */,
-				1BBD38F28813406880E94C90 /* Flora-Bridging-Header.h */,
+				2D4F95BE4F6C4AE9AF151415 /* noop-file.swift */,
+				9C12FBEA30754CA4AA76AB39 /* Flora-Bridging-Header.h */,
 			);
 			name = Flora;
 			sourceTree = "<group>";
@@ -94,7 +94,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				ABAC5982042A43098BB0118C /* Resources */,
+				692A25FC290C4D3488B94E43 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -143,12 +143,12 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		ABAC5982042A43098BB0118C /* Resources */ = {
+		692A25FC290C4D3488B94E43 /* Resources */ = {
 			isa = "PBXGroup";
 			children = (
-				CD8BF51EF1E6437E9DEBE813 /* Poppins-Bold.ttf */,
-				77DF9D7C157A45E5841B0304 /* Poppins-Medium.ttf */,
-				01B59FF483EF4E0A965DE3CD /* Poppins-Regular.ttf */,
+				83A71583EAE243028DD32B49 /* Poppins-Bold.ttf */,
+				2C30B70189B040D2ACA7C6A6 /* Poppins-Medium.ttf */,
+				EF3933830F8F43E6AEFA19D8 /* Poppins-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -216,10 +216,10 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				C73B36A278FC478DB0799873 /* Flora-Bridging-Header.h in Resources */,
-				7971EB86E334446CA0E77F09 /* Poppins-Bold.ttf in Resources */,
-				4C7A3C3D3E7B49A0B2B95410 /* Poppins-Medium.ttf in Resources */,
-				E7463C7BCD5A43BF9867CE22 /* Poppins-Regular.ttf in Resources */,
+				DC6A6B44200243299330C1D0 /* Flora-Bridging-Header.h in Resources */,
+				0014B2B65ED34BB79ABB6CD6 /* Poppins-Bold.ttf in Resources */,
+				591A6CC5FE0F46EDB820E9AE /* Poppins-Medium.ttf in Resources */,
+				E14EB12DE2E049F285B749AF /* Poppins-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +295,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				1A92674E9FC944BFA7F65E5C /* noop-file.swift in Sources */,
+				F4DF74AAB37D46C3A04B414F /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
