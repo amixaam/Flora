@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { useCallback, useRef } from "react";
 import { Text, View } from "react-native";
 import { useActiveTrack } from "react-native-track-player";
 import AlbumArt from "../Components/AlbumArt";
@@ -11,14 +12,18 @@ import { useSongsStore } from "../store/songs";
 import { Spacing } from "../styles/constants";
 import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 
 const PlayerScreen = () => {
-    const { likeSong, unlikeSong } = useSongsStore();
+    const { likeSong, unlikeSong, setSelectedSong, getSong } = useSongsStore();
     const activeTrack = useActiveTrack();
 
-    const editSongRef = useRef<BottomSheet>(null);
-    const handleEditSong = () => editSongRef.current?.expand();
+    const SongOptionsRef = useRef<BottomSheetModal>(null);
+    const openSongOptions = useCallback(() => {
+        SongOptionsRef.current?.present();
+    }, []);
+    const dismissSongoptions = useCallback(() => {
+        SongOptionsRef.current?.dismiss();
+    }, []);
 
     const handleLikeButtonPress = () => {
         if (activeTrack) {
@@ -57,7 +62,13 @@ const PlayerScreen = () => {
                     />
                     <PrimaryRoundIconButton
                         icon="pencil"
-                        onPress={handleEditSong}
+                        onPress={() => {
+                            let song = getSong(activeTrack?.id);
+                            if (song) {
+                                setSelectedSong(song);
+                                openSongOptions();
+                            }
+                        }}
                         style={{
                             position: "absolute",
                             bottom: Spacing.md,
@@ -97,7 +108,7 @@ const PlayerScreen = () => {
                 </View>
                 <PlaybackControls />
             </View>
-            <SongSheet ref={editSongRef} />
+            <SongSheet ref={SongOptionsRef} dismiss={dismissSongoptions} />
         </View>
     );
 };

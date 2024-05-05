@@ -13,17 +13,10 @@ const SongsLayout = () => {
                     headerTitle: "Songs",
                     headerTitleStyle: textStyles.h3,
                     headerBackground: () => <Header />,
-
                     headerShadowVisible: false,
                     headerTransparent: true,
                     headerTintColor: Colors.primary,
-                    headerSearchBarOptions: {
-                        headerIconColor: Colors.primary,
-                        textColor: Colors.primary,
-                        barTintColor: Colors.secondary,
-                        hintTextColor: Colors.primary90,
-                        shouldShowHintSearchIcon: false,
-                    },
+                    animation: "none",
                 }}
             >
                 <Stack.Screen name="index" />

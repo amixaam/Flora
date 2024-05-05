@@ -17,6 +17,7 @@ const PlaylistsLayout = () => {
                     headerShadowVisible: false,
                     headerTransparent: true,
                     headerTintColor: Colors.primary,
+                    animation: "none",
                 }}
             >
                 <Stack.Screen

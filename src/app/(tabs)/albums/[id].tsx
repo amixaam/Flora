@@ -1,6 +1,7 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,20 +19,24 @@ import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 
 export default function AlbumScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     if (typeof id === "undefined") return router.back();
 
-    const { getAlbum, getSongsFromAlbum, shuffleList, addListToQueue } =
-        useSongsStore();
+    const {
+        getAlbum,
+        getSongsFromAlbum,
+        shuffleList,
+        addListToQueue,
+        setSelectedSong,
+    } = useSongsStore();
 
     const navigation = useNavigation();
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="pencil" onPress={handleEditPlaylist} />
+                <IconButton icon="pencil" onPress={openAlbumOptions} />
             ),
         });
     }, [navigation]);
@@ -41,13 +46,23 @@ export default function AlbumScreen() {
     if (!album) return;
 
     const songs = getSongsFromAlbum(album.id);
-    console.log(album);
 
-    const editSongSheetRef = useRef<BottomSheet>(null);
-    const handleEditSong = () => editSongSheetRef.current?.expand();
+    const SongOptionsRef = useRef<BottomSheetModal>(null);
+    const openSongOptions = useCallback(() => {
+        SongOptionsRef.current?.present();
+    }, []);
+    const dismissSongOptions = useCallback(() => {
+        SongOptionsRef.current?.dismiss();
+    }, []);
 
-    const editAlbumSheetRef = useRef<BottomSheet>(null);
-    const handleEditPlaylist = () => editAlbumSheetRef.current?.expand();
+    const AlbumOptionsRef = useRef<BottomSheetModal>(null);
+    const openAlbumOptions = useCallback(() => {
+        AlbumOptionsRef.current?.present();
+    }, []);
+
+    const dismissAlbumOptions = useCallback(() => {
+        AlbumOptionsRef.current?.dismiss();
+    }, []);
 
     const insets = useSafeAreaInsets();
 
@@ -108,12 +123,13 @@ export default function AlbumScreen() {
                         icon="play"
                     />
                     <PrimaryRoundIconButton
+                        icon="shuffle"
                         size={36}
                         onPress={() => shuffleList(songs, true)}
                     />
                     <SecondaryRoundIconButton
                         icon="pencil"
-                        onPress={handleEditPlaylist}
+                        onPress={openAlbumOptions}
                     />
                 </View>
             </View>
@@ -123,7 +139,7 @@ export default function AlbumScreen() {
                     estimatedItemSize={100}
                     ListEmptyComponent={
                         <ListItemsNotFound
-                            text={`There are no songs in this playlist!`}
+                            text={`There are no songs in this album!`}
                             icon="music-note"
                         />
                     }
@@ -151,7 +167,10 @@ export default function AlbumScreen() {
                             index={index}
                             showNumeration={true}
                             showImage={false}
-                            onLongPress={handleEditSong}
+                            onLongPress={() => {
+                                setSelectedSong(item);
+                                openSongOptions();
+                            }}
                             onPress={() => {
                                 addListToQueue(songs, item, true);
                             }}
@@ -160,8 +179,8 @@ export default function AlbumScreen() {
                     keyExtractor={(item) => item.id}
                 />
             </View>
-            <SongSheet ref={editSongSheetRef} />
-            <AlbumSheet ref={editAlbumSheetRef} />
+            <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
+            <AlbumSheet ref={AlbumOptionsRef} dismiss={dismissAlbumOptions} />
         </ScrollView>
     );
 }

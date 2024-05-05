@@ -8,7 +8,7 @@ const Header = () => {
             style={{
                 flex: 1,
                 backgroundColor: Colors.bg,
-                opacity: 0,
+                opacity: 0.5,
             }}
         />
     );

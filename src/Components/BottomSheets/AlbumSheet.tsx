@@ -1,16 +1,16 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
 import { Spacing } from "../../styles/constants";
-import DeletePlaylist from "../Modals/DeletePlaylist";
 import LargeOptionButton from "../UI/LargeOptionButton";
 import SheetOptionsButton from "../UI/SheetOptionsButton";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetProps } from "../../types/other";
-import { SheetModalLayout } from "./SheetModalLayout";
-import EditPlaylist from "./EditPlaylist";
-import AddSongsToPlaylist from "./AddSongsToPlaylist";
 import DeleteAlbum from "../Modals/DeleteAlbum";
+import AddSongsToAlbum from "./AddSongsToAlbum";
+import EditAlbum from "./EditAlbum";
+import { SheetModalLayout } from "./SheetModalLayout";
+import UpdateAlbumsConfirm from "../Modals/UpdateAlbumsConfirm";
 
 const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -18,12 +18,15 @@ const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             selectedAlbum,
             deleteAlbum,
             getSongsFromAlbum,
+            copyAlbumTagsToSongs,
+
             shuffleList,
             addToQueue,
         } = useSongsStore();
 
         const [deleteConfirmModal, setDeleteConfirmModal] =
             useState<boolean>(false);
+        const [syncAlbumModal, setSyncAlbumModal] = useState<boolean>(false);
 
         const EditAlbumRef = useRef<BottomSheetModal>(null);
         const openEditAlbum = useCallback(() => {
@@ -45,6 +48,13 @@ const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             setDeleteConfirmModal(false);
 
             deleteAlbum(selectedAlbum.id);
+        };
+
+        const handleSyncAlbum = () => {
+            props.dismiss?.();
+            setSyncAlbumModal(false);
+
+            copyAlbumTagsToSongs(selectedAlbum.id);
         };
 
         const handleShufflePlay = () => {
@@ -90,6 +100,11 @@ const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         onPress={openEditAlbum}
                     />
                     <SheetOptionsButton
+                        icon="checkbox-multiple-blank"
+                        buttonContent={"Sync Song tags"}
+                        onPress={() => setSyncAlbumModal(true)}
+                    />
+                    <SheetOptionsButton
                         icon="trash-can"
                         buttonContent={"Delete album"}
                         onPress={() => setDeleteConfirmModal(true)}
@@ -100,8 +115,14 @@ const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     dismiss={() => setDeleteConfirmModal(false)}
                     confirm={handleDeleteAlbum}
                 />
-                <EditPlaylist ref={EditAlbumRef} dismiss={dismissEditAlbum} />
-                <AddSongsToPlaylist ref={AddSongsRef} />
+                <UpdateAlbumsConfirm
+                    visible={syncAlbumModal}
+                    dismiss={() => setSyncAlbumModal(false)}
+                    confirm={handleSyncAlbum}
+                />
+
+                <EditAlbum ref={EditAlbumRef} dismiss={dismissEditAlbum} />
+                <AddSongsToAlbum ref={AddSongsRef} />
             </>
         );
     }

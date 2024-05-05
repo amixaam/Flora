@@ -2,9 +2,10 @@ import { router, useNavigation } from "expo-router";
 import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSongsStore } from "../../../store/songs";
 
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
 import AlbumSheet from "../../../Components/BottomSheets/AlbumSheet";
@@ -13,7 +14,6 @@ import IconButton from "../../../Components/UI/IconButton";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 import { Album } from "../../../types/song";
 export default function AlbumsTab() {
     const { albums, setSelectedAlbum } = useSongsStore();
@@ -23,16 +23,29 @@ export default function AlbumsTab() {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="plus" onPress={handleOpenCreateAlbum} />
+                <IconButton icon="plus" onPress={openCreateAlbum} />
             ),
         });
     }, [navigation]);
 
-    const newAlbumSheetRef = useRef<BottomSheet>(null);
-    const handleOpenCreateAlbum = () => newAlbumSheetRef.current?.expand();
+    const CreateAlbumRef = useRef<BottomSheetModal>(null);
+    const openCreateAlbum = useCallback(
+        () => CreateAlbumRef.current?.present(),
+        []
+    );
+    const dismissCreateAlbum = useCallback(
+        () => CreateAlbumRef.current?.dismiss(),
+        []
+    );
 
-    const AlbumSheetRef = useRef<BottomSheet>(null);
-    const handleOpenAlbumSheet = () => AlbumSheetRef.current?.expand();
+    const AlbumOptionsRef = useRef<BottomSheetModal>(null);
+    const openAlbumOptions = useCallback(() => {
+        AlbumOptionsRef.current?.present();
+    }, []);
+
+    const dismissAlbumOptions = useCallback(() => {
+        AlbumOptionsRef.current?.dismiss();
+    }, []);
 
     return (
         <View style={[mainStyles.container]}>
@@ -55,13 +68,13 @@ export default function AlbumsTab() {
                         }}
                         onLongPress={() => {
                             setSelectedAlbum(item);
-                            handleOpenAlbumSheet();
+                            openAlbumOptions();
                         }}
                     />
                 )}
             />
-            <CreateAlbum ref={newAlbumSheetRef} />
-            <AlbumSheet ref={AlbumSheetRef} />
+            <CreateAlbum ref={CreateAlbumRef} dismiss={dismissCreateAlbum} />
+            <AlbumSheet ref={AlbumOptionsRef} dismiss={dismissAlbumOptions} />
         </View>
     );
 }

@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,20 +18,25 @@ import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 export default function PlaylistScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     if (typeof id === "undefined") return router.back();
 
-    const { getPlaylist, getSongsFromPlaylist, shuffleList, addListToQueue } =
-        useSongsStore();
+    const {
+        getPlaylist,
+        getSongsFromPlaylist,
+        shuffleList,
+        addListToQueue,
+        setSelectedSong,
+    } = useSongsStore();
 
     const navigation = useNavigation();
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="pencil" onPress={handleEditPlaylist} />
+                <IconButton icon="pencil" onPress={openPlaylistOptions} />
             ),
         });
     }, [navigation]);
@@ -39,11 +44,22 @@ export default function PlaylistScreen() {
     const playlistData = getPlaylist(id);
     const songData = getSongsFromPlaylist(id);
 
-    const editSongSheetRef = useRef<BottomSheet>(null);
-    const handleEditSong = () => editSongSheetRef.current?.expand();
+    const SongOptionsRef = useRef<BottomSheetModal>(null);
+    const openSongOptions = useCallback(() => {
+        SongOptionsRef.current?.present();
+    }, []);
+    const dismissSongOptions = useCallback(() => {
+        SongOptionsRef.current?.dismiss();
+    }, []);
 
-    const editPlaylistSheetRef = useRef<BottomSheet>(null);
-    const handleEditPlaylist = () => editPlaylistSheetRef.current?.expand();
+    const PlaylistOptionsRef = useRef<BottomSheetModal>(null);
+    const openPlaylistOptions = useCallback(() => {
+        PlaylistOptionsRef.current?.present();
+    }, []);
+
+    const dismissPlaylistOptions = useCallback(() => {
+        PlaylistOptionsRef.current?.dismiss();
+    }, []);
 
     const insets = useSafeAreaInsets();
 
@@ -107,12 +123,13 @@ export default function PlaylistScreen() {
                         icon="play"
                     />
                     <PrimaryRoundIconButton
+                        icon="shuffle"
                         size={36}
                         onPress={() => shuffleList(songData, true)}
                     />
                     <SecondaryRoundIconButton
                         icon="pencil"
-                        onPress={handleEditPlaylist}
+                        onPress={openPlaylistOptions}
                     />
                 </View>
             </View>
@@ -149,7 +166,10 @@ export default function PlaylistScreen() {
                             item={item}
                             index={index}
                             showImage={true}
-                            onLongPress={handleEditSong}
+                            onLongPress={() => {
+                                setSelectedSong(item);
+                                openSongOptions();
+                            }}
                             onPress={() => {
                                 addListToQueue(songData, item, true);
                             }}
@@ -158,8 +178,11 @@ export default function PlaylistScreen() {
                     keyExtractor={(item) => item.id.toString()}
                 />
             </View>
-            <SongSheet ref={editSongSheetRef} />
-            <PlaylistSheet ref={editPlaylistSheetRef} />
+            <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
+            <PlaylistSheet
+                ref={PlaylistOptionsRef}
+                dismiss={dismissPlaylistOptions}
+            />
         </ScrollView>
     );
 }

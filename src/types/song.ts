@@ -9,7 +9,7 @@ interface Song {
     url: string;
     title: string;
     artist: string;
-    year: number | string;
+    year: string;
     artwork: string | undefined;
     duration: number;
 
@@ -30,7 +30,7 @@ interface Album {
     readonly id: string;
     title: string;
     artist: string;
-    year: number | string;
+    year: string;
     artwork: string | undefined;
     songs: string[];
 }

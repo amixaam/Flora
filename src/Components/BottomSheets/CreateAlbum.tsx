@@ -35,7 +35,7 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
         return (
             <SheetModalLayout
                 ref={ref}
-                title={"Create playlist"}
+                title={"Create album"}
                 snapPoints={["65%"]}
             >
                 <BottomSheetView
@@ -60,7 +60,12 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 setInputFields({ ...inputFields, title: value })
                             }
                         />
-                        <BottomSheetView>
+                        <BottomSheetView
+                            style={{
+                                flexDirection: "row",
+                                columnGap: Spacing.sm,
+                            }}
+                        >
                             <TextInput
                                 bottomSheet={true}
                                 placeholder="Artist"

@@ -18,19 +18,21 @@ import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
+import { Song } from "../../../types/song";
+
 export default function SongsTab() {
-    const { songs, setSongs, setSelectedSong, addListToQueue } =
+    const { songs, addSongs, setSelectedSong, addListToQueue } =
         useSongsStore();
 
-    // const search = useSearchBar("Search songs or artists...");
-    const search = "";
+    const [search, setSearch] = useState("");
+
     const filteredSongs = useMemo(() => {
         return songs.filter(
             (song) =>
                 song.title.toLowerCase().includes(search.toLowerCase()) ||
                 song.artist.toLowerCase().includes(search.toLowerCase())
         );
-    }, [search, songs]);
+    }, [search]);
 
     const getFiles = async () => {
         const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -38,7 +40,7 @@ export default function SongsTab() {
             alert("Permission to access media library was denied");
             return;
         }
-        // get all audio assets
+
         let assets = [];
         let endCursor;
         let hasNextPage = true;
@@ -63,12 +65,16 @@ export default function SongsTab() {
             (asset) => !songs.some((song) => song.id === asset.id)
         );
 
-        const newSongsWithInfo = newSongs.map((asset) => {
+        console.log("newSongs: ", newSongs);
+
+        if (newSongs.length === 0) return;
+
+        const newSongsWithInfo = newSongs.map((asset): Song => {
             return {
                 id: asset.id,
                 url: asset.uri,
 
-                title: asset.filename,
+                title: "New song",
                 artist: "No artist",
                 year: "No year",
                 artwork: undefined,
@@ -84,7 +90,7 @@ export default function SongsTab() {
             };
         });
 
-        setSongs([...songs, ...newSongsWithInfo]);
+        addSongs(newSongsWithInfo);
     };
 
     useEffect(() => {
@@ -107,7 +113,7 @@ export default function SongsTab() {
         await getFiles();
         setRefreshing(false);
     }, []);
-    const insets = useSafeAreaInsets();
+    // const insets = useSafeAreaInsets();
 
     return (
         <View style={mainStyles.container}>
@@ -116,7 +122,7 @@ export default function SongsTab() {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        progressViewOffset={insets.top * 2}
+                        // progressViewOffset={insets.top * 2}
                         onRefresh={onRefresh}
                         colors={[Colors.bg]}
                         progressBackgroundColor={Colors.primary}
@@ -130,18 +136,18 @@ export default function SongsTab() {
                         icon="magnify"
                     />
                 }
-                contentContainerStyle={{
-                    paddingTop: insets.top * 2,
-                    paddingBottom: insets.bottom + Spacing.miniPlayer,
-                }}
+                contentContainerStyle={
+                    {
+                        // paddingTop: insets.top * 2,
+                        // paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    }
+                }
                 renderItem={({ item }) => {
                     return (
                         <SongListItem
                             item={item}
                             showImage={true}
                             onLongPress={() => {
-                                console.log("long press");
-
                                 setSelectedSong(item);
                                 openSongOptions();
                             }}

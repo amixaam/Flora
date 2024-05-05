@@ -10,7 +10,7 @@ import TrackPlayer, {
     RepeatMode,
 } from "react-native-track-player";
 import { Album, Playlist, Song } from "../types/song";
-// import { PlaybackService } from "../../PlaybackService";
+import { PlaybackService } from "../../PlaybackService";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -54,6 +54,7 @@ type SongsStore = {
 
     // // songs
     setSongs: (songs: Song[]) => void;
+    addSongs: (songs: Song[]) => void;
     getSong: (id: string) => Song | undefined;
     likeSong: (id: string) => void;
     unlikeSong: (id: string) => void;
@@ -141,7 +142,7 @@ export const useSongsStore = create<SongsStore>()(
                 try {
                     await TrackPlayer.getActiveTrack();
                 } catch (error) {
-                    // TrackPlayer.registerPlaybackService(() => PlaybackService);
+                    TrackPlayer.registerPlaybackService(() => PlaybackService);
 
                     await TrackPlayer.setupPlayer({
                         autoHandleInterruptions: true,
@@ -214,6 +215,11 @@ export const useSongsStore = create<SongsStore>()(
 
             // songs ----------------------------------------------------------
             setSongs: (songs) => set({ songs }),
+            addSongs: (songs) => {
+                set((state) => ({
+                    songs: [...state.songs, ...songs],
+                }));
+            },
             getSong: (id) => get().songs.find((song) => song.id === id),
 
             likeSong: (id) => {
@@ -385,12 +391,13 @@ export const useSongsStore = create<SongsStore>()(
                         album.id === id
                             ? {
                                   ...album,
-                                  inputFields,
+                                  ...inputFields,
                               }
                             : album
                     ),
                 }));
             },
+
             deleteAlbum: (id) => {
                 set((state) => ({
                     albums: state.albums.filter((a) => a.id !== id),
