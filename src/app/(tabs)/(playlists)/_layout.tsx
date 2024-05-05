@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import React from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import Header from "../../../Components/Header";
 import IconButton from "../../../Components/UI/IconButton";
 import { Colors } from "../../../styles/constants";
@@ -8,7 +7,6 @@ import { textStyles } from "../../../styles/text";
 
 const PlaylistsLayout = () => {
     return (
-        <SafeAreaProvider>
             <Stack
                 screenOptions={{
                     headerTitle: "Playlists",
@@ -32,7 +30,6 @@ const PlaylistsLayout = () => {
                     }}
                 />
             </Stack>
-        </SafeAreaProvider>
     );
 };
 

@@ -19,12 +19,13 @@ import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Song } from "../../../types/song";
+import useSearchBar from "../../../hooks/useSearchBar";
 
 export default function SongsTab() {
     const { songs, addSongs, setSelectedSong, addListToQueue } =
         useSongsStore();
 
-    const [search, setSearch] = useState("");
+    const search = useSearchBar();
 
     const filteredSongs = useMemo(() => {
         return songs.filter(
@@ -113,7 +114,7 @@ export default function SongsTab() {
         await getFiles();
         setRefreshing(false);
     }, []);
-    // const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
 
     return (
         <View style={mainStyles.container}>
@@ -122,7 +123,7 @@ export default function SongsTab() {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        // progressViewOffset={insets.top * 2}
+                        progressViewOffset={insets.top * 2}
                         onRefresh={onRefresh}
                         colors={[Colors.bg]}
                         progressBackgroundColor={Colors.primary}
@@ -136,12 +137,10 @@ export default function SongsTab() {
                         icon="magnify"
                     />
                 }
-                contentContainerStyle={
-                    {
-                        // paddingTop: insets.top * 2,
-                        // paddingBottom: insets.bottom + Spacing.miniPlayer,
-                    }
-                }
+                contentContainerStyle={{
+                    paddingTop: insets.top * 2,
+                    paddingBottom: insets.bottom + Spacing.miniPlayer,
+                }}
                 renderItem={({ item }) => {
                     return (
                         <SongListItem
