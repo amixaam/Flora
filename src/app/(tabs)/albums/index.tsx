@@ -15,6 +15,7 @@ import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album } from "../../../types/song";
+import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
 export default function AlbumsTab() {
     const { albums, setSelectedAlbum } = useSongsStore();
     const insets = useSafeAreaInsets();
@@ -58,6 +59,12 @@ export default function AlbumsTab() {
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
                     paddingHorizontal: Spacing.appPadding - Spacing.sm,
                 }}
+                ListEmptyComponent={
+                    <ListItemsNotFound
+                        text={`You dont have any albums!`}
+                        icon="album"
+                    />
+                }
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
                     <AlbumItem

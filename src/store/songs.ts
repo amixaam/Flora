@@ -55,6 +55,7 @@ type SongsStore = {
     // // songs
     setSongs: (songs: Song[]) => void;
     addSongs: (songs: Song[]) => void;
+    doesSongExist: (id: string) => boolean;
     getSong: (id: string) => Song | undefined;
     likeSong: (id: string) => void;
     unlikeSong: (id: string) => void;
@@ -76,11 +77,13 @@ type SongsStore = {
     removeSongFromPlaylist: (playlistId: string, songId: string) => void;
 
     // // albums
-    createAlbum: (inputFields: Partial<Album>) => void;
+    createAlbum: (inputFields: Partial<Album>) => string;
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
     getAlbum: (id: string) => Album | undefined;
+    getAlbumByName: (name: string) => Album | undefined;
+    doesAlbumExist: (name: string) => boolean;
     getSongsFromAlbum: (id: string) => Song[];
 
     addSongToAlbum: (albumId: string, songId: string) => void;
@@ -135,6 +138,7 @@ export const useSongsStore = create<SongsStore>()(
                     ],
                     albums: [],
                 });
+                console.log("reset all!");
             },
 
             // Music playback ----------------------------------------------------------
@@ -221,6 +225,9 @@ export const useSongsStore = create<SongsStore>()(
                 }));
             },
             getSong: (id) => get().songs.find((song) => song.id === id),
+            doesSongExist: (id) => {
+                return get().songs.some((song) => song.id === id);
+            },
 
             likeSong: (id) => {
                 get().addSongToPlaylist("1", id);
@@ -362,11 +369,12 @@ export const useSongsStore = create<SongsStore>()(
 
             // Albums ----------------------------------------------------------
             createAlbum: (inputFields) => {
+                const id = (
+                    Date.now().toString(36) +
+                    Math.random().toString(36).substr(2, 5)
+                ).toUpperCase();
                 const newAlbum: Album = {
-                    id: (
-                        Date.now().toString(36) +
-                        Math.random().toString(36).substr(2, 5)
-                    ).toUpperCase(),
+                    id: id,
                     songs: [],
                     title: inputFields.title
                         ? inputFields.title
@@ -383,6 +391,8 @@ export const useSongsStore = create<SongsStore>()(
                 set((state) => ({
                     albums: [...state.albums, newAlbum],
                 }));
+
+                return id;
             },
 
             editAlbum: (id, inputFields) => {
@@ -409,6 +419,20 @@ export const useSongsStore = create<SongsStore>()(
                 const album = albums.find((a) => a.id === id);
 
                 return album;
+            },
+
+            getAlbumByName: (name) => {
+                const albums = get().albums;
+                const album = albums.find((a) => a.title === name);
+
+                return album;
+            },
+
+            doesAlbumExist: (name) => {
+                const albums = get().albums;
+                const album = albums.find((a) => a.title === name);
+                if (album) return true;
+                return false;
             },
 
             getSongsFromAlbum: (id) => {

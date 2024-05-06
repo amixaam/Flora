@@ -3,7 +3,7 @@
         "scheme": "flora",
         "name": "Flora",
         "slug": "Flora",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "orientation": "portrait",
         "icon": "./assets/images/system/icon.png",
         "userInterfaceStyle": "dark",

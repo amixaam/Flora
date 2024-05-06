@@ -9,15 +9,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SongSheet from "../../../Components/BottomSheets/SongSheet";
 import SongListItem from "../../../Components/SongListItem";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
+import useSearchBar from "../../../hooks/useSearchBar";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { Song } from "../../../types/song";
-import useSearchBar from "../../../hooks/useSearchBar";
-import { MusicInfo } from "expo-music-info-2";
+import { Album, Song } from "../../../types/song";
+import { MusicInfo } from "../../../utils/TagReader";
 export default function SongsTab() {
-    const { songs, addSongs, setSelectedSong, addListToQueue } =
-        useSongsStore();
+    const {
+        songs,
+        addSongs,
+        setSelectedSong,
+        addListToQueue,
+        doesAlbumExist,
+        createAlbum,
+        getAlbumByName,
+        addSongToAlbum,
+        doesSongExist,
+    } = useSongsStore();
 
     const search = useSearchBar();
 
@@ -26,6 +35,77 @@ export default function SongsTab() {
             song.title.toLowerCase().includes(search.toLowerCase()) ||
             song.artist.toLowerCase().includes(search.toLowerCase())
     );
+
+    const processData = async (asset: MediaLibrary.Asset) => {
+        if (doesSongExist(asset.id)) return "Song already exists";
+
+        const musicData = await MusicInfo.getMusicInfoAsync(asset.uri, {
+            title: true,
+            artist: true,
+            album: true,
+            year: true,
+        });
+
+        if (musicData === null) {
+            const songData: Song = {
+                id: asset.id,
+                url: asset.uri,
+
+                title: asset.filename,
+                artist: "No artist",
+                year: "No year",
+                artwork: undefined,
+                duration: asset.duration,
+
+                isLiked: false,
+                isHidden: false,
+                statistics: {
+                    lastPlayed: undefined,
+                    timesPlayed: 0,
+                    timesSkipped: 0,
+                },
+            };
+            addSongs([songData]);
+
+            return "Invalid music file";
+        }
+
+        if (!doesAlbumExist(musicData?.album)) {
+            const inputFields: Partial<Album> = {
+                title: musicData.album,
+                artist: musicData.artist,
+                year: musicData.year,
+            };
+            createAlbum(inputFields);
+        }
+        console.log(`${asset.filename}: `, musicData);
+
+        const songData: Song = {
+            id: asset.id,
+            url: asset.uri,
+
+            title: asset.filename,
+            artist: musicData.artist ? musicData.artist : "No artist",
+            year: musicData.year ? musicData.year : "No year",
+            artwork: undefined,
+            duration: asset.duration,
+
+            isLiked: false,
+            isHidden: false,
+            statistics: {
+                lastPlayed: undefined,
+                timesPlayed: 0,
+                timesSkipped: 0,
+            },
+        };
+        addSongs([songData]);
+
+        const album = getAlbumByName(musicData.album);
+        if (album) {
+            addSongToAlbum(album.id, asset.id);
+        }
+        return "Saved to album";
+    };
 
     const getFiles = async () => {
         const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -57,38 +137,10 @@ export default function SongsTab() {
         const newSongs = assets.filter(
             (asset) => !songs.some((song) => song.id === asset.id)
         );
-
-        const getMetadataFrom = assets[20];
-        try {
-            const metadata = await MusicInfo.getMusicInfoAsync(
-                getMetadataFrom.uri
-            );
-            console.log("metadata: ", metadata);
-        } catch (error) {
-            console.log(error);
-        }
-
-        const newSongsWithInfo = newSongs.map((asset): Song => {
-            return {
-                id: asset.id,
-                url: asset.uri,
-
-                title: "New song",
-                artist: "No artist",
-                year: "No year",
-                artwork: undefined,
-                duration: asset.duration,
-
-                isLiked: false,
-                isHidden: false,
-                statistics: {
-                    lastPlayed: undefined,
-                    timesPlayed: 0,
-                    timesSkipped: 0,
-                },
-            };
+        if (newSongs.length === 0) return;
+        newSongs.forEach((song) => {
+            processData(song);
         });
-        if (newSongsWithInfo) addSongs(newSongsWithInfo);
     };
 
     useEffect(() => {

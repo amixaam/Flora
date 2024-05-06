@@ -17,9 +17,10 @@ import { Playlist } from "../../../types/song";
 import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, setup } = useSongsStore();
+    const { playlists, setSelectedPlaylist, setup, resetAll } = useSongsStore();
     useEffect(() => {
         setup();
+        // resetAll();
     }, []);
     const insets = useSafeAreaInsets();
 
