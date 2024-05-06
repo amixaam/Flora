@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useCallback, useRef } from "react";
 import { FlatList } from "react-native";
 import { useSongsStore } from "../../store/songs";
 import { SnapPoints, Spacing } from "../../styles/constants";
@@ -8,6 +8,8 @@ import { SheetModalLayout } from "./SheetModalLayout";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BottomSheetProps } from "../../types/other";
 import { Playlist } from "../../types/song";
+import SheetOptionsButton from "../UI/SheetOptionsButton";
+import CreatePlaylist from "./CreatePlaylist";
 
 const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -28,33 +30,58 @@ const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
             }
         };
 
+        const CreatePlaylistRef = useRef<BottomSheetModal>(null);
+        const openCreatePlaylist = useCallback(() => {
+            CreatePlaylistRef.current?.present();
+        }, []);
+        const dismissCreatePlaylist = useCallback(() => {
+            CreatePlaylistRef.current?.dismiss();
+        }, []);
+
         return (
-            <SheetModalLayout
-                ref={ref}
-                title={`Add ${selectedSong.title} to playlist`}
-                snapPoints={[SnapPoints.full]}
-            >
-                <FlatList
-                    data={playlists}
-                    ListEmptyComponent={
-                        <ListItemsNotFound
-                            icon="playlist-music"
-                            text="No playlists found!"
-                        />
-                    }
-                    contentContainerStyle={{
-                        paddingBottom: Spacing.xl,
-                    }}
-                    renderItem={({ item }) => (
-                        <SheetPlaylistOptionsButton
-                            data={item}
-                            onPress={handleAddPress}
-                            isSelected={item.songs.includes(selectedSong.id)}
-                        />
-                    )}
-                    keyExtractor={(item) => item.id}
+            <>
+                <SheetModalLayout
+                    ref={ref}
+                    title={`Add ${selectedSong.title} to playlist`}
+                    snapPoints={[SnapPoints.full]}
+                >
+                    <FlatList
+                        data={playlists}
+                        ListEmptyComponent={
+                            <ListItemsNotFound
+                                icon="playlist-music"
+                                text="No playlists found!"
+                            />
+                        }
+                        ListFooterComponent={
+                            <SheetOptionsButton
+                                icon="plus"
+                                onPress={openCreatePlaylist}
+                                buttonContent="Make a new playlist"
+                            />
+                        }
+                        contentContainerStyle={{
+                            paddingBottom: Spacing.xl,
+                        }}
+                        renderItem={({ item }) => (
+                            <SheetPlaylistOptionsButton
+                                playlist={item}
+                                onPress={() => {
+                                    handleAddPress(item);
+                                }}
+                                isSelected={item.songs.includes(
+                                    selectedSong.id
+                                )}
+                            />
+                        )}
+                        keyExtractor={(item) => item.id}
+                    />
+                </SheetModalLayout>
+                <CreatePlaylist
+                    ref={CreatePlaylistRef}
+                    dismiss={dismissCreatePlaylist}
                 />
-            </SheetModalLayout>
+            </>
         );
     }
 );

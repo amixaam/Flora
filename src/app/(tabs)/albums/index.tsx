@@ -16,6 +16,7 @@ import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album } from "../../../types/song";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
+import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 export default function AlbumsTab() {
     const { albums, setSelectedAlbum } = useSongsStore();
     const insets = useSafeAreaInsets();
@@ -50,6 +51,8 @@ export default function AlbumsTab() {
 
     return (
         <View style={[mainStyles.container]}>
+            <BackgroundImageAbsolute />
+
             <FlashList
                 numColumns={2}
                 data={albums}

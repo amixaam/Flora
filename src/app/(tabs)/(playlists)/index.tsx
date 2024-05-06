@@ -1,5 +1,10 @@
 import { router, useNavigation } from "expo-router";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import {
+    ImageBackground,
+    Text,
+    TouchableNativeFeedback,
+    View,
+} from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef } from "react";
@@ -15,6 +20,7 @@ import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Playlist } from "../../../types/song";
 import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
+import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 
 export default function PlaylistsTab() {
     const { playlists, setSelectedPlaylist, setup, resetAll } = useSongsStore();
@@ -54,6 +60,7 @@ export default function PlaylistsTab() {
 
     return (
         <View style={[mainStyles.container]}>
+            <BackgroundImageAbsolute />
             <FlashList
                 numColumns={2}
                 data={playlists}

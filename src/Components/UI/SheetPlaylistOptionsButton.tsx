@@ -5,19 +5,24 @@ import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import Checkbox from "./Checkbox";
 import { Spacing } from "../../styles/constants";
+import { Playlist } from "../../types/song";
+
+interface Props {
+    playlist: Playlist;
+    onPress: () => void;
+    isSelected?: boolean;
+    isDisabled?: boolean;
+}
 
 const SheetPlaylistOptionsButton = ({
-    data,
+    playlist,
     onPress,
 
     isSelected = false,
     isDisabled = false,
-}) => {
+}: Props) => {
     return (
-        <TouchableNativeFeedback
-            onPress={() => onPress(data)}
-            disabled={isDisabled}
-        >
+        <TouchableNativeFeedback onPress={onPress} disabled={isDisabled}>
             <View
                 style={[
                     mainStyles.textListItem,
@@ -26,7 +31,7 @@ const SheetPlaylistOptionsButton = ({
                 ]}
             >
                 <AlbumArt
-                    image={data.artwork}
+                    image={playlist.artwork}
                     style={{
                         width: 56,
                         aspectRatio: 1,
@@ -44,16 +49,13 @@ const SheetPlaylistOptionsButton = ({
                 >
                     <View style={{ flexDirection: "column", flex: 1 }}>
                         <Text style={[textStyles.text]} numberOfLines={1}>
-                            {data.name}
+                            {playlist.title}
                         </Text>
                         <Text style={textStyles.small}>
-                            {data.songs.length} songs
+                            {playlist.songs.length} songs
                         </Text>
                     </View>
-                    <Checkbox
-                        onPress={() => onPress(data)}
-                        isSelected={isSelected}
-                    />
+                    <Checkbox onPress={onPress} isSelected={isSelected} />
                 </View>
             </View>
         </TouchableNativeFeedback>

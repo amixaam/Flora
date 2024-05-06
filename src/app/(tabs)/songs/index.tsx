@@ -15,6 +15,7 @@ import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Album, Song } from "../../../types/song";
 import { MusicInfo } from "../../../utils/TagReader";
+import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 export default function SongsTab() {
     const {
         songs,
@@ -167,6 +168,8 @@ export default function SongsTab() {
 
     return (
         <View style={mainStyles.container}>
+            <BackgroundImageAbsolute />
+
             <FlashList
                 data={filteredSongs}
                 estimatedItemSize={1000}

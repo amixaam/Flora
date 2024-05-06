@@ -135,7 +135,7 @@ export default function PlaylistScreen() {
             </View>
             <View style={{ flex: 1, minHeight: 5 }}>
                 <FlashList
-                    data={songData}
+                    data={songData.slice().reverse()}
                     estimatedItemSize={100}
                     ListEmptyComponent={
                         <ListItemsNotFound
