@@ -20,7 +20,7 @@
 -   [x] Read audio file metadata from downloads
 -   [ ] Edit specific song metadata
 -   [ ] Song title (if too long) in mini player, will loop horizontally
--   [ ] Dismiss player by swiping down
+-   [x] Dismiss player by swiping down
 -   [x] Shuffle and play buttons on main screens
 
 -   [ ] Playlist, Song and Album sorting
