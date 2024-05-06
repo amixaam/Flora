@@ -138,7 +138,7 @@ export const mainStyles = StyleSheet.create({
         marginTop: -8,
         flexDirection: "column",
         rowGap: 8,
-        padding: 8,
+        padding: 16,
         backgroundColor: "#16151B",
     },
     backgroundBlur: {

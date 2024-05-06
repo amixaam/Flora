@@ -3,6 +3,12 @@ import { Audio, InterruptionModeAndroid } from "expo-av";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import TrackPlayer, {
+    AppKilledPlaybackBehavior,
+    Capability,
+    RepeatMode,
+} from "react-native-track-player";
+
 const MARKED_SONGS_KEY = "MarkedSongs";
 
 export const useSongsStore = create(
@@ -35,6 +41,67 @@ export const useSongsStore = create(
 
             trackDuration: 0,
             trackPosition: 0,
+
+            isSetup: false,
+            playbackState: null, // would be nice for me to use this variable as a check in other components to change the ui
+            setPlaybackState: (state) => set({ playbackState: state }),
+
+            setup: async () => {
+                if (get().isSetup) return console.log("already setup");
+
+                await TrackPlayer.setupPlayer({
+                    autoHandleInterruptions: true,
+                });
+                await TrackPlayer.updateOptions({
+                    progressUpdateInterval: 500,
+                    android: {
+                        appKilledPlaybackBehavior:
+                            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+                    },
+                    capabilities: [
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                        Capability.SkipToPrevious,
+                        Capability.SeekTo,
+                    ],
+                    compactCapabilities: [
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                    ],
+                });
+                await TrackPlayer.setRepeatMode(RepeatMode.Off);
+                set({ isSetup: true });
+            },
+            addToQueue: async (song) => {
+                await TrackPlayer.add(song);
+            },
+            resetPlayer: async () => {
+                await TrackPlayer.reset();
+            },
+            play: async () => {
+                await TrackPlayer.play();
+            },
+            pause: async () => {
+                await TrackPlayer.pause();
+            },
+            next: async () => {
+                await TrackPlayer.skipToNext();
+            },
+            previous: async () => {
+                await TrackPlayer.skipToPrevious();
+            },
+            seekToPosition: async (position = 0) => {
+                await TrackPlayer.seekTo(position);
+            },
+
+            logQueue: async () => {
+                console.log(await TrackPlayer.getQueue());
+            },
+            logCurrentTrack: async () => {
+                console.log(await TrackPlayer.getActiveTrack());
+            },
 
             resetAll: () => {
                 set({
@@ -120,74 +187,74 @@ export const useSongsStore = create(
             },
 
             // Playback & controls
-            play: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // play: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                try {
-                    await audioRef.playAsync();
-                    set({ isPlaying: true });
-                } catch (error) {
-                    console.error("Error playing audio:", error);
-                }
-            },
-            pause: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            //     try {
+            //         await audioRef.playAsync();
+            //         set({ isPlaying: true });
+            //     } catch (error) {
+            //         console.error("Error playing audio:", error);
+            //     }
+            // },
+            // pause: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                try {
-                    await audioRef.pauseAsync();
-                    set({ isPlaying: false });
-                } catch (error) {
-                    console.error("Error pausing audio:", error);
-                }
-            },
+            //     try {
+            //         await audioRef.pauseAsync();
+            //         set({ isPlaying: false });
+            //     } catch (error) {
+            //         console.error("Error pausing audio:", error);
+            //     }
+            // },
 
-            next: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // next: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack;
+            //     const playlist = get().playlist.songs;
+            //     const currentTrack = get().currentTrack;
 
-                const index = playlist.indexOf(currentTrack);
-                const nextSongs = playlist.slice(index + 1);
-                const nextSong = nextSongs.find(
-                    (songId) => !get().getSong(songId).isHidden
-                );
+            //     const index = playlist.indexOf(currentTrack);
+            //     const nextSongs = playlist.slice(index + 1);
+            //     const nextSong = nextSongs.find(
+            //         (songId) => !get().getSong(songId).isHidden
+            //     );
 
-                if (nextSong) {
-                    const nextSongData = get().getSong(nextSong);
-                    await get().loadTrack(nextSongData);
-                } else {
-                    await get().unloadTrack();
-                }
-            },
+            //     if (nextSong) {
+            //         const nextSongData = get().getSong(nextSong);
+            //         await get().loadTrack(nextSongData);
+            //     } else {
+            //         await get().unloadTrack();
+            //     }
+            // },
 
-            previous: async () => {
-                const audioRef = get().audioRef;
-                if (!audioRef) return;
+            // previous: async () => {
+            //     const audioRef = get().audioRef;
+            //     if (!audioRef) return;
 
-                const playlist = get().playlist.songs;
-                const currentTrack = get().currentTrack;
-                const currentSong = get().getSong(currentTrack);
+            //     const playlist = get().playlist.songs;
+            //     const currentTrack = get().currentTrack;
+            //     const currentSong = get().getSong(currentTrack);
 
-                const index = playlist.indexOf(currentTrack);
-                const previousSongs = playlist.slice(0, index).reverse();
-                const previousSong = previousSongs.find(
-                    (songId) => !get().getSong(songId).isHidden
-                );
+            //     const index = playlist.indexOf(currentTrack);
+            //     const previousSongs = playlist.slice(0, index).reverse();
+            //     const previousSong = previousSongs.find(
+            //         (songId) => !get().getSong(songId).isHidden
+            //     );
 
-                if (previousSong) {
-                    const previousSongData = get().getSong(previousSong);
-                    const { positionMillis } = await audioRef.getStatusAsync();
-                    if (positionMillis >= 1000) {
-                        await audioRef.setPositionAsync(0);
-                    } else {
-                        await get().loadTrack(previousSongData);
-                    }
-                }
-            },
+            //     if (previousSong) {
+            //         const previousSongData = get().getSong(previousSong);
+            //         const { positionMillis } = await audioRef.getStatusAsync();
+            //         if (positionMillis >= 1000) {
+            //             await audioRef.setPositionAsync(0);
+            //         } else {
+            //             await get().loadTrack(previousSongData);
+            //         }
+            //     }
+            // },
 
             skipPosition: async (position) => {
                 const audioRef = get().audioRef;

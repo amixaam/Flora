@@ -7,6 +7,11 @@ import AlbumArt from "./AlbumArt";
 import IconButton from "./UI/IconButton";
 import { mainStyles, textStyles } from "./styles";
 import { FormatMillis } from "./FormatMillis";
+import {
+    useActiveTrack,
+    usePlaybackState,
+    useProgress,
+} from "react-native-track-player";
 
 const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
     return (
@@ -16,8 +21,9 @@ const PlaybackSlider = ({ trackDuration, trackPosition, skipPosition }) => {
                     ? trackPosition / trackDuration
                     : 0
             }
-            onSlidingComplete={async (value) => {
-                await skipPosition(value);
+            onSlidingComplete={(value) => {
+                const valueInMillis = value * trackDuration;
+                skipPosition(valueInMillis);
             }}
             thumbTintColor="#E8DEF8"
             minimumTrackTintColor="#E8DEF8"
@@ -44,7 +50,12 @@ const MiniPlaybackControls = () => {
 
         currentTrack,
         getSong,
+        seekToPosition,
     } = useSongsStore();
+    const activeTrack = useActiveTrack();
+    const playbackState = usePlaybackState();
+    const progress = useProgress();
+    console.log(progress);
 
     const handleLikeButtonPress = () => {
         if (songData.isLiked) {
@@ -57,7 +68,7 @@ const MiniPlaybackControls = () => {
     };
 
     const hanldePlayPausePress = () => {
-        if (isPlaying) pause();
+        if (playbackState.state === "playing") pause();
         else play();
     };
 
@@ -66,7 +77,7 @@ const MiniPlaybackControls = () => {
         setSongData(getSong(currentTrack));
     }, [currentTrack]);
 
-    if (currentTrack === null || !songData) return;
+    if (!activeTrack) return;
     return (
         <TouchableNativeFeedback
             onPress={() => router.push("/(player)/" + currentTrack)}
@@ -80,7 +91,7 @@ const MiniPlaybackControls = () => {
                     }}
                 >
                     <AlbumArt
-                        image={songData.image}
+                        image={activeTrack.artwork}
                         style={{
                             height: 48,
                             aspectRatio: 1,
@@ -105,19 +116,19 @@ const MiniPlaybackControls = () => {
                             }}
                         >
                             <Text style={textStyles.h6} numberOfLines={1}>
-                                {songData.name}
+                                {activeTrack.title}
                             </Text>
                             <Text style={textStyles.detail} numberOfLines={1}>
-                                {songData.artist
-                                    ? songData.artist
+                                {activeTrack.artist
+                                    ? activeTrack.artist
                                     : "No artist"}
                                 {" • "}
-                                {songData && songData.date
-                                    ? new Date(songData.date).getFullYear()
+                                {activeTrack.date
+                                    ? new Date(activeTrack.date).getFullYear()
                                     : "No date"}
                             </Text>
                         </View>
-                        <View style={{ marginTop: -10, marginLeft: -13 }}>
+                        {/* <View style={{ marginTop: -10, marginLeft: -13 }}>
                             <IconButton
                                 onPress={handleLikeButtonPress}
                                 icon={
@@ -125,7 +136,7 @@ const MiniPlaybackControls = () => {
                                 }
                                 size={18}
                             />
-                        </View>
+                        </View> */}
                         <View style={{ flexDirection: "row", columnGap: 16 }}>
                             <IconButton
                                 onPress={previous}
@@ -134,7 +145,11 @@ const MiniPlaybackControls = () => {
                             />
                             <IconButton
                                 onPress={hanldePlayPausePress}
-                                icon={isPlaying ? "pause" : "play"}
+                                icon={
+                                    playbackState.state === "playing"
+                                        ? "pause"
+                                        : "play"
+                                }
                                 size={36}
                             />
                             <IconButton
@@ -146,9 +161,9 @@ const MiniPlaybackControls = () => {
                     </View>
                 </View>
                 <PlaybackSlider
-                    trackDuration={trackDuration}
-                    trackPosition={trackPosition}
-                    skipPosition={skipPosition}
+                    trackDuration={progress.duration}
+                    trackPosition={progress.position}
+                    skipPosition={seekToPosition}
                 />
             </View>
         </TouchableNativeFeedback>

@@ -1,13 +1,14 @@
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useRef } from "react";
-import { View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import * as MediaLibrary from "expo-media-library";
 import SongSheet from "../../Components/BottomSheets/SongSheet";
 import PlaybackControls from "../../Components/PlaybackControls";
 import SongListItem from "../../Components/SongListItem";
-import { mainStyles } from "../../Components/styles";
+import { mainStyles, textStyles } from "../../Components/styles";
 import { useSongsStore } from "../../store/songs";
+import { play } from "react-native-track-player/lib/src/trackPlayer";
 
 export default function LocalFilesTab() {
     const {
@@ -17,6 +18,15 @@ export default function LocalFilesTab() {
         removeSongLike,
         setSelectedSong,
         currentTrack,
+        addToQueue,
+        logQueue,
+        logCurrentTrack,
+        resetPlayer,
+        playbackState,
+        play,
+        pause,
+        nextTrack,
+        previousTrack,
     } = useSongsStore();
 
     const getFiles = async () => {
@@ -54,13 +64,15 @@ export default function LocalFilesTab() {
             return {
                 id: asset.id,
                 uri: asset.uri,
+                url: asset.uri,
                 filename: asset.filename,
                 duration: asset.duration,
 
                 name: asset.filename, //default
-                artist: null,
-                date: null,
-                image: null,
+                title: asset.filename, //default
+                artist: "No artist",
+                date: "No date",
+                artwork: null,
 
                 isLiked: false,
                 isHidden: false,
@@ -93,6 +105,10 @@ export default function LocalFilesTab() {
                         addSongLike={addSongLike}
                         removeSongLike={removeSongLike}
                         handleOpenPress={handleOpenPress}
+                        onPress={() => {
+                            addToQueue(item);
+                            play();
+                        }}
                         setSelectedSong={setSelectedSong}
                         isCurrentTrack={item.id === currentTrack ? true : false}
                         showImage={true}
