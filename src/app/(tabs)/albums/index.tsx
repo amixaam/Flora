@@ -17,8 +17,9 @@ import { textStyles } from "../../../styles/text";
 import { Album } from "../../../types/song";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
 export default function AlbumsTab() {
-    const { albums, setSelectedAlbum } = useSongsStore();
+    const { albums, setSelectedAlbum, getAllAlbumSongs } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const navigation = useNavigation();
@@ -49,14 +50,18 @@ export default function AlbumsTab() {
         AlbumOptionsRef.current?.dismiss();
     }, []);
 
+    const allSongs = getAllAlbumSongs();
+
     return (
         <View style={[mainStyles.container]}>
             <BackgroundImageAbsolute />
-
             <FlashList
                 numColumns={2}
                 data={albums}
                 keyExtractor={(item) => item.id}
+                ListHeaderComponent={
+                    <TopButtonControls songs={allSongs ? allSongs : []} />
+                }
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
@@ -115,6 +120,7 @@ const AlbumItem = ({
                     </Text>
                     <Text
                         style={[{ marginTop: -Spacing.xs }, textStyles.small]}
+                        numberOfLines={1}
                     >
                         {`${item.artist} • ${item.year}`}
                     </Text>

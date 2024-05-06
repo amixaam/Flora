@@ -16,6 +16,7 @@ import { mainStyles } from "../../../styles/styles";
 import { Album, Song } from "../../../types/song";
 import { MusicInfo } from "../../../utils/TagReader";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
 export default function SongsTab() {
     const {
         songs,
@@ -173,6 +174,12 @@ export default function SongsTab() {
             <FlashList
                 data={filteredSongs}
                 estimatedItemSize={1000}
+                ListHeaderComponent={
+                    <TopButtonControls
+                        horizontalMargins={Spacing.md}
+                        songs={filteredSongs ? filteredSongs : []}
+                    />
+                }
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}

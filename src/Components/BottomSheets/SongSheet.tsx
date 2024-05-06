@@ -7,6 +7,7 @@ import AddPlaylistToSong from "./AddPlaylistToSong";
 import { SheetModalLayout } from "./SheetModalLayout";
 import { BottomSheetProps } from "../../types/other";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import SongStatistics from "./SongStatistics";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -22,6 +23,11 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         const addPlaylistRef = useRef<BottomSheetModal>(null);
         const openAddPlaylist = useCallback(() => {
             addPlaylistRef.current?.present();
+        }, []);
+
+        const songStatisticsRef = useRef<BottomSheetModal>(null);
+        const openSongStatistics = useCallback(() => {
+            songStatisticsRef.current?.present();
         }, []);
 
         if (selectedSong === null) return;
@@ -99,9 +105,10 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     />
                     <SheetOptionsButton
                         icon="chart-timeline-variant-shimmer"
-                        buttonContent="View statistics (NOT DONE)"
+                        buttonContent="View statistics (ACCESSIBLE)"
                         onPress={() => {
                             props.dismiss?.();
+                            openSongStatistics();
                         }}
                     />
                     <SheetOptionsButton
@@ -128,6 +135,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     />
                 </SheetModalLayout>
                 <AddPlaylistToSong ref={addPlaylistRef} />
+                <SongStatistics ref={songStatisticsRef} />
             </>
         );
     }

@@ -70,6 +70,7 @@ type SongsStore = {
     editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
     deletePlaylist: (id: string) => void;
 
+    getAllPlaylistSongs: () => Song[] | undefined;
     getPlaylist: (id: string) => Playlist | undefined;
     getSongsFromPlaylist: (id: string) => Song[];
 
@@ -81,6 +82,7 @@ type SongsStore = {
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
+    getAllAlbumSongs: () => Song[] | undefined;
     getAlbum: (id: string) => Album | undefined;
     getAlbumByName: (name: string) => Album | undefined;
     doesAlbumExist: (name: string) => boolean;
@@ -295,6 +297,17 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
             },
+
+            getAllPlaylistSongs: () => {
+                const songs = get()
+                    .playlists.map((playlist) => playlist.songs)
+                    .reduce((a, b) => a.concat(b), [])
+                    .map((songId) => get().songs.find((s) => s.id === songId))
+                    .filter((s) => s !== undefined) as Song[];
+
+                return songs;
+            },
+
             getPlaylist: (id) => {
                 const playlists = get().playlists;
                 const playlist = playlists.find(
@@ -412,6 +425,16 @@ export const useSongsStore = create<SongsStore>()(
                 set((state) => ({
                     albums: state.albums.filter((a) => a.id !== id),
                 }));
+            },
+
+            getAllAlbumSongs: () => {
+                const songs = get()
+                    .albums.map((album) => album.songs)
+                    .reduce((a, b) => a.concat(b), [])
+                    .map((songId) => get().songs.find((s) => s.id === songId))
+                    .filter((s) => s !== undefined) as Song[];
+
+                return songs;
             },
 
             getAlbum: (id) => {

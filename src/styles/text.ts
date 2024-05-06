@@ -21,6 +21,7 @@ export const textStyles = StyleSheet.create({
         fontFamily: "Poppins-Medium",
         color: Colors.primary,
         fontSize: FontSize.h6,
+        marginBottom: -4,
     },
     text: {
         fontFamily: "Poppins-Medium",

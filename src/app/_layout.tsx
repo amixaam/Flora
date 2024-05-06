@@ -27,11 +27,7 @@ function DefaultLayout() {
             <Stack.Screen
                 name="player"
                 options={{
-                    presentation: "modal",
                     animation: "slide_from_bottom",
-                    gestureEnabled: true,
-                    gestureDirection: "vertical",
-                    fullScreenGestureEnabled: true,
                 }}
             />
         </Stack>

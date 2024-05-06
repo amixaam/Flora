@@ -1,10 +1,5 @@
 import { router, useNavigation } from "expo-router";
-import {
-    ImageBackground,
-    Text,
-    TouchableNativeFeedback,
-    View,
-} from "react-native";
+import { Text, TouchableNativeFeedback, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef } from "react";
@@ -13,17 +8,24 @@ import { useSongsStore } from "../../../store/songs";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
+import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
 import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
+import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
 import IconButton from "../../../Components/UI/IconButton";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Playlist } from "../../../types/song";
-import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, setup, resetAll } = useSongsStore();
+    const {
+        playlists,
+        setSelectedPlaylist,
+        setup,
+        getAllPlaylistSongs,
+        resetAll,
+    } = useSongsStore();
     useEffect(() => {
         setup();
         // resetAll();
@@ -58,13 +60,19 @@ export default function PlaylistsTab() {
         PlaylistOptionsRef.current?.dismiss();
     }, []);
 
+    const allSongs = getAllPlaylistSongs();
+
     return (
         <View style={[mainStyles.container]}>
             <BackgroundImageAbsolute />
+
             <FlashList
                 numColumns={2}
                 data={playlists}
                 keyExtractor={(item) => item.id}
+                ListHeaderComponent={
+                    <TopButtonControls songs={allSongs ? allSongs : []} />
+                }
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,

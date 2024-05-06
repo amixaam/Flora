@@ -31,6 +31,7 @@ export enum FontSize {
 export enum Colors {
     primary = "#E8DEF8",
     primary90 = "#E8DEF890",
+    primary30 = "#E8DEF830",
     secondary = "#16151B",
     bg = "#050506",
     input = "#2B2931",

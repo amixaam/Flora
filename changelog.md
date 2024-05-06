@@ -13,8 +13,6 @@
 
 ## New features
 
-## ATGADINAT LEONAM, VAI TS IR FIRE OR NAH
-
 -   [x] Playing queue (Add songs, playlists, albums to playing queue)
 -   [x] Background music playback
 -   [x] Albums and Singles (Album tab)
@@ -23,7 +21,7 @@
 -   [ ] Edit specific song metadata
 -   [ ] Song title (if too long) in mini player, will loop horizontally
 -   [ ] Dismiss player by swiping down
--   [ ] Shuffle and play buttons on main screens
+-   [x] Shuffle and play buttons on main screens
 
 -   [ ] Playlist, Song and Album sorting
 -   [ ] Go to Album in song bottom sheet
@@ -47,7 +45,7 @@
 
 ## Teaks
 
--   [ ] Glow bg on of main screens, just like in the figma design
+-   [x] Glow bg on of main screens, just like in the figma design
 -   [x] Removed "Remove from playlist" in favour of adding checkboxes to "Add to playlist"
 -   [x] Aligned playlist list correctly to the app's margin
 -   [x] Playback scrollbar aligns with content horizontally
