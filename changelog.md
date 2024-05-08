@@ -15,7 +15,8 @@
 
 -   [x] Playing queue (Add songs, playlists, albums to playing queue)
 -   [x] Background music playback
--   [x] Albums and Singles (Album tab)
+-   [x] Music controller in notifications
+-   [x] Albums (Album tab)
 -   [ ] Last played history
 -   [x] Read audio file metadata from downloads
 -   [ ] Edit specific song metadata

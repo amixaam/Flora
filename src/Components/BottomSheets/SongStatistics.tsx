@@ -1,15 +1,12 @@
-import { forwardRef, useCallback, useRef } from "react";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { forwardRef } from "react";
+import { Text } from "react-native";
 import { useSongsStore } from "../../store/songs";
 import { SnapPoints, Spacing } from "../../styles/constants";
-import LargeOptionButton from "../UI/LargeOptionButton";
-import SheetOptionsButton from "../UI/SheetOptionsButton";
-import AddPlaylistToSong from "./AddPlaylistToSong";
-import { SheetModalLayout } from "./SheetModalLayout";
-import { BottomSheetProps } from "../../types/other";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { Text } from "react-native";
 import { textStyles } from "../../styles/text";
+import { BottomSheetProps } from "../../types/other";
 import LargeTextButton from "../UI/LargeTextButton";
+import { SheetModalLayout } from "./SheetModalLayout";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -25,20 +22,31 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                 >
                     <BottomSheetView
                         style={{
-                            rowGap: Spacing.sm,
                             marginHorizontal: Spacing.appPadding,
-                            flexDirection: "row",
-                            gap: Spacing.sm,
                         }}
                     >
-                        <LargeTextButton
-                            mainText={selectedSong.statistics.timesPlayed.toString()}
-                            subText="Plays"
-                        />
-                        <LargeTextButton
-                            mainText={selectedSong.statistics.timesSkipped.toString()}
-                            subText="Skips"
-                        />
+                        <BottomSheetView
+                            style={{
+                                rowGap: Spacing.sm,
+                                flexDirection: "row",
+                                gap: Spacing.sm,
+                            }}
+                        >
+                            <LargeTextButton
+                                mainText={selectedSong.statistics.timesPlayed.toString()}
+                                subText="Plays"
+                            />
+                            <LargeTextButton
+                                mainText={selectedSong.statistics.timesSkipped.toString()}
+                                subText="Skips"
+                            />
+                        </BottomSheetView>
+                        <Text style={textStyles.h6}>
+                            Last played:{" "}
+                            {selectedSong.statistics.lastPlayed
+                                ? selectedSong.statistics.lastPlayed.toISOString()
+                                : "Never"}
+                        </Text>
                     </BottomSheetView>
                 </SheetModalLayout>
             </>

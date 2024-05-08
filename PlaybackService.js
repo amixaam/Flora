@@ -21,7 +21,7 @@ export const PlaybackService = async function () {
         TrackPlayer.skipToPrevious();
     });
 
-    TrackPlayer.addEventListener(Event.RemoteLike, (event) => {
+    TrackPlayer.addEventListener(Event.RemoteSetRating, (event) => {
         console.log("Event.RemoteLike", event);
     });
 

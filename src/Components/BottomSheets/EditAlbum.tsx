@@ -62,6 +62,7 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                     <BottomSheetView
                         style={{
                             rowGap: Spacing.sm,
+                            marginHorizontal: Spacing.appPadding,
                             flex: 1,
                         }}
                     >

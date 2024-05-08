@@ -47,6 +47,7 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                     style={{
                         rowGap: Spacing.sm,
                         flex: 1,
+                        marginHorizontal: Spacing.appPadding,
                     }}
                 >
                     <ImagePickerButton

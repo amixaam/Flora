@@ -161,13 +161,14 @@ export const useSongsStore = create<SongsStore>()(
                                 AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
                         },
                         notificationCapabilities: [
+                            Capability.SetRating,
                             Capability.Play,
                             Capability.Pause,
                             Capability.SkipToNext,
                             Capability.SkipToPrevious,
                             Capability.SeekTo,
-                            Capability.SetRating,
                         ],
+                        
                     });
                     await TrackPlayer.setRepeatMode(RepeatMode.Queue);
                 }
