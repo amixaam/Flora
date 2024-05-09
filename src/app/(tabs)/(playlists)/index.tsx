@@ -19,17 +19,9 @@ import { textStyles } from "../../../styles/text";
 import { Playlist } from "../../../types/song";
 
 export default function PlaylistsTab() {
-    const {
-        playlists,
-        setSelectedPlaylist,
-        setup,
-        getAllPlaylistSongs,
-        resetAll,
-    } = useSongsStore();
-    useEffect(() => {
-        setup();
-        // resetAll();
-    }, []);
+    const { playlists, setSelectedPlaylist, getAllPlaylistSongs } =
+        useSongsStore();
+
     const insets = useSafeAreaInsets();
 
     const navigation = useNavigation();

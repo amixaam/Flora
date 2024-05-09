@@ -1,4 +1,5 @@
 import TrackPlayer, { Event } from "react-native-track-player";
+import { useSongsStore } from "./src/store/songs";
 
 export const PlaybackService = async function () {
     TrackPlayer.addEventListener(Event.RemotePlay, () => {
@@ -53,7 +54,15 @@ export const PlaybackService = async function () {
     });
 
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
-        console.log("Event.PlaybackActiveTrackChanged", event);
+        if (event.track) {
+            console.log("Changed active track: ", event.track.id);
+            useSongsStore.getState().updateSongStatistics(event.track.id);
+            useSongsStore.getState().addSongToHistory(event.track.id);
+        }
+        if (event.lastTrack) {
+            console.log("Skipped track: ", event.lastTrack);
+            useSongsStore.getState().updateSongSkip(event.track.id);
+        }
     });
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {

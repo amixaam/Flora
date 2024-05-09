@@ -3,14 +3,8 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
-import TrackPlayer, {
-    AppKilledPlaybackBehavior,
-    Capability,
-    RatingType,
-    RepeatMode,
-} from "react-native-track-player";
+import TrackPlayer, { RepeatMode } from "react-native-track-player";
 import { Album, Playlist, Song } from "../types/song";
-import { PlaybackService } from "../../PlaybackService";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -18,7 +12,7 @@ type SongsStore = {
     songs: Song[];
     playlists: Playlist[];
     albums: Album[];
-
+    history: string[];
     selectedSong: Song | null;
     selectedPlaylist: Playlist | null;
     selectedAlbum: Album | null;
@@ -32,7 +26,6 @@ type SongsStore = {
     resetAll: () => void;
 
     // for music playback
-    setup: () => Promise<void>;
     resetPlayer: () => Promise<void>;
     play: () => Promise<void>;
     pause: () => Promise<void>;
@@ -61,9 +54,12 @@ type SongsStore = {
     unlikeSong: (id: string) => void;
     hideSong: (id: string) => void;
     unhideSong: (id: string) => void;
+    updateSongStatistics: (id: string) => void;
+    updateSongSkip: (id: string) => void;
     // // UPDATE SONG TAGS
 
     // // statistics
+    addSongToHistory: (id: string) => void;
 
     // // playlists
     createPlaylist: (inputFields: Partial<Playlist>) => void;
@@ -107,6 +103,7 @@ export const useSongsStore = create<SongsStore>()(
                 },
             ],
             albums: [],
+            history: [],
             repeatMode: RepeatMode.Queue,
 
             // menus
@@ -144,35 +141,6 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             // Music playback ----------------------------------------------------------
-            setup: async () => {
-                try {
-                    await TrackPlayer.getActiveTrack();
-                } catch (error) {
-                    TrackPlayer.registerPlaybackService(() => PlaybackService);
-
-                    await TrackPlayer.setupPlayer({
-                        autoHandleInterruptions: true,
-                    });
-
-                    await TrackPlayer.updateOptions({
-                        ratingType: RatingType.Heart,
-                        android: {
-                            appKilledPlaybackBehavior:
-                                AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-                        },
-                        notificationCapabilities: [
-                            Capability.SetRating,
-                            Capability.Play,
-                            Capability.Pause,
-                            Capability.SkipToNext,
-                            Capability.SkipToPrevious,
-                            Capability.SeekTo,
-                        ],
-                        
-                    });
-                    await TrackPlayer.setRepeatMode(RepeatMode.Queue);
-                }
-            },
             resetPlayer: async () => {
                 await TrackPlayer.reset();
             },
@@ -253,6 +221,53 @@ export const useSongsStore = create<SongsStore>()(
                         song.id === id ? { ...song, isHidden: false } : song
                     ),
                 }));
+            },
+
+            updateSongStatistics: (id) => {
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        song.id === id
+                            ? {
+                                  ...song,
+                                  statistics: {
+                                      ...song.statistics,
+                                      lastPlayed: new Date(),
+                                      timesPlayed:
+                                          song.statistics.timesPlayed + 1,
+                                  },
+                              }
+                            : song
+                    ),
+                }));
+            },
+
+            updateSongSkip: (id) => {
+                set((state) => ({
+                    songs: state.songs.map((song) =>
+                        song.id === id
+                            ? {
+                                  ...song,
+                                  statistics: {
+                                      ...song.statistics,
+                                      timesSkipped:
+                                          song.statistics.timesSkipped + 1,
+                                  },
+                              }
+                            : song
+                    ),
+                }));
+            },
+            // statistics ---------------------------------------------------------
+            addSongToHistory: (id) => {
+                set((state) => {
+                    const newHistory = [...state.history, id];
+                    if (newHistory.length > 5) {
+                        newHistory.shift();
+                    }
+                    return {
+                        history: newHistory,
+                    };
+                });
             },
 
             // playlists ----------------------------------------------------------
@@ -526,6 +541,7 @@ export const useSongsStore = create<SongsStore>()(
                 songs: state.songs,
                 playlists: state.playlists,
                 albums: state.albums,
+                history: state.history,
             }),
         }
     )

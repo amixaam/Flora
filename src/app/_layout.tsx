@@ -4,13 +4,50 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Colors } from "../styles/constants";
 import { useEffect } from "react";
 import { Linking } from "react-native";
+import TrackPlayer, {
+    AppKilledPlaybackBehavior,
+    Capability,
+    RatingType,
+    RepeatMode,
+} from "react-native-track-player";
+import { PlaybackService } from "../../PlaybackService";
 
 export default function App() {
     useEffect(() => {
+        async function setup() {
+            try {
+                await TrackPlayer.getActiveTrack();
+            } catch (error) {
+                TrackPlayer.registerPlaybackService(() => PlaybackService);
+
+                await TrackPlayer.setupPlayer({
+                    autoHandleInterruptions: true,
+                });
+
+                await TrackPlayer.updateOptions({
+                    ratingType: RatingType.Heart,
+                    android: {
+                        appKilledPlaybackBehavior:
+                            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+                    },
+                    notificationCapabilities: [
+                        Capability.SetRating,
+                        Capability.Play,
+                        Capability.Pause,
+                        Capability.SkipToNext,
+                        Capability.SkipToPrevious,
+                        Capability.SeekTo,
+                    ],
+                });
+                await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+                console.log("Setup!");
+            }
+        }
+        setup();
         function deepLinkHandler(data: { url: string }) {
             console.log("deepLinkHandler", data.url);
             if (data.url === "trackplayer://notification.click") {
-                router.push("/player");
+                router.navigate("/player");
             }
         }
 

@@ -2,6 +2,7 @@ interface Statistics {
     lastPlayed?: Date;
     timesPlayed: number;
     timesSkipped: number;
+    
 }
 
 interface Song {
