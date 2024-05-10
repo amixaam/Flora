@@ -96,20 +96,20 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         />
                     </BottomSheetView>
                     <SheetOptionsButton
+                        icon="chart-timeline-variant-shimmer"
+                        buttonContent="View statistics"
+                        onPress={() => {
+                            props.dismiss?.();
+                            openSongStatistics();
+                        }}
+                    />
+                    <SheetOptionsButton
                         icon="album"
                         buttonContent="Go to album (NOT DONE)"
                         onPress={() => {
                             props.dismiss?.();
                         }}
                         isDisabled={selectedSong.isHidden}
-                    />
-                    <SheetOptionsButton
-                        icon="chart-timeline-variant-shimmer"
-                        buttonContent="View statistics (ACCESSIBLE)"
-                        onPress={() => {
-                            props.dismiss?.();
-                            openSongStatistics();
-                        }}
                     />
                     <SheetOptionsButton
                         icon="pencil"
