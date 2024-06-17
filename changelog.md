@@ -72,7 +72,14 @@
 -   [ ] Select multiple in song lists
 -   [ ] Delete song from device option
 -   [ ] Display album/playlist name in player, instead of "placeholder text"
+
 - [ ] Quick-download song from share (youtube)
 - [ ] AI integration (custom playlists, ect.)
 - [ ] Smart shuffle
 - [ ] Monthly / weekly song recap
+- [ ] Home page, with most played playlists and albums
+- [ ] Cool banner, for song recaps, when they are available
+- [ ] App settings
+- [ ] Search everywhere
+- [ ] Song switch fade 
+- [ ] Fade satisfying playlist
