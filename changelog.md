@@ -72,3 +72,4 @@
 -   [ ] Select multiple in song lists
 -   [ ] Delete song from device option
 -   [ ] Display album/playlist name in player, instead of "placeholder text"
+- [ ] Quick-download song from share (youtube)
