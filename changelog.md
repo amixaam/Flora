@@ -73,3 +73,6 @@
 -   [ ] Delete song from device option
 -   [ ] Display album/playlist name in player, instead of "placeholder text"
 - [ ] Quick-download song from share (youtube)
+- [ ] AI integration (custom playlists, ect.)
+- [ ] Smart shuffle
+- [ ] Monthly / weekly song recap
