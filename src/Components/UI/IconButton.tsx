@@ -3,21 +3,24 @@ import { TouchableOpacity } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Colors, DefaultIcon, IconSizes } from "../../styles/constants";
 
+type IconButtonTypes = {
+    touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;
+    icon?: string;
+    size?: IconSizes;
+};
+
 const IconButton = ({
-    onPress = () => {
-        console.log("Pressed!");
-    },
+    touchableOpacityProps = {},
     icon = DefaultIcon,
     size = IconSizes.md,
-    isDisabled = false,
-}) => {
+}: IconButtonTypes) => {
     return (
-        <TouchableOpacity onPress={onPress} disabled={isDisabled}>
+        <TouchableOpacity {...touchableOpacityProps}>
             <MaterialCommunityIcons
                 name={icon}
                 size={size}
                 style={[
-                    isDisabled ? { opacity: 0.5 } : {},
+                    touchableOpacityProps.disabled && { opacity: 0.5 },
                     { color: Colors.primary },
                 ]}
             />

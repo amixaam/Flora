@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import {  Colors, Spacing } from "./constants";
+import { Colors, Spacing } from "./constants";
 
 export const mainStyles = StyleSheet.create({
     container: {
@@ -81,4 +81,16 @@ export const mainStyles = StyleSheet.create({
         margin: Spacing.appPadding,
         rowGap: Spacing.sm,
     },
+});
+
+export const newStyles = StyleSheet.create({
+    chip: {
+        backgroundColor: Colors.bg,
+        borderRadius: Spacing.round,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.xs,
+        borderColor: Colors.secondary,
+        borderWidth: 1.5,
+    },
+    chipSelected: { backgroundColor: Colors.secondary },
 });

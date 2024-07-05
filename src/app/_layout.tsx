@@ -11,6 +11,7 @@ import TrackPlayer, {
     RepeatMode,
 } from "react-native-track-player";
 import { PlaybackService } from "../../PlaybackService";
+import BackgroundImageAbsolute from "../Components/BackgroundImageAbsolute";
 
 export default function App() {
     useEffect(() => {

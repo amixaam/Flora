@@ -45,7 +45,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             <SmallTitleBigText
                                 icon="history"
                                 header="Last played"
-                                text={selectedSong.statistics.lastPlayed?.toDateString()}
+                                text={"BUSTED"}
                             />
                             <SmallTitleBigText
                                 icon="timelapse"

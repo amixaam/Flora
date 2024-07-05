@@ -1,11 +1,12 @@
 export enum Spacing {
     xs = 4,
     sm = 8,
+    mmd = 12,
     md = 16, //default
     lg = 24,
     xl = 32,
     appPadding = 16,
-    radius = 5,
+    radius = 10,
     round = 9999,
     miniPlayer = 90,
 }
@@ -19,13 +20,13 @@ export enum IconSizes {
 export const DefaultIcon = "help-circle";
 
 export enum FontSize {
-    h3 = 29.86,
-    h4 = 20.74,
-    h5 = 17.28,
-    h6 = 14.4,
+    h3 = 30,
+    h4 = 22,
+    h5 = 17,
+    h6 = 14,
     text = 12,
     small = 10,
-    detail = 8.33,
+    detail = 8,
 }
 
 export enum Colors {

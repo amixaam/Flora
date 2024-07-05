@@ -27,7 +27,24 @@ export default function TabLayout() {
                 }}
             >
                 <MaterialBottomTabs.Screen
-                    name="(playlists)"
+                    name="(home)"
+                    options={{
+                        tabBarLabel: "Home",
+                        tabBarIcon: ({ focused, color }: any) => (
+                            <MaterialCommunityIcons
+                                name={
+                                    focused
+                                        ? "home"
+                                        : "home-outline"
+                                }
+                                size={IconSizes.md}
+                                color={color}
+                            />
+                        ),
+                    }}
+                />
+                <MaterialBottomTabs.Screen
+                    name="playlists"
                     options={{
                         tabBarLabel: "Playlists",
                         tabBarIcon: ({ focused, color }: any) => (
