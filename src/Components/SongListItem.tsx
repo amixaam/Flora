@@ -5,13 +5,14 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useActiveTrack } from "react-native-track-player";
 import { useSongsStore } from "../store/songs";
 import { Colors, IconSizes, Spacing } from "../styles/constants";
-import { mainStyles } from "../styles/styles";
+import { mainStyles, newStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { Song } from "../types/song";
 import Checkbox from "./UI/Checkbox";
 import IconButton from "./UI/IconButton";
+import { CombineStrings } from "../utils/CombineStrings";
 
-interface SongListItemProps {
+export interface SongListItemProps {
     item: Song;
     index?: number;
 
@@ -49,11 +50,10 @@ const SongListItem = ({
         >
             <View
                 style={[
-                    mainStyles.songListItem,
-                    activeTrack?.id === item.id
-                        ? mainStyles.selectedSongListItem
-                        : {},
-                    item.isHidden ? mainStyles.hiddenListItem : {},
+                    newStyles.songListItem,
+                    activeTrack?.id === item.id &&
+                        newStyles.songListItemSelected,
+                    item.isHidden && newStyles.songListItemHidden,
                 ]}
             >
                 <View
@@ -64,7 +64,11 @@ const SongListItem = ({
                         alignItems: "center",
                     }}
                 >
-                    <Numeration index={index} showNumeration={showNumeration} />
+                    <Numeration
+                        index={index}
+                        showNumeration={showNumeration}
+                        isCurrentTrack={activeTrack?.id === item.id}
+                    />
                     <PlayingIndicator
                         image={item.artwork}
                         isCurrentTrack={activeTrack?.id === item.id}
@@ -80,10 +84,11 @@ const SongListItem = ({
                         <Text numberOfLines={1} style={[textStyles.text]}>
                             {name}
                         </Text>
-                        <Text numberOfLines={1} style={[textStyles.small]}>
-                            {`${item.artist ? item.artist : "No artist"} • ${
-                                item.year ? item.year : "No year"
-                            }`}
+                        <Text
+                            numberOfLines={1}
+                            style={[textStyles.small, { opacity: 0.75 }]}
+                        >
+                            {CombineStrings([item.artist, item.year])}
                         </Text>
                     </View>
                 </View>
@@ -111,18 +116,28 @@ const SongListItem = ({
 const Numeration = ({
     index,
     showNumeration,
+    isCurrentTrack,
 }: {
     index: number;
     showNumeration: boolean;
+    isCurrentTrack: boolean;
 }) => {
     if (!showNumeration) return;
+
+    if (isCurrentTrack) {
+        return (
+            <MaterialCommunityIcons
+                name="volume-high"
+                size={IconSizes.sm}
+                color={Colors.primary}
+            />
+        );
+    }
+
     return (
-        <View style={{ width: Spacing.md, opacity: 0.7 }}>
+        <View style={{ width: Spacing.md }}>
             <Text
-                style={[
-                    textStyles.small,
-                    { textAlign: "center", fontWeight: "700" },
-                ]}
+                style={[textStyles.text, { textAlign: "center", opacity: 0.8 }]}
             >
                 {index + 1}
             </Text>
@@ -143,8 +158,11 @@ const LikeButton = ({
     if (isSelectMode) return;
     return (
         <IconButton
-            onPress={() => (isLiked ? unlikeSong(id) : likeSong(id))}
+            touchableOpacityProps={{
+                onPress: () => (isLiked ? unlikeSong(id) : likeSong(id)),
+            }}
             icon={isLiked ? "heart" : "heart-outline"}
+            size={IconSizes.sm}
         />
     );
 };
@@ -171,12 +189,11 @@ const PlayingIndicator = ({
                     aspectRatio: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    borderRadius: Spacing.radius,
                 }}
+                imageStyle={{ borderRadius: Spacing.radiusSm }}
             />
         );
     }
-    if (!isCurrentTrack) return;
 
     if (showImage) {
         return (
@@ -191,12 +208,12 @@ const PlayingIndicator = ({
                     aspectRatio: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    borderRadius: Spacing.radius,
                 }}
+                imageStyle={{ borderRadius: Spacing.radiusSm }}
             >
                 <View
                     style={{
-                        backgroundColor: "#00000070",
+                        backgroundColor: "#00000090",
                         width: "100%",
                         aspectRatio: 1,
                         position: "absolute",
@@ -204,20 +221,14 @@ const PlayingIndicator = ({
                 />
                 <MaterialCommunityIcons
                     name="volume-high"
-                    size={IconSizes.md}
+                    size={IconSizes.sm}
                     color={Colors.primary}
                 />
             </ImageBackground>
         );
     }
 
-    return (
-        <MaterialCommunityIcons
-            name="volume-high"
-            size={IconSizes.md}
-            color={Colors.primary}
-        />
-    );
+    return;
 };
 
 export default SongListItem;

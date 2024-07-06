@@ -1,67 +1,62 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { ImageBackground, StyleProp, View, ViewStyle } from "react-native";
+import {
+    ImageBackground,
+    StyleProp,
+    StyleSheet,
+    View,
+    ViewStyle,
+} from "react-native";
+import { Album, Playlist } from "../types/song";
 
 interface ImageBlurBackgroundProps {
-    image?: string;
+    image: Playlist["artwork"] | Album["artwork"];
+    gradient?: React.ComponentProps<typeof LinearGradient>;
     style?: StyleProp<ViewStyle>;
-    gradientColors?: string[];
+    blur?: number;
 }
 
 const ImageBlurBackground = ({
     image,
+    gradient = { colors: ["#050506", "#05050650", "#050506"] },
     style,
-    gradientColors = [
-        "#050506",
-        "#05050699",
-        "#05050655",
-        "#05050699",
-        "#050506",
-    ],
+    blur = 20,
 }: ImageBlurBackgroundProps) => {
     const backup = require("../../assets/images/empty-cover.png");
 
     return (
-        <View
-            style={[
-                {
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                    flex: 1,
-                },
-                style,
-            ]}
-        >
+        <View style={[styles.AbsoluteFill, style]}>
             <View
                 style={{
                     position: "relative",
-                    height: "100%",
                     flex: 1,
                 }}
             >
                 <ImageBackground
                     source={image ? { uri: image } : backup}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        position: "absolute",
-                        opacity: 0.8,
-                    }}
+                    style={styles.AbsoluteFill}
                     resizeMode="stretch"
-                    blurRadius={30}
+                    blurRadius={blur}
                 />
                 <LinearGradient
-                    colors={gradientColors}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        position: "absolute",
-                    }}
+                    style={styles.AbsoluteFill}
+                    locations={[0.075, 0.5, 0.95]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    {...gradient}
                 />
             </View>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    AbsoluteFill: {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        flex: 1,
+    },
+});
 
 export default ImageBlurBackground;

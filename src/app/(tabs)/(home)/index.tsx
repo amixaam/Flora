@@ -1,24 +1,30 @@
 import { router, useNavigation } from "expo-router";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import {
+    ImageBackground,
+    Text,
+    TouchableNativeFeedback,
+    View,
+} from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
 import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
 import IconButton from "../../../Components/UI/IconButton";
-import { Spacing } from "../../../styles/constants";
+import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
 import Pluralize from "../../../utils/Pluralize";
 import { CombineStrings } from "../../../utils/CombineStrings";
+import RecapGradient from "../../../../assets/images/recap-gradient.png";
 
 export default function PlaylistsTab() {
     const { playlists, albums } = useSongsStore();
@@ -63,8 +69,10 @@ export default function PlaylistsTab() {
     return (
         <ScrollView style={mainStyles.container}>
             <BackgroundImageAbsolute />
-            <View style={{ paddingTop: insets.top * 2.1 }} />
+            <View style={{ paddingTop: insets.top * 2.3 }} />
+
             <View style={{ flex: 1, gap: Spacing.appPadding }}>
+                <RecapBanner />
                 <HomeHeader text="Recently played" />
                 {/* Pin Liked songs playlist to first position */}
                 {/* Limit to 10 entries */}
@@ -76,9 +84,12 @@ export default function PlaylistsTab() {
                     />
                 </View>
                 <HorizontalList list={albums} />
-                <HomeHeader text="Most played" />
-                <HomeHeader text="Recaps" />
+                {/* <HomeHeader text="Most played" />
+                <HomeHeader text="Recaps" /> */}
             </View>
+            <View
+                style={{ paddingBottom: insets.bottom + Spacing.miniPlayer }}
+            />
 
             <PlaylistSheet
                 ref={PlaylistOptionsRef}
@@ -91,6 +102,36 @@ export default function PlaylistsTab() {
         </ScrollView>
     );
 }
+
+const RecapBanner = () => {
+    return (
+        <TouchableHighlight>
+            <ImageBackground
+                source={RecapGradient}
+                style={newStyles.recapBanner}
+                imageStyle={{ borderRadius: Spacing.radiusLg }}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flex: 1,
+                        paddingRight: Spacing.sm,
+                    }}
+                >
+                    <View>
+                        <Text style={textStyles.h5}>Your recap is here!</Text>
+                        <Text style={textStyles.small}>
+                            Find out what you’ve been listening to for a month!
+                        </Text>
+                    </View>
+                    <IconButton icon="play" size={IconSizes.lg} />
+                </View>
+            </ImageBackground>
+        </TouchableHighlight>
+    );
+};
 
 type HorizontalListProps = {
     list?: (Playlist | Album)[];
@@ -231,7 +272,7 @@ const Chip = ({
     return (
         <TouchableNativeFeedback {...touchableNativeProps}>
             <View style={[newStyles.chip, selected && newStyles.chipSelected]}>
-                <Text style={textStyles.small}>{text}</Text>
+                <Text style={textStyles.text}>{text}</Text>
             </View>
         </TouchableNativeFeedback>
     );

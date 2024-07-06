@@ -10,9 +10,11 @@ import {
     usePlaybackState,
     useProgress,
 } from "react-native-track-player";
-import { mainStyles } from "../styles/styles";
+import { mainStyles, newStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import PlaybackSlider from "./PlaybackSlider";
+import { IconSizes, Spacing } from "../styles/constants";
+import { CombineStrings } from "../utils/CombineStrings";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     const { play, pause, next, previous, seekToPosition } = useSongsStore();
@@ -29,25 +31,18 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     if (!activeTrack) return;
     return (
         <View style={style}>
-            <TouchableNativeFeedback
-                style={{ flex: 1 }}
-                onPress={() => router.push("/player")}
-            >
-                <View style={mainStyles.miniPlayer}>
+            <TouchableNativeFeedback onPress={() => router.push("/player")}>
+                <View style={newStyles.miniPlayer}>
                     <View
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            columnGap: 8,
+                            columnGap: Spacing.sm,
                         }}
                     >
                         <AlbumArt
                             image={activeTrack.artwork}
-                            style={{
-                                height: 48,
-                                aspectRatio: 1,
-                                borderRadius: 5,
-                            }}
+                            style={{ height: 46 }}
                         />
                         <View
                             style={{
@@ -55,8 +50,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                                width: "100%",
-                                columnGap: 16,
+                                gap: Spacing.md,
                             }}
                         >
                             <View
@@ -66,46 +60,52 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
                                     width: "100%",
                                 }}
                             >
-                                <Text style={textStyles.h4} numberOfLines={1}>
+                                <Text style={textStyles.h6} numberOfLines={1}>
                                     {activeTrack.title}
                                 </Text>
                                 <Text
-                                    style={textStyles.detail}
+                                    style={textStyles.small}
                                     numberOfLines={1}
                                 >
-                                    {`${activeTrack.artist} • ${activeTrack.year}`}
+                                    {CombineStrings([
+                                        activeTrack.artist,
+                                        activeTrack.year,
+                                    ])}
                                 </Text>
                             </View>
                             <View
-                                style={{ flexDirection: "row", columnGap: 16 }}
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: Spacing.sm,
+                                }}
                             >
                                 <IconButton
-                                    onPress={previous}
+                                    touchableOpacityProps={{
+                                        onPress: previous,
+                                    }}
                                     icon="skip-previous"
-                                    size={36}
                                 />
                                 <IconButton
-                                    onPress={hanldePlayPausePress}
+                                    touchableOpacityProps={{
+                                        onPress: hanldePlayPausePress,
+                                    }}
+                                    size={IconSizes.lg}
                                     icon={
                                         playbackState.state === "playing"
                                             ? "pause"
                                             : "play"
                                     }
-                                    size={36}
                                 />
                                 <IconButton
-                                    onPress={next}
+                                    touchableOpacityProps={{
+                                        onPress: next,
+                                    }}
                                     icon="skip-next"
-                                    size={36}
                                 />
                             </View>
                         </View>
                     </View>
-                    <PlaybackSlider
-                        trackDuration={progress.duration}
-                        trackPosition={progress.position}
-                        skipPosition={seekToPosition}
-                    />
                 </View>
             </TouchableNativeFeedback>
         </View>

@@ -5,7 +5,7 @@ import IconButton from "../../../Components/UI/IconButton";
 import { Colors } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 
-const PlaylistsLayout = () => {
+const HomeLayout = () => {
     return (
         <Stack
             screenOptions={{
@@ -28,11 +28,11 @@ const PlaylistsLayout = () => {
                 name="[id]"
                 options={{
                     headerTitle: "",
-                    headerRight: () => <IconButton icon="pencil" />,
+                    headerRight: () => <IconButton icon="tune" />,
                 }}
             />
         </Stack>
     );
 };
 
-export default PlaylistsLayout;
+export default HomeLayout;

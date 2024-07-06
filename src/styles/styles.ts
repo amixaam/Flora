@@ -93,4 +93,37 @@ export const newStyles = StyleSheet.create({
         borderWidth: 1.5,
     },
     chipSelected: { backgroundColor: Colors.secondary },
+
+    songListItem: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: Spacing.appPadding,
+        paddingVertical: Spacing.mmd,
+    },
+    songListItemSelected: {
+        backgroundColor: "rgba(74, 68, 88, 0.3)",
+    },
+    songListItemHidden: { opacity: 0.5 },
+
+    recapBanner: {
+        marginHorizontal: Spacing.appPadding,
+        padding: Spacing.appPadding,
+        aspectRatio: 16 / 8,
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        flexDirection: "row",
+    },
+
+    miniPlayer: {
+        flexDirection: "column",
+
+        padding: 12,
+        paddingHorizontal: Spacing.appPadding,
+
+        borderTopEndRadius: Spacing.radiusMd,
+        borderTopStartRadius: Spacing.radiusMd,
+
+        backgroundColor: Colors.secondary,
+    },
 });
