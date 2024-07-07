@@ -10,10 +10,9 @@ import {
     usePlaybackState,
     useProgress,
 } from "react-native-track-player";
-import { mainStyles, newStyles } from "../styles/styles";
-import { textStyles } from "../styles/text";
-import PlaybackSlider from "./PlaybackSlider";
 import { IconSizes, Spacing } from "../styles/constants";
+import { newStyles } from "../styles/styles";
+import { textStyles } from "../styles/text";
 import { CombineStrings } from "../utils/CombineStrings";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {

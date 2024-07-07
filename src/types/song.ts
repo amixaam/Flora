@@ -2,7 +2,14 @@ interface Statistics {
     lastPlayed?: Date;
     timesPlayed: number;
     timesSkipped: number;
-    
+}
+
+interface Playlist {
+    readonly id: string;
+    title: string;
+    description: string | undefined;
+    artwork: string | undefined;
+    songs: string[];
 }
 
 interface Song {
@@ -16,15 +23,34 @@ interface Song {
 
     isHidden: boolean;
     isLiked: boolean;
-    statistics: Statistics;
+    statistics: {
+        playCount: number;
+        skipCount: number;
+        lastPlayed: Date | undefined;
+    };
 }
 
-interface Playlist {
-    readonly id: string;
-    title: string;
-    description: string | undefined;
-    artwork: string | undefined;
-    songs: string[];
+enum RECAP_PERIOD {
+    WEEKLY = "WEEKLY",
+    MONTHLY = "MONTHLY",
+    QUARTERLY = "QUARTERLY",
+    YEARLY = "YEARLY",
+}
+
+interface RecapStatistics {
+    date: Date;
+    songId: Song["id"];
+    playCount: number;
+    playStartTime: Date | undefined;
+    lastPlayed: Date; // Last time played on this date, specify hours, minutes, etc.
+    albumId: Album["id"] | undefined;
+    skipCount: number;
+}
+
+interface Recap {
+    period: RECAP_PERIOD; // WEEKLY, MONTHLY, etc.
+    lastUpdated: Date;
+    data: RecapStatistics[]; // Array of RecapStatistics objects
 }
 
 interface Album {
@@ -36,4 +62,15 @@ interface Album {
     songs: string[];
 }
 
-export type { Song, Playlist, Album };
+interface HistoryItem {
+    song: Song["id"];
+    albumId: Album["id"] | undefined;
+    date: Date;
+}
+
+interface History {
+    history: HistoryItem[];
+    consciousHistory: HistoryItem[];
+}
+
+export type { Song, Playlist, Album, History, HistoryItem };

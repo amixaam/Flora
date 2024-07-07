@@ -27,7 +27,7 @@ import { CombineStrings } from "../../../utils/CombineStrings";
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
 
 export default function PlaylistsTab() {
-    const { playlists, albums } = useSongsStore();
+    const { playlists, albums, getRecentlyPlayed } = useSongsStore();
 
     const insets = useSafeAreaInsets();
 
@@ -76,7 +76,7 @@ export default function PlaylistsTab() {
                 <HomeHeader text="Recently played" />
                 {/* Pin Liked songs playlist to first position */}
                 {/* Limit to 10 entries */}
-                <HorizontalList list={playlists} />
+                <HorizontalList list={getRecentlyPlayed()} />
                 <View style={{ gap: Spacing.sm }}>
                     <HomeHeader text="Mood board" />
                     <CategoriesSelector
@@ -123,7 +123,8 @@ const RecapBanner = () => {
                     <View>
                         <Text style={textStyles.h5}>Your recap is here!</Text>
                         <Text style={textStyles.small}>
-                            Find out what you’ve been listening to for a month!
+                            Find out what you’ve been listening to for the last
+                            month!
                         </Text>
                     </View>
                     <IconButton icon="play" size={IconSizes.lg} />

@@ -37,7 +37,7 @@ const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             AddSongsRef.current?.present();
         }, []);
 
-        if (selectedPlaylist === null) return null;
+        if (selectedPlaylist === undefined) return;
 
         const handleDeletePlaylist = () => {
             props.dismiss?.();

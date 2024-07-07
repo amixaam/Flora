@@ -213,7 +213,7 @@ const SongList = ({ songData, songProps }: SongListProps) => {
                                 ]}
                             >
                                 {CombineStrings([
-                                    "N songs",
+                                    `${songData.length} songs`,
                                     CalculateTotalDuration(songData),
                                 ])}
                             </Text>

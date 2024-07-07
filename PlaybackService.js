@@ -59,10 +59,10 @@ export const PlaybackService = async function () {
             useSongsStore.getState().updateSongStatistics(event.track.id);
             useSongsStore.getState().addSongToHistory(event.track.id);
         }
-        if (event.lastTrack) {
-            console.log("Skipped track: ", event.lastTrack);
-            useSongsStore.getState().updateSongSkip(event.track.id);
-        }
+        // if (event.lastTrack) {
+        //     console.log("Skipped track: ", event.lastTrack);
+        //     useSongsStore.getState().updateSongSkip(event.track.id);
+        // }
     });
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {

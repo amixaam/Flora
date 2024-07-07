@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
 import TrackPlayer, { RepeatMode } from "react-native-track-player";
-import { Album, Playlist, Song } from "../types/song";
+import { Album, History, Playlist, Song } from "../types/song";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -12,10 +12,11 @@ type SongsStore = {
     songs: Song[];
     playlists: Playlist[];
     albums: Album[];
-    history: string[];
-    selectedSong: Song | null;
-    selectedPlaylist: Playlist | null;
-    selectedAlbum: Album | null;
+    history: History;
+
+    selectedSong: Song | undefined;
+    selectedPlaylist: Playlist | undefined;
+    selectedAlbum: Album | undefined;
 
     setSelectedSong: (song: Song) => void;
     setSelectedPlaylist: (playlist: Playlist) => void;
@@ -54,11 +55,11 @@ type SongsStore = {
     unlikeSong: (id: string) => void;
     hideSong: (id: string) => void;
     unhideSong: (id: string) => void;
-    updateSongStatistics: (id: string) => void;
-    updateSongSkip: (id: string) => void;
     // // UPDATE SONG TAGS
 
     // // statistics
+    updateSongSkip: (id: string) => void;
+    updateSongStatistics: (id: string) => void;
     addSongToHistory: (id: string) => void;
 
     // // playlists
@@ -86,8 +87,13 @@ type SongsStore = {
 
     addSongToAlbum: (albumId: string, songId: string) => void;
     removeSongFromAlbum: (albumId: string, songId: string) => void;
+    getAlbumBySong: (songId: string) => Album | undefined;
 
     copyAlbumTagsToSongs: (albumId: string) => void;
+
+    // Algo
+    getRecentlyPlayed: () => (Album | Playlist)[];
+    // getMostPlayed: () => (Album | Playlist)[];
 };
 export const useSongsStore = create<SongsStore>()(
     persist(
@@ -103,13 +109,17 @@ export const useSongsStore = create<SongsStore>()(
                 },
             ],
             albums: [],
-            history: [],
+            history: {
+                history: [],
+                consciousHistory: [],
+            },
+
             repeatMode: RepeatMode.Queue,
 
             // menus
-            selectedSong: null,
-            selectedPlaylist: null,
-            selectedAlbum: null,
+            selectedSong: undefined,
+            selectedPlaylist: undefined,
+            selectedAlbum: undefined,
 
             setSelectedSong: (song) => {
                 set({ selectedSong: song });
@@ -132,10 +142,14 @@ export const useSongsStore = create<SongsStore>()(
                             title: "Liked songs",
                             description: "Your songs that you liked.",
                             artwork: undefined,
-                            songs: [], //contains only id's
+                            songs: [],
                         },
                     ],
                     albums: [],
+                    history: {
+                        history: [],
+                        consciousHistory: [],
+                    },
                 });
                 console.log("reset all!");
             },
@@ -233,7 +247,7 @@ export const useSongsStore = create<SongsStore>()(
                                       ...song.statistics,
                                       lastPlayed: new Date(),
                                       timesPlayed:
-                                          song.statistics.timesPlayed + 1,
+                                          song.statistics.playCount + 1,
                                   },
                               }
                             : song
@@ -250,7 +264,7 @@ export const useSongsStore = create<SongsStore>()(
                                   statistics: {
                                       ...song.statistics,
                                       timesSkipped:
-                                          song.statistics.timesSkipped + 1,
+                                          song.statistics.skipCount + 1,
                                   },
                               }
                             : song
@@ -259,15 +273,18 @@ export const useSongsStore = create<SongsStore>()(
             },
             // statistics ---------------------------------------------------------
             addSongToHistory: (id) => {
-                set((state) => {
-                    const newHistory = [...state.history, id];
-                    if (newHistory.length > 5) {
-                        newHistory.shift();
-                    }
-                    return {
-                        history: newHistory,
-                    };
-                });
+                const song = get().getSong(id);
+                if (song === undefined) return;
+
+                set((state) => ({
+                    history: {
+                        ...state.history,
+                        history: [
+                            ...state.history.history,
+                            { song: id, date: new Date(), albumId: "0" },
+                        ],
+                    },
+                }));
             },
 
             // playlists ----------------------------------------------------------
@@ -484,6 +501,13 @@ export const useSongsStore = create<SongsStore>()(
                     .filter((s) => s !== undefined) as Song[];
             },
 
+            getAlbumBySong: (songId) => {
+                const albums = get().albums;
+                const album = albums.find((a) => a.songs.includes(songId));
+
+                return album;
+            },
+
             addSongToAlbum: (albumId, songId) => {
                 const album = get().getAlbum(albumId);
 
@@ -532,6 +556,33 @@ export const useSongsStore = create<SongsStore>()(
                             : song
                     ),
                 }));
+            },
+
+            // Algo
+            getRecentlyPlayed: () => {
+                const history = get().history;
+                const likedPlaylist = get().getPlaylist("1");
+                if (likedPlaylist === undefined) return [];
+
+                console.log(history.consciousHistory);
+                const historyAlbums: Album[] = [];
+                if (history.consciousHistory.length > 0) {
+                    history.consciousHistory.forEach((item) => {
+                        if (historyAlbums.length > 5) return;
+
+                        if (item.albumId !== "0" && item.albumId) {
+                            const album = get().getAlbum(item.albumId);
+                            if (album && !historyAlbums.includes(album))
+                                historyAlbums.push(album);
+                        } else {
+                            const album = get().getAlbumBySong(item.song);
+                            if (album && !historyAlbums.includes(album))
+                                historyAlbums.push(album);
+                        }
+                    });
+                }
+
+                return [likedPlaylist, ...historyAlbums];
             },
         }),
         {

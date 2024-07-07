@@ -30,7 +30,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             songStatisticsRef.current?.present();
         }, []);
 
-        if (selectedSong === null) return;
+        if (selectedSong === undefined) return;
 
         const handleHideSong = () => {
             props.dismiss?.();

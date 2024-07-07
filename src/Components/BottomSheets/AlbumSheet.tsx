@@ -41,7 +41,7 @@ const AlbumSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             AddSongsRef.current?.present();
         }, []);
 
-        if (selectedAlbum === null) return null;
+        if (selectedAlbum === undefined) return;
 
         const handleDeleteAlbum = () => {
             props.dismiss?.();
