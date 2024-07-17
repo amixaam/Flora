@@ -9,7 +9,7 @@ const SongsLayout = () => {
         <Stack
             screenOptions={{
                 headerTitle: "Songs",
-                headerTitleStyle: textStyles.h3,
+                headerTitleStyle: textStyles.h4,
                 headerBackground: () => <Header />,
                 headerShadowVisible: false,
                 headerTransparent: true,

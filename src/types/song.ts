@@ -1,9 +1,3 @@
-interface Statistics {
-    lastPlayed?: Date;
-    timesPlayed: number;
-    timesSkipped: number;
-}
-
 interface Playlist {
     readonly id: string;
     title: string;

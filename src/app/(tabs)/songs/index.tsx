@@ -17,6 +17,7 @@ import { Album, Song } from "../../../types/song";
 import { MusicInfo } from "../../../utils/TagReader";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
+
 export default function SongsTab() {
     const {
         songs,

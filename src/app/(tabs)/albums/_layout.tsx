@@ -10,7 +10,7 @@ const PlaylistsLayout = () => {
             <Stack
                 screenOptions={{
                     headerTitle: "Albums",
-                    headerTitleStyle: textStyles.h3,
+                    headerTitleStyle: textStyles.h4,
                     headerBackground: () => <Header />,
                     headerShadowVisible: false,
                     headerTransparent: true,
