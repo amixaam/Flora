@@ -10,21 +10,34 @@ import { SheetModalLayout } from "./SheetModalLayout";
 import AddSongsToPlaylist from "./AddSongsToPlaylist";
 import { Text } from "react-native";
 import { textStyles } from "../../styles/text";
+import DeleteContainer from "../Modals/DeleteContainer";
 
-const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
+const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedContainer } = useSongsStore();
-        
+        const { selectedContainer, deleteAlbum, deletePlaylist } =
+            useSongsStore();
+
+        const [deleteConfirmModal, setDeleteConfirmModal] =
+            useState<boolean>(false);
+
         if (selectedContainer === undefined) return;
-        
-        const containerType = selectedContainer?.id[0];
 
-        // const handleDeletePlaylist = () => {
-        //     props.dismiss?.();
-        //     setDeleteConfirmModal(false);
+        const containerType =
+            selectedContainer?.id[0] === "P" ||
+            parseInt(selectedContainer?.id[0]) == 1
+                ? "playlist"
+                : "album";
 
-        //     deletePlaylist(selectedContainer.id);
-        // };
+        const handleDeleteContainer = () => {
+            props.dismiss?.();
+            setDeleteConfirmModal(false);
+
+            if (containerType === "album") {
+                deleteAlbum(selectedContainer.id);
+            } else {
+                deletePlaylist(selectedContainer.id);
+            }
+        };
 
         // const handleShufflePlay = () => {
         //     props.dismiss?.();
@@ -54,21 +67,35 @@ const PlaylistSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             text="Add songs"
                         />
                     </BottomSheetView>
-                    <Text style={[textStyles.h5]}>{containerType}</Text>
                     <SheetOptionsButton
                         icon="playlist-edit"
-                        buttonContent={"Edit N"}
+                        buttonContent={"Edit " + containerType}
                         isDisabled={selectedContainer.id === "1"}
                     />
+                    {containerType === "album" && (
+                        <SheetOptionsButton
+                            icon="checkbox-multiple-blank"
+                            buttonContent={"Sync Song tags"}
+                        />
+                    )}
                     <SheetOptionsButton
                         icon="trash-can"
-                        buttonContent={"Delete N"}
+                        buttonContent={"Delete " + containerType}
                         isDisabled={selectedContainer.id === "1"}
+                        onPress={() => {
+                            setDeleteConfirmModal(true);
+                        }}
                     />
                 </SheetModalLayout>
+                <DeleteContainer
+                    visible={deleteConfirmModal}
+                    dismiss={() => setDeleteConfirmModal(false)}
+                    confirm={handleDeleteContainer}
+                    containerType={containerType}
+                />
             </>
         );
     }
 );
 
-export default PlaylistSheet;
+export default ContainerSheet;

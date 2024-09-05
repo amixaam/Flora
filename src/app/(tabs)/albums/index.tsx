@@ -26,7 +26,12 @@ export default function AlbumsTab() {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="plus" onPress={openCreateAlbum} />
+                <IconButton
+                    icon="plus"
+                    touchableOpacityProps={{
+                        onPress: openCreateAlbum,
+                    }}
+                />
             ),
         });
     }, [navigation]);

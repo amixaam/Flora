@@ -28,7 +28,12 @@ export default function PlaylistsTab() {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <IconButton icon="plus" onPress={openCreatePlaylist} />
+                <IconButton
+                    icon="plus"
+                    touchableOpacityProps={{
+                        onPress: openCreatePlaylist,
+                    }}
+                />
             ),
         });
     }, [navigation]);
