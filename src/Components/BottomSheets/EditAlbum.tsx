@@ -121,7 +121,7 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                         >
                             <SubmitButton
                                 handleSubmitForm={handleSubmitForm}
-                                text="Edit"
+                                text="Update"
                             />
                             <CancelButton
                                 handlePress={() => {

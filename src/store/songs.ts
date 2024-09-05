@@ -18,9 +18,15 @@ type SongsStore = {
     selectedPlaylist: Playlist | undefined;
     selectedAlbum: Album | undefined;
 
+    selectedContainer: Playlist | Album | undefined;
+
     setSelectedSong: (song: Song) => void;
+
+    // to be replaced by containers
     setSelectedPlaylist: (playlist: Playlist) => void;
     setSelectedAlbum: (album: Album) => void;
+
+    setSelectedContainer: (container: Playlist | Album) => void;
 
     repeatMode: RepeatMode; // enum
 
@@ -121,6 +127,8 @@ export const useSongsStore = create<SongsStore>()(
             selectedPlaylist: undefined,
             selectedAlbum: undefined,
 
+            selectedContainer: undefined,
+
             setSelectedSong: (song) => {
                 set({ selectedSong: song });
             },
@@ -131,6 +139,10 @@ export const useSongsStore = create<SongsStore>()(
 
             setSelectedPlaylist: (playlist) => {
                 set({ selectedPlaylist: playlist });
+            },
+
+            setSelectedContainer: (container) => {
+                set({ selectedContainer: container });
             },
 
             resetAll: () => {
@@ -291,6 +303,7 @@ export const useSongsStore = create<SongsStore>()(
             createPlaylist: (inputFields) => {
                 const newPlaylist: Playlist = {
                     id: (
+                        "P" +
                         Date.now().toString(36) +
                         Math.random().toString(36).substr(2, 5)
                     ).toUpperCase(),
@@ -416,6 +429,7 @@ export const useSongsStore = create<SongsStore>()(
             // Albums ----------------------------------------------------------
             createAlbum: (inputFields) => {
                 const id = (
+                    "A" +
                     Date.now().toString(36) +
                     Math.random().toString(36).substr(2, 5)
                 ).toUpperCase();
