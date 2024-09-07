@@ -1,7 +1,12 @@
 import { View, Text, TouchableNativeFeedback } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
-import { Colors, DefaultIcon, IconSizes, Spacing } from "../../styles/constants";
+import {
+    Colors,
+    DefaultIcon,
+    IconSizes,
+    Spacing,
+} from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 
 const LargeOptionButton = ({
@@ -17,7 +22,7 @@ const LargeOptionButton = ({
             style={{
                 flex: 1,
                 alignItems: "center",
-                rowGap: Spacing.xs,
+                gap: Spacing.sm,
                 marginBottom: Spacing.md,
             }}
         >

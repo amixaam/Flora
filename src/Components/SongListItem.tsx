@@ -79,6 +79,7 @@ const SongListItem = ({
                             flexDirection: "column",
                             justifyContent: "center",
                             flex: 1,
+                            gap: Spacing.xs,
                         }}
                     >
                         <Text numberOfLines={1} style={[textStyles.text]}>
@@ -100,7 +101,7 @@ const SongListItem = ({
                     }}
                 >
                     {isSelectMode && (
-                        <Checkbox onPress={onSelect} isSelected={isSelected} />
+                        <Checkbox isSelected={isSelected} />
                     )}
                     <LikeButton
                         isLiked={item.isLiked}

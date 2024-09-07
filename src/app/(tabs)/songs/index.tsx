@@ -64,8 +64,8 @@ export default function SongsTab() {
                 isHidden: false,
                 statistics: {
                     lastPlayed: undefined,
-                    timesPlayed: 0,
-                    timesSkipped: 0,
+                    playCount: 0,
+                    skipCount: 0,
                 },
             };
             addSongs([songData]);
@@ -97,8 +97,8 @@ export default function SongsTab() {
             isHidden: false,
             statistics: {
                 lastPlayed: undefined,
-                timesPlayed: 0,
-                timesSkipped: 0,
+                playCount: 0,
+                skipCount: 0,
             },
         };
         addSongs([songData]);

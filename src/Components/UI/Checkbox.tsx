@@ -1,10 +1,13 @@
+import { Colors, IconSizes } from "../../styles/constants";
 import IconButton from "./IconButton";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Checkbox = ({ onPress = () => {}, isSelected = false }) => {
+const Checkbox = ({ isSelected = false }) => {
     return (
-        <IconButton
-            onPress={onPress}
-            icon={isSelected ? "checkbox-marked" : "checkbox-blank-outline"}
+        <MaterialCommunityIcons
+            name={isSelected ? "checkbox-marked" : "checkbox-blank-outline"}
+            size={IconSizes.md}
+            style={[{ color: Colors.primary }]}
         />
     );
 };

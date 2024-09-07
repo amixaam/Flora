@@ -14,7 +14,13 @@ const ListItemsNotFound = ({
     text = "Items not found!",
 }) => {
     return (
-        <View style={{ alignItems: "center", marginTop: Spacing.xl }}>
+        <View
+            style={{
+                alignItems: "center",
+                marginTop: Spacing.xl,
+                gap: Spacing.sm,
+            }}
+        >
             <MaterialCommunityIcons
                 name={icon}
                 size={IconSizes.md}

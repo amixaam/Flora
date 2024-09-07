@@ -13,7 +13,7 @@ const SubmitButton = ({ handleSubmitForm = () => {}, text = "Submit" }) => {
                     { backgroundColor: Colors.primary },
                 ]}
             >
-                <Text style={[textStyles.h6, { color: Colors.bg }]}>
+                <Text style={[textStyles.text, { color: Colors.bg }]}>
                     {text}
                 </Text>
             </View>

@@ -1,4 +1,4 @@
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import {
     ImageBackground,
     Text,
@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -15,41 +15,22 @@ import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
-import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
 import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
 import IconButton from "../../../Components/UI/IconButton";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
-import Pluralize from "../../../utils/Pluralize";
 import { CombineStrings } from "../../../utils/CombineStrings";
+import Pluralize from "../../../utils/Pluralize";
 
+// @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
 
 export default function PlaylistsTab() {
-    const { playlists, albums, getRecentlyPlayed } = useSongsStore();
+    const { playlists, albums, getRecentlyPlayed, getHistory } =
+        useSongsStore();
     const insets = useSafeAreaInsets();
-
-    const CreatePlaylistRef = useRef<BottomSheetModal>(null);
-    const openCreatePlaylist = useCallback(
-        () => CreatePlaylistRef.current?.present(),
-        []
-    );
-    const dismissCreatePlaylist = useCallback(
-        () => CreatePlaylistRef.current?.dismiss(),
-        []
-    );
-
-    const PlaylistOptionsRef = useRef<BottomSheetModal>(null);
-    const openPlaylistOptions = useCallback(() => {
-        PlaylistOptionsRef.current?.present();
-    }, []);
-
-    const dismissPlaylistOptions = useCallback(() => {
-        PlaylistOptionsRef.current?.dismiss();
-    }, []);
 
     const ContainerOptionsRef = useRef<BottomSheetModal>(null);
     const openContainerOptions = useCallback(() => {
@@ -65,8 +46,12 @@ export default function PlaylistsTab() {
             <BackgroundImageAbsolute />
             <View style={{ paddingTop: insets.top * 2.3 }} />
 
-            <View style={{ flex: 1, gap: Spacing.appPadding }}>
-                <RecapBanner />
+            {/* <Text style={[textStyles.text, { marginBottom: Spacing.md }]}>
+                {JSON.stringify(getHistory(), null, 6)}
+            </Text> */}
+
+            <View style={{ flex: 1, gap: Spacing.md }}>
+                {/* <RecapBanner /> */}
                 <HomeHeader text="Recently played" />
                 {/* Pin Liked songs playlist to first position */}
                 {/* Limit to 10 entries */}
@@ -74,7 +59,7 @@ export default function PlaylistsTab() {
                     list={getRecentlyPlayed()}
                     longPress={openContainerOptions}
                 />
-                <View style={{ gap: Spacing.sm }}>
+                <View style={{ gap: Spacing.xs }}>
                     <HomeHeader text="Mood board" />
                     <CategoriesSelector
                         buttons={["Sleep", "Focus", "Energize", "sad"]}
@@ -89,15 +74,6 @@ export default function PlaylistsTab() {
             </View>
             <View
                 style={{ paddingBottom: insets.bottom + Spacing.miniPlayer }}
-            />
-
-            <PlaylistSheet
-                ref={PlaylistOptionsRef}
-                dismiss={dismissPlaylistOptions}
-            />
-            <CreatePlaylist
-                ref={CreatePlaylistRef}
-                dismiss={dismissCreatePlaylist}
             />
             <ContainerSheet
                 ref={ContainerOptionsRef}

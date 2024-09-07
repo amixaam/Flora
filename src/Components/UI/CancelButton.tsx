@@ -10,10 +10,10 @@ const CancelButton = ({ handlePress = () => {}, text = "Cancel" }) => {
             <View
                 style={[
                     mainStyles.button_skeleton,
-                    { backgroundColor: Colors.input60 },
+                    { backgroundColor: Colors.input },
                 ]}
             >
-                <Text style={[textStyles.h6, { color: Colors.primary90 }]}>
+                <Text style={[textStyles.text, { color: Colors.primary }]}>
                     {text}
                 </Text>
             </View>

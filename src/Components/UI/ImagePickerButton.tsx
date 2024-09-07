@@ -5,13 +5,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Colors } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 
-const ImagePickerButton = ({
-    image,
-    setImage,
-}: {
+type ImagePickerTypes = {
+    touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;
     image?: string;
     setImage: any;
-}) => {
+};
+
+const ImagePickerButton = ({
+    touchableOpacityProps,
+    image,
+    setImage,
+}: ImagePickerTypes) => {
     const pickImage = async () => {
         await ImagePicker.getMediaLibraryPermissionsAsync();
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -25,7 +29,7 @@ const ImagePickerButton = ({
     };
 
     return (
-        <TouchableOpacity onPress={pickImage}>
+        <TouchableOpacity onPress={pickImage} {...touchableOpacityProps}>
             {image ? (
                 <Image
                     source={{ uri: image }}
@@ -33,7 +37,7 @@ const ImagePickerButton = ({
                         {
                             backgroundColor: Colors.input,
                             alignSelf: "center",
-                            width: "50%",
+                            width: "100%",
                             aspectRatio: 1,
                             borderRadius: 7,
                         },
@@ -45,7 +49,7 @@ const ImagePickerButton = ({
                         {
                             backgroundColor: Colors.input,
                             alignSelf: "center",
-                            width: "50%",
+                            width: "100%",
                             aspectRatio: 1,
                             borderRadius: 7,
                             justifyContent: "center",

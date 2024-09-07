@@ -12,7 +12,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { selectedSong } = useSongsStore();
 
-        if (selectedSong === null) return;
+        if (selectedSong === undefined) return;
         return (
             <>
                 <SheetModalLayout
@@ -33,11 +33,11 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <LargeTextButton
-                                mainText={selectedSong.statistics.timesPlayed.toString()}
+                                mainText={selectedSong.statistics.playCount.toString()}
                                 subText="Plays"
                             />
                             <LargeTextButton
-                                mainText={selectedSong.statistics.timesSkipped.toString()}
+                                mainText={selectedSong.statistics.skipCount.toString()}
                                 subText="Skips"
                             />
                         </BottomSheetView>

@@ -1,24 +1,58 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../store/songs";
-import { Spacing } from "../../styles/constants";
+import { Colors, Spacing } from "../../styles/constants";
 import LargeOptionButton from "../UI/LargeOptionButton";
 import SheetOptionsButton from "../UI/SheetOptionsButton";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetProps } from "../../types/other";
-import { SheetModalLayout } from "./SheetModalLayout";
-import AddSongsToPlaylist from "./AddSongsToPlaylist";
-import { Text } from "react-native";
-import { textStyles } from "../../styles/text";
 import DeleteContainer from "../Modals/DeleteContainer";
+import { SheetModalLayout } from "./SheetModalLayout";
+import AddSongsToContainer from "./AddSongsToContainer";
+import EditAlbum from "./EditAlbum";
+import EditPlaylist from "./EditPlaylist";
+import { View } from "react-native";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedContainer, deleteAlbum, deletePlaylist } =
-            useSongsStore();
+        const {
+            selectedContainer,
+            deleteAlbum,
+            deletePlaylist,
+            shuffleList,
+            getSongsFromContainer,
+            addToQueue,
+        } = useSongsStore();
 
         const [deleteConfirmModal, setDeleteConfirmModal] =
             useState<boolean>(false);
+
+        const AddSongsToContainerRef = useRef<BottomSheetModal>(null);
+        const openAddSongsToContainer = useCallback(() => {
+            AddSongsToContainerRef.current?.present();
+        }, []);
+
+        const dismissAddSongsToContainer = useCallback(() => {
+            AddSongsToContainerRef.current?.dismiss();
+        }, []);
+
+        const EditPlaylistRef = useRef<BottomSheetModal>(null);
+        const openEditPlaylistRef = useCallback(() => {
+            EditPlaylistRef.current?.present();
+        }, []);
+
+        const dismissEditPlaylistRef = useCallback(() => {
+            EditPlaylistRef.current?.dismiss();
+        }, []);
+
+        const EditAlbumRef = useRef<BottomSheetModal>(null);
+        const openEditAlbumRef = useCallback(() => {
+            EditAlbumRef.current?.present();
+        }, []);
+
+        const dismissEditAlbumRef = useCallback(() => {
+            EditAlbumRef.current?.dismiss();
+        }, []);
 
         if (selectedContainer === undefined) return;
 
@@ -39,15 +73,25 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             }
         };
 
-        // const handleShufflePlay = () => {
-        //     props.dismiss?.();
-        //     shuffleList(getSongsFromPlaylist(selectedContainer.id));
-        // };
+        const handleShufflePlay = () => {
+            props.dismiss?.();
+            shuffleList(getSongsFromContainer(selectedContainer.id));
+        };
 
-        // const handleAddToQueue = () => {
-        //     props.dismiss?.();
-        //     addToQueue(getSongsFromPlaylist(selectedContainer.id));
-        // };
+        const handleAddToQueue = () => {
+            props.dismiss?.();
+            addToQueue(getSongsFromContainer(selectedContainer.id));
+        };
+
+        const handleEditContainer = () => {
+            props.dismiss?.();
+
+            if (containerType === "album") {
+                openEditAlbumRef();
+            } else {
+                openEditPlaylistRef();
+            }
+        };
 
         return (
             <>
@@ -59,25 +103,38 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             marginHorizontal: Spacing.appPadding,
                         }}
                     >
-                        <LargeOptionButton icon="album" text="Add to queue" />
-                        <LargeOptionButton icon="shuffle" text="Shuffle play" />
+                        <LargeOptionButton
+                            icon="album"
+                            text="Add to queue"
+                            onPress={handleAddToQueue}
+                        />
+                        <LargeOptionButton
+                            icon="shuffle"
+                            text="Shuffle play"
+                            onPress={handleShufflePlay}
+                        />
 
                         <LargeOptionButton
                             icon="playlist-plus"
                             text="Add songs"
+                            onPress={openAddSongsToContainer}
                         />
                     </BottomSheetView>
+                    <View
+                        style={{
+                            height: 2,
+                            backgroundColor: Colors.input,
+                            marginHorizontal: Spacing.appPadding,
+                        }}
+                    />
                     <SheetOptionsButton
                         icon="playlist-edit"
                         buttonContent={"Edit " + containerType}
                         isDisabled={selectedContainer.id === "1"}
+                        onPress={() => {
+                            handleEditContainer();
+                        }}
                     />
-                    {containerType === "album" && (
-                        <SheetOptionsButton
-                            icon="checkbox-multiple-blank"
-                            buttonContent={"Sync Song tags"}
-                        />
-                    )}
                     <SheetOptionsButton
                         icon="trash-can"
                         buttonContent={"Delete " + containerType}
@@ -92,6 +149,15 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     dismiss={() => setDeleteConfirmModal(false)}
                     confirm={handleDeleteContainer}
                     containerType={containerType}
+                />
+                <AddSongsToContainer
+                    ref={AddSongsToContainerRef}
+                    dismiss={dismissAddSongsToContainer}
+                />
+                <EditAlbum ref={EditAlbumRef} dismiss={dismissEditAlbumRef} />
+                <EditPlaylist
+                    ref={EditPlaylistRef}
+                    dismiss={dismissEditPlaylistRef}
                 />
             </>
         );

@@ -26,12 +26,11 @@ export const mainStyles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: Spacing.lg,
         paddingVertical: Spacing.sm,
-        borderRadius: Spacing.radius,
+        borderRadius: Spacing.radiusSm,
     },
+
     text_input_skeleton: {
-        flex: 1,
-        maxHeight: 45,
-        borderRadius: Spacing.radius,
+        borderRadius: Spacing.radiusSm,
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
     },
@@ -52,9 +51,7 @@ export const mainStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         padding: Spacing.md,
-        borderBottomWidth: 1,
         columnGap: Spacing.md,
-        borderColor: "rgba(74, 68, 88, 0.2)",
     },
     hiddenListItem: { opacity: 0.5 },
 
@@ -99,8 +96,9 @@ export const newStyles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: Spacing.appPadding,
-        paddingVertical: Spacing.mmd,
+        paddingVertical: 14,
     },
+
     songListItemSelected: {
         backgroundColor: "rgba(74, 68, 88, 0.3)",
     },

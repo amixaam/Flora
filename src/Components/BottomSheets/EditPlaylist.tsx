@@ -13,7 +13,7 @@ import { SnapPoints, Spacing } from "../../styles/constants";
 
 const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedPlaylist, editPlaylist } = useSongsStore();
+        const { selectedContainer, editPlaylist } = useSongsStore();
         const [inputFields, setInputFields] = useState<Partial<Playlist>>({
             title: "",
             description: undefined,
@@ -21,74 +21,95 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
         });
 
         useEffect(() => {
-            if (!selectedPlaylist) return;
+            if (!selectedContainer || !("description" in selectedContainer))
+                return;
             setInputFields({
-                title: selectedPlaylist.title,
-                description: selectedPlaylist.description,
-                artwork: selectedPlaylist.artwork,
+                title: selectedContainer.title,
+                description: selectedContainer.description,
+                artwork: selectedContainer.artwork,
             });
-        }, [selectedPlaylist]);
+        }, [selectedContainer]);
 
-        if (!selectedPlaylist) return;
+        if (!selectedContainer || !("description" in selectedContainer)) return;
 
         const handleSubmitForm = () => {
             if (!inputFields.title) inputFields.title = "Unnamed playlist";
-            editPlaylist(selectedPlaylist.id, inputFields);
+            editPlaylist(selectedContainer.id, inputFields);
             props.dismiss?.();
         };
 
         return (
             <SheetModalLayout
                 ref={ref}
-                title={`Edit ${selectedPlaylist.title}`}
+                title={`Edit ${selectedContainer.title}`}
                 snapPoints={[SnapPoints.lg]}
             >
                 <BottomSheetView
                     style={{
-                        rowGap: Spacing.sm,
-                        flex: 1,
+                        gap: Spacing.md,
+                        flexDirection: "row",
                         marginHorizontal: Spacing.appPadding,
                     }}
                 >
                     <ImagePickerButton
                         image={inputFields.artwork}
                         setImage={(artwork: string) =>
-                            setInputFields({ ...inputFields, artwork: artwork })
-                        }
-                    />
-                    <TextInput
-                        bottomSheet={true}
-                        placeholder="title"
-                        value={inputFields.title}
-                        setValue={(value) =>
-                            setInputFields({ ...inputFields, title: value })
-                        }
-                    />
-                    <TextInput
-                        bottomSheet={true}
-                        placeholder="Description"
-                        value={inputFields.description}
-                        setValue={(value) =>
                             setInputFields({
                                 ...inputFields,
-                                description: value,
+                                artwork: artwork,
                             })
                         }
+                        touchableOpacityProps={{
+                            style: {
+                                flex: 1,
+                                width: 128,
+                            },
+                        }}
                     />
 
-                    <View
-                        style={{ flexDirection: "row", columnGap: Spacing.sm }}
-                    >
-                        <SubmitButton
-                            handleSubmitForm={handleSubmitForm}
-                            text="Update"
-                        />
-                        <CancelButton
-                            handlePress={() => {
-                                props.dismiss?.();
+                    <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
+                        <BottomSheetView style={{ gap: Spacing.sm }}>
+                            <TextInput
+                                bottomSheet={true}
+                                placeholder="Playlist name..."
+                                value={inputFields.title}
+                                setValue={(value) =>
+                                    setInputFields({
+                                        ...inputFields,
+                                        title: value,
+                                    })
+                                }
+                            />
+                            <TextInput
+                                bottomSheet={true}
+                                placeholder="Description..."
+                                value={inputFields.description}
+                                setValue={(value) =>
+                                    setInputFields({
+                                        ...inputFields,
+                                        description: value,
+                                    })
+                                }
+                            />
+                        </BottomSheetView>
+
+                        <BottomSheetView
+                            style={{
+                                flexDirection: "row",
+                                gap: Spacing.sm,
                             }}
-                        />
-                    </View>
+                        >
+                            <SubmitButton
+                                handleSubmitForm={handleSubmitForm}
+                                text="Save"
+                            />
+                            <CancelButton
+                                handlePress={() => {
+                                    props.dismiss?.();
+                                }}
+                            />
+                        </BottomSheetView>
+                    </BottomSheetView>
                 </BottomSheetView>
             </SheetModalLayout>
         );

@@ -67,6 +67,10 @@ type SongsStore = {
     updateSongSkip: (id: string) => void;
     updateSongStatistics: (id: string) => void;
     addSongToHistory: (id: string) => void;
+    getHistory: () => History;
+
+    // // container
+    getSongsFromContainer: (id: string) => Song[];
 
     // // playlists
     createPlaylist: (inputFields: Partial<Playlist>) => void;
@@ -297,6 +301,27 @@ export const useSongsStore = create<SongsStore>()(
                         ],
                     },
                 }));
+            },
+
+            getHistory: () => {
+                return get().history;
+            },
+
+            // containers ---------------------------------------------------------
+
+            getSongsFromContainer: (id) => {
+                var container;
+                if (id[0] === "P") {
+                    container = get().getPlaylist(id);
+                } else {
+                    container = get().getAlbum(id);
+                }
+
+                return container?.songs
+                    .map((songId) =>
+                        get().songs.find((song) => song.id === songId)
+                    )
+                    .filter((s) => s !== undefined) as Song[];
             },
 
             // playlists ----------------------------------------------------------

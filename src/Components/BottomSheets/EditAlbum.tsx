@@ -1,6 +1,5 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useEffect, useState } from "react";
-import { View } from "react-native";
 import { useSongsStore } from "../../store/songs";
 import { SnapPoints, Spacing } from "../../styles/constants";
 import { BottomSheetProps } from "../../types/other";
@@ -10,11 +9,10 @@ import ImagePickerButton from "../UI/ImagePickerButton";
 import SubmitButton from "../UI/SubmitButton";
 import TextInput from "../UI/TextInput";
 import { SheetModalLayout } from "./SheetModalLayout";
-import UpdateSongsToo from "../Modals/UpdateSongsToo";
 
 const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedAlbum, editAlbum, copyAlbumTagsToSongs } =
+        const { selectedContainer, editAlbum, copyAlbumTagsToSongs } =
             useSongsStore();
         const [inputFields, setInputFields] = useState<Partial<Album>>({
             title: "",
@@ -23,47 +21,40 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
             artwork: undefined,
         });
 
-        const [syncSongTags, setSyncSongTags] = useState(false);
-
         useEffect(() => {
-            if (!selectedAlbum) return;
+            if (!selectedContainer || !("artist" in selectedContainer)) return;
             setInputFields({
-                title: selectedAlbum.title,
-                artist: selectedAlbum.artist,
-                year: selectedAlbum.year,
-                artwork: selectedAlbum.artwork,
+                title: selectedContainer.title,
+                artist: selectedContainer.artist,
+                year: selectedContainer.year,
+                artwork: selectedContainer.artwork,
             });
-        }, [selectedAlbum]);
+        }, [selectedContainer]);
 
-        if (!selectedAlbum) return;
+        if (!selectedContainer || !("artist" in selectedContainer)) return;
 
         const handleSubmitForm = () => {
             if (!inputFields.title) inputFields.title = "Unnamed album";
             if (!inputFields.artist) inputFields.artist = "No artist";
             if (!inputFields.year) inputFields.year = "No year";
 
-            editAlbum(selectedAlbum.id, inputFields);
+            editAlbum(selectedContainer.id, inputFields);
+            copyAlbumTagsToSongs(selectedContainer.id);
             props.dismiss?.();
-            setSyncSongTags(true);
-        };
-
-        const handleSyncSongs = () => {
-            copyAlbumTagsToSongs(selectedAlbum.id);
-            setSyncSongTags(false);
         };
 
         return (
             <>
                 <SheetModalLayout
                     ref={ref}
-                    title={`Edit ${selectedAlbum.title}`}
+                    title={`Edit ${selectedContainer.title}`}
                     snapPoints={[SnapPoints.lg]}
                 >
                     <BottomSheetView
                         style={{
-                            rowGap: Spacing.sm,
+                            gap: Spacing.md,
+                            flexDirection: "row",
                             marginHorizontal: Spacing.appPadding,
-                            flex: 1,
                         }}
                     >
                         <ImagePickerButton
@@ -74,68 +65,70 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                     artwork: artwork,
                                 })
                             }
-                        />
-                        <TextInput
-                            bottomSheet={true}
-                            placeholder="Title"
-                            value={inputFields.title}
-                            setValue={(value) =>
-                                setInputFields({ ...inputFields, title: value })
-                            }
-                        />
-                        <BottomSheetView
-                            style={{
-                                columnGap: Spacing.sm,
-                                flexDirection: "row",
+                            touchableOpacityProps={{
+                                style: {
+                                    flex: 1,
+                                    width: 128,
+                                },
                             }}
-                        >
-                            <TextInput
-                                bottomSheet={true}
-                                placeholder="Artist"
-                                value={inputFields.artist}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        artist: value,
-                                    })
-                                }
-                            />
-                            <TextInput
-                                bottomSheet={true}
-                                placeholder="Year"
-                                value={inputFields.year?.toString()}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        year: value,
-                                    })
-                                }
-                            />
-                        </BottomSheetView>
+                        />
 
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                columnGap: Spacing.sm,
-                            }}
-                        >
-                            <SubmitButton
-                                handleSubmitForm={handleSubmitForm}
-                                text="Update"
-                            />
-                            <CancelButton
-                                handlePress={() => {
-                                    props.dismiss?.();
+                        <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
+                            <BottomSheetView style={{ gap: Spacing.sm }}>
+                                <TextInput
+                                    bottomSheet={true}
+                                    placeholder="Album name..."
+                                    value={inputFields.title}
+                                    setValue={(value) =>
+                                        setInputFields({
+                                            ...inputFields,
+                                            title: value,
+                                        })
+                                    }
+                                />
+                                <TextInput
+                                    bottomSheet={true}
+                                    placeholder="Artist..."
+                                    value={inputFields.artist}
+                                    setValue={(value) =>
+                                        setInputFields({
+                                            ...inputFields,
+                                            artist: value,
+                                        })
+                                    }
+                                />
+                                <TextInput
+                                    bottomSheet={true}
+                                    placeholder="Year..."
+                                    value={inputFields.year}
+                                    setValue={(value) =>
+                                        setInputFields({
+                                            ...inputFields,
+                                            year: value,
+                                        })
+                                    }
+                                />
+                            </BottomSheetView>
+
+                            <BottomSheetView
+                                style={{
+                                    flexDirection: "row",
+                                    gap: Spacing.sm,
                                 }}
-                            />
-                        </View>
+                            >
+                                <SubmitButton
+                                    handleSubmitForm={handleSubmitForm}
+                                    text="Save"
+                                />
+                                <CancelButton
+                                    handlePress={() => {
+                                        props.dismiss?.();
+                                    }}
+                                />
+                            </BottomSheetView>
+                        </BottomSheetView>
                     </BottomSheetView>
                 </SheetModalLayout>
-                <UpdateSongsToo
-                    visible={syncSongTags}
-                    dismiss={() => setSyncSongTags(false)}
-                    confirm={handleSyncSongs}
-                />
             </>
         );
     }

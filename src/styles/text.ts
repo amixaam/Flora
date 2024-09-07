@@ -31,6 +31,7 @@ export const textStyles = StyleSheet.create({
         color: Colors.primary,
         fontSize: FontSize.text,
         letterSpacing: 0.5,
+        lineHeight: FontSize.text * 1.2,
     },
     small: {
         fontFamily: "Poppins-Medium",
