@@ -95,6 +95,7 @@ type SongsStore = {
     doesAlbumExist: (name: string) => boolean;
     getSongsFromAlbum: (id: string) => Song[];
 
+    isSongInAnyAlbum: (songId: string) => boolean;
     addSongToAlbum: (albumId: string, songId: string) => void;
     removeSongFromAlbum: (albumId: string, songId: string) => void;
     getAlbumBySong: (songId: string) => Album | undefined;
@@ -523,6 +524,12 @@ export const useSongsStore = create<SongsStore>()(
                 return album;
             },
 
+            isSongInAnyAlbum: (songId) => {
+                const albums = get().albums;
+
+                return albums.some((album) => album.songs.includes(songId));
+            },
+
             doesAlbumExist: (name) => {
                 const albums = get().albums;
                 const album = albums.find((a) => a.title === name);
@@ -549,8 +556,11 @@ export const useSongsStore = create<SongsStore>()(
 
             addSongToAlbum: (albumId, songId) => {
                 const album = get().getAlbum(albumId);
+                const inAlbum = get().isSongInAnyAlbum(songId);
 
-                if (!album?.songs.includes(songId)) {
+                if (!album) return;
+
+                if (!album.songs.includes(songId)) {
                     set((state) => ({
                         albums: state.albums.map((album) =>
                             album.id === albumId
@@ -558,6 +568,20 @@ export const useSongsStore = create<SongsStore>()(
                                 : album
                         ),
                     }));
+                    if (!inAlbum) {
+                        set((state) => ({
+                            songs: state.songs.map((song) =>
+                                song.id === songId
+                                    ? {
+                                          ...song,
+                                          artist: album.artist,
+                                          artwork: album.artwork,
+                                          year: album.year,
+                                      }
+                                    : song
+                            ),
+                        }));
+                    }
                 }
             },
 

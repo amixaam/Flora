@@ -2,13 +2,11 @@ import { Text, View } from "react-native";
 import { useSongsStore } from "../store/songs";
 import IconButton from "./UI/IconButton";
 
-import {
-    usePlaybackState,
-    useProgress
-} from "react-native-track-player";
+import { usePlaybackState, useProgress } from "react-native-track-player";
 import { textStyles } from "../styles/text";
 import { FormatSecs } from "../utils/FormatMillis";
 import PlaybackSlider from "./PlaybackSlider";
+import { IconSizes, Spacing } from "../styles/constants";
 
 const PlaybackControls = () => {
     const { play, pause, next, previous, seekToPosition } = useSongsStore();
@@ -25,12 +23,9 @@ const PlaybackControls = () => {
             style={{
                 flexDirection: "column",
                 justifyContent: "center",
-                rowGap: 8,
+                gap: Spacing.md,
             }}
         >
-            <Text style={[textStyles.small, { textAlign: "center" }]}>
-                {"placeholder text"}
-            </Text>
             <View
                 style={{
                     flexDirection: "row",
@@ -38,23 +33,43 @@ const PlaybackControls = () => {
                     alignItems: "center",
                 }}
             >
-                <IconButton icon={"shuffle"} size={32} isDisabled={true} />
                 <IconButton
-                    onPress={previous}
-                    icon={"skip-previous"}
-                    size={48}
+                    icon={"shuffle"}
+                    size={IconSizes.lg}
+                    touchableOpacityProps={{
+                        disabled: true,
+                    }}
                 />
                 <IconButton
-                    onPress={hanldePlayPausePress}
+                    touchableOpacityProps={{
+                        onPress: previous,
+                    }}
+                    icon={"skip-previous"}
+                    size={IconSizes.xl}
+                />
+                <IconButton
+                    touchableOpacityProps={{
+                        onPress: hanldePlayPausePress,
+                    }}
                     icon={
                         playbackState.state === "playing"
                             ? "pause-circle"
                             : "play-circle"
                     }
-                    size={64}
+                    size={IconSizes.xxl}
                 />
-                <IconButton onPress={next} icon={"skip-next"} size={48} />
-                <IconButton icon={"repeat-once"} size={32} isDisabled={true} />
+                <IconButton
+                    touchableOpacityProps={{ onPress: next }}
+                    icon={"skip-next"}
+                    size={IconSizes.xl}
+                />
+                <IconButton
+                    icon={"repeat-once"}
+                    size={IconSizes.lg}
+                    touchableOpacityProps={{
+                        disabled: true,
+                    }}
+                />
             </View>
             <PlaybackSlider
                 trackDuration={progress.duration}
@@ -62,6 +77,7 @@ const PlaybackControls = () => {
                 skipPosition={seekToPosition}
             />
             <Text style={[textStyles.detail, { textAlign: "center" }]}>
+                {"Imaginarium • "}
                 {FormatSecs(progress.position)} /{" "}
                 {FormatSecs(progress.duration)}
             </Text>

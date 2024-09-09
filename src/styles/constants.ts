@@ -19,6 +19,7 @@ export enum IconSizes {
     md = 26, //default
     lg = 30,
     xl = 36,
+    xxl = 64,
 }
 export const DefaultIcon = "help-circle";
 

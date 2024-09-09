@@ -18,11 +18,11 @@ else
 fi
 
 # Get today's date in dd.mm format
-today=$(date +%m.%d)
+today=$(date +%Y.%m.%d)
 
 # Define source and target paths
 source_file="app/build/outputs/apk/release/app-release.apk"
-target_file="${today}-$project_name.apk"
+target_file="${today} - $project_name.apk"
 target_dir=~/Documents/Expo-Builds/$project_name/ 
 mtp_target="mtp://Google_Pixel_7_28251FDH2006FH/Internal%20shared%storage/Download/$project_name-releases"
 

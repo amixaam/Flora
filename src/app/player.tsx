@@ -73,15 +73,14 @@ const PlayerScreen = () => {
                     style={{
                         flex: 1,
                         justifyContent: "center",
-                        marginHorizontal: Spacing.appPadding,
-                        rowGap: Spacing.sm,
+                        marginHorizontal: Spacing.appPadding * 2,
+                        gap: Spacing.md,
                     }}
                 >
                     <View>
                         <AlbumArt
                             image={activeTrack?.artwork}
                             style={{
-                                width: "100%",
                                 aspectRatio: 1,
                                 borderRadius: Spacing.radius,
                             }}
@@ -102,37 +101,35 @@ const PlayerScreen = () => {
                             }}
                         />
                     </View>
-                    <View style={{ marginBottom: Spacing.xl }}>
+                    <View
+                        style={{
+                            marginBottom: Spacing.xl,
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
                         <View
                             style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "100%",
+                                flexDirection: "column",
                                 columnGap: Spacing.sm,
                             }}
                         >
-                            <Text style={[textStyles.h4]} numberOfLines={1}>
-                                {activeTrack?.title}
+                            <Text style={[textStyles.h5]} numberOfLines={1}>
+                                {"It was all a dream"}
                             </Text>
-                            <IconButton
-                                onPress={handleLikeButtonPress}
-                                icon={
-                                    activeTrack?.isLiked
-                                        ? "heart"
-                                        : "heart-outline"
-                                }
-                            />
+                            <Text style={[textStyles.text]}>
+                                {`${activeTrack?.artist} • ${activeTrack?.year}`}
+                            </Text>
                         </View>
-
-                        <Text
-                            style={[
-                                textStyles.text,
-                                { textAlign: "center", opacity: 0.7 },
-                            ]}
-                        >
-                            {`${activeTrack?.artist} • ${activeTrack?.year}`}
-                        </Text>
+                        <IconButton
+                            touchableOpacityProps={{
+                                onPress: handleLikeButtonPress,
+                            }}
+                            icon={
+                                activeTrack?.isLiked ? "heart" : "heart-outline"
+                            }
+                        />
                     </View>
 
                     <PlaybackControls />

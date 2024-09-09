@@ -1,4 +1,5 @@
 import Slider from "@react-native-community/slider";
+
 const PlaybackSlider = ({
     trackDuration,
     trackPosition,
@@ -23,7 +24,7 @@ const PlaybackSlider = ({
             minimumTrackTintColor="#E8DEF8"
             maximumTrackTintColor="#E8DEF8"
             style={{
-                marginHorizontal: -15,
+                marginHorizontal: -12,
             }}
         />
     );
