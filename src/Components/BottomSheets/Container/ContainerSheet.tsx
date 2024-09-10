@@ -1,16 +1,16 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
-import { useSongsStore } from "../../store/songs";
-import { Colors, Spacing } from "../../styles/constants";
-import LargeOptionButton from "../UI/LargeOptionButton";
-import SheetOptionsButton from "../UI/SheetOptionsButton";
+import { useSongsStore } from "../../../store/songs";
+import { Colors, Spacing } from "../../../styles/constants";
+import LargeOptionButton from "../../UI/LargeOptionButton";
+import SheetOptionsButton from "../../UI/SheetOptionsButton";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { BottomSheetProps } from "../../types/other";
-import DeleteContainer from "../Modals/DeleteContainer";
-import { SheetModalLayout } from "./SheetModalLayout";
+import { BottomSheetProps } from "../../../types/other";
+import DeleteContainer from "../../Modals/DeleteContainer";
+import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
-import EditAlbum from "./EditAlbum";
-import EditPlaylist from "./EditPlaylist";
+import EditAlbum from "../Album/EditAlbum";
+import EditPlaylist from "../Playlist/EditPlaylist";
 import { View } from "react-native";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(

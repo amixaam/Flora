@@ -22,106 +22,80 @@ export const TopButtonControls = ({
             style={{
                 paddingTop: Spacing.sm,
                 paddingHorizontal: horizontalMargins,
-                rowGap: Spacing.sm,
                 paddingBottom: Spacing.sm,
             }}
         >
-            {/* <View
-            style={{
-                justifyContent: "space-between",
-                flexDirection: "row",
-            }}
-        >
-            <Text style={[textStyles.h6, { opacity: 0.7 }]}>
-                Playlist name
-            </Text>
-            <Text style={[textStyles.h6, { opacity: 0.7 }]}>
-                {playlists.length} Playlists
-            </Text>
-        </View> */}
             <View
                 style={{
                     flexDirection: "row",
-                    justifyContent: "space-between",
-                    columnGap: Spacing.sm,
+                    gap: Spacing.md,
                 }}
             >
-                <TouchableNativeFeedback
-                    onPress={() => {
-                        addListToQueue(songs);
-                    }}
-                    disabled={songs.length === 0}
-                >
-                    <View
-                        style={[
-                            mainStyles.button_skeleton,
-                            {
-                                borderColor: Colors.primary30,
-                                borderWidth: 1,
-                                flex: 1,
-                                justifyContent: "center",
-                                alignContent: "center",
-                                alignItems: "center",
-                                opacity: 0.7,
-                                columnGap: Spacing.sm,
-                            },
-                        ]}
-                    >
-                        <MaterialCommunityIcons
-                            name="play"
-                            size={IconSizes.md}
-                            color={Colors.primary}
-                            style={songs.length === 0 ? { opacity: 0.5 } : {}}
-                        />
-                        <Text
-                            style={[
-                                textStyles.text,
-                                songs.length === 0 ? { opacity: 0.5 } : {},
-                                { textAlign: "center" },
-                            ]}
-                            adjustsFontSizeToFit
-                        >
-                            Play
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
-                <TouchableNativeFeedback
-                    onPress={() => {
-                        shuffleList(songs);
-                    }}
-                    disabled={songs.length === 0}
-                >
-                    <View
-                        style={[
-                            mainStyles.button_skeleton,
-                            {
-                                borderColor: Colors.primary30,
-                                borderWidth: 1,
-                                flex: 1,
-                                opacity: 0.7,
-                                columnGap: Spacing.sm,
-                            },
-                        ]}
-                    >
-                        <MaterialCommunityIcons
-                            name="shuffle"
-                            size={IconSizes.md}
-                            color={Colors.primary}
-                            style={songs.length === 0 ? { opacity: 0.5 } : {}}
-                        />
-                        <Text
-                            style={[
-                                textStyles.text,
-                                songs.length === 0 ? { opacity: 0.5 } : {},
-                                { textAlign: "center" },
-                            ]}
-                            adjustsFontSizeToFit
-                        >
-                            Shuffle
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
+                <QuickButton
+                    songs={songs}
+                    onPress={addListToQueue}
+                    text="Play"
+                    icon="play"
+                />
+                <QuickButton
+                    songs={songs}
+                    onPress={shuffleList}
+                    text="Shuffle"
+                    icon="shuffle"
+                />
             </View>
         </View>
+    );
+};
+
+interface QuickButtonProps {
+    songs: Song[];
+    onPress: (songs: Song[]) => void;
+    text?: string;
+    icon?: string;
+}
+
+const QuickButton = ({
+    songs,
+    onPress,
+    text = "text",
+    icon = "alert-circle",
+}: QuickButtonProps) => {
+    return (
+        <TouchableNativeFeedback
+            onPress={() => {
+                onPress(songs);
+            }}
+            disabled={songs.length === 0}
+        >
+            <View
+                style={[
+                    mainStyles.button_skeleton,
+                    {
+                        flex: 1,
+                        gap: Spacing.sm,
+                        borderColor: Colors.primary30,
+                        borderWidth: 1,
+                        backgroundColor: Colors.neon10,
+                    },
+                ]}
+            >
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={IconSizes.md}
+                    color={Colors.primary}
+                    style={songs.length === 0 ? { opacity: 0.5 } : {}}
+                />
+                <Text
+                    style={[
+                        textStyles.text,
+                        songs.length === 0 ? { opacity: 0.5 } : {},
+                        { marginTop: Spacing.xs },
+                    ]}
+                >
+                    {text}
+                </Text>
+            </View>
+        </TouchableNativeFeedback>
     );
 };

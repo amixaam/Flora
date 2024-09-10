@@ -1,15 +1,15 @@
 import { forwardRef, useCallback, useRef } from "react";
 import { FlatList } from "react-native";
-import { useSongsStore } from "../../store/songs";
-import { SnapPoints, Spacing } from "../../styles/constants";
-import ListItemsNotFound from "../UI/ListItemsNotFound";
-import SheetPlaylistOptionsButton from "../UI/SheetPlaylistOptionsButton";
-import { SheetModalLayout } from "./SheetModalLayout";
+import { useSongsStore } from "../../../store/songs";
+import { SnapPoints, Spacing } from "../../../styles/constants";
+import ListItemsNotFound from "../../UI/ListItemsNotFound";
+import SheetPlaylistOptionsButton from "../../UI/SheetPlaylistOptionsButton";
+import { SheetModalLayout } from "../SheetModalLayout";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { BottomSheetProps } from "../../types/other";
-import { Playlist } from "../../types/song";
-import SheetOptionsButton from "../UI/SheetOptionsButton";
-import CreatePlaylist from "./CreatePlaylist";
+import { BottomSheetProps } from "../../../types/other";
+import { Playlist } from "../../../types/song";
+import SheetOptionsButton from "../../UI/SheetOptionsButton";
+import CreatePlaylist from "../Playlist/CreatePlaylist";
 
 const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {

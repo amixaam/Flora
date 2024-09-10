@@ -3,7 +3,7 @@ import React, { useCallback, useRef } from "react";
 import { Text, View } from "react-native";
 import { useActiveTrack } from "react-native-track-player";
 import AlbumArt from "../Components/AlbumArt";
-import SongSheet from "../Components/BottomSheets/SongSheet";
+import SongSheet from "../Components/BottomSheets/Song/SongSheet";
 import ImageBlurBackground from "../Components/ImageBlurBackground";
 import PlaybackControls from "../Components/PlaybackControls";
 import IconButton from "../Components/UI/IconButton";

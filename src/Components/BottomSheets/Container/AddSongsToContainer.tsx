@@ -1,41 +1,59 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import { useSongsStore } from "../../store/songs";
-import { SnapPoints, Spacing } from "../../styles/constants";
-import SongListItem from "../SongListItem";
-import ListItemsNotFound from "../UI/ListItemsNotFound";
+import { useSongsStore } from "../../../store/songs";
+import { SnapPoints, Spacing } from "../../../styles/constants";
+import SongListItem from "../../SongListItem";
+import ListItemsNotFound from "../../UI/ListItemsNotFound";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { SheetModalLayout } from "./SheetModalLayout";
-import { BottomSheetProps } from "../../types/other";
+import { SheetModalLayout } from "../SheetModalLayout";
+import { BottomSheetProps } from "../../../types/other";
 
-const AddSongsToAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
+const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { songs, selectedAlbum, addSongToAlbum, removeSongFromAlbum } =
-            useSongsStore();
+        const {
+            songs,
+            selectedContainer,
+
+            addSongToPlaylist,
+            addSongToAlbum,
+
+            removeSongFromPlaylist,
+            removeSongFromAlbum,
+        } = useSongsStore();
         const [selectedSongs, setselectedSongs] = useState<string[]>([]);
 
         useEffect(() => {
-            if (!selectedAlbum) return;
-            setselectedSongs(selectedAlbum.songs);
-        }, [selectedAlbum]);
+            if (!selectedContainer) return;
+            setselectedSongs(selectedContainer.songs);
+        }, [selectedContainer]);
 
-        if (!selectedAlbum) return;
+        if (selectedContainer === undefined) return;
+
+        const containerType =
+            selectedContainer?.id[0] === "P" ||
+            parseInt(selectedContainer?.id[0]) == 1
+                ? "playlist"
+                : "album";
 
         const changeList = (songId: string) => {
             if (selectedSongs.includes(songId)) {
                 setselectedSongs(selectedSongs.filter((id) => id !== songId));
-                removeSongFromAlbum(selectedAlbum.id, songId);
+                containerType === "album"
+                    ? removeSongFromAlbum(selectedContainer.id, songId)
+                    : removeSongFromPlaylist(selectedContainer.id, songId);
                 return;
             }
+
             setselectedSongs([...selectedSongs, songId]);
-            addSongToAlbum(selectedAlbum.id, songId);
-            console.log(selectedSongs);
+            containerType === "album"
+                ? addSongToAlbum(selectedContainer.id, songId)
+                : addSongToPlaylist(selectedContainer.id, songId);
         };
 
         return (
             <SheetModalLayout
                 ref={ref}
-                title={`Add songs to ${selectedAlbum.title}`}
+                title={`Add songs to ${containerType}`}
                 snapPoints={[SnapPoints.full]}
             >
                 <FlatList
@@ -47,7 +65,7 @@ const AddSongsToAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                         />
                     }
                     contentContainerStyle={{
-                        paddingBottom: Spacing.xl,
+                        paddingBottom: Spacing.xl * 3,
                     }}
                     renderItem={({ item }) => (
                         <SongListItem
@@ -68,4 +86,4 @@ const AddSongsToAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     }
 );
 
-export default AddSongsToAlbum;
+export default AddSongsToContainer;

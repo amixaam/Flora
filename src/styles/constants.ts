@@ -41,6 +41,7 @@ export enum Colors {
     bg = "#050506",
     input = "#2B2931",
     input60 = "#2B293160",
+    neon10 = "#9747FF10",
 }
 
 export enum SnapPoints {

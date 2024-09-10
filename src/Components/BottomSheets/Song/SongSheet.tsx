@@ -1,11 +1,11 @@
 import { forwardRef, useCallback, useRef } from "react";
-import { useSongsStore } from "../../store/songs";
-import { SnapPoints, Spacing } from "../../styles/constants";
-import LargeOptionButton from "../UI/LargeOptionButton";
-import SheetOptionsButton from "../UI/SheetOptionsButton";
+import { useSongsStore } from "../../../store/songs";
+import { SnapPoints, Spacing } from "../../../styles/constants";
+import LargeOptionButton from "../../UI/LargeOptionButton";
+import SheetOptionsButton from "../../UI/SheetOptionsButton";
 import AddPlaylistToSong from "./AddPlaylistToSong";
-import { SheetModalLayout } from "./SheetModalLayout";
-import { BottomSheetProps } from "../../types/other";
+import { SheetModalLayout } from "../SheetModalLayout";
+import { BottomSheetProps } from "../../../types/other";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import SongStatistics from "./SongStatistics";
 

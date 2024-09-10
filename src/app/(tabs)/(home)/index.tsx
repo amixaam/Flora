@@ -14,16 +14,13 @@ import { useSongsStore } from "../../../store/songs";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AlbumArt from "../../../Components/AlbumArt";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
+import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import IconButton from "../../../Components/UI/IconButton";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
-import { CombineStrings } from "../../../utils/CombineStrings";
-import Pluralize from "../../../utils/Pluralize";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
@@ -174,6 +171,11 @@ const HorizontalList = ({
             )}
             renderItem={({ item }) => (
                 <ContainerItem
+                    viewProps={{
+                        style: {
+                            width: 160,
+                        },
+                    }}
                     item={item}
                     touchableProps={{
                         onPress: () => {

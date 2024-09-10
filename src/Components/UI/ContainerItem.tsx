@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, TouchableNativeFeedback, View } from "react-native";
 import { Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
@@ -9,14 +10,18 @@ import AlbumArt from "../AlbumArt";
 type ContainerItemProps = {
     item: Playlist | Album;
     touchableProps?: React.ComponentProps<typeof TouchableNativeFeedback>;
+    viewProps?: React.ComponentProps<typeof View>;
 };
 
-const ContainerItem = ({ item, touchableProps = {} }: ContainerItemProps) => {
-    const width = 160;
+const ContainerItem = ({
+    item,
+    touchableProps = {},
+    viewProps,
+}: ContainerItemProps) => {
     return (
         <TouchableNativeFeedback delayLongPress={250} {...touchableProps}>
-            <View style={{ gap: Spacing.xs, width: width }}>
-                <AlbumArt image={item.artwork} style={{ width: width }} />
+            <View style={[{ gap: Spacing.xs }, viewProps?.style]}>
+                <AlbumArt image={item.artwork} style={{ width: "100%" }} />
                 <View>
                     <Text style={textStyles.h6} numberOfLines={1}>
                         {item.title}

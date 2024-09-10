@@ -1,12 +1,12 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef } from "react";
 import { View } from "react-native";
-import { useSongsStore } from "../../store/songs";
-import { SnapPoints, Spacing } from "../../styles/constants";
-import { BottomSheetProps } from "../../types/other";
-import LargeTextButton from "../UI/LargeTextButton";
-import SmallTitleBigText from "../UI/SmallTitleBigText";
-import { SheetModalLayout } from "./SheetModalLayout";
+import { useSongsStore } from "../../../store/songs";
+import { SnapPoints, Spacing } from "../../../styles/constants";
+import { BottomSheetProps } from "../../../types/other";
+import LargeTextButton from "../../UI/LargeTextButton";
+import SmallTitleBigText from "../../UI/SmallTitleBigText";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {

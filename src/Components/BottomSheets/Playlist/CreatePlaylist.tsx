@@ -1,15 +1,15 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useState } from "react";
 import { View } from "react-native";
-import { useSongsStore } from "../../store/songs";
-import CancelButton from "../UI/CancelButton";
-import ImagePickerButton from "../UI/ImagePickerButton";
-import SubmitButton from "../UI/SubmitButton";
-import TextInput from "../UI/TextInput";
-import { Spacing } from "../../styles/constants";
-import { BottomSheetProps } from "../../types/other";
-import { Playlist } from "../../types/song";
-import { SheetModalLayout } from "./SheetModalLayout";
+import { useSongsStore } from "../../../store/songs";
+import CancelButton from "../../UI/CancelButton";
+import ImagePickerButton from "../../UI/ImagePickerButton";
+import SubmitButton from "../../UI/SubmitButton";
+import TextInput from "../../UI/TextInput";
+import { Spacing } from "../../../styles/constants";
+import { BottomSheetProps } from "../../../types/other";
+import { Playlist } from "../../../types/song";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 const CreatePlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {

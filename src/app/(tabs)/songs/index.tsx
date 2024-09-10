@@ -6,7 +6,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as MediaLibrary from "expo-media-library";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SongSheet from "../../../Components/BottomSheets/SongSheet";
+import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import SongListItem from "../../../Components/SongListItem";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
 import useSearchBar from "../../../hooks/useSearchBar";

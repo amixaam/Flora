@@ -8,8 +8,8 @@ import { useSongsStore } from "../../../store/songs";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
-import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
+import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
+import CreatePlaylist from "../../../Components/BottomSheets/Playlist/CreatePlaylist";
 import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
 import ContainerItem from "../../../Components/UI/ContainerItem";
 import IconButton from "../../../Components/UI/IconButton";
@@ -71,11 +71,16 @@ export default function PlaylistsTab() {
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
-                    paddingHorizontal: Spacing.appPadding - Spacing.sm,
+                    paddingHorizontal: Spacing.appPadding / 2,
                 }}
-                estimatedItemSize={100}
+                estimatedItemSize={50}
                 renderItem={({ item }) => (
                     <ContainerItem
+                        viewProps={{
+                            style: {
+                                margin: Spacing.sm,
+                            },
+                        }}
                         item={item}
                         touchableProps={{
                             onPress: () => {

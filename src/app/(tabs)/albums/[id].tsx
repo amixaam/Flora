@@ -6,8 +6,8 @@ import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
-import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
-import SongSheet from "../../../Components/BottomSheets/SongSheet";
+import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
+import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import ImageBlurBackground from "../../../Components/ImageBlurBackground";
 import SongListItem, {
     SongListItemProps,

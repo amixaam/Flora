@@ -8,8 +8,8 @@ import { useSongsStore } from "../../../store/songs";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
-import CreateAlbum from "../../../Components/BottomSheets/CreateAlbum";
+import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
+import CreateAlbum from "../../../Components/BottomSheets/Album/CreateAlbum";
 import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
 import ContainerItem from "../../../Components/UI/ContainerItem";
 import IconButton from "../../../Components/UI/IconButton";
@@ -72,14 +72,16 @@ export default function AlbumsTab() {
                     paddingHorizontal: Spacing.appPadding - Spacing.sm,
                 }}
                 ListEmptyComponent={
-                    <ListItemsNotFound
-                        text={`You dont have any albums!`}
-                        icon="album"
-                    />
+                    <ListItemsNotFound text={`No albums found!`} icon="album" />
                 }
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
                     <ContainerItem
+                        viewProps={{
+                            style: {
+                                margin: Spacing.sm,
+                            },
+                        }}
                         item={item}
                         touchableProps={{
                             onPress: () => {

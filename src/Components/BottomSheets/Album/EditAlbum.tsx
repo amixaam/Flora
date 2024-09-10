@@ -1,14 +1,14 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useEffect, useState } from "react";
-import { useSongsStore } from "../../store/songs";
-import { SnapPoints, Spacing } from "../../styles/constants";
-import { BottomSheetProps } from "../../types/other";
-import { Album } from "../../types/song";
-import CancelButton from "../UI/CancelButton";
-import ImagePickerButton from "../UI/ImagePickerButton";
-import SubmitButton from "../UI/SubmitButton";
-import TextInput from "../UI/TextInput";
-import { SheetModalLayout } from "./SheetModalLayout";
+import { useSongsStore } from "../../../store/songs";
+import { SnapPoints, Spacing } from "../../../styles/constants";
+import { BottomSheetProps } from "../../../types/other";
+import { Album } from "../../../types/song";
+import CancelButton from "../../UI/CancelButton";
+import ImagePickerButton from "../../UI/ImagePickerButton";
+import SubmitButton from "../../UI/SubmitButton";
+import TextInput from "../../UI/TextInput";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
