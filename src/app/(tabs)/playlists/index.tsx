@@ -1,5 +1,5 @@
 import { router, useNavigation } from "expo-router";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import { View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef } from "react";
@@ -7,19 +7,17 @@ import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AlbumArt from "../../../Components/AlbumArt";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
 import CreatePlaylist from "../../../Components/BottomSheets/CreatePlaylist";
-import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
 import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
+import ContainerItem from "../../../Components/UI/ContainerItem";
 import IconButton from "../../../Components/UI/IconButton";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { textStyles } from "../../../styles/text";
-import { Playlist } from "../../../types/song";
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedPlaylist, getAllPlaylistSongs } =
+    const { playlists, setSelectedContainer, getAllPlaylistSongs } =
         useSongsStore();
 
     const insets = useSafeAreaInsets();
@@ -48,13 +46,13 @@ export default function PlaylistsTab() {
         []
     );
 
-    const PlaylistOptionsRef = useRef<BottomSheetModal>(null);
-    const openPlaylistOptions = useCallback(() => {
-        PlaylistOptionsRef.current?.present();
+    const ContainerOptionsRef = useRef<BottomSheetModal>(null);
+    const openContainerOptions = useCallback(() => {
+        ContainerOptionsRef.current?.present();
     }, []);
 
-    const dismissPlaylistOptions = useCallback(() => {
-        PlaylistOptionsRef.current?.dismiss();
+    const dismissContainerOptions = useCallback(() => {
+        ContainerOptionsRef.current?.dismiss();
     }, []);
 
     const allSongs = getAllPlaylistSongs();
@@ -77,22 +75,23 @@ export default function PlaylistsTab() {
                 }}
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
-                    <PlaylistItem
+                    <ContainerItem
                         item={item}
-                        onPress={() => {
-                            setSelectedPlaylist(item);
-                            router.push(`./${item.id}`);
-                        }}
-                        onLongPress={() => {
-                            setSelectedPlaylist(item);
-                            openPlaylistOptions();
+                        touchableProps={{
+                            onPress: () => {
+                                router.push(`(tabs)/playlists/${item.id}`);
+                            },
+                            onLongPress: () => {
+                                setSelectedContainer(item);
+                                openContainerOptions();
+                            },
                         }}
                     />
                 )}
             />
-            <PlaylistSheet
-                ref={PlaylistOptionsRef}
-                dismiss={dismissPlaylistOptions}
+            <ContainerSheet
+                ref={ContainerOptionsRef}
+                dismiss={dismissContainerOptions}
             />
             <CreatePlaylist
                 ref={CreatePlaylistRef}
@@ -101,45 +100,3 @@ export default function PlaylistsTab() {
         </View>
     );
 }
-
-const PlaylistItem = ({
-    item,
-    onPress,
-    onLongPress,
-}: {
-    item: Playlist;
-    onPress?: () => void;
-    onLongPress?: () => void;
-}) => {
-    return (
-        <TouchableNativeFeedback
-            onPress={onPress}
-            onLongPress={onLongPress}
-            delayLongPress={250}
-        >
-            <View style={{ rowGap: Spacing.xs, margin: Spacing.sm }}>
-                <AlbumArt
-                    image={item.artwork}
-                    style={{ width: "100%", aspectRatio: 1, borderRadius: 7 }}
-                />
-                <View>
-                    <Text style={[textStyles.h5]} numberOfLines={1}>
-                        {item.title}
-                    </Text>
-                    <Text
-                        style={[
-                            {
-                                marginTop: -Spacing.xs,
-                            },
-                            textStyles.small,
-                        ]}
-                    >
-                        {item.songs.length === 0 ? "No" : item.songs.length}{" "}
-                        song
-                        {item.songs.length !== 1 && "s"}
-                    </Text>
-                </View>
-            </View>
-        </TouchableNativeFeedback>
-    );
-};

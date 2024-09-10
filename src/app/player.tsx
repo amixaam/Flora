@@ -15,6 +15,8 @@ import { textStyles } from "../styles/text";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { router } from "expo-router";
 import { runOnJS } from "react-native-reanimated";
+import { CombineStrings } from "../utils/CombineStrings";
+import MinimiseText from "../utils/MinimiseText";
 
 const PlayerScreen = () => {
     const { likeSong, unlikeSong, setSelectedSong, getSong } = useSongsStore();
@@ -55,13 +57,24 @@ const PlayerScreen = () => {
             <View style={[mainStyles.container, { justifyContent: "center" }]}>
                 <ImageBlurBackground
                     image={activeTrack?.artwork}
+                    blur={15}
                     style={{ height: "85%", top: 0 }}
+                    gradient={{
+                        colors: [
+                            "#050506",
+                            "#05050650",
+                            "#05050650",
+                            "#05050630",
+                            "#050506",
+                        ],
+                        locations: [0.1, 0.4, 0.5, 0.6, 1],
+                    }}
                 />
                 <View
                     style={{
                         backgroundColor: Colors.primary,
-                        width: 50,
-                        height: 7,
+                        width: 54,
+                        height: 6,
                         borderRadius: Spacing.round,
                         position: "absolute",
                         top: Spacing.xl * 2,
@@ -112,14 +125,16 @@ const PlayerScreen = () => {
                         <View
                             style={{
                                 flexDirection: "column",
-                                columnGap: Spacing.sm,
                             }}
                         >
                             <Text style={[textStyles.h5]} numberOfLines={1}>
-                                {"It was all a dream"}
+                                {MinimiseText(activeTrack?.title, 24, true)}
                             </Text>
                             <Text style={[textStyles.text]}>
-                                {`${activeTrack?.artist} • ${activeTrack?.year}`}
+                                {CombineStrings([
+                                    activeTrack?.artist,
+                                    activeTrack?.year,
+                                ])}
                             </Text>
                         </View>
                         <IconButton

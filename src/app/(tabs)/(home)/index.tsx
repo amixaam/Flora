@@ -3,6 +3,7 @@ import {
     ImageBackground,
     Text,
     TouchableNativeFeedback,
+    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -17,7 +18,7 @@ import AlbumArt from "../../../Components/AlbumArt";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
 import IconButton from "../../../Components/UI/IconButton";
-import { IconSizes, Spacing } from "../../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
@@ -26,11 +27,14 @@ import Pluralize from "../../../utils/Pluralize";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
+import ContainerItem from "../../../Components/UI/ContainerItem";
 
 export default function PlaylistsTab() {
     const { playlists, albums, getRecentlyPlayed, getHistory } =
         useSongsStore();
     const insets = useSafeAreaInsets();
+
+    const [first, setfirst] = useState<boolean>(false);
 
     const ContainerOptionsRef = useRef<BottomSheetModal>(null);
     const openContainerOptions = useCallback(() => {
@@ -46,9 +50,35 @@ export default function PlaylistsTab() {
             <BackgroundImageAbsolute />
             <View style={{ paddingTop: insets.top * 2.3 }} />
 
-            {/* <Text style={[textStyles.text, { marginBottom: Spacing.md }]}>
+            <TouchableOpacity
+                onPress={() => {
+                    setfirst(!first);
+                    getRecentlyPlayed();
+                }}
+                style={[
+                    mainStyles.button_skeleton,
+                    {
+                        backgroundColor: Colors.primary,
+                        width: 132,
+                        marginHorizontal: Spacing.appPadding,
+                        marginBottom: Spacing.md,
+                    },
+                ]}
+            >
+                <Text>{first ? "Close History" : "Open History"}</Text>
+            </TouchableOpacity>
+
+            <Text
+                style={[
+                    textStyles.text,
+                    {
+                        marginBottom: Spacing.md,
+                        display: first ? "flex" : "none",
+                    },
+                ]}
+            >
                 {JSON.stringify(getHistory(), null, 6)}
-            </Text> */}
+            </Text>
 
             <View style={{ flex: 1, gap: Spacing.md }}>
                 {/* <RecapBanner /> */}
@@ -56,7 +86,7 @@ export default function PlaylistsTab() {
                 {/* Pin Liked songs playlist to first position */}
                 {/* Limit to 10 entries */}
                 <HorizontalList
-                    list={getRecentlyPlayed()}
+                    list={playlists}
                     longPress={openContainerOptions}
                 />
                 <View style={{ gap: Spacing.xs }}>
@@ -143,7 +173,7 @@ const HorizontalList = ({
                 <View style={{ width: Spacing.appPadding }} />
             )}
             renderItem={({ item }) => (
-                <PlaylistItem
+                <ContainerItem
                     item={item}
                     touchableProps={{
                         onPress: () => {
@@ -157,36 +187,6 @@ const HorizontalList = ({
                 />
             )}
         />
-    );
-};
-
-type PlaylistItemProps = {
-    item: Playlist | Album;
-    touchableProps?: React.ComponentProps<typeof TouchableNativeFeedback>;
-};
-
-const PlaylistItem = ({ item, touchableProps = {} }: PlaylistItemProps) => {
-    const width = 160;
-    return (
-        <TouchableNativeFeedback delayLongPress={250} {...touchableProps}>
-            <View style={{ gap: Spacing.xs, width: width }}>
-                <AlbumArt image={item.artwork} style={{ width: width }} />
-                <View>
-                    <Text style={textStyles.h6} numberOfLines={1}>
-                        {item.title}
-                    </Text>
-                    <Text
-                        style={[textStyles.small, { width: "100%" }]}
-                        numberOfLines={1}
-                    >
-                        {/* Differentiate between albums and playlists */}
-                        {"artist" in item
-                            ? CombineStrings([item.artist, item.year])
-                            : Pluralize(item.songs.length, "song", "songs")}
-                    </Text>
-                </View>
-            </View>
-        </TouchableNativeFeedback>
     );
 };
 

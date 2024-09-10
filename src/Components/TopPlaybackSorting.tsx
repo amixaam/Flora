@@ -75,7 +75,7 @@ export const TopButtonControls = ({
                         />
                         <Text
                             style={[
-                                textStyles.h6,
+                                textStyles.text,
                                 songs.length === 0 ? { opacity: 0.5 } : {},
                                 { textAlign: "center" },
                             ]}
@@ -111,7 +111,7 @@ export const TopButtonControls = ({
                         />
                         <Text
                             style={[
-                                textStyles.h6,
+                                textStyles.text,
                                 songs.length === 0 ? { opacity: 0.5 } : {},
                                 { textAlign: "center" },
                             ]}

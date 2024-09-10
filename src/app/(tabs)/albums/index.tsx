@@ -1,5 +1,5 @@
 import { router, useNavigation } from "expo-router";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import { View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef } from "react";
@@ -7,19 +7,18 @@ import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AlbumArt from "../../../Components/AlbumArt";
-import AlbumSheet from "../../../Components/BottomSheets/AlbumSheet";
+import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
 import CreateAlbum from "../../../Components/BottomSheets/CreateAlbum";
+import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
+import ContainerItem from "../../../Components/UI/ContainerItem";
 import IconButton from "../../../Components/UI/IconButton";
+import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { textStyles } from "../../../styles/text";
-import { Album } from "../../../types/song";
-import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
+
 export default function AlbumsTab() {
-    const { albums, setSelectedAlbum, getAllAlbumSongs } = useSongsStore();
+    const { albums, setSelectedContainer, getAllAlbumSongs } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const navigation = useNavigation();
@@ -46,13 +45,13 @@ export default function AlbumsTab() {
         []
     );
 
-    const AlbumOptionsRef = useRef<BottomSheetModal>(null);
-    const openAlbumOptions = useCallback(() => {
-        AlbumOptionsRef.current?.present();
+    const ContainerOptionsRef = useRef<BottomSheetModal>(null);
+    const openContainerOptions = useCallback(() => {
+        ContainerOptionsRef.current?.present();
     }, []);
 
-    const dismissAlbumOptions = useCallback(() => {
-        AlbumOptionsRef.current?.dismiss();
+    const dismissContainerOptions = useCallback(() => {
+        ContainerOptionsRef.current?.dismiss();
     }, []);
 
     const allSongs = getAllAlbumSongs();
@@ -80,57 +79,25 @@ export default function AlbumsTab() {
                 }
                 estimatedItemSize={100}
                 renderItem={({ item }) => (
-                    <AlbumItem
+                    <ContainerItem
                         item={item}
-                        onPress={() => {
-                            setSelectedAlbum(item);
-                            router.push(`(tabs)/albums/${item.id}`);
-                        }}
-                        onLongPress={() => {
-                            setSelectedAlbum(item);
-                            openAlbumOptions();
+                        touchableProps={{
+                            onPress: () => {
+                                router.push(`(tabs)/albums/${item.id}`);
+                            },
+                            onLongPress: () => {
+                                setSelectedContainer(item);
+                                openContainerOptions();
+                            },
                         }}
                     />
                 )}
             />
             <CreateAlbum ref={CreateAlbumRef} dismiss={dismissCreateAlbum} />
-            <AlbumSheet ref={AlbumOptionsRef} dismiss={dismissAlbumOptions} />
+            <ContainerSheet
+                ref={ContainerOptionsRef}
+                dismiss={dismissContainerOptions}
+            />
         </View>
     );
 }
-
-const AlbumItem = ({
-    item,
-    onPress = () => {},
-    onLongPress = () => {},
-}: {
-    item: Album;
-    onPress?: () => void;
-    onLongPress?: () => void;
-}) => {
-    return (
-        <TouchableNativeFeedback
-            onPress={onPress}
-            onLongPress={onLongPress}
-            delayLongPress={250}
-        >
-            <View style={{ rowGap: Spacing.xs, margin: Spacing.sm }}>
-                <AlbumArt
-                    image={item.artwork}
-                    style={{ width: "100%", aspectRatio: 1, borderRadius: 7 }}
-                />
-                <View>
-                    <Text style={[textStyles.h5]} numberOfLines={1}>
-                        {item.title}
-                    </Text>
-                    <Text
-                        style={[{ marginTop: -Spacing.xs }, textStyles.small]}
-                        numberOfLines={1}
-                    >
-                        {`${item.artist} • ${item.year}`}
-                    </Text>
-                </View>
-            </View>
-        </TouchableNativeFeedback>
-    );
-};

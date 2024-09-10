@@ -7,6 +7,7 @@ import { textStyles } from "../styles/text";
 import { FormatSecs } from "../utils/FormatMillis";
 import PlaybackSlider from "./PlaybackSlider";
 import { IconSizes, Spacing } from "../styles/constants";
+import { CombineStrings } from "../utils/CombineStrings";
 
 const PlaybackControls = () => {
     const { play, pause, next, previous, seekToPosition } = useSongsStore();
@@ -23,7 +24,7 @@ const PlaybackControls = () => {
             style={{
                 flexDirection: "column",
                 justifyContent: "center",
-                gap: Spacing.md,
+                gap: Spacing.sm,
             }}
         >
             <View
@@ -64,7 +65,7 @@ const PlaybackControls = () => {
                     size={IconSizes.xl}
                 />
                 <IconButton
-                    icon={"repeat-once"}
+                    icon={"repeat"}
                     size={IconSizes.lg}
                     touchableOpacityProps={{
                         disabled: true,
@@ -76,9 +77,9 @@ const PlaybackControls = () => {
                 trackPosition={progress.position}
                 skipPosition={seekToPosition}
             />
-            <Text style={[textStyles.detail, { textAlign: "center" }]}>
-                {"Imaginarium • "}
-                {FormatSecs(progress.position)} /{" "}
+            <Text style={[textStyles.small, { textAlign: "center" }]}>
+                {FormatSecs(progress.position)}
+                {" / "}
                 {FormatSecs(progress.duration)}
             </Text>
         </View>

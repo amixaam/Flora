@@ -1,3 +1,4 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useRef } from "react";
@@ -5,7 +6,7 @@ import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AlbumArt from "../../../Components/AlbumArt";
-import PlaylistSheet from "../../../Components/BottomSheets/PlaylistSheet";
+import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
 import SongSheet from "../../../Components/BottomSheets/SongSheet";
 import ImageBlurBackground from "../../../Components/ImageBlurBackground";
 import SongListItem, {
@@ -13,17 +14,13 @@ import SongListItem, {
 } from "../../../Components/SongListItem";
 import IconButton from "../../../Components/UI/IconButton";
 import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
-import PrimaryRoundIconButton from "../../../Components/UI/PrimaryRoundIconButton";
-import SecondaryRoundIconButton from "../../../Components/UI/SecondaryRoundIconButton";
 import { useSongsStore } from "../../../store/songs";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { CalculateTotalDuration } from "../../../utils/FormatMillis";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
-import ContainerSheet from "../../../Components/BottomSheets/ContainerSheet";
+import { CalculateTotalDuration } from "../../../utils/FormatMillis";
 
 export default function PlaylistScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -84,7 +81,11 @@ export default function PlaylistScreen() {
 
     return (
         <ScrollView style={[mainStyles.container]}>
-            <ImageBlurBackground image={data.artwork} style={{ height: 560 }} />
+            <ImageBlurBackground
+                image={data.artwork}
+                style={{ height: 500, top: 0 }}
+                blur={15}
+            />
             <View style={{ paddingTop: insets.top * 2.3 }} />
 
             <View style={{ flex: 1, gap: Spacing.appPadding }}>

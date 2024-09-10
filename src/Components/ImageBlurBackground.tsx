@@ -35,15 +35,29 @@ const ImageBlurBackground = ({
                 <ImageBackground
                     source={image ? { uri: image } : backup}
                     style={styles.AbsoluteFill}
-                    resizeMode="stretch"
+                    resizeMode="cover"
                     blurRadius={blur}
                 />
                 <LinearGradient
                     style={styles.AbsoluteFill}
                     locations={[0.075, 0.5, 0.95]}
+                    start={{ x: 1, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    {...gradient}
+                />
+                <LinearGradient
+                    style={styles.AbsoluteFill}
+                    locations={[0.075, 0.5, 0.95]}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 1, y: 0 }}
+                    {...gradient}
+                />
+                <LinearGradient
+                    style={styles.AbsoluteFill}
+                    locations={[0, 0.9, 1]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}
-                    {...gradient}
+                    colors={["#05050600", "#05050000", "#050506"]}
                 />
             </View>
         </View>
