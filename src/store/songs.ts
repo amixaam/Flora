@@ -68,6 +68,7 @@ type SongsStore = {
     updateSongStatistics: (id: string) => void;
     addSongToHistory: (id: string) => void;
     getHistory: () => History;
+    clearHistory: () => void;
 
     // // container
     getSongsFromContainer: (id: string) => Song[];
@@ -298,7 +299,7 @@ export const useSongsStore = create<SongsStore>()(
                         ...state.history,
                         history: [
                             ...state.history.history,
-                            { song: id, date: new Date(), albumId: "0" },
+                            { song: id, date: new Date(), containerId: "0" },
                         ],
                     },
                 }));
@@ -306,6 +307,10 @@ export const useSongsStore = create<SongsStore>()(
 
             getHistory: () => {
                 return get().history;
+            },
+
+            clearHistory: () => {
+                set({ history: { history: [], consciousHistory: [] } });
             },
 
             // containers ---------------------------------------------------------
@@ -627,14 +632,13 @@ export const useSongsStore = create<SongsStore>()(
                 const likedPlaylist = get().getPlaylist("1");
                 if (likedPlaylist === undefined) return [];
 
-                console.log(history.consciousHistory);
                 const historyAlbums: Album[] = [];
                 if (history.consciousHistory.length > 0) {
                     history.consciousHistory.forEach((item) => {
                         if (historyAlbums.length > 5) return;
 
-                        if (item.albumId !== "0" && item.albumId) {
-                            const album = get().getAlbum(item.albumId);
+                        if (item.containerId !== "0" && item.containerId) {
+                            const album = get().getAlbum(item.containerId);
                             if (album && !historyAlbums.includes(album))
                                 historyAlbums.push(album);
                         } else {

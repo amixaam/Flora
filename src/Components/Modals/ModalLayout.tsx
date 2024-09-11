@@ -2,7 +2,7 @@ import { View, Text, Modal, TouchableWithoutFeedback } from "react-native";
 import React from "react";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
-import { Colors } from "../../styles/constants";
+import { Colors, Spacing } from "../../styles/constants";
 
 const ModalLayout = ({
     title = "Modal title",
@@ -25,7 +25,7 @@ const ModalLayout = ({
                     style={{
                         width: "100%",
                         height: "100%",
-                        backgroundColor: "#00000060",
+                        backgroundColor: "#00000090",
                         flex: 1,
                         justifyContent: "center",
                     }}
@@ -34,7 +34,12 @@ const ModalLayout = ({
                         <View
                             style={[
                                 mainStyles.modal,
-                                { backgroundColor: Colors.secondary },
+                                {
+                                    backgroundColor: Colors.secondary,
+                                    paddingVertical: Spacing.xl,
+                                    shadowColor: "black",
+                                    elevation: 10,
+                                },
                             ]}
                         >
                             <Text

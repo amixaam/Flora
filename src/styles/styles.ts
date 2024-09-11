@@ -76,7 +76,7 @@ export const mainStyles = StyleSheet.create({
         borderRadius: Spacing.radius,
         padding: Spacing.appPadding,
         margin: Spacing.appPadding,
-        rowGap: Spacing.sm,
+        gap: Spacing.md,
     },
 });
 

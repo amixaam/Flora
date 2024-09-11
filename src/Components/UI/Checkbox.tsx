@@ -1,6 +1,5 @@
-import { Colors, IconSizes } from "../../styles/constants";
-import IconButton from "./IconButton";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Colors, IconSizes } from "../../styles/constants";
 
 const Checkbox = ({ isSelected = false }) => {
     return (

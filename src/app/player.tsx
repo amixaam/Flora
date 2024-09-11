@@ -128,7 +128,7 @@ const PlayerScreen = () => {
                             }}
                         >
                             <Text style={[textStyles.h5]} numberOfLines={1}>
-                                {MinimiseText(activeTrack?.title, 24, true)}
+                                {MinimiseText(activeTrack?.title, 20, true)}
                             </Text>
                             <Text style={[textStyles.text]}>
                                 {CombineStrings([

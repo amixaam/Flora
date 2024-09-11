@@ -85,6 +85,7 @@ export default function PlaylistScreen() {
                 image={data.artwork}
                 style={{ height: 500, top: 0 }}
                 blur={15}
+                gradient={{ colors: ["#050506", "#05050640", "#050506"] }}
             />
             <View style={{ paddingTop: insets.top * 2.3 }} />
 

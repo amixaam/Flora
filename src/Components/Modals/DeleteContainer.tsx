@@ -4,6 +4,7 @@ import ModalLayout from "./ModalLayout";
 import { textStyles } from "../../styles/text";
 import SubmitButton from "../UI/SubmitButton";
 import CancelButton from "../UI/CancelButton";
+import { Spacing } from "../../styles/constants";
 
 const DeleteContainer = ({
     visible = false,
@@ -21,11 +22,21 @@ const DeleteContainer = ({
             title={"Delete " + containerType + "?"}
             dismiss={dismiss}
         >
-            <Text style={[textStyles.text, { textAlign: "center" }]}>
-                Are you sure you want to delete this {containerType}? You cannot
-                undo this action.
-            </Text>
-            <View style={{ marginTop: 8, rowGap: 8 }}>
+            <View style={{ gap: Spacing.xs }}>
+                <Text style={[textStyles.text, { textAlign: "center" }]}>
+                    Are you sure you want to delete this {containerType}?
+                </Text>
+                <Text style={[textStyles.text, { textAlign: "center" }]}>
+                    You cannot undo this action.
+                </Text>
+            </View>
+            <View
+                style={{
+                    gap: 8,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                }}
+            >
                 <SubmitButton text="Delete" handleSubmitForm={confirm} />
                 <CancelButton handlePress={dismiss} />
             </View>

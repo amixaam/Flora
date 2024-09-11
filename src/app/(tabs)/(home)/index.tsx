@@ -20,18 +20,26 @@ import IconButton from "../../../Components/UI/IconButton";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { Album, Playlist } from "../../../types/song";
+import { Album, History, Playlist } from "../../../types/song";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
 import ContainerItem from "../../../Components/UI/ContainerItem";
 
 export default function PlaylistsTab() {
-    const { playlists, albums, getRecentlyPlayed, getHistory } =
+    const { playlists, albums, getRecentlyPlayed, getHistory, clearHistory } =
         useSongsStore();
     const insets = useSafeAreaInsets();
 
     const [first, setfirst] = useState<boolean>(false);
+    const [history, setHistory] = useState<History>({
+        history: [],
+        consciousHistory: [],
+    });
+
+    const updateHistory = () => {
+        setHistory(getHistory());
+    };
 
     const ContainerOptionsRef = useRef<BottomSheetModal>(null);
     const openContainerOptions = useCallback(() => {
@@ -47,23 +55,49 @@ export default function PlaylistsTab() {
             <BackgroundImageAbsolute />
             <View style={{ paddingTop: insets.top * 2.3 }} />
 
-            <TouchableOpacity
-                onPress={() => {
-                    setfirst(!first);
-                    getRecentlyPlayed();
+            <View
+                style={{
+                    flexDirection: "row",
+                    gap: Spacing.sm,
+                    flex: 1,
+                    marginHorizontal: Spacing.appPadding,
                 }}
-                style={[
-                    mainStyles.button_skeleton,
-                    {
-                        backgroundColor: Colors.primary,
-                        width: 132,
-                        marginHorizontal: Spacing.appPadding,
-                        marginBottom: Spacing.md,
-                    },
-                ]}
             >
-                <Text>{first ? "Close History" : "Open History"}</Text>
-            </TouchableOpacity>
+                <TouchableNativeFeedback
+                    onPress={() => {
+                        setfirst(!first);
+                        updateHistory();
+                    }}
+                >
+                    <View
+                        style={[
+                            mainStyles.button_skeleton,
+                            {
+                                backgroundColor: Colors.primary,
+                                marginBottom: Spacing.md,
+                            },
+                        ]}
+                    >
+                        <Text>
+                            {first ? "Close history" : "Open history"}{" "}
+                            {new Date().toISOString()}
+                        </Text>
+                    </View>
+                </TouchableNativeFeedback>
+                <TouchableNativeFeedback onPress={() => clearHistory()}>
+                    <View
+                        style={[
+                            mainStyles.button_skeleton,
+                            {
+                                backgroundColor: Colors.primary,
+                                marginBottom: Spacing.md,
+                            },
+                        ]}
+                    >
+                        <Text>Clear history</Text>
+                    </View>
+                </TouchableNativeFeedback>
+            </View>
 
             <Text
                 style={[
@@ -74,7 +108,7 @@ export default function PlaylistsTab() {
                     },
                 ]}
             >
-                {JSON.stringify(getHistory(), null, 6)}
+                {JSON.stringify(history, null, 6)}
             </Text>
 
             <View style={{ flex: 1, gap: Spacing.md }}>

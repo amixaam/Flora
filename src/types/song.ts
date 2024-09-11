@@ -58,7 +58,7 @@ interface Album {
 
 interface HistoryItem {
     song: Song["id"];
-    albumId: Album["id"] | undefined;
+    containerId: Album["id"] | Playlist["id"] | undefined;
     date: Date;
 }
 

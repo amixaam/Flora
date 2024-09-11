@@ -5,7 +5,7 @@ import { useSongsStore } from "../../../store/songs";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
 import LargeTextButton from "../../UI/LargeTextButton";
-import SmallTitleBigText from "../../UI/SmallTitleBigText";
+import StatisticDisplay from "../../UI/StatisticDisplay";
 import { SheetModalLayout } from "../SheetModalLayout";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
@@ -42,12 +42,12 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
                         </BottomSheetView>
                         <View style={{ gap: Spacing.sm }}>
-                            <SmallTitleBigText
+                            <StatisticDisplay
                                 icon="history"
                                 header="Last played"
                                 text={"BUSTED"}
                             />
-                            <SmallTitleBigText
+                            <StatisticDisplay
                                 icon="timelapse"
                                 header="Hours listened"
                                 text="alot"
