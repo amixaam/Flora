@@ -1,7 +1,13 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import React, { useCallback, useRef } from "react";
-import { Text, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useActiveTrack } from "react-native-track-player";
+import {
+    skipToNext,
+    skipToPrevious,
+} from "react-native-track-player/lib/src/trackPlayer";
 import AlbumArt from "../Components/AlbumArt";
 import SongSheet from "../Components/BottomSheets/Song/SongSheet";
 import ImageBlurBackground from "../Components/ImageBlurBackground";
@@ -12,11 +18,17 @@ import { useSongsStore } from "../store/songs";
 import { Colors, Spacing } from "../styles/constants";
 import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { router } from "expo-router";
-import { runOnJS } from "react-native-reanimated";
 import { CombineStrings } from "../utils/CombineStrings";
 import MinimiseText from "../utils/MinimiseText";
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    withTiming,
+    runOnJS,
+} from "react-native-reanimated";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const PlayerScreen = () => {
     const { likeSong, unlikeSong, setSelectedSong, getSong } = useSongsStore();
@@ -46,19 +58,91 @@ const PlayerScreen = () => {
         router.back();
     };
 
-    const swipeDownGesture = Gesture.Pan().onChange((event) => {
-        if (event.translationY > 120 || event.velocityY > 1000) {
-            runOnJS(goBack)();
-        }
+    // player UI
+    const translateX = useSharedValue(0);
+    const opacity = useSharedValue(1);
+
+    // blurry BG
+    const imageOpacity = useSharedValue(1);
+
+    // Reset the position of the player
+    const resetPosition = (startFrom?: any) => {
+        "worklet";
+        translateX.value = startFrom ? startFrom : withSpring(0);
+    };
+
+    // pan gestures
+    const panGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            translateX.value = event.translationX;
+        })
+        .onEnd((event) => {
+            const { translationX, translationY } = event;
+            const SWIPE_LENGTH = 50;
+
+            // Swipe Left - Next Song
+            if (translationX < -SWIPE_LENGTH) {
+                runOnJS(skipToNext)();
+                imageOpacity.value = withTiming(0, {
+                    duration: 300,
+                });
+                translateX.value = withTiming(-SCREEN_WIDTH, {}, () => {
+                    resetPosition(SCREEN_WIDTH);
+                    imageOpacity.value = withTiming(1, { duration: 300 }); // Fade in new image
+                    translateX.value = withSpring(0, {
+                        stiffness: 250,
+                        damping: 20,
+                    });
+                });
+            }
+
+            // Swipe Right - Previous Song
+            if (translationX > SWIPE_LENGTH) {
+                runOnJS(skipToPrevious)();
+                imageOpacity.value = withTiming(0, {
+                    duration: 300,
+                });
+                translateX.value = withTiming(SCREEN_WIDTH, {}, () => {
+                    resetPosition(-SCREEN_WIDTH);
+                    imageOpacity.value = withTiming(1, { duration: 300 }); // Fade in new image
+                    translateX.value = withSpring(0, {
+                        stiffness: 250,
+                        damping: 20,
+                    });
+                });
+            }
+
+            // Swipe Down - Dismiss Screen
+            if (translationY > SWIPE_LENGTH) {
+                runOnJS(goBack)();
+            }
+
+            // Reset animation if no intentional swipe
+            if (
+                Math.abs(translationX) < SWIPE_LENGTH &&
+                Math.abs(translationY) < SWIPE_LENGTH
+            ) {
+                resetPosition();
+            }
+        });
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: translateX.value }],
+            opacity: opacity.value,
+        };
     });
 
     return (
-        <GestureDetector gesture={swipeDownGesture}>
+        <GestureDetector gesture={panGesture}>
             <View style={[mainStyles.container, { justifyContent: "center" }]}>
                 <ImageBlurBackground
                     image={activeTrack?.artwork}
                     blur={15}
-                    style={{ height: "85%", top: 0 }}
+                    style={{
+                        height: "85%",
+                        top: 0,
+                    }}
                     gradient={{
                         colors: [
                             "#050506",
@@ -69,7 +153,10 @@ const PlayerScreen = () => {
                         ],
                         locations: [0.1, 0.4, 0.5, 0.6, 1],
                     }}
+                    opacity={imageOpacity}
                 />
+
+                {/* gesture pill */}
                 <View
                     style={{
                         backgroundColor: Colors.primary,
@@ -82,13 +169,16 @@ const PlayerScreen = () => {
                     }}
                 />
 
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        marginHorizontal: Spacing.appPadding * 2,
-                        gap: Spacing.md,
-                    }}
+                <Animated.View
+                    style={[
+                        {
+                            flex: 1,
+                            justifyContent: "center",
+                            marginHorizontal: Spacing.appPadding * 2,
+                            gap: Spacing.md,
+                        },
+                        animatedStyle,
+                    ]}
                 >
                     <View>
                         <AlbumArt
@@ -148,7 +238,7 @@ const PlayerScreen = () => {
                     </View>
 
                     <PlaybackControls />
-                </View>
+                </Animated.View>
                 <SongSheet ref={SongOptionsRef} dismiss={dismissSongoptions} />
             </View>
         </GestureDetector>

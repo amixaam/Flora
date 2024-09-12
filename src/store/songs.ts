@@ -303,6 +303,13 @@ export const useSongsStore = create<SongsStore>()(
                         ],
                     },
                 }));
+
+                console.log(
+                    "added " +
+                        song.title +
+                        " to history at " +
+                        new Date().toLocaleTimeString()
+                );
             },
 
             getHistory: () => {

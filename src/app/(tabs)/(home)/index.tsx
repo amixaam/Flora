@@ -78,10 +78,7 @@ export default function PlaylistsTab() {
                             },
                         ]}
                     >
-                        <Text>
-                            {first ? "Close history" : "Open history"}{" "}
-                            {new Date().toISOString()}
-                        </Text>
+                        <Text>{first ? "Close history" : "Open history"} </Text>
                     </View>
                 </TouchableNativeFeedback>
                 <TouchableNativeFeedback onPress={() => clearHistory()}>

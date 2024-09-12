@@ -210,7 +210,7 @@ const SongList = ({
     return (
         <View style={{ minHeight: 5 }}>
             <FlashList
-                data={songData.slice().reverse()}
+                data={songData}
                 estimatedItemSize={100}
                 ListEmptyComponent={
                     <ListItemsNotFound

@@ -1,6 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
+    Image,
     ImageBackground,
     StyleProp,
     StyleSheet,
@@ -8,12 +9,18 @@ import {
     ViewStyle,
 } from "react-native";
 import { Album, Playlist } from "../types/song";
+import Animated, {
+    SharedValue,
+    useAnimatedStyle,
+    useSharedValue,
+} from "react-native-reanimated";
 
 interface ImageBlurBackgroundProps {
     image: Playlist["artwork"] | Album["artwork"];
     gradient?: React.ComponentProps<typeof LinearGradient>;
     style?: StyleProp<ViewStyle>;
     blur?: number;
+    opacity?: SharedValue<number>;
 }
 
 const ImageBlurBackground = ({
@@ -21,8 +28,16 @@ const ImageBlurBackground = ({
     gradient = { colors: ["#050506", "#05050650", "#050506"] },
     style,
     blur = 20,
+    opacity = useSharedValue(1),
 }: ImageBlurBackgroundProps) => {
     const backup = require("../../assets/images/empty-cover.png");
+
+    // Use animated style for opacity
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            opacity: opacity.value,
+        };
+    });
 
     return (
         <View style={[styles.AbsoluteFill, style]}>
@@ -32,9 +47,9 @@ const ImageBlurBackground = ({
                     flex: 1,
                 }}
             >
-                <ImageBackground
+                <Animated.Image
                     source={image ? { uri: image } : backup}
-                    style={styles.AbsoluteFill}
+                    style={[styles.AbsoluteFill, animatedStyle]}
                     resizeMode="cover"
                     blurRadius={blur}
                 />

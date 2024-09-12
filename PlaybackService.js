@@ -23,41 +23,42 @@ export const PlaybackService = async function () {
     });
 
     TrackPlayer.addEventListener(Event.RemoteSetRating, (event) => {
-        console.log("Event.RemoteLike", event);
+        // console.log("Event.RemoteLike", event);
     });
 
     TrackPlayer.addEventListener(Event.RemoteDislike, (event) => {
-        console.log("Event.RemoteDislike", event);
+        // console.log("Event.RemoteDislike", event);
     });
 
     TrackPlayer.addEventListener(Event.RemoteJumpForward, async (event) => {
-        console.log("Event.RemoteJumpForward", event);
+        // console.log("Event.RemoteJumpForward", event);
         await TrackPlayer.seekBy(event.interval);
     });
 
     TrackPlayer.addEventListener(Event.RemoteJumpBackward, async (event) => {
-        console.log("Event.RemoteJumpBackward", event);
+        // console.log("Event.RemoteJumpBackward", event);
         await TrackPlayer.seekBy(-event.interval);
     });
 
     TrackPlayer.addEventListener(Event.RemoteSeek, (event) => {
-        console.log("Event.RemoteSeek", event);
+        // console.log("Event.RemoteSeek", event);
         TrackPlayer.seekTo(event.position);
     });
 
     TrackPlayer.addEventListener(Event.RemoteDuck, async (event) => {
-        console.log("Event.RemoteDuck", event);
+        // console.log("Event.RemoteDuck", event);
     });
 
     TrackPlayer.addEventListener(Event.PlaybackQueueEnded, (event) => {
-        console.log("Event.PlaybackQueueEnded", event);
+        // console.log("Event.PlaybackQueueEnded", event);
     });
 
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
         if (event.track) {
-            console.log("Changed active track: ", event.track.id);
+            // console.log(event);
             useSongsStore.getState().updateSongStatistics(event.track.id);
             useSongsStore.getState().addSongToHistory(event.track.id);
+            // console.log("youve GiYAAAT to be kidding me!!!");
         }
         // if (event.lastTrack) {
         //     console.log("Skipped track: ", event.lastTrack);
@@ -66,33 +67,33 @@ export const PlaybackService = async function () {
     });
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
-        console.log("Event.PlaybackProgressUpdated", event);
+        // console.log("Event.PlaybackProgressUpdated", event);
     });
 
     TrackPlayer.addEventListener(
         Event.PlaybackPlayWhenReadyChanged,
         (event) => {
-            console.log("Event.PlaybackPlayWhenReadyChanged", event);
+            // console.log("Event.PlaybackPlayWhenReadyChanged", event);
         }
     );
 
     TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
-        console.log("Event.PlaybackState", event);
+        // console.log("Event.PlaybackState", event);
     });
 
     TrackPlayer.addEventListener(Event.MetadataChapterReceived, (event) => {
-        console.log("Event.MetadataChapterReceived", event);
+        // console.log("Event.MetadataChapterReceived", event);
     });
 
     TrackPlayer.addEventListener(Event.MetadataTimedReceived, (event) => {
-        console.log("Event.MetadataTimedReceived", event);
+        // console.log("Event.MetadataTimedReceived", event);
     });
 
     TrackPlayer.addEventListener(Event.MetadataCommonReceived, (event) => {
-        console.log("Event.MetadataCommonReceived", event);
+        // console.log("Event.MetadataCommonReceived", event);
     });
 
     TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
-        console.log("Event.PlaybackProgressUpdated", event);
+        // console.log("Event.PlaybackProgressUpdated", event);
     });
 };

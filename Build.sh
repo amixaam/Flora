@@ -3,6 +3,9 @@
 # Get the project name from the directory name
 project_name=$(basename $(pwd))
 
+# set correct java version
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
 # Move to android directory (assuming standard structure)
 cd android
 
@@ -23,8 +26,7 @@ today=$(date +%Y.%m.%d)
 # Define source and target paths
 source_file="app/build/outputs/apk/release/app-release.apk"
 target_file="${today} - $project_name.apk"
-target_dir=~/Documents/Expo-Builds/$project_name/ 
-mtp_target="mtp://Google_Pixel_7_28251FDH2006FH/Internal%20shared%storage/Download/$project_name-releases"
+target_dir=~/Seafile/Documents/$project_name/ 
 
 # Create target directory if it doesn't exist
 mkdir -p "$target_dir"

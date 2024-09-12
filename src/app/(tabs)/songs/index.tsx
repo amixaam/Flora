@@ -81,7 +81,7 @@ export default function SongsTab() {
             };
             createAlbum(inputFields);
         }
-        console.log(`${asset.filename}: `, musicData);
+        // console.log(`${asset.filename}: `, musicData);
 
         const songData: Song = {
             id: asset.id,
