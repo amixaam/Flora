@@ -1,9 +1,9 @@
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import { withLayoutContext } from "expo-router";
-import { IconSizes } from "../../styles/constants";
-import MiniPlayer from "../../Components/MiniPlayer";
+import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MiniPlayer from "../../Components/MiniPlayer";
+import { IconSizes } from "../../styles/constants";
 
 const { Navigator } = createMaterialBottomTabNavigator();
 
@@ -32,11 +32,7 @@ export default function TabLayout() {
                         tabBarLabel: "Home",
                         tabBarIcon: ({ focused, color }: any) => (
                             <MaterialCommunityIcons
-                                name={
-                                    focused
-                                        ? "home"
-                                        : "home-outline"
-                                }
+                                name={focused ? "home" : "home-outline"}
                                 size={IconSizes.md}
                                 color={color}
                             />

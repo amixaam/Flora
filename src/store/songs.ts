@@ -72,6 +72,7 @@ type SongsStore = {
 
     // // container
     getSongsFromContainer: (id: string) => Song[];
+    getContainer: (id: string) => Playlist | Album | undefined;
 
     // // playlists
     createPlaylist: (inputFields: Partial<Playlist>) => void;
@@ -323,18 +324,23 @@ export const useSongsStore = create<SongsStore>()(
             // containers ---------------------------------------------------------
 
             getSongsFromContainer: (id) => {
-                var container;
-                if (id[0] === "P") {
-                    container = get().getPlaylist(id);
-                } else {
-                    container = get().getAlbum(id);
-                }
+                const container = get().getContainer(id);
 
                 return container?.songs
                     .map((songId) =>
                         get().songs.find((song) => song.id === songId)
                     )
                     .filter((s) => s !== undefined) as Song[];
+            },
+
+            getContainer: (id) => {
+                if (id[0] === "A") {
+                    // album
+                    return get().getAlbum(id);
+                } else {
+                    // playlist
+                    return get().getPlaylist(id);
+                }
             },
 
             // playlists ----------------------------------------------------------

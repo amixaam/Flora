@@ -22,17 +22,12 @@ import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
 
-export default function PlaylistScreen() {
+export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     if (typeof id === "undefined") return router.back();
 
-    const {
-        getPlaylist,
-        getSongsFromPlaylist,
-        getAlbum,
-        getSongsFromAlbum,
-        setSelectedContainer,
-    } = useSongsStore();
+    const { setSelectedContainer, getSongsFromContainer, getContainer } =
+        useSongsStore();
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -48,11 +43,12 @@ export default function PlaylistScreen() {
         });
     }, [navigation]);
 
-    let data: Album | Playlist | undefined = getPlaylist(id);
-    let songData = getSongsFromPlaylist(id);
-    if (data === undefined) {
-        data = getAlbum(id);
-        songData = getSongsFromAlbum(id);
+    let data: Album | Playlist | undefined = getContainer(id);
+    let songData = getSongsFromContainer(id);
+
+    // if container a playlist, reverse the order to newest first
+    if (id[0] === "P" || id === "1") {
+        songData = songData.slice().reverse();
     }
 
     if (data === undefined) {

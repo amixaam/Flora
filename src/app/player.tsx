@@ -1,8 +1,19 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
 import React, { useCallback, useRef } from "react";
-import { Dimensions, Text, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import {
+    Gesture,
+    GestureDetector,
+    PanGestureHandler,
+} from "react-native-gesture-handler";
+import Animated, {
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+    withTiming,
+} from "react-native-reanimated";
 import { useActiveTrack } from "react-native-track-player";
 import {
     skipToNext,
@@ -20,15 +31,9 @@ import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { CombineStrings } from "../utils/CombineStrings";
 import MinimiseText from "../utils/MinimiseText";
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withSpring,
-    withTiming,
-    runOnJS,
-} from "react-native-reanimated";
+import { Direction } from "../types/other";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const PlayerScreen = () => {
     const { likeSong, unlikeSong, setSelectedSong, getSong } = useSongsStore();
@@ -60,9 +65,8 @@ const PlayerScreen = () => {
 
     // player UI
     const translateX = useSharedValue(0);
-    const opacity = useSharedValue(1);
+    const translateY = useSharedValue(0);
 
-    // blurry BG
     const imageOpacity = useSharedValue(1);
 
     // Reset the position of the player
@@ -71,71 +75,109 @@ const PlayerScreen = () => {
         translateX.value = startFrom ? startFrom : withSpring(0);
     };
 
-    // pan gestures
-    const panGesture = Gesture.Pan()
+    const dismissGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            translateY.value = Math.max(0, event.translationY);
+        })
+        .onEnd((event) => {
+            const DISMISS_THRESHOLD = 100;
+
+            // Swipe Down - Dismiss Screen
+            if (event.translationY > DISMISS_THRESHOLD) {
+                runOnJS(goBack)();
+                translateY.value = withTiming(SCREEN_HEIGHT, {}, () => {});
+            } else {
+                translateY.value = withTiming(0); // Reset if swipe was not enough
+            }
+        })
+        .minDistance(2)
+        .failOffsetX(1);
+
+    const triggerSkipAnimation = (
+        direction: Direction,
+        fast: boolean = false
+    ) => {
+        const duration = fast ? 200 : 600; //600
+        const defaultDuration = fast ? 200 : 300; //300
+        const opacityDuration = fast ? 200 : 300; //300
+        const dampingRatio = 0.8; //0.8
+
+        if (direction === Direction.LEFT) {
+            imageOpacity.value = withTiming(0, { duration: opacityDuration });
+            translateX.value = withTiming(
+                -SCREEN_WIDTH,
+                { duration: defaultDuration },
+                () => {
+                    resetPosition(SCREEN_WIDTH);
+                    translateX.value = withSpring(0, {
+                        dampingRatio: dampingRatio,
+                        duration: duration,
+                    });
+                    imageOpacity.value = withTiming(1, {
+                        duration: opacityDuration,
+                    });
+                }
+            );
+        } else if (direction === Direction.RIGHT) {
+            imageOpacity.value = withTiming(0, { duration: opacityDuration });
+            translateX.value = withTiming(
+                SCREEN_WIDTH,
+                { duration: defaultDuration },
+                () => {
+                    resetPosition(-SCREEN_WIDTH);
+                    translateX.value = withSpring(0, {
+                        dampingRatio: dampingRatio,
+                        duration: duration,
+                    });
+                    imageOpacity.value = withTiming(1, {
+                        duration: opacityDuration,
+                    });
+                }
+            );
+        }
+    };
+
+    const skipGesture = Gesture.Pan()
         .onUpdate((event) => {
             translateX.value = event.translationX;
         })
         .onEnd((event) => {
-            const { translationX, translationY } = event;
-            const SWIPE_LENGTH = 50;
+            const SWIPE_THRESHOLD = 50;
 
-            // Swipe Left - Next Song
-            if (translationX < -SWIPE_LENGTH) {
+            if (event.translationX < -SWIPE_THRESHOLD) {
                 runOnJS(skipToNext)();
-                imageOpacity.value = withTiming(0, {
-                    duration: 300,
-                });
-                translateX.value = withTiming(-SCREEN_WIDTH, {}, () => {
-                    resetPosition(SCREEN_WIDTH);
-                    imageOpacity.value = withTiming(1, { duration: 300 }); // Fade in new image
-                    translateX.value = withSpring(0, {
-                        stiffness: 250,
-                        damping: 20,
-                    });
-                });
-            }
-
-            // Swipe Right - Previous Song
-            if (translationX > SWIPE_LENGTH) {
+                runOnJS(triggerSkipAnimation)(Direction.LEFT);
+            } else if (event.translationX > SWIPE_THRESHOLD) {
                 runOnJS(skipToPrevious)();
-                imageOpacity.value = withTiming(0, {
-                    duration: 300,
-                });
-                translateX.value = withTiming(SCREEN_WIDTH, {}, () => {
-                    resetPosition(-SCREEN_WIDTH);
-                    imageOpacity.value = withTiming(1, { duration: 300 }); // Fade in new image
-                    translateX.value = withSpring(0, {
-                        stiffness: 250,
-                        damping: 20,
-                    });
-                });
+                runOnJS(triggerSkipAnimation)(Direction.RIGHT);
+            } else {
+                translateX.value = withSpring(0); // Reset if no significant swipe
             }
-
-            // Swipe Down - Dismiss Screen
-            if (translationY > SWIPE_LENGTH) {
-                runOnJS(goBack)();
-            }
-
-            // Reset animation if no intentional swipe
-            if (
-                Math.abs(translationX) < SWIPE_LENGTH &&
-                Math.abs(translationY) < SWIPE_LENGTH
-            ) {
-                resetPosition();
-            }
-        });
+        })
+        .minDistance(2)
+        .failOffsetY(1);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
             transform: [{ translateX: translateX.value }],
-            opacity: opacity.value,
+        };
+    });
+
+    const animatedVerticalStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateY: translateY.value }],
         };
     });
 
     return (
-        <GestureDetector gesture={panGesture}>
-            <View style={[mainStyles.container, { justifyContent: "center" }]}>
+        <GestureDetector gesture={dismissGesture}>
+            <Animated.View
+                style={[
+                    mainStyles.container,
+                    { justifyContent: "center" },
+                    animatedVerticalStyle,
+                ]}
+            >
                 <ImageBlurBackground
                     image={activeTrack?.artwork}
                     blur={15}
@@ -156,91 +198,90 @@ const PlayerScreen = () => {
                     opacity={imageOpacity}
                 />
 
-                {/* gesture pill */}
                 <View
-                    style={{
-                        backgroundColor: Colors.primary,
-                        width: 54,
-                        height: 6,
-                        borderRadius: Spacing.round,
-                        position: "absolute",
-                        top: Spacing.xl * 2,
-                        alignSelf: "center",
-                    }}
-                />
-
-                <Animated.View
                     style={[
                         {
-                            flex: 1,
                             justifyContent: "center",
                             marginHorizontal: Spacing.appPadding * 2,
                             gap: Spacing.md,
                         },
-                        animatedStyle,
                     ]}
                 >
-                    <View>
-                        <AlbumArt
-                            image={activeTrack?.artwork}
-                            style={{
-                                aspectRatio: 1,
-                                borderRadius: Spacing.radius,
-                            }}
-                        />
-                        <PrimaryRoundIconButton
-                            icon="pencil"
-                            onPress={() => {
-                                let song = getSong(activeTrack?.id);
-                                if (song) {
-                                    setSelectedSong(song);
-                                    openSongOptions();
-                                }
-                            }}
-                            style={{
-                                position: "absolute",
-                                bottom: Spacing.md,
-                                right: Spacing.md,
-                            }}
-                        />
-                    </View>
-                    <View
-                        style={{
-                            marginBottom: Spacing.xl,
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
-                        <View
-                            style={{
-                                flexDirection: "column",
-                            }}
+                    <GestureDetector gesture={skipGesture}>
+                        <Animated.View
+                            style={[{ gap: Spacing.md }, animatedStyle]}
                         >
-                            <Text style={[textStyles.h5]} numberOfLines={1}>
-                                {MinimiseText(activeTrack?.title, 20, true)}
-                            </Text>
-                            <Text style={[textStyles.text]}>
-                                {CombineStrings([
-                                    activeTrack?.artist,
-                                    activeTrack?.year,
-                                ])}
-                            </Text>
-                        </View>
-                        <IconButton
-                            touchableOpacityProps={{
-                                onPress: handleLikeButtonPress,
-                            }}
-                            icon={
-                                activeTrack?.isLiked ? "heart" : "heart-outline"
-                            }
-                        />
-                    </View>
-
-                    <PlaybackControls />
-                </Animated.View>
+                            <View>
+                                <AlbumArt
+                                    image={activeTrack?.artwork}
+                                    style={{
+                                        aspectRatio: 1,
+                                        borderRadius: Spacing.radius,
+                                    }}
+                                />
+                                <PrimaryRoundIconButton
+                                    icon="pencil"
+                                    onPress={() => {
+                                        let song = getSong(activeTrack?.id);
+                                        if (song) {
+                                            setSelectedSong(song);
+                                            openSongOptions();
+                                        }
+                                    }}
+                                    style={{
+                                        position: "absolute",
+                                        bottom: Spacing.md,
+                                        right: Spacing.md,
+                                    }}
+                                />
+                            </View>
+                            <View
+                                style={{
+                                    marginBottom: Spacing.xl,
+                                    flexDirection: "row",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        flexDirection: "column",
+                                    }}
+                                >
+                                    <Text
+                                        style={[textStyles.h5]}
+                                        numberOfLines={1}
+                                    >
+                                        {MinimiseText(
+                                            activeTrack?.title,
+                                            20,
+                                            true
+                                        )}
+                                    </Text>
+                                    <Text style={[textStyles.text]}>
+                                        {CombineStrings([
+                                            activeTrack?.artist,
+                                            activeTrack?.year,
+                                        ])}
+                                    </Text>
+                                </View>
+                                <IconButton
+                                    touchableOpacityProps={{
+                                        onPress: handleLikeButtonPress,
+                                    }}
+                                    icon={
+                                        activeTrack?.isLiked
+                                            ? "heart"
+                                            : "heart-outline"
+                                    }
+                                />
+                            </View>
+                        </Animated.View>
+                    </GestureDetector>
+                    <PlaybackControls animation={triggerSkipAnimation} />
+                </View>
                 <SongSheet ref={SongOptionsRef} dismiss={dismissSongoptions} />
-            </View>
+            </Animated.View>
         </GestureDetector>
     );
 };

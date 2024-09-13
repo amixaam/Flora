@@ -1,9 +1,8 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack, router } from "expo-router";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Colors } from "../styles/constants";
 import { useEffect } from "react";
 import { Linking } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import TrackPlayer, {
     AppKilledPlaybackBehavior,
     Capability,
@@ -11,7 +10,7 @@ import TrackPlayer, {
     RepeatMode,
 } from "react-native-track-player";
 import { PlaybackService } from "../../PlaybackService";
-import BackgroundImageAbsolute from "../Components/BackgroundImageAbsolute";
+import { Colors } from "../styles/constants";
 
 export default function App() {
     useEffect(() => {
@@ -84,11 +83,13 @@ function DefaultLayout() {
                 statusBarColor: "transparent",
             }}
         >
-            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="(tabs)" options={{}} />
             <Stack.Screen
                 name="player"
                 options={{
                     animation: "slide_from_bottom",
+                    contentStyle: { backgroundColor: "transparent" },
+                    presentation: "transparentModal",
                 }}
             />
         </Stack>

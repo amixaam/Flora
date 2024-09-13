@@ -3,13 +3,15 @@ import { useSongsStore } from "../store/songs";
 import IconButton from "./UI/IconButton";
 
 import { usePlaybackState, useProgress } from "react-native-track-player";
+import { IconSizes, Spacing } from "../styles/constants";
 import { textStyles } from "../styles/text";
 import { FormatSecs } from "../utils/FormatMillis";
 import PlaybackSlider from "./PlaybackSlider";
-import { IconSizes, Spacing } from "../styles/constants";
-import { CombineStrings } from "../utils/CombineStrings";
+import { Direction } from "../types/other";
 
-const PlaybackControls = () => {
+const PlaybackControls = ({
+    animation = (direction: Direction, fast: boolean) => {},
+}) => {
     const { play, pause, next, previous, seekToPosition } = useSongsStore();
     const playbackState = usePlaybackState();
     const progress = useProgress();
@@ -43,7 +45,10 @@ const PlaybackControls = () => {
                 />
                 <IconButton
                     touchableOpacityProps={{
-                        onPress: previous,
+                        onPress: () => {
+                            previous();
+                            animation(Direction.RIGHT, true);
+                        },
                     }}
                     icon={"skip-previous"}
                     size={IconSizes.xl}
@@ -60,7 +65,12 @@ const PlaybackControls = () => {
                     size={IconSizes.xxl}
                 />
                 <IconButton
-                    touchableOpacityProps={{ onPress: next }}
+                    touchableOpacityProps={{
+                        onPress: () => {
+                            next();
+                            animation(Direction.LEFT, true);
+                        },
+                    }}
                     icon={"skip-next"}
                     size={IconSizes.xl}
                 />
