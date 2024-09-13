@@ -2,7 +2,7 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useState } from "react";
 import { View } from "react-native";
 import { useSongsStore } from "../../../store/songs";
-import { Spacing } from "../../../styles/constants";
+import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
 import { Album } from "../../../types/song";
 import CancelButton from "../../UI/CancelButton";
@@ -36,12 +36,12 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
             <SheetModalLayout
                 ref={ref}
                 title={"Create album"}
-                snapPoints={["65%"]}
+                snapPoints={[SnapPoints.md]}
             >
                 <BottomSheetView
                     style={{
-                        rowGap: Spacing.sm,
-                        flex: 1,
+                        gap: Spacing.md,
+                        flexDirection: "row",
                         marginHorizontal: Spacing.appPadding,
                     }}
                 >
@@ -50,25 +50,29 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                         setImage={(artwork: string) =>
                             setInputFields({ ...inputFields, artwork })
                         }
+                        touchableOpacityProps={{
+                            style: {
+                                flex: 1,
+                                width: 128,
+                            },
+                        }}
                     />
-                    <BottomSheetView style={{ rowGap: Spacing.sm, flex: 1 }}>
-                        <TextInput
-                            bottomSheet={true}
-                            placeholder="Name"
-                            value={inputFields.title}
-                            setValue={(value) =>
-                                setInputFields({ ...inputFields, title: value })
-                            }
-                        />
-                        <BottomSheetView
-                            style={{
-                                flexDirection: "row",
-                                columnGap: Spacing.sm,
-                            }}
-                        >
+                    <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
+                        <BottomSheetView style={{ gap: Spacing.sm }}>
                             <TextInput
                                 bottomSheet={true}
-                                placeholder="Artist"
+                                placeholder="Album name..."
+                                value={inputFields.title}
+                                setValue={(value) =>
+                                    setInputFields({
+                                        ...inputFields,
+                                        title: value,
+                                    })
+                                }
+                            />
+                            <TextInput
+                                bottomSheet={true}
+                                placeholder="Artist..."
                                 value={inputFields.artist}
                                 setValue={(value) =>
                                     setInputFields({
@@ -79,7 +83,7 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
                             <TextInput
                                 bottomSheet={true}
-                                placeholder="Year"
+                                placeholder="Year..."
                                 value={inputFields.year?.toString()}
                                 setValue={(value) =>
                                     setInputFields({
@@ -89,10 +93,11 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 }
                             />
                         </BottomSheetView>
-                        <View
+
+                        <BottomSheetView
                             style={{
                                 flexDirection: "row",
-                                columnGap: Spacing.sm,
+                                gap: Spacing.sm,
                             }}
                         >
                             <SubmitButton
@@ -104,7 +109,7 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                     props.dismiss?.();
                                 }}
                             />
-                        </View>
+                        </BottomSheetView>
                     </BottomSheetView>
                 </BottomSheetView>
             </SheetModalLayout>

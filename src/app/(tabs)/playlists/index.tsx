@@ -1,26 +1,18 @@
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import { View } from "react-native";
 
-import { FlashList } from "@shopify/flash-list";
 import { useCallback, useEffect, useRef } from "react";
 import { useSongsStore } from "../../../store/songs";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import CreatePlaylist from "../../../Components/BottomSheets/Playlist/CreatePlaylist";
-import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
-import ContainerItem from "../../../Components/UI/ContainerItem";
 import IconButton from "../../../Components/UI/IconButton";
-import { Spacing } from "../../../styles/constants";
+import { TwoColContainerList } from "../../../Components/UI/TwoColContainerList";
 import { mainStyles } from "../../../styles/styles";
 
 export default function PlaylistsTab() {
-    const { playlists, setSelectedContainer, getAllPlaylistSongs } =
-        useSongsStore();
-
-    const insets = useSafeAreaInsets();
+    useSongsStore();
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -46,58 +38,10 @@ export default function PlaylistsTab() {
         []
     );
 
-    const ContainerOptionsRef = useRef<BottomSheetModal>(null);
-    const openContainerOptions = useCallback(() => {
-        ContainerOptionsRef.current?.present();
-    }, []);
-
-    const dismissContainerOptions = useCallback(() => {
-        ContainerOptionsRef.current?.dismiss();
-    }, []);
-
-    const allSongs = getAllPlaylistSongs();
-
     return (
         <View style={[mainStyles.container]}>
             <BackgroundImageAbsolute />
-
-            <FlashList
-                numColumns={2}
-                data={playlists}
-                keyExtractor={(item) => item.id}
-                ListHeaderComponent={
-                    <TopButtonControls songs={allSongs ? allSongs : []} />
-                }
-                contentContainerStyle={{
-                    paddingTop: insets.top * 2,
-                    paddingBottom: insets.bottom + Spacing.miniPlayer,
-                    paddingHorizontal: Spacing.appPadding / 2,
-                }}
-                estimatedItemSize={50}
-                renderItem={({ item }) => (
-                    <ContainerItem
-                        viewProps={{
-                            style: {
-                                margin: Spacing.sm,
-                            },
-                        }}
-                        item={item}
-                        touchableProps={{
-                            onPress: () => {
-                                router.push(`(tabs)/playlists/${item.id}`);
-                            },
-                            onLongPress: () => {
-                                setSelectedContainer(item);
-                                openContainerOptions();
-                            },
-                        }}
-                    />
-                )}
-            />
-            <ContainerSheet
-                ref={ContainerOptionsRef}
-                dismiss={dismissContainerOptions}
-            />
+            <TwoColContainerList type="playlist" />
             <CreatePlaylist
                 ref={CreatePlaylistRef}
                 dismiss={dismissCreatePlaylist}

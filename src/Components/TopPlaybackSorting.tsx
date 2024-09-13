@@ -77,6 +77,7 @@ const QuickButton = ({
                         borderColor: Colors.primary30,
                         borderWidth: 1,
                         backgroundColor: Colors.neon10,
+                        paddingTop: Spacing.sm,
                     },
                 ]}
             >

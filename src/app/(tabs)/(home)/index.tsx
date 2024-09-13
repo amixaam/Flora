@@ -3,7 +3,6 @@ import {
     ImageBackground,
     Text,
     TouchableNativeFeedback,
-    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -78,7 +77,11 @@ export default function PlaylistsTab() {
                             },
                         ]}
                     >
-                        <Text>{first ? "Close history" : "Open history"} </Text>
+                        <Text
+                            style={[textStyles.text, { color: Colors.input }]}
+                        >
+                            {first ? "Close history" : "Open history"}{" "}
+                        </Text>
                     </View>
                 </TouchableNativeFeedback>
                 <TouchableNativeFeedback onPress={() => clearHistory()}>
@@ -91,7 +94,11 @@ export default function PlaylistsTab() {
                             },
                         ]}
                     >
-                        <Text>Clear history</Text>
+                        <Text
+                            style={[textStyles.text, { color: Colors.input }]}
+                        >
+                            Clear history
+                        </Text>
                     </View>
                 </TouchableNativeFeedback>
             </View>

@@ -6,7 +6,7 @@ import CancelButton from "../../UI/CancelButton";
 import ImagePickerButton from "../../UI/ImagePickerButton";
 import SubmitButton from "../../UI/SubmitButton";
 import TextInput from "../../UI/TextInput";
-import { Spacing } from "../../../styles/constants";
+import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
 import { Playlist } from "../../../types/song";
 import { SheetModalLayout } from "../SheetModalLayout";
@@ -34,12 +34,12 @@ const CreatePlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
             <SheetModalLayout
                 ref={ref}
                 title={"Create playlist"}
-                snapPoints={["65%"]}
+                snapPoints={[SnapPoints.md]}
             >
                 <BottomSheetView
                     style={{
-                        rowGap: 8,
-                        flex: 1,
+                        gap: Spacing.md,
+                        flexDirection: "row",
                         marginHorizontal: Spacing.appPadding,
                     }}
                 >
@@ -48,31 +48,43 @@ const CreatePlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                         setImage={(artwork: string) =>
                             setInputFields({ ...inputFields, artwork })
                         }
+                        touchableOpacityProps={{
+                            style: {
+                                flex: 1,
+                                width: 128,
+                            },
+                        }}
                     />
-                    <BottomSheetView style={{ rowGap: Spacing.sm, flex: 1 }}>
-                        <TextInput
-                            bottomSheet={true}
-                            placeholder="Name"
-                            value={inputFields.title}
-                            setValue={(value) =>
-                                setInputFields({ ...inputFields, title: value })
-                            }
-                        />
-                        <TextInput
-                            bottomSheet={true}
-                            placeholder="Description"
-                            value={inputFields.description}
-                            setValue={(value) =>
-                                setInputFields({
-                                    ...inputFields,
-                                    description: value,
-                                })
-                            }
-                        />
-                        <View
+
+                    <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
+                        <BottomSheetView style={{ gap: Spacing.sm }}>
+                            <TextInput
+                                bottomSheet={true}
+                                placeholder="Playlist name..."
+                                value={inputFields.title}
+                                setValue={(value) =>
+                                    setInputFields({
+                                        ...inputFields,
+                                        title: value,
+                                    })
+                                }
+                            />
+                            <TextInput
+                                bottomSheet={true}
+                                placeholder="Description..."
+                                value={inputFields.description}
+                                setValue={(value) =>
+                                    setInputFields({
+                                        ...inputFields,
+                                        description: value,
+                                    })
+                                }
+                            />
+                        </BottomSheetView>
+                        <BottomSheetView
                             style={{
                                 flexDirection: "row",
-                                columnGap: Spacing.sm,
+                                gap: Spacing.sm,
                             }}
                         >
                             <SubmitButton
@@ -84,7 +96,7 @@ const CreatePlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                                     props.dismiss?.();
                                 }}
                             />
-                        </View>
+                        </BottomSheetView>
                     </BottomSheetView>
                 </BottomSheetView>
             </SheetModalLayout>

@@ -41,7 +41,7 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
             <SheetModalLayout
                 ref={ref}
                 title={`Edit ${selectedContainer.title}`}
-                snapPoints={[SnapPoints.lg]}
+                snapPoints={[SnapPoints.md]}
             >
                 <BottomSheetView
                     style={{

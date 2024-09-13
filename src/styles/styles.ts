@@ -26,6 +26,7 @@ export const mainStyles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: Spacing.lg,
         paddingVertical: Spacing.sm,
+        paddingTop: Spacing.sm + 2,
         borderRadius: Spacing.radiusSm,
     },
 
@@ -33,6 +34,7 @@ export const mainStyles = StyleSheet.create({
         borderRadius: Spacing.radiusSm,
         paddingHorizontal: Spacing.md,
         paddingVertical: Spacing.sm,
+        paddingTop: Spacing.sm + 2,
     },
 
     songListItem: {

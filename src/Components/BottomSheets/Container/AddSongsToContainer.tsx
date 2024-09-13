@@ -1,12 +1,14 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import { useSongsStore } from "../../../store/songs";
-import { SnapPoints, Spacing } from "../../../styles/constants";
+import { Colors, SnapPoints, Spacing } from "../../../styles/constants";
 import SongListItem from "../../SongListItem";
 import ListItemsNotFound from "../../UI/ListItemsNotFound";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { SheetModalLayout } from "../SheetModalLayout";
 import { BottomSheetProps } from "../../../types/other";
+import TextInput from "../../UI/TextInput";
+import { Song } from "../../../types/song";
 
 const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -21,6 +23,34 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
             removeSongFromAlbum,
         } = useSongsStore();
         const [selectedSongs, setselectedSongs] = useState<string[]>([]);
+
+        const [searchQuery, setSearchQuery] = useState("");
+        const [searchResults, setSearchResults] = useState<Song[]>([]);
+
+        // Shows newest songs first if no search query
+        // Otherwise, shows search results sorted by title and or artist
+        useEffect(() => {
+            if (searchQuery === "") {
+                setSearchResults(songs.slice().reverse());
+                return;
+            }
+
+            const results = songs.filter(
+                (song) =>
+                    song.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    song.artist
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())
+            );
+
+            setSearchResults(results);
+        }, [searchQuery, songs]);
+
+        const handleSearch = (query: string) => {
+            setSearchQuery(query);
+        };
 
         useEffect(() => {
             if (!selectedContainer) return;
@@ -54,19 +84,33 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
             <SheetModalLayout
                 ref={ref}
                 title={`Add songs to ${containerType}`}
-                snapPoints={[SnapPoints.full]}
+                snapPoints={[SnapPoints.lg]}
             >
                 <FlatList
-                    data={songs.filter((song) => !song.isHidden)}
+                    data={searchResults.filter((song) => !song.isHidden)}
                     ListEmptyComponent={
                         <ListItemsNotFound
                             text="No songs found!"
                             icon="music-note"
                         />
                     }
-                    contentContainerStyle={{
-                        paddingBottom: Spacing.xl * 3,
-                    }}
+                    ListHeaderComponent={
+                        <BottomSheetView
+                            style={{
+                                marginHorizontal: Spacing.appPadding,
+                                backgroundColor: Colors.secondary,
+                                paddingBottom: Spacing.md,
+                            }}
+                        >
+                            <TextInput
+                                // bottomSheet
+                                placeholder="Song name or artist..."
+                                setValue={(query) => handleSearch(query)}
+                            />
+                        </BottomSheetView>
+                    }
+                    stickyHeaderIndices={[0]}
+                    stickyHeaderHiddenOnScroll={true}
                     renderItem={({ item }) => (
                         <SongListItem
                             item={item}
