@@ -1,23 +1,195 @@
-import { router } from "expo-router";
-import { Text, TouchableNativeFeedback, View, ViewStyle } from "react-native";
+import {
+    Easing,
+    Text,
+    TouchableNativeFeedback,
+    View,
+    ViewStyle,
+} from "react-native";
 import { useSongsStore } from "../store/songs";
 import AlbumArt from "./AlbumArt";
 import IconButton from "./UI/IconButton";
 
+import { LinearGradient } from "expo-linear-gradient";
 import { StyleProp } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { runOnJS } from "react-native-reanimated";
-import { useActiveTrack, usePlaybackState } from "react-native-track-player";
-import { IconSizes, Spacing } from "../styles/constants";
+import Animated, {
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+    withTiming,
+} from "react-native-reanimated";
+import TextTicker from "react-native-text-ticker";
+import {
+    Track,
+    useActiveTrack,
+    usePlaybackState,
+} from "react-native-track-player";
+import { Colors, IconSizes, Spacing } from "../styles/constants";
 import { newStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { CombineStrings } from "../utils/CombineStrings";
-import MinimiseText from "../utils/MinimiseText";
+import { router } from "expo-router";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
-    const { play, pause, next, previous } = useSongsStore();
-
     const activeTrack = useActiveTrack();
+
+    const openPlayer = () => {
+        router.push("/player");
+    };
+
+    if (!activeTrack) return;
+    return (
+        <View style={style}>
+            <TouchableNativeFeedback onPress={openPlayer}>
+                <View style={newStyles.miniPlayer}>
+                    <SongDetails activeTrack={activeTrack} />
+                    <SongControls />
+                </View>
+            </TouchableNativeFeedback>
+        </View>
+    );
+};
+export default MiniPlayer;
+
+interface SongDetailsProps {
+    activeTrack: Track;
+}
+
+const SongDetails = ({ activeTrack }: SongDetailsProps) => {
+    const { next, previous } = useSongsStore();
+
+    const translateX = useSharedValue(0);
+    const opacity = useSharedValue(1);
+
+    const onSongChange = (direction: 1 | -1) => {
+        if (direction === -1) {
+            previous();
+        } else {
+            next();
+        }
+    };
+
+    // Reset the position of the player
+    const resetPosition = () => {
+        "worklet";
+        translateX.value = withSpring(0, { damping: 15 });
+        opacity.value = withTiming(1, { duration: 200 });
+    };
+
+    const skipGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            translateX.value = event.translationX;
+
+            // Max swipe for opacity
+            const SWIPE_DISTANCE = 150;
+            opacity.value =
+                1 - Math.min(Math.abs(event.translationX) / SWIPE_DISTANCE, 1);
+        })
+        .onEnd((event) => {
+            const SWIPE_THRESHOLD = 40;
+            const direction = event.translationX > 0 ? 1 : -1;
+
+            if (Math.abs(event.translationX) > SWIPE_THRESHOLD) {
+                runOnJS(onSongChange)(direction);
+
+                opacity.value = withTiming(0, { duration: 150 });
+                translateX.value = withTiming(
+                    direction * 200,
+                    { duration: 200 },
+                    () => {
+                        translateX.value = direction * -200;
+                        resetPosition();
+                    }
+                );
+            } else {
+                resetPosition();
+            }
+        })
+        .minDistance(2)
+        .failOffsetY(1);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: translateX.value }],
+            opacity: opacity.value,
+        };
+    });
+
+    return (
+        <View
+            style={{
+                flex: 1,
+                overflow: "hidden",
+                position: "relative",
+                paddingStart: Spacing.appPadding,
+            }}
+        >
+            <LinearGradient
+                colors={["transparent", Colors.secondary]}
+                style={{
+                    position: "absolute",
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 16,
+                    zIndex: 1,
+                }}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+            />
+            <GestureDetector gesture={skipGesture}>
+                <Animated.View
+                    style={[
+                        {
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: Spacing.sm,
+                            flex: 1,
+                        },
+                        animatedStyle,
+                    ]}
+                >
+                    <AlbumArt
+                        image={activeTrack.artwork}
+                        style={{ height: 46 }}
+                    />
+
+                    <View
+                        style={{
+                            flexDirection: "column",
+                            flex: 1,
+                        }}
+                    >
+                        <TextTicker
+                            key={activeTrack.title}
+                            style={textStyles.h6}
+                            duration={12 * 1000}
+                            marqueeDelay={2 * 1000}
+                            easing={Easing.linear}
+                            bounce={false}
+                            scroll={false}
+                            loop
+                        >
+                            {activeTrack.title
+                                ? activeTrack.title
+                                : "12345678901234567890"}
+                        </TextTicker>
+                        <Text style={textStyles.small} numberOfLines={1}>
+                            {CombineStrings([
+                                activeTrack.artist,
+                                activeTrack.year,
+                            ])}
+                        </Text>
+                    </View>
+                </Animated.View>
+            </GestureDetector>
+        </View>
+    );
+};
+
+const SongControls = () => {
+    const { play, pause, next, previous } = useSongsStore();
     const playbackState = usePlaybackState();
 
     const hanldePlayPausePress = () => {
@@ -25,121 +197,33 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
         else play();
     };
 
-    const openPlayer = () => {
-        router.push("/player");
-    };
-
-    const panGesture = Gesture.Pan()
-        .onEnd((event) => {
-            const { translationX, translationY } = event;
-
-            // Swipe Right - Next Song
-            if (translationX < -50) {
-                next();
-            }
-
-            // Swipe Left - Previous Song
-            if (translationX > 50) {
-                previous();
-            }
-
-            // Swipe Up - Open Screen
-            if (translationY < -50) {
-                openPlayer();
-            }
-        })
-        .runOnJS(true);
-
-    if (!activeTrack) return;
     return (
-        <GestureDetector gesture={panGesture}>
-            <View style={style}>
-                <TouchableNativeFeedback onPress={openPlayer}>
-                    <View style={newStyles.miniPlayer}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                columnGap: Spacing.sm,
-                            }}
-                        >
-                            <AlbumArt
-                                image={activeTrack.artwork}
-                                style={{ height: 46 }}
-                            />
-                            <View
-                                style={{
-                                    flex: 1,
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    gap: Spacing.md,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        flex: 1,
-                                        flexDirection: "column",
-                                        width: "100%",
-                                    }}
-                                >
-                                    <Text
-                                        style={textStyles.h6}
-                                        numberOfLines={1}
-                                    >
-                                        {MinimiseText(
-                                            activeTrack.title,
-                                            20,
-                                            true
-                                        )}
-                                    </Text>
-                                    <Text
-                                        style={textStyles.small}
-                                        numberOfLines={1}
-                                    >
-                                        {CombineStrings([
-                                            activeTrack.artist,
-                                            activeTrack.year,
-                                        ])}
-                                    </Text>
-                                </View>
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        gap: Spacing.sm,
-                                    }}
-                                >
-                                    <IconButton
-                                        touchableOpacityProps={{
-                                            onPress: previous,
-                                        }}
-                                        icon="skip-previous"
-                                    />
-                                    <IconButton
-                                        touchableOpacityProps={{
-                                            onPress: hanldePlayPausePress,
-                                        }}
-                                        size={IconSizes.lg}
-                                        icon={
-                                            playbackState.state === "playing"
-                                                ? "pause"
-                                                : "play"
-                                        }
-                                    />
-                                    <IconButton
-                                        touchableOpacityProps={{
-                                            onPress: next,
-                                        }}
-                                        icon="skip-next"
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
-            </View>
-        </GestureDetector>
+        <View
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: Spacing.mmd,
+            }}
+        >
+            <IconButton
+                touchableOpacityProps={{
+                    onPress: previous,
+                }}
+                icon="skip-previous"
+            />
+            <IconButton
+                touchableOpacityProps={{
+                    onPress: hanldePlayPausePress,
+                }}
+                size={IconSizes.lg}
+                icon={playbackState.state === "playing" ? "pause" : "play"}
+            />
+            <IconButton
+                touchableOpacityProps={{
+                    onPress: next,
+                }}
+                icon="skip-next"
+            />
+        </View>
     );
 };
-export default MiniPlayer;

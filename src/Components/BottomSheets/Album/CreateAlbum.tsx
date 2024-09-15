@@ -1,6 +1,5 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useState } from "react";
-import { View } from "react-native";
 import { useSongsStore } from "../../../store/songs";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";

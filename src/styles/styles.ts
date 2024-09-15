@@ -116,14 +116,15 @@ export const newStyles = StyleSheet.create({
     },
 
     miniPlayer: {
-        flexDirection: "column",
+        padding: Spacing.mmd,
+        paddingStart: 0,
+        paddingEnd: Spacing.appPadding,
 
-        padding: 12,
-        paddingHorizontal: Spacing.appPadding,
+        flexDirection: "row",
+        gap: Spacing.mmd,
 
         borderTopEndRadius: Spacing.radiusMd,
         borderTopStartRadius: Spacing.radiusMd,
-
         backgroundColor: Colors.secondary,
     },
 });

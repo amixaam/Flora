@@ -87,7 +87,7 @@ export default function SongsTab() {
             id: asset.id,
             url: asset.uri,
 
-            title: asset.filename,
+            title: asset.filename.replace(/\.[^/.]+$/, ""),
             artist: musicData.artist ? musicData.artist : "No artist",
             year: musicData.year ? musicData.year : "No year",
             artwork: undefined,

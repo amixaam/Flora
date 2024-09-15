@@ -1,12 +1,8 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
 import React, { useCallback, useRef } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
-import {
-    Gesture,
-    GestureDetector,
-    PanGestureHandler,
-} from "react-native-gesture-handler";
+import { Dimensions, Easing, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
     useAnimatedStyle,
@@ -26,12 +22,13 @@ import PlaybackControls from "../Components/PlaybackControls";
 import IconButton from "../Components/UI/IconButton";
 import PrimaryRoundIconButton from "../Components/UI/PrimaryRoundIconButton";
 import { useSongsStore } from "../store/songs";
-import { Colors, Spacing } from "../styles/constants";
+import { Spacing } from "../styles/constants";
 import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
+import { Direction } from "../types/other";
 import { CombineStrings } from "../utils/CombineStrings";
 import MinimiseText from "../utils/MinimiseText";
-import { Direction } from "../types/other";
+import TextTicker from "react-native-text-ticker";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -238,6 +235,7 @@ const PlayerScreen = () => {
                             <View
                                 style={{
                                     marginBottom: Spacing.xl,
+                                    gap: Spacing.xl,
                                     flexDirection: "row",
                                     justifyContent: "space-between",
                                     alignItems: "center",
@@ -246,9 +244,10 @@ const PlayerScreen = () => {
                                 <View
                                     style={{
                                         flexDirection: "column",
+                                        flex: 1,
                                     }}
                                 >
-                                    <Text
+                                    {/* <Text
                                         style={[textStyles.h5]}
                                         numberOfLines={1}
                                     >
@@ -257,7 +256,19 @@ const PlayerScreen = () => {
                                             20,
                                             true
                                         )}
-                                    </Text>
+                                    </Text> */}
+                                    <TextTicker
+                                        key={activeTrack?.title}
+                                        style={textStyles.h5}
+                                        duration={12 * 1000}
+                                        marqueeDelay={2 * 1000}
+                                        easing={Easing.linear}
+                                        bounce={false}
+                                        scroll={false}
+                                        loop
+                                    >
+                                        {activeTrack?.title}
+                                    </TextTicker>
                                     <Text style={[textStyles.text]}>
                                         {CombineStrings([
                                             activeTrack?.artist,
