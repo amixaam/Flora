@@ -12,6 +12,7 @@ import AddSongsToContainer from "./AddSongsToContainer";
 import EditAlbum from "../Album/EditAlbum";
 import EditPlaylist from "../Playlist/EditPlaylist";
 import { View } from "react-native";
+import { UISeperator } from "../../UI/UISeperator";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -98,51 +99,52 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                 <SheetModalLayout ref={ref} title={selectedContainer.title}>
                     <BottomSheetView
                         style={{
-                            flexDirection: "row",
-                            columnGap: Spacing.md,
                             marginHorizontal: Spacing.appPadding,
+                            gap: Spacing.md,
                         }}
                     >
-                        <LargeOptionButton
-                            icon="album"
-                            text="Add to queue"
-                            onPress={handleAddToQueue}
-                        />
-                        <LargeOptionButton
-                            icon="shuffle"
-                            text="Shuffle play"
-                            onPress={handleShufflePlay}
-                        />
+                        <BottomSheetView
+                            style={{
+                                flexDirection: "row",
+                                columnGap: Spacing.md,
+                            }}
+                        >
+                            <LargeOptionButton
+                                icon="album"
+                                text="Add to queue"
+                                onPress={handleAddToQueue}
+                            />
+                            <LargeOptionButton
+                                icon="shuffle"
+                                text="Shuffle play"
+                                onPress={handleShufflePlay}
+                            />
 
-                        <LargeOptionButton
-                            icon="playlist-plus"
-                            text="Add songs"
-                            onPress={openAddSongsToContainer}
+                            <LargeOptionButton
+                                icon="playlist-plus"
+                                text="Add songs"
+                                onPress={openAddSongsToContainer}
+                            />
+                        </BottomSheetView>
+                        <UISeperator />
+
+                        <SheetOptionsButton
+                            icon="playlist-edit"
+                            buttonContent={"Edit " + containerType}
+                            isDisabled={selectedContainer.id === "1"}
+                            onPress={() => {
+                                handleEditContainer();
+                            }}
+                        />
+                        <SheetOptionsButton
+                            icon="trash-can"
+                            buttonContent={"Delete " + containerType}
+                            isDisabled={selectedContainer.id === "1"}
+                            onPress={() => {
+                                setDeleteConfirmModal(true);
+                            }}
                         />
                     </BottomSheetView>
-                    <View
-                        style={{
-                            height: 2,
-                            backgroundColor: Colors.input,
-                            marginHorizontal: Spacing.appPadding,
-                        }}
-                    />
-                    <SheetOptionsButton
-                        icon="playlist-edit"
-                        buttonContent={"Edit " + containerType}
-                        isDisabled={selectedContainer.id === "1"}
-                        onPress={() => {
-                            handleEditContainer();
-                        }}
-                    />
-                    <SheetOptionsButton
-                        icon="trash-can"
-                        buttonContent={"Delete " + containerType}
-                        isDisabled={selectedContainer.id === "1"}
-                        onPress={() => {
-                            setDeleteConfirmModal(true);
-                        }}
-                    />
                 </SheetModalLayout>
                 <DeleteContainer
                     visible={deleteConfirmModal}

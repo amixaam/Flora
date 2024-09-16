@@ -11,14 +11,14 @@ const LargeTextButton = ({
         console.log("Pressed!");
     },
     disabled = false,
+    bgColor = Colors.input,
 }) => {
     return (
         <View
             style={{
                 flex: 1,
                 alignItems: "center",
-                rowGap: Spacing.xs,
-                marginBottom: Spacing.md,
+                gap: Spacing.sm,
             }}
         >
             <TouchableNativeFeedback onPress={onPress} disabled={disabled}>
@@ -28,14 +28,15 @@ const LargeTextButton = ({
                         alignItems: "center",
                         borderRadius: Spacing.radius,
                         padding: Spacing.sm,
+                        paddingVertical: Spacing.md,
 
-                        backgroundColor: Colors.input,
+                        backgroundColor: bgColor,
                         opacity: disabled ? 0.5 : 1,
                     }}
                 >
                     <Text
                         style={[
-                            textStyles.h3,
+                            textStyles.h5,
                             { opacity: disabled ? 0.5 : 1, marginBottom: -8 },
                         ]}
                     >
@@ -43,7 +44,7 @@ const LargeTextButton = ({
                     </Text>
                 </View>
             </TouchableNativeFeedback>
-            <Text style={[textStyles.h6, { opacity: disabled ? 0.5 : 1 }]}>
+            <Text style={[textStyles.text, { opacity: disabled ? 0.5 : 1 }]}>
                 {subText}
             </Text>
         </View>

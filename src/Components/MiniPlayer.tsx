@@ -105,9 +105,7 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
             } else {
                 resetPosition();
             }
-        })
-        .minDistance(2)
-        .failOffsetY(1);
+        });
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -159,6 +157,7 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
                         style={{
                             flexDirection: "column",
                             flex: 1,
+                            position: "relative",
                         }}
                     >
                         <TextTicker

@@ -8,6 +8,7 @@ import { SheetModalLayout } from "../SheetModalLayout";
 import { BottomSheetProps } from "../../../types/other";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import SongStatistics from "./SongStatistics";
+import { UISeperator } from "../../UI/UISeperator";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -64,75 +65,89 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                 >
                     <BottomSheetView
                         style={{
-                            flexDirection: "row",
-                            columnGap: Spacing.md,
                             marginHorizontal: Spacing.appPadding,
+                            gap: Spacing.md,
                         }}
                     >
-                        <LargeOptionButton
-                            icon="album"
-                            text="Add to queue"
-                            onPress={handleAddToQueue}
-                            disabled={selectedSong.isHidden}
+                        <BottomSheetView
+                            style={{
+                                flexDirection: "row",
+                                columnGap: Spacing.md,
+                            }}
+                        >
+                            <LargeOptionButton
+                                icon="album"
+                                text="Add to queue"
+                                onPress={handleAddToQueue}
+                                disabled={selectedSong.isHidden}
+                            />
+                            <LargeOptionButton
+                                icon="playlist-plus"
+                                text="Add to playlist"
+                                onPress={openAddPlaylist}
+                                disabled={selectedSong.isHidden}
+                            />
+
+                            <LargeOptionButton
+                                icon={
+                                    selectedSong.isLiked
+                                        ? "heart"
+                                        : "heart-outline"
+                                }
+                                text={
+                                    selectedSong.isLiked
+                                        ? "Remove favourite"
+                                        : "Add favourite"
+                                }
+                                onPress={handleToggleLike}
+                                disabled={selectedSong.isHidden}
+                            />
+                        </BottomSheetView>
+
+                        <UISeperator />
+
+                        <SheetOptionsButton
+                            icon="chart-timeline-variant-shimmer"
+                            buttonContent="View statistics"
+                            onPress={() => {
+                                props.dismiss?.();
+                                openSongStatistics();
+                            }}
                         />
-                        <LargeOptionButton
-                            icon="playlist-plus"
-                            text="Add to playlist"
-                            onPress={openAddPlaylist}
-                            disabled={selectedSong.isHidden}
+                        <SheetOptionsButton
+                            icon="album"
+                            buttonContent="View album"
+                            onPress={() => {
+                                props.dismiss?.();
+                            }}
+                            isDisabled
+                        />
+                        <SheetOptionsButton
+                            icon="pencil"
+                            buttonContent="Edit tags"
+                            onPress={() => {
+                                props.dismiss?.();
+                            }}
+                            isDisabled
                         />
 
-                        <LargeOptionButton
-                            icon={
-                                selectedSong.isLiked ? "heart" : "heart-outline"
+                        <SheetOptionsButton
+                            icon={selectedSong.isHidden ? "eye" : "eye-off"}
+                            buttonContent={
+                                selectedSong.isHidden
+                                    ? "Show song"
+                                    : "Hide song"
                             }
-                            text={
-                                selectedSong.isLiked
-                                    ? "Remove favourite"
-                                    : "Add favourite"
+                            onPress={handleHideSong}
+                        />
+                        <SheetOptionsButton
+                            icon={"trash-can"}
+                            buttonContent={
+                                "Delete song from device (not available)"
                             }
-                            onPress={handleToggleLike}
-                            disabled={selectedSong.isHidden}
+                            isDisabled={true}
                         />
                     </BottomSheetView>
-                    <SheetOptionsButton
-                        icon="chart-timeline-variant-shimmer"
-                        buttonContent="View statistics"
-                        onPress={() => {
-                            props.dismiss?.();
-                            openSongStatistics();
-                        }}
-                    />
-                    <SheetOptionsButton
-                        icon="album"
-                        buttonContent="Go to album (NOT DONE)"
-                        onPress={() => {
-                            props.dismiss?.();
-                        }}
-                        isDisabled={selectedSong.isHidden}
-                    />
-                    <SheetOptionsButton
-                        icon="pencil"
-                        buttonContent="Edit tags (NOT DONE)"
-                        onPress={() => {
-                            props.dismiss?.();
-                        }}
-                    />
-
-                    <SheetOptionsButton
-                        icon={selectedSong.isHidden ? "eye" : "eye-off"}
-                        buttonContent={
-                            selectedSong.isHidden ? "Show song" : "Hide song"
-                        }
-                        onPress={handleHideSong}
-                    />
-                    <SheetOptionsButton
-                        icon={"trash-can"}
-                        buttonContent={
-                            "Delete song from device (not available)"
-                        }
-                        isDisabled={true}
-                    />
                 </SheetModalLayout>
                 <AddPlaylistToSong ref={addPlaylistRef} />
                 <SongStatistics ref={songStatisticsRef} />

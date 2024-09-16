@@ -3,7 +3,12 @@ import React from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
-import { Colors, DefaultIcon, IconSizes } from "../../styles/constants";
+import {
+    Colors,
+    DefaultIcon,
+    IconSizes,
+    Spacing,
+} from "../../styles/constants";
 
 interface SheetOptionsButtonProps {
     icon?: string;
@@ -28,7 +33,7 @@ const SheetOptionsButton = ({
             >
                 <MaterialCommunityIcons
                     name={icon}
-                    size={IconSizes.sm}
+                    size={IconSizes.md}
                     style={{ color: Colors.primary }}
                 />
                 <Text style={[textStyles.text]}>{buttonContent}</Text>

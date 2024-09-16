@@ -10,6 +10,7 @@ import Animated, {
     withSpring,
     withTiming,
 } from "react-native-reanimated";
+import TextTicker from "react-native-text-ticker";
 import { useActiveTrack } from "react-native-track-player";
 import {
     skipToNext,
@@ -27,8 +28,6 @@ import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { Direction } from "../types/other";
 import { CombineStrings } from "../utils/CombineStrings";
-import MinimiseText from "../utils/MinimiseText";
-import TextTicker from "react-native-text-ticker";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -247,16 +246,6 @@ const PlayerScreen = () => {
                                         flex: 1,
                                     }}
                                 >
-                                    {/* <Text
-                                        style={[textStyles.h5]}
-                                        numberOfLines={1}
-                                    >
-                                        {MinimiseText(
-                                            activeTrack?.title,
-                                            20,
-                                            true
-                                        )}
-                                    </Text> */}
                                     <TextTicker
                                         key={activeTrack?.title}
                                         style={textStyles.h5}

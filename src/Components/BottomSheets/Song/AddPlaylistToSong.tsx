@@ -42,7 +42,7 @@ const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
             <>
                 <SheetModalLayout
                     ref={ref}
-                    title={`Add ${selectedSong.title} to playlist`}
+                    title={`Add to playlist`}
                     snapPoints={[SnapPoints.full]}
                 >
                     <FlatList
@@ -62,6 +62,8 @@ const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
                         }
                         contentContainerStyle={{
                             paddingBottom: Spacing.xl,
+                            gap: Spacing.md,
+                            marginHorizontal: Spacing.appPadding,
                         }}
                         renderItem={({ item }) => (
                             <SheetPlaylistOptionsButton

@@ -20,7 +20,7 @@ interface Song {
     statistics: {
         playCount: number;
         skipCount: number;
-        lastPlayed: Date | undefined;
+        lastPlayed: string | undefined;
     };
 }
 

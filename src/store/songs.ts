@@ -184,6 +184,9 @@ export const useSongsStore = create<SongsStore>()(
                 await TrackPlayer.pause();
             },
             next: async () => {
+                const current = await TrackPlayer.getActiveTrack();
+                get().updateSongSkip(current?.id);
+
                 await TrackPlayer.skipToNext();
             },
             previous: async () => {
@@ -263,15 +266,16 @@ export const useSongsStore = create<SongsStore>()(
                             ? {
                                   ...song,
                                   statistics: {
-                                      ...song.statistics,
-                                      lastPlayed: new Date(),
-                                      timesPlayed:
-                                          song.statistics.playCount + 1,
+                                      lastPlayed: new Date().toString(),
+                                      playCount: song.statistics.playCount + 1,
+                                      skipCount: song.statistics.skipCount,
                                   },
                               }
                             : song
                     ),
                 }));
+
+                console.log("updated statistics for: " + id);
             },
 
             updateSongSkip: (id) => {

@@ -23,7 +23,6 @@ const LargeOptionButton = ({
                 flex: 1,
                 alignItems: "center",
                 gap: Spacing.sm,
-                marginBottom: Spacing.md,
             }}
         >
             <TouchableNativeFeedback onPress={onPress} disabled={disabled}>
