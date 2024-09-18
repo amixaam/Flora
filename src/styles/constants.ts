@@ -42,6 +42,9 @@ export enum Colors {
     input = "#2B2931",
     input60 = "#2B293160",
     neon10 = "#9747FF10",
+
+    badgeRare = "#5E4C96",
+    badgeLegendary = "#E8D07C",
 }
 
 export enum SnapPoints {

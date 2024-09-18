@@ -106,47 +106,49 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
                         <UISeperator />
 
-                        <SheetOptionsButton
-                            icon="chart-timeline-variant-shimmer"
-                            buttonContent="View statistics"
-                            onPress={() => {
-                                props.dismiss?.();
-                                openSongStatistics();
-                            }}
-                        />
-                        <SheetOptionsButton
-                            icon="album"
-                            buttonContent="View album"
-                            onPress={() => {
-                                props.dismiss?.();
-                            }}
-                            isDisabled
-                        />
-                        <SheetOptionsButton
-                            icon="pencil"
-                            buttonContent="Edit tags"
-                            onPress={() => {
-                                props.dismiss?.();
-                            }}
-                            isDisabled
-                        />
+                        <BottomSheetView style={{ marginTop: -Spacing.sm }}>
+                            <SheetOptionsButton
+                                icon="chart-timeline-variant-shimmer"
+                                buttonContent="View statistics"
+                                onPress={() => {
+                                    props.dismiss?.();
+                                    openSongStatistics();
+                                }}
+                            />
+                            <SheetOptionsButton
+                                icon="album"
+                                buttonContent="View album"
+                                onPress={() => {
+                                    props.dismiss?.();
+                                }}
+                                isDisabled
+                            />
+                            <SheetOptionsButton
+                                icon="pencil"
+                                buttonContent="Edit tags"
+                                onPress={() => {
+                                    props.dismiss?.();
+                                }}
+                                isDisabled
+                            />
 
-                        <SheetOptionsButton
-                            icon={selectedSong.isHidden ? "eye" : "eye-off"}
-                            buttonContent={
-                                selectedSong.isHidden
-                                    ? "Show song"
-                                    : "Hide song"
-                            }
-                            onPress={handleHideSong}
-                        />
-                        <SheetOptionsButton
-                            icon={"trash-can"}
-                            buttonContent={
-                                "Delete song from device (not available)"
-                            }
-                            isDisabled={true}
-                        />
+                            <SheetOptionsButton
+                                icon={selectedSong.isHidden ? "eye" : "eye-off"}
+                                buttonContent={
+                                    selectedSong.isHidden
+                                        ? "Show song"
+                                        : "Hide song"
+                                }
+                                onPress={handleHideSong}
+                            />
+                            <SheetOptionsButton
+                                icon={"trash-can"}
+                                buttonContent={
+                                    "Delete song from device (not available)"
+                                }
+                                isDisabled={true}
+                            />
+                        </BottomSheetView>
                     </BottomSheetView>
                 </SheetModalLayout>
                 <AddPlaylistToSong ref={addPlaylistRef} />

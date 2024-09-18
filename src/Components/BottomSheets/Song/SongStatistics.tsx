@@ -1,16 +1,27 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef } from "react";
 import { Text, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSongsStore } from "../../../store/songs";
-import { SnapPoints, Spacing } from "../../../styles/constants";
+import {
+    Colors,
+    IconSizes,
+    SnapPoints,
+    Spacing,
+} from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
 import LargeTextButton from "../../UI/LargeTextButton";
-import StatisticDisplay from "../../UI/StatisticDisplay";
-import { SheetModalLayout } from "../SheetModalLayout";
-import { FormatSecs } from "../../../utils/FormatMillis";
-import LargeOptionButton from "../../UI/LargeOptionButton";
+import ListItemsNotFound from "../../UI/ListItemsNotFound";
+import SmallStatisticText from "../../UI/SmallStatisticText";
 import { UISeperator } from "../../UI/UISeperator";
-import { textStyles } from "../../../styles/text";
+import { SheetModalLayout } from "../SheetModalLayout";
+import {
+    abbreviateNumber,
+    makeFriendly,
+    ordinateNumber,
+} from "../../../utils/FormatNumber";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -26,9 +37,39 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
             lastPlayed = new Date(lastPlayedUnfiltered).toLocaleDateString();
         }
 
-        const timeListened = Math.round(
-            (selectedSong.duration * statistics.playCount) / 60 / 60
-        );
+        const registerDate = new Date(
+            statistics.creationDate
+        ).toLocaleDateString();
+
+        var timeListened =
+            selectedSong.statistics.playCount * selectedSong.duration;
+
+        var formattedTimeListened;
+
+        // show minutes instead of hours
+        if (timeListened <= 3600) {
+            formattedTimeListened = Math.round(timeListened / 60);
+        } else {
+            // show hours
+            formattedTimeListened =
+                Math.round((timeListened / 60 / 60) * 10) / 10;
+        }
+
+        const rank = 0;
+
+        // [bgColor, textColor]
+        const getBadgeColors = (rank: number) => {
+            switch (rank) {
+                case 1:
+                    return [Colors.badgeLegendary, Colors.secondary];
+                case 2:
+                    return [Colors.primary, Colors.secondary];
+                case 3:
+                    return [Colors.badgeRare, Colors.primary];
+                default:
+                    return [undefined, undefined];
+            }
+        };
 
         return (
             <>
@@ -50,38 +91,106 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <LargeTextButton
-                                mainText={statistics.skipCount.toString()}
-                                subText="Hours listened"
+                                mainText={formattedTimeListened.toString()}
+                                subText={
+                                    (timeListened <= 3600
+                                        ? "Minutes"
+                                        : "Hours") + " listened"
+                                }
                             />
                             <LargeTextButton
-                                mainText={statistics.skipCount.toString()}
+                                mainText={ordinateNumber(rank)}
                                 subText="Album rank"
+                                bgColor={getBadgeColors(rank)[0]}
+                                textColor={getBadgeColors(rank)[1]}
                             />
                             <LargeTextButton
-                                mainText={statistics.skipCount.toString()}
-                                subText="Skips"
+                                mainText={abbreviateNumber(
+                                    statistics.playCount
+                                )}
+                                subText="Plays"
                             />
                         </BottomSheetView>
                         <UISeperator />
-                        <View style={{ gap: Spacing.sm }}>
-                            <StatisticDisplay
-                                icon="history"
+                        <View style={{ marginVertical: -Spacing.sm }}>
+                            <SmallStatisticText
+                                icon="heart"
                                 header="Last played"
-                                text={lastPlayed}
+                                text={"Since " + registerDate}
                             />
-                            <StatisticDisplay
-                                icon="timelapse"
+                            <SmallStatisticText
+                                icon="skip-next"
                                 header="Time listened"
-                                text={timeListened}
+                                text={`Skipped ${abbreviateNumber(
+                                    statistics.skipCount
+                                )} times`}
+                            />
+                            <SmallStatisticText
+                                icon="history"
+                                header="Time listened"
+                                text={"Last played " + lastPlayed}
                             />
                         </View>
                         <UISeperator />
                         <Text style={textStyles.h5}>Badges</Text>
+                        <FlatList
+                            data={[]}
+                            numColumns={2}
+                            ListEmptyComponent={
+                                <ListItemsNotFound
+                                    text="No badges yet!"
+                                    icon="trophy-variant"
+                                />
+                            }
+                            contentContainerStyle={{ gap: Spacing.md }}
+                            columnWrapperStyle={{ gap: Spacing.md }}
+                            renderItem={() => <Badge />}
+                            keyExtractor={(item) => item.toString()}
+                        />
                     </BottomSheetView>
                 </SheetModalLayout>
             </>
         );
     }
 );
+
+interface BadgeProps {
+    text?: string;
+    iconColor?: Colors;
+    icon?: string;
+    bgColor?: Colors;
+}
+
+const Badge = ({
+    text = "Badge text",
+    iconColor = Colors.primary,
+    icon = "music-note",
+    bgColor = Colors.input,
+}: BadgeProps) => {
+    return (
+        <BottomSheetView
+            style={{ flex: 1, gap: Spacing.sm, alignItems: "center" }}
+        >
+            <BottomSheetView
+                style={{
+                    width: "100%",
+                    alignItems: "center",
+                    borderRadius: Spacing.radius,
+                    paddingBottom: Spacing.md,
+                    paddingTop: Spacing.md,
+
+                    backgroundColor: bgColor,
+                }}
+            >
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={IconSizes.md}
+                    style={{ color: iconColor }}
+                />
+            </BottomSheetView>
+            <Text style={textStyles.text}>{text}</Text>
+        </BottomSheetView>
+    );
+};
 
 export default SongStatistics;

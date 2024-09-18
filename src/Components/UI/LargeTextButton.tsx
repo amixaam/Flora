@@ -1,7 +1,6 @@
-import { View, Text, TouchableNativeFeedback } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
-import { Colors, IconSizes, Spacing } from "../../styles/constants";
+import { Text, TouchableNativeFeedback, View } from "react-native";
+import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 
 const LargeTextButton = ({
@@ -12,6 +11,7 @@ const LargeTextButton = ({
     },
     disabled = false,
     bgColor = Colors.input,
+    textColor = Colors.primary,
 }) => {
     return (
         <View
@@ -37,7 +37,11 @@ const LargeTextButton = ({
                     <Text
                         style={[
                             textStyles.h5,
-                            { opacity: disabled ? 0.5 : 1, marginBottom: -8 },
+                            {
+                                opacity: disabled ? 0.5 : 1,
+                                marginBottom: -8,
+                                color: textColor,
+                            },
                         ]}
                     >
                         {mainText}

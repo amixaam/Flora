@@ -47,7 +47,9 @@ const PlaybackControls = ({
                     touchableOpacityProps={{
                         onPress: () => {
                             previous();
-                            animation(Direction.RIGHT, true);
+                            if (progress.position < 3) {
+                                animation(Direction.RIGHT, true);
+                            }
                         },
                     }}
                     icon={"skip-previous"}

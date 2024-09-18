@@ -119,6 +119,8 @@ export const useSongsStore = create<SongsStore>()(
                     description: "Your songs that you liked.",
                     artwork: undefined,
                     songs: [], //contains only id's
+                    lastModified: undefined,
+                    createdAt: new Date().toString(),
                 },
             ],
             albums: [],
@@ -162,6 +164,8 @@ export const useSongsStore = create<SongsStore>()(
                             description: "Your songs that you liked.",
                             artwork: undefined,
                             songs: [],
+                            lastModified: undefined,
+                            createdAt: new Date().toString(),
                         },
                     ],
                     albums: [],
@@ -190,7 +194,13 @@ export const useSongsStore = create<SongsStore>()(
                 await TrackPlayer.skipToNext();
             },
             previous: async () => {
-                await TrackPlayer.skipToPrevious();
+                const playbackProgress = await TrackPlayer.getProgress();
+
+                if (playbackProgress.position >= 3) {
+                    await TrackPlayer.seekTo(0);
+                } else {
+                    await TrackPlayer.skipToPrevious();
+                }
             },
             seekToPosition: async (position) => {
                 await TrackPlayer.seekTo(position);
@@ -266,9 +276,9 @@ export const useSongsStore = create<SongsStore>()(
                             ? {
                                   ...song,
                                   statistics: {
+                                      ...song.statistics,
                                       lastPlayed: new Date().toString(),
                                       playCount: song.statistics.playCount + 1,
-                                      skipCount: song.statistics.skipCount,
                                   },
                               }
                             : song
@@ -286,8 +296,7 @@ export const useSongsStore = create<SongsStore>()(
                                   ...song,
                                   statistics: {
                                       ...song.statistics,
-                                      timesSkipped:
-                                          song.statistics.skipCount + 1,
+                                      skipCount: song.statistics.skipCount + 1,
                                   },
                               }
                             : song
@@ -365,6 +374,8 @@ export const useSongsStore = create<SongsStore>()(
                         ? inputFields.artwork
                         : undefined,
                     songs: [],
+                    lastModified: undefined,
+                    createdAt: new Date().toString(),
                 };
 
                 set((state) => ({
@@ -494,6 +505,8 @@ export const useSongsStore = create<SongsStore>()(
                     artwork: inputFields.artwork
                         ? inputFields.artwork
                         : undefined,
+                    lastModified: undefined,
+                    createdAt: new Date().toString(),
                 };
 
                 set((state) => ({

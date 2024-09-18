@@ -11,9 +11,14 @@ import IconButton from "./UI/IconButton";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleProp } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+    Gesture,
+    GestureDetector,
+    GestureType,
+} from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
+    SharedValue,
     useAnimatedStyle,
     useSharedValue,
     withSpring,
@@ -24,6 +29,7 @@ import {
     Track,
     useActiveTrack,
     usePlaybackState,
+    useProgress,
 } from "react-native-track-player";
 import { Colors, IconSizes, Spacing } from "../styles/constants";
 import { newStyles } from "../styles/styles";
@@ -34,33 +40,29 @@ import { router } from "expo-router";
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     const activeTrack = useActiveTrack();
 
-    const openPlayer = () => {
-        router.push("/player");
-    };
-
-    if (!activeTrack) return;
-    return (
-        <View style={style}>
-            <TouchableNativeFeedback onPress={openPlayer}>
-                <View style={newStyles.miniPlayer}>
-                    <SongDetails activeTrack={activeTrack} />
-                    <SongControls />
-                </View>
-            </TouchableNativeFeedback>
-        </View>
-    );
-};
-export default MiniPlayer;
-
-interface SongDetailsProps {
-    activeTrack: Track;
-}
-
-const SongDetails = ({ activeTrack }: SongDetailsProps) => {
-    const { next, previous } = useSongsStore();
-
     const translateX = useSharedValue(0);
     const opacity = useSharedValue(1);
+
+    // Reset the position of the player
+    const resetPosition = () => {
+        "worklet";
+        translateX.value = withSpring(0, { damping: 15 });
+        opacity.value = withTiming(1, { duration: 200 });
+    };
+
+    const skipAnimation = (direction: 1 | -1) => {
+        opacity.value = withTiming(0, { duration: 150 });
+        translateX.value = withTiming(
+            direction * 200,
+            { duration: 200 },
+            () => {
+                translateX.value = direction * -200;
+                resetPosition();
+            }
+        );
+    };
+
+    const { next, previous } = useSongsStore();
 
     const onSongChange = (direction: 1 | -1) => {
         if (direction === -1) {
@@ -68,13 +70,6 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
         } else {
             next();
         }
-    };
-
-    // Reset the position of the player
-    const resetPosition = () => {
-        "worklet";
-        translateX.value = withSpring(0, { damping: 15 });
-        opacity.value = withTiming(1, { duration: 200 });
     };
 
     const skipGesture = Gesture.Pan()
@@ -92,16 +87,8 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
 
             if (Math.abs(event.translationX) > SWIPE_THRESHOLD) {
                 runOnJS(onSongChange)(direction);
-
-                opacity.value = withTiming(0, { duration: 150 });
-                translateX.value = withTiming(
-                    direction * 200,
-                    { duration: 200 },
-                    () => {
-                        translateX.value = direction * -200;
-                        resetPosition();
-                    }
-                );
+                // @ts-ignore
+                runOnJS(skipAnimation)(direction);
             } else {
                 resetPosition();
             }
@@ -114,6 +101,46 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
         };
     });
 
+    const openPlayer = () => {
+        router.push("/player");
+    };
+
+    if (!activeTrack) return;
+    return (
+        <View style={style}>
+            <TouchableNativeFeedback onPress={openPlayer}>
+                <View style={newStyles.miniPlayer}>
+                    <SongDetails
+                        activeTrack={activeTrack}
+                        skipGesture={skipGesture}
+                        animatedStyle={animatedStyle}
+                    />
+                    <SongControls skipAnimation={skipAnimation} />
+                </View>
+            </TouchableNativeFeedback>
+        </View>
+    );
+};
+export default MiniPlayer;
+
+interface d {
+    transform: {
+        translateX: number;
+    }[];
+    opacity: number;
+}
+
+interface SongDetailsProps {
+    activeTrack: Track;
+    skipGesture: GestureType;
+    animatedStyle: d;
+}
+
+const SongDetails = ({
+    activeTrack,
+    skipGesture,
+    animatedStyle,
+}: SongDetailsProps) => {
     return (
         <View
             style={{
@@ -170,9 +197,7 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
                             scroll={false}
                             loop
                         >
-                            {activeTrack.title
-                                ? activeTrack.title
-                                : "12345678901234567890"}
+                            {activeTrack.title}
                         </TextTicker>
                         <Text style={textStyles.small} numberOfLines={1}>
                             {CombineStrings([
@@ -187,13 +212,30 @@ const SongDetails = ({ activeTrack }: SongDetailsProps) => {
     );
 };
 
-const SongControls = () => {
+interface SongControlsProps {
+    skipAnimation: (direction: 1 | -1) => void;
+}
+
+const SongControls = ({ skipAnimation }: SongControlsProps) => {
     const { play, pause, next, previous } = useSongsStore();
     const playbackState = usePlaybackState();
+    const progress = useProgress();
 
     const hanldePlayPausePress = () => {
         if (playbackState.state === "playing") pause();
         else play();
+    };
+
+    const handlePlayNext = () => {
+        next();
+        skipAnimation(1);
+    };
+
+    const handlePlayPrevious = () => {
+        previous();
+        if (progress.position < 3) {
+            skipAnimation(-1);
+        }
     };
 
     return (
@@ -206,7 +248,7 @@ const SongControls = () => {
         >
             <IconButton
                 touchableOpacityProps={{
-                    onPress: previous,
+                    onPress: handlePlayPrevious,
                 }}
                 icon="skip-previous"
             />
@@ -219,7 +261,7 @@ const SongControls = () => {
             />
             <IconButton
                 touchableOpacityProps={{
-                    onPress: next,
+                    onPress: handlePlayNext,
                 }}
                 icon="skip-next"
             />

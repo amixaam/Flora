@@ -54,7 +54,7 @@ export default function SongsTab() {
                 id: asset.id,
                 url: asset.uri,
 
-                title: asset.filename,
+                title: asset.filename.split(".").slice(0, -1).join("."),
                 artist: "No artist",
                 year: "No year",
                 artwork: undefined,
@@ -63,9 +63,11 @@ export default function SongsTab() {
                 isLiked: false,
                 isHidden: false,
                 statistics: {
+                    creationDate: new Date().toString(),
                     lastPlayed: undefined,
                     playCount: 0,
                     skipCount: 0,
+                    lastModified: undefined,
                 },
             };
             addSongs([songData]);
@@ -81,13 +83,12 @@ export default function SongsTab() {
             };
             createAlbum(inputFields);
         }
-        // console.log(`${asset.filename}: `, musicData);
 
         const songData: Song = {
             id: asset.id,
             url: asset.uri,
 
-            title: asset.filename.replace(/\.[^/.]+$/, ""),
+            title: asset.filename.split(".").slice(0, -1).join("."),
             artist: musicData.artist ? musicData.artist : "No artist",
             year: musicData.year ? musicData.year : "No year",
             artwork: undefined,
@@ -96,9 +97,11 @@ export default function SongsTab() {
             isLiked: false,
             isHidden: false,
             statistics: {
+                creationDate: new Date().toString(),
                 lastPlayed: undefined,
                 playCount: 0,
                 skipCount: 0,
+                lastModified: undefined,
             },
         };
         addSongs([songData]);

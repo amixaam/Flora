@@ -62,7 +62,6 @@ const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
                         }
                         contentContainerStyle={{
                             paddingBottom: Spacing.xl,
-                            gap: Spacing.md,
                             marginHorizontal: Spacing.appPadding,
                         }}
                         renderItem={({ item }) => (

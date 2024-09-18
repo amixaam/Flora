@@ -97,9 +97,9 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
                     ListHeaderComponent={
                         <BottomSheetView
                             style={{
-                                marginHorizontal: Spacing.appPadding,
                                 backgroundColor: Colors.secondary,
                                 paddingBottom: Spacing.md,
+                                paddingHorizontal: Spacing.appPadding,
                             }}
                         >
                             <TextInput

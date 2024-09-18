@@ -1,18 +1,17 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
-import { Colors, Spacing } from "../../../styles/constants";
+import { Spacing } from "../../../styles/constants";
 import LargeOptionButton from "../../UI/LargeOptionButton";
 import SheetOptionsButton from "../../UI/SheetOptionsButton";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetProps } from "../../../types/other";
 import DeleteContainer from "../../Modals/DeleteContainer";
-import { SheetModalLayout } from "../SheetModalLayout";
-import AddSongsToContainer from "./AddSongsToContainer";
+import { UISeperator } from "../../UI/UISeperator";
 import EditAlbum from "../Album/EditAlbum";
 import EditPlaylist from "../Playlist/EditPlaylist";
-import { View } from "react-native";
-import { UISeperator } from "../../UI/UISeperator";
+import { SheetModalLayout } from "../SheetModalLayout";
+import AddSongsToContainer from "./AddSongsToContainer";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -128,22 +127,24 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         </BottomSheetView>
                         <UISeperator />
 
-                        <SheetOptionsButton
-                            icon="playlist-edit"
-                            buttonContent={"Edit " + containerType}
-                            isDisabled={selectedContainer.id === "1"}
-                            onPress={() => {
-                                handleEditContainer();
-                            }}
-                        />
-                        <SheetOptionsButton
-                            icon="trash-can"
-                            buttonContent={"Delete " + containerType}
-                            isDisabled={selectedContainer.id === "1"}
-                            onPress={() => {
-                                setDeleteConfirmModal(true);
-                            }}
-                        />
+                        <BottomSheetView style={{ marginTop: -Spacing.sm }}>
+                            <SheetOptionsButton
+                                icon="playlist-edit"
+                                buttonContent={"Edit " + containerType}
+                                isDisabled={selectedContainer.id === "1"}
+                                onPress={() => {
+                                    handleEditContainer();
+                                }}
+                            />
+                            <SheetOptionsButton
+                                icon="trash-can"
+                                buttonContent={"Delete " + containerType}
+                                isDisabled={selectedContainer.id === "1"}
+                                onPress={() => {
+                                    setDeleteConfirmModal(true);
+                                }}
+                            />
+                        </BottomSheetView>
                     </BottomSheetView>
                 </SheetModalLayout>
                 <DeleteContainer

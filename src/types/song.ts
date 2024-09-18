@@ -4,6 +4,8 @@ interface Playlist {
     description: string | undefined;
     artwork: string | undefined;
     songs: string[];
+    lastModified: string | undefined;
+    createdAt: string;
 }
 
 interface Song {
@@ -20,7 +22,9 @@ interface Song {
     statistics: {
         playCount: number;
         skipCount: number;
+        creationDate: string;
         lastPlayed: string | undefined;
+        lastModified: string | undefined;
     };
 }
 
@@ -54,6 +58,8 @@ interface Album {
     year: string;
     artwork: string | undefined;
     songs: string[];
+    lastModified: string | undefined;
+    createdAt: string;
 }
 
 interface HistoryItem {
