@@ -31,6 +31,7 @@ import SmallStatisticText from "../../UI/SmallStatisticText";
 import { UISeperator } from "../../UI/UISeperator";
 import { SheetModalLayout } from "../SheetModalLayout";
 import { FlatList } from "react-native-gesture-handler";
+import ListItemsNotFound from "../../UI/ListItemsNotFound";
 
 const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -39,7 +40,19 @@ const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
         if (!selectedContainer || !("artist" in selectedContainer)) return;
 
         const ranking = getAlbumRanking(selectedContainer.id);
-        if (!ranking) return;
+        if (!ranking || ranking.length === 0)
+            return (
+                <SheetModalLayout
+                    ref={ref}
+                    title={`Album ranking`}
+                    snapPoints={[SnapPoints.lg]}
+                >
+                    <ListItemsNotFound
+                        text="No ranking data!"
+                        icon="chart-timeline-variant-shimmer"
+                    />
+                </SheetModalLayout>
+            );
 
         const largestPlayCount = ranking[0].statistics.playCount;
         const calculateWidth = (playCount: number): DimensionValue => {

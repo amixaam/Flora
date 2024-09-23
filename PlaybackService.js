@@ -51,19 +51,21 @@ export const PlaybackService = async function () {
         TrackPlayer.seekTo(event.position);
     });
 
+    let previousTrackId;
+    let previousTimestamp = Date.now();
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
-        if (event.track) {
+        const condition =
+            previousTrackId !== event.track?.id ||
+            Date.now() - previousTimestamp >= 1000;
+
+        if (event.track && condition) {
+            console.log(Date.now() - previousTimestamp);
             useSongsStore.getState().updateSongStatistics(event.track.id);
             useSongsStore.getState().addSongToHistory(event.track.id);
+            previousTrackId = event.track.id;
+            previousTimestamp = Date.now();
         }
     });
-
-    TrackPlayer.addEventListener(
-        Event.PlaybackPlayWhenReadyChanged,
-        (event) => {
-            // console.log("Event.PlaybackPlayWhenReadyChanged", event);
-        }
-    );
 
     // TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
     //     console.log("Event.PlaybackState", event);

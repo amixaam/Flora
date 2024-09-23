@@ -44,16 +44,19 @@ export default function ContainerScreen() {
     }, [navigation]);
 
     let data: Album | Playlist | undefined = getContainer(id);
-    let songData = getSongsFromContainer(id);
-
-    // if container a playlist, reverse the order to newest first
-    if (id[0] === "P" || id === "1") {
-        songData = songData.slice().reverse();
-    }
 
     if (data === undefined) {
-        return <ListItemsNotFound />;
+        return (
+            <View style={[mainStyles.container, { justifyContent: "center" }]}>
+                <ListItemsNotFound
+                    text="Container not found!"
+                    icon="alert-circle"
+                />
+            </View>
+        );
     }
+
+    let songData = getSongsFromContainer(id);
 
     const SongOptionsRef = useRef<BottomSheetModal>(null);
     const openSongOptions = useCallback(() => {
@@ -210,7 +213,7 @@ const SongList = ({
                 estimatedItemSize={100}
                 ListEmptyComponent={
                     <ListItemsNotFound
-                        text={`There are no added songs!`}
+                        text={`No songs found, add some!`}
                         icon="music-note"
                     />
                 }

@@ -70,7 +70,11 @@ type SongsStore = {
     // // statistics
     updateSongSkip: (id: string) => void;
     updateSongStatistics: (id: string) => void;
+
+    //  // history
     addSongToHistory: (id: string) => void;
+    addSongToConsciousHistory: (id: string) => void;
+
     getHistory: () => History;
     clearHistory: () => void;
 
@@ -222,22 +226,36 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
-                await TrackPlayer.setQueue(list);
                 if (selectedSong) {
-                    const currentIndex = list.findIndex(
+                    const selectedSongIndex = list.findIndex(
                         (song) => song.id === selectedSong.id
                     );
-                    await TrackPlayer.skip(currentIndex);
+
+                    if (selectedSongIndex > 0) {
+                        const songsBefore = list.slice(0, selectedSongIndex);
+                        const songsAfter = list.slice(selectedSongIndex);
+                        await TrackPlayer.setQueue([
+                            ...songsAfter,
+                            ...songsBefore,
+                        ]);
+                    }
+                    get().addSongToConsciousHistory(selectedSong.id);
+                } else {
+                    await TrackPlayer.setQueue(list);
+                    get().addSongToConsciousHistory(list[0].id);
                 }
                 await TrackPlayer.play();
+
                 if (redirect) router.push("/player");
             },
 
             shuffle: async () => {},
+
             shuffleList: async (list, redirect = false) => {
                 const shuffledList = [...list].sort(() => Math.random() - 0.5);
                 await TrackPlayer.setQueue(shuffledList);
                 await TrackPlayer.play();
+                get().addSongToConsciousHistory(shuffledList[0].id);
                 if (redirect) router.push("/player");
             },
 
@@ -320,7 +338,11 @@ export const useSongsStore = create<SongsStore>()(
                         ...state.history,
                         history: [
                             ...state.history.history,
-                            { song: id, date: new Date(), containerId: "0" },
+                            {
+                                song: id,
+                                date: new Date(),
+                                containerId: song.albumIds[0],
+                            },
                         ],
                     },
                 }));
@@ -331,6 +353,25 @@ export const useSongsStore = create<SongsStore>()(
                         " to history at " +
                         new Date().toLocaleTimeString()
                 );
+            },
+
+            addSongToConsciousHistory: (id) => {
+                const song = get().getSong(id);
+                if (song === undefined) return;
+
+                set((state) => ({
+                    history: {
+                        ...state.history,
+                        consciousHistory: [
+                            ...state.history.consciousHistory,
+                            {
+                                song: id,
+                                date: new Date(),
+                                containerId: song.albumIds[0],
+                            },
+                        ],
+                    },
+                }));
             },
 
             getHistory: () => {
@@ -373,11 +414,17 @@ export const useSongsStore = create<SongsStore>()(
             getSongsFromContainer: (id) => {
                 const container = get().getContainer(id);
 
-                return container?.songs
+                const songs = container?.songs
                     .map((songId) =>
                         get().songs.find((song) => song.id === songId)
                     )
                     .filter((s) => s !== undefined) as Song[];
+
+                if (container?.id[0] === "P" || container?.id === "1") {
+                    return songs?.slice().reverse();
+                } else {
+                    return songs;
+                }
             },
 
             getContainer: (id) => {

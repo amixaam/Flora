@@ -218,8 +218,7 @@ export default function SongsTab() {
                             }}
                             onPress={() => {
                                 setSelectedSong(item);
-                                addListToQueue(songs, item);
-                                router.push("/player");
+                                addListToQueue(songs, item, true);
                             }}
                         />
                     );
