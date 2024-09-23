@@ -15,13 +15,13 @@ const SmallStatisticText = ({
     text = "no text provided",
 }: SmallTitleBigTextProps) => {
     return (
-        <View style={mainStyles.textListItem}>
+        <View style={[mainStyles.textListItem]}>
             <MaterialCommunityIcons
                 name={icon}
                 size={IconSizes.md}
                 style={{ color: Colors.primary }}
             />
-            <Text style={[textStyles.text]}>{text}</Text>
+            <Text style={[textStyles.text, { flex: 1 }]}>{text}</Text>
         </View>
     );
 };

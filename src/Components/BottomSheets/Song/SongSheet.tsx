@@ -58,11 +58,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
         return (
             <>
-                <SheetModalLayout
-                    ref={ref}
-                    title={selectedSong.title}
-                    snapPoints={[SnapPoints.lg]}
-                >
+                <SheetModalLayout ref={ref} title={selectedSong.title}>
                     <BottomSheetView
                         style={{
                             marginHorizontal: Spacing.appPadding,
@@ -111,7 +107,6 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 icon="chart-timeline-variant-shimmer"
                                 buttonContent="View statistics"
                                 onPress={() => {
-                                    props.dismiss?.();
                                     openSongStatistics();
                                 }}
                             />
@@ -143,9 +138,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
                             <SheetOptionsButton
                                 icon={"trash-can"}
-                                buttonContent={
-                                    "Delete song from device (not available)"
-                                }
+                                buttonContent={"Delete song"}
                                 isDisabled={true}
                             />
                         </BottomSheetView>

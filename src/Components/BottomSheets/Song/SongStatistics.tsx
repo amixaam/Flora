@@ -12,20 +12,16 @@ import {
 } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
+import { abbreviateNumber, ordinateNumber } from "../../../utils/FormatNumber";
 import LargeTextButton from "../../UI/LargeTextButton";
 import ListItemsNotFound from "../../UI/ListItemsNotFound";
 import SmallStatisticText from "../../UI/SmallStatisticText";
 import { UISeperator } from "../../UI/UISeperator";
 import { SheetModalLayout } from "../SheetModalLayout";
-import {
-    abbreviateNumber,
-    makeFriendly,
-    ordinateNumber,
-} from "../../../utils/FormatNumber";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedSong } = useSongsStore();
+        const { selectedSong, getSongRanking } = useSongsStore();
 
         if (selectedSong === undefined) return;
 
@@ -55,7 +51,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                 Math.round((timeListened / 60 / 60) * 10) / 10;
         }
 
-        const rank = 0;
+        const rank = getSongRanking(selectedSong.id);
 
         // [bgColor, textColor]
         const getBadgeColors = (rank: number) => {

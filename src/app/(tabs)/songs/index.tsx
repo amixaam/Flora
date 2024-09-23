@@ -52,6 +52,8 @@ export default function SongsTab() {
         if (musicData === null) {
             const songData: Song = {
                 id: asset.id,
+                albumIds: [],
+
                 url: asset.uri,
 
                 title: asset.filename.split(".").slice(0, -1).join("."),
@@ -86,6 +88,8 @@ export default function SongsTab() {
 
         const songData: Song = {
             id: asset.id,
+            albumIds: [],
+
             url: asset.uri,
 
             title: asset.filename.split(".").slice(0, -1).join("."),

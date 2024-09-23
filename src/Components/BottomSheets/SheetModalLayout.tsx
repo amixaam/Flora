@@ -1,6 +1,7 @@
 import {
     BottomSheetBackdrop,
     BottomSheetModal,
+    BottomSheetScrollView,
     BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useMemo } from "react";
@@ -42,19 +43,19 @@ export const SheetModalLayout = forwardRef<BottomSheetModal, Props>(
                 handleIndicatorStyle={{ backgroundColor: Colors.primary }}
                 backgroundStyle={{ backgroundColor: Colors.secondary }}
             >
-                <BottomSheetView style={[{ height: "100%" }]}>
-                    <Text
-                        style={[
-                            [textStyles.h5],
-                            {
-                                marginBottom: Spacing.md,
-                                marginHorizontal: Spacing.appPadding,
-                            },
-                        ]}
-                        numberOfLines={1}
-                    >
-                        {props.title ? props.title : "Default sheet title"}
-                    </Text>
+                <Text
+                    style={[
+                        [textStyles.h5],
+                        {
+                            marginBottom: Spacing.md,
+                            marginHorizontal: Spacing.appPadding,
+                        },
+                    ]}
+                    numberOfLines={1}
+                >
+                    {props.title ? props.title : "Default sheet title"}
+                </Text>
+                <BottomSheetView style={[{ flex: 1 }]}>
                     {props.children}
                 </BottomSheetView>
             </BottomSheetModal>

@@ -61,6 +61,10 @@ type SongsStore = {
     unlikeSong: (id: string) => void;
     hideSong: (id: string) => void;
     unhideSong: (id: string) => void;
+
+    isSongInAnyAlbum: (songId: string) => boolean;
+    autoUpdateSongTags: (songId: string) => void;
+    updateSongTagsByAlbum: (albumId: string) => void;
     // // UPDATE SONG TAGS
 
     // // statistics
@@ -69,6 +73,9 @@ type SongsStore = {
     addSongToHistory: (id: string) => void;
     getHistory: () => History;
     clearHistory: () => void;
+
+    getAlbumRanking: (albumId: string) => Song[] | undefined;
+    getSongRanking: (songId: string) => number;
 
     // // container
     getSongsFromContainer: (id: string) => Song[];
@@ -79,8 +86,9 @@ type SongsStore = {
     editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
     deletePlaylist: (id: string) => void;
 
-    getAllPlaylistSongs: () => Song[] | undefined;
     getPlaylist: (id: string) => Playlist | undefined;
+
+    getAllPlaylistSongs: () => Song[] | undefined;
     getSongsFromPlaylist: (id: string) => Song[];
 
     addSongToPlaylist: (playlistId: string, songId: string) => void;
@@ -91,18 +99,17 @@ type SongsStore = {
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
-    getAllAlbumSongs: () => Song[] | undefined;
+    doesAlbumExist: (name: string) => boolean;
+
     getAlbum: (id: string) => Album | undefined;
     getAlbumByName: (name: string) => Album | undefined;
-    doesAlbumExist: (name: string) => boolean;
-    getSongsFromAlbum: (id: string) => Song[];
-
-    isSongInAnyAlbum: (songId: string) => boolean;
-    addSongToAlbum: (albumId: string, songId: string) => void;
-    removeSongFromAlbum: (albumId: string, songId: string) => void;
     getAlbumBySong: (songId: string) => Album | undefined;
 
-    copyAlbumTagsToSongs: (albumId: string) => void;
+    getAllAlbumSongs: () => Song[] | undefined;
+    getSongsFromAlbum: (id: string) => Song[];
+
+    addSongToAlbum: (albumId: string, songId: string) => void;
+    removeSongFromAlbum: (albumId: string, songId: string) => void;
 
     // Algo
     getRecentlyPlayed: () => (Album | Playlist)[];
@@ -334,6 +341,33 @@ export const useSongsStore = create<SongsStore>()(
                 set({ history: { history: [], consciousHistory: [] } });
             },
 
+            getAlbumRanking: (albumId: string) => {
+                const album = get().getAlbum(albumId);
+                if (!album) return;
+
+                // Sorts the songs in an album by play count
+                return album.songs
+                    .map((id) => get().getSong(id))
+                    .filter((song): song is Song => song !== undefined)
+                    .sort(
+                        (a, b) =>
+                            (b?.statistics.playCount ?? 0) -
+                            (a?.statistics.playCount ?? 0)
+                    );
+            },
+
+            getSongRanking: (songId: string) => {
+                // Gets the ranking for a song in its album
+                const song = get().getSong(songId);
+                if (!song) return 0;
+
+                const ranking = get().getAlbumRanking(song.albumIds[0]);
+                if (!ranking) return 0;
+
+                // return the rank of the song in number form
+                return ranking.indexOf(song) + 1;
+            },
+
             // containers ---------------------------------------------------------
 
             getSongsFromContainer: (id) => {
@@ -527,6 +561,8 @@ export const useSongsStore = create<SongsStore>()(
                             : album
                     ),
                 }));
+
+                get().updateSongTagsByAlbum(id);
             },
 
             deleteAlbum: (id) => {
@@ -583,10 +619,10 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             getAlbumBySong: (songId) => {
-                const albums = get().albums;
-                const album = albums.find((a) => a.songs.includes(songId));
+                const song = get().getSong(songId);
+                if (!song) return;
 
-                return album;
+                return get().getAlbum(song.albumIds[0]);
             },
 
             addSongToAlbum: (albumId, songId) => {
@@ -603,21 +639,34 @@ export const useSongsStore = create<SongsStore>()(
                                 : album
                         ),
                     }));
-                    if (!inAlbum) {
-                        set((state) => ({
-                            songs: state.songs.map((song) =>
-                                song.id === songId
-                                    ? {
-                                          ...song,
-                                          artist: album.artist,
-                                          artwork: album.artwork,
-                                          year: album.year,
-                                      }
-                                    : song
-                            ),
-                        }));
-                    }
+                    // if (!inAlbum) {
+                    //     set((state) => ({
+                    //         songs: state.songs.map((song) =>
+                    //             song.id === songId
+                    //                 ? {
+                    //                       ...song,
+                    //                       artist: album.artist,
+                    //                       artwork: album.artwork,
+                    //                       year: album.year,
+                    //                   }
+                    //                 : song
+                    //         ),
+                    //     }));
+                    // }
+
+                    set((state) => ({
+                        songs: state.songs.map((song) =>
+                            song.id === songId
+                                ? {
+                                      ...song,
+                                      albumIds: [...song.albumIds, albumId],
+                                  }
+                                : song
+                        ),
+                    }));
                 }
+
+                get().autoUpdateSongTags(songId);
             },
 
             removeSongFromAlbum: (albumId, songId) => {
@@ -636,22 +685,59 @@ export const useSongsStore = create<SongsStore>()(
                                 : album
                         ),
                     }));
+
+                    set((state) => ({
+                        songs: state.songs.map((song) =>
+                            song.id === songId
+                                ? {
+                                      ...song,
+                                      albumIds: song.albumIds.filter(
+                                          (id) => id !== albumId
+                                      ),
+                                  }
+                                : song
+                        ),
+                    }));
                 }
+
+                get().autoUpdateSongTags(songId);
             },
 
-            copyAlbumTagsToSongs: (albumId) => {
+            updateSongTagsByAlbum: (albumId) => {
                 const album = get().getAlbum(albumId);
+                if (!album) return;
+
+                album.songs.forEach((song) => {
+                    get().autoUpdateSongTags(song);
+                });
+            },
+
+            autoUpdateSongTags: (songId) => {
+                const song = get().getSong(songId);
+                if (!song) return;
+
+                const relatedAlbum = get().getAlbum(song.albumIds[0]);
+                if (!relatedAlbum) {
+                    // remove just the artwork for the song
+                    set((state) => ({
+                        songs: state.songs.map((s) =>
+                            s.id === songId ? { ...s, artwork: undefined } : s
+                        ),
+                    }));
+
+                    return;
+                }
 
                 set((state) => ({
-                    songs: state.songs.map((song) =>
-                        album?.songs.includes(song.id)
+                    songs: state.songs.map((s) =>
+                        s.id === songId
                             ? {
-                                  ...song,
-                                  artist: album.artist,
-                                  artwork: album.artwork,
-                                  year: album.year,
+                                  ...s,
+                                  artist: relatedAlbum.artist,
+                                  artwork: relatedAlbum.artwork,
+                                  year: relatedAlbum.year,
                               }
-                            : song
+                            : s
                     ),
                 }));
             },

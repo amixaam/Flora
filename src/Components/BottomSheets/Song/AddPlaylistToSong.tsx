@@ -43,7 +43,7 @@ const AddPlaylistToSong = forwardRef<BottomSheetModal, BottomSheetProps>(
                 <SheetModalLayout
                     ref={ref}
                     title={`Add to playlist`}
-                    snapPoints={[SnapPoints.full]}
+                    snapPoints={[SnapPoints.lg]}
                 >
                     <FlatList
                         data={playlists}

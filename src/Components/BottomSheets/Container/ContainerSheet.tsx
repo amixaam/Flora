@@ -1,6 +1,6 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
-import { Spacing } from "../../../styles/constants";
+import { SnapPoints, Spacing } from "../../../styles/constants";
 import LargeOptionButton from "../../UI/LargeOptionButton";
 import SheetOptionsButton from "../../UI/SheetOptionsButton";
 
@@ -12,6 +12,7 @@ import EditAlbum from "../Album/EditAlbum";
 import EditPlaylist from "../Playlist/EditPlaylist";
 import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
+import AlbumRanking from "../Album/AlbumRanking";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -54,6 +55,15 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             EditAlbumRef.current?.dismiss();
         }, []);
 
+        const AlbumRankingRef = useRef<BottomSheetModal>(null);
+        const openAlbumRanking = useCallback(() => {
+            AlbumRankingRef.current?.present();
+        }, []);
+
+        const dismissAlbumRanking = useCallback(() => {
+            AlbumRankingRef.current?.dismiss();
+        }, []);
+
         if (selectedContainer === undefined) return;
 
         const containerType =
@@ -84,8 +94,6 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         };
 
         const handleEditContainer = () => {
-            props.dismiss?.();
-
             if (containerType === "album") {
                 openEditAlbumRef();
             } else {
@@ -128,6 +136,14 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         <UISeperator />
 
                         <BottomSheetView style={{ marginTop: -Spacing.sm }}>
+                            {containerType === "album" && (
+                                <SheetOptionsButton
+                                    icon="chart-timeline-variant-shimmer"
+                                    buttonContent={"Album ranking"}
+                                    isDisabled={selectedContainer.id === "1"}
+                                    onPress={openAlbumRanking}
+                                />
+                            )}
                             <SheetOptionsButton
                                 icon="playlist-edit"
                                 buttonContent={"Edit " + containerType}
@@ -161,6 +177,10 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                 <EditPlaylist
                     ref={EditPlaylistRef}
                     dismiss={dismissEditPlaylistRef}
+                />
+                <AlbumRanking
+                    ref={AlbumRankingRef}
+                    dismiss={dismissAlbumRanking}
                 />
             </>
         );

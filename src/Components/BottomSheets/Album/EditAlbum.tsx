@@ -12,8 +12,7 @@ import { SheetModalLayout } from "../SheetModalLayout";
 
 const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedContainer, editAlbum, copyAlbumTagsToSongs } =
-            useSongsStore();
+        const { selectedContainer, editAlbum } = useSongsStore();
         const [inputFields, setInputFields] = useState<Partial<Album>>({
             title: "",
             artist: "",
@@ -39,7 +38,7 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
             if (!inputFields.year) inputFields.year = "No year";
 
             editAlbum(selectedContainer.id, inputFields);
-            copyAlbumTagsToSongs(selectedContainer.id);
+            // copyAlbumTagsToSongs(selectedContainer.id);
             props.dismiss?.();
         };
 
@@ -48,7 +47,6 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                 <SheetModalLayout
                     ref={ref}
                     title={`Edit ${selectedContainer.title}`}
-                    snapPoints={[SnapPoints.md]}
                 >
                     <BottomSheetView
                         style={{

@@ -10,6 +10,8 @@ interface Playlist {
 
 interface Song {
     readonly id: string;
+    albumIds: string[]; // could be in many albums, main one being 1st element
+
     url: string;
     title: string;
     artist: string;
