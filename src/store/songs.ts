@@ -221,8 +221,13 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addToQueue: async (song) => {
-                if (Array.isArray(song)) await TrackPlayer.add(song);
-                else await TrackPlayer.add([song]);
+                if (Array.isArray(song)) {
+                    await TrackPlayer.add(song);
+                    get().addSongToConsciousHistory(song[0].id);
+                } else {
+                    await TrackPlayer.add([song]);
+                    get().addSongToConsciousHistory(song.id);
+                }
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
@@ -359,19 +364,24 @@ export const useSongsStore = create<SongsStore>()(
                 const song = get().getSong(id);
                 if (song === undefined) return;
 
+                const history = get().history;
+                const newConsciousHistory = [
+                    ...history.consciousHistory.slice(-5),
+                    {
+                        song: id,
+                        date: new Date(),
+                        containerId: song.albumIds[0],
+                    },
+                ];
+
                 set((state) => ({
                     history: {
                         ...state.history,
-                        consciousHistory: [
-                            ...state.history.consciousHistory,
-                            {
-                                song: id,
-                                date: new Date(),
-                                containerId: song.albumIds[0],
-                            },
-                        ],
+                        consciousHistory: newConsciousHistory,
                     },
                 }));
+
+                console.log("added song to conscious history: ", song.title);
             },
 
             getHistory: () => {
@@ -674,7 +684,6 @@ export const useSongsStore = create<SongsStore>()(
 
             addSongToAlbum: (albumId, songId) => {
                 const album = get().getAlbum(albumId);
-                const inAlbum = get().isSongInAnyAlbum(songId);
 
                 if (!album) return;
 
@@ -686,21 +695,6 @@ export const useSongsStore = create<SongsStore>()(
                                 : album
                         ),
                     }));
-                    // if (!inAlbum) {
-                    //     set((state) => ({
-                    //         songs: state.songs.map((song) =>
-                    //             song.id === songId
-                    //                 ? {
-                    //                       ...song,
-                    //                       artist: album.artist,
-                    //                       artwork: album.artwork,
-                    //                       year: album.year,
-                    //                   }
-                    //                 : song
-                    //         ),
-                    //     }));
-                    // }
-
                     set((state) => ({
                         songs: state.songs.map((song) =>
                             song.id === songId
@@ -797,19 +791,22 @@ export const useSongsStore = create<SongsStore>()(
 
                 const historyAlbums: Album[] = [];
                 if (history.consciousHistory.length > 0) {
-                    history.consciousHistory.forEach((item) => {
-                        if (historyAlbums.length > 5) return;
+                    history.consciousHistory
+                        .slice()
+                        .reverse()
+                        .forEach((item) => {
+                            if (historyAlbums.length > 5) return;
 
-                        if (item.containerId !== "0" && item.containerId) {
-                            const album = get().getAlbum(item.containerId);
-                            if (album && !historyAlbums.includes(album))
-                                historyAlbums.push(album);
-                        } else {
-                            const album = get().getAlbumBySong(item.song);
-                            if (album && !historyAlbums.includes(album))
-                                historyAlbums.push(album);
-                        }
-                    });
+                            if (item.containerId !== "0" && item.containerId) {
+                                const album = get().getAlbum(item.containerId);
+                                if (album && !historyAlbums.includes(album))
+                                    historyAlbums.push(album);
+                            } else {
+                                const album = get().getAlbumBySong(item.song);
+                                if (album && !historyAlbums.includes(album))
+                                    historyAlbums.push(album);
+                            }
+                        });
                 }
 
                 return [likedPlaylist, ...historyAlbums];

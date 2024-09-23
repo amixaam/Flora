@@ -121,7 +121,7 @@ export default function PlaylistsTab() {
                 {/* Pin Liked songs playlist to first position */}
                 {/* Limit to 10 entries */}
                 <HorizontalList
-                    list={playlists}
+                    list={getRecentlyPlayed()}
                     longPress={openContainerOptions}
                 />
                 <View style={{ gap: Spacing.xs }}>
