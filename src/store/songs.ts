@@ -243,14 +243,16 @@ export const useSongsStore = create<SongsStore>()(
                             ...songsAfter,
                             ...songsBefore,
                         ]);
+                    } else {
+                        await TrackPlayer.setQueue(list);
                     }
                     get().addSongToConsciousHistory(selectedSong.id);
                 } else {
                     await TrackPlayer.setQueue(list);
                     get().addSongToConsciousHistory(list[0].id);
                 }
-                await TrackPlayer.play();
 
+                await TrackPlayer.play();
                 if (redirect) router.push("/player");
             },
 
