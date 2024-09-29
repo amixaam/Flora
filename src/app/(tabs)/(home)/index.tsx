@@ -1,8 +1,10 @@
 import { router } from "expo-router";
 import {
+    Button,
     ImageBackground,
     Text,
     TouchableNativeFeedback,
+    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -16,29 +18,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import IconButton from "../../../Components/UI/IconButton";
-import { Colors, IconSizes, Spacing } from "../../../styles/constants";
+import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { Album, History, Playlist } from "../../../types/song";
+import { Album, Playlist } from "../../../types/song";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
 import ContainerItem from "../../../Components/UI/ContainerItem";
+import HistorySheet from "../../../Components/BottomSheets/Misc/HistorySheet";
 
 export default function PlaylistsTab() {
-    const { playlists, albums, getRecentlyPlayed, getHistory, clearHistory } =
-        useSongsStore();
+    const { albums, getRecentlyPlayed } = useSongsStore();
     const insets = useSafeAreaInsets();
-
-    const [first, setfirst] = useState<boolean>(false);
-    const [history, setHistory] = useState<History>({
-        history: [],
-        consciousHistory: [],
-    });
-
-    const updateHistory = () => {
-        setHistory(getHistory());
-    };
 
     const ContainerOptionsRef = useRef<BottomSheetModal>(null);
     const openContainerOptions = useCallback(() => {
@@ -49,77 +41,36 @@ export default function PlaylistsTab() {
         ContainerOptionsRef.current?.dismiss();
     }, []);
 
+    const HistoryRef = useRef<BottomSheetModal>(null);
+    const openHistory = useCallback(() => {
+        HistoryRef.current?.present();
+    }, []);
+
+    const dismissHistory = useCallback(() => {
+        HistoryRef.current?.dismiss();
+    }, []);
+
     return (
         <ScrollView style={mainStyles.container}>
             <BackgroundImageAbsolute />
             <View style={{ paddingTop: insets.top * 2.3 }} />
-
             <View
                 style={{
                     flexDirection: "row",
-                    gap: Spacing.sm,
-                    flex: 1,
+                    gap: Spacing.md,
+                    paddingBottom: Spacing.md,
                     marginHorizontal: Spacing.appPadding,
                 }}
             >
-                <TouchableNativeFeedback
-                    onPress={() => {
-                        setfirst(!first);
-                        updateHistory();
-                    }}
-                >
-                    <View
-                        style={[
-                            mainStyles.button_skeleton,
-                            {
-                                backgroundColor: Colors.primary,
-                                marginBottom: Spacing.md,
-                            },
-                        ]}
-                    >
-                        <Text
-                            style={[textStyles.text, { color: Colors.input }]}
-                        >
-                            {first ? "Close history" : "Open history"}{" "}
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
-                <TouchableNativeFeedback onPress={() => clearHistory()}>
-                    <View
-                        style={[
-                            mainStyles.button_skeleton,
-                            {
-                                backgroundColor: Colors.primary,
-                                marginBottom: Spacing.md,
-                            },
-                        ]}
-                    >
-                        <Text
-                            style={[textStyles.text, { color: Colors.input }]}
-                        >
-                            Clear history
-                        </Text>
-                    </View>
-                </TouchableNativeFeedback>
+                <TouchableOpacity onPress={openHistory}>
+                    <Text style={textStyles.text}>History</Text>
+                </TouchableOpacity>
             </View>
-
-            <Text
-                style={[
-                    textStyles.text,
-                    {
-                        marginBottom: Spacing.md,
-                        display: first ? "flex" : "none",
-                    },
-                ]}
-            >
-                {JSON.stringify(history, null, 6)}
-            </Text>
-
             <View style={{ flex: 1, gap: Spacing.md }}>
                 {/* <RecapBanner /> */}
                 <HomeHeader text="Recently played" />
                 {/* Pin Liked songs playlist to first position */}
-                {/* Limit to 10 entries */}
+                {/* Limit to ~10 entries */}
                 <HorizontalList
                     list={getRecentlyPlayed()}
                     longPress={openContainerOptions}
@@ -144,6 +95,7 @@ export default function PlaylistsTab() {
                 ref={ContainerOptionsRef}
                 dismiss={dismissContainerOptions}
             />
+            <HistorySheet ref={HistoryRef} dismiss={dismissHistory} />
         </ScrollView>
     );
 }

@@ -340,17 +340,23 @@ export const useSongsStore = create<SongsStore>()(
                 const song = get().getSong(id);
                 if (song === undefined) return;
 
+                const history = get().history.history;
+
+                const index = history.findIndex((item) => item.song === id);
+                if (index !== -1) {
+                    history.splice(index, 1);
+                }
+
+                history.unshift({
+                    song: id,
+                    date: new Date(),
+                    containerId: song.albumIds[0],
+                });
+
                 set((state) => ({
                     history: {
                         ...state.history,
-                        history: [
-                            ...state.history.history,
-                            {
-                                song: id,
-                                date: new Date(),
-                                containerId: song.albumIds[0],
-                            },
-                        ],
+                        history: history,
                     },
                 }));
 

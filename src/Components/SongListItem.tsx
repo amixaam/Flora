@@ -21,7 +21,9 @@ export interface SongListItemProps {
     showNumeration?: boolean;
     isSelected?: boolean;
 
-    onSelect?: () => void;
+    secondaryButtonIcon?: string;
+
+    onSecondaryButtonPress?: () => void;
     onLongPress?: () => void;
     onPress?: () => void;
 }
@@ -35,7 +37,9 @@ const SongListItem = ({
     showNumeration = false,
     isSelected = false,
 
-    onSelect = () => {},
+    secondaryButtonIcon = undefined,
+
+    onSecondaryButtonPress = () => {},
     onLongPress = () => {},
     onPress = () => {},
 }: SongListItemProps) => {
@@ -100,13 +104,20 @@ const SongListItem = ({
                         paddingLeft: Spacing.appPadding,
                     }}
                 >
-                    {isSelectMode && (
-                        <Checkbox isSelected={isSelected} />
+                    {isSelectMode && <Checkbox isSelected={isSelected} />}
+                    {secondaryButtonIcon && (
+                        <IconButton
+                            touchableOpacityProps={{
+                                onPress: onSecondaryButtonPress,
+                            }}
+                            icon={secondaryButtonIcon}
+                            size={IconSizes.sm}
+                        />
                     )}
                     <LikeButton
                         isLiked={item.isLiked}
                         id={item.id}
-                        isSelectMode={isSelectMode}
+                        isSelectMode={isSelectMode || secondaryButtonIcon !== undefined}
                     />
                 </View>
             </View>

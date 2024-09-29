@@ -9,6 +9,7 @@ import { BottomSheetProps } from "../../../types/other";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import SongStatistics from "./SongStatistics";
 import { UISeperator } from "../../UI/UISeperator";
+import { router } from "expo-router";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -115,8 +116,11 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 buttonContent="View album"
                                 onPress={() => {
                                     props.dismiss?.();
+                                    router.push(
+                                        `./${selectedSong.albumIds[0]}`
+                                    );
                                 }}
-                                isDisabled
+                                isDisabled={selectedSong.albumIds.length === 0}
                             />
                             <SheetOptionsButton
                                 icon="pencil"

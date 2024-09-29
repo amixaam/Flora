@@ -10,6 +10,7 @@ import AlbumArt from "./AlbumArt";
 import IconButton from "./UI/IconButton";
 
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import { StyleProp } from "react-native";
 import {
     Gesture,
@@ -18,11 +19,10 @@ import {
 } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
-    SharedValue,
     useAnimatedStyle,
     useSharedValue,
     withSpring,
-    withTiming,
+    withTiming
 } from "react-native-reanimated";
 import TextTicker from "react-native-text-ticker";
 import {
@@ -35,7 +35,6 @@ import { Colors, IconSizes, Spacing } from "../styles/constants";
 import { newStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { CombineStrings } from "../utils/CombineStrings";
-import { router } from "expo-router";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     const activeTrack = useActiveTrack();
