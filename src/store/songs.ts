@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
-import TrackPlayer, { RepeatMode } from "react-native-track-player";
+import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
 import { Album, History, Playlist, Song } from "../types/song";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
@@ -13,6 +13,7 @@ type SongsStore = {
     playlists: Playlist[];
     albums: Album[];
     history: History;
+    queue: Track[];
 
     selectedSong: Song | undefined;
     selectedPlaylist: Playlist | undefined;
@@ -34,6 +35,7 @@ type SongsStore = {
 
     // for music playback
     resetPlayer: () => Promise<void>;
+    startup: () => Promise<void>;
     play: () => Promise<void>;
     pause: () => Promise<void>;
     next: () => Promise<void>;
@@ -43,11 +45,18 @@ type SongsStore = {
     setRepeatMode: (mode: RepeatMode) => Promise<void>;
 
     addToQueue: (song: Song | Song[]) => Promise<void>;
+    addToQueueFirst: (
+        song: Song,
+        redirect?: boolean,
+        override?: boolean
+    ) => Promise<void>;
     addListToQueue: (
         list: Song[],
         selectedSong?: Song,
         redirect?: boolean
     ) => Promise<void>;
+
+    getQueue: () => Promise<Song[]>;
 
     shuffle: () => void;
     shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
@@ -140,7 +149,8 @@ export const useSongsStore = create<SongsStore>()(
                 consciousHistory: [],
             },
 
-            repeatMode: RepeatMode.Queue,
+            queue: [],
+            repeatMode: RepeatMode.Off,
 
             // menus
             selectedSong: undefined,
@@ -184,6 +194,7 @@ export const useSongsStore = create<SongsStore>()(
                         history: [],
                         consciousHistory: [],
                     },
+                    queue: [],
                 });
                 console.log("reset all!");
             },
@@ -191,7 +202,15 @@ export const useSongsStore = create<SongsStore>()(
             // Music playback ----------------------------------------------------------
             resetPlayer: async () => {
                 await TrackPlayer.reset();
+                set({ queue: [] });
             },
+            startup: async () => {
+                set({
+                    queue: await TrackPlayer.getQueue(),
+                    repeatMode: await TrackPlayer.getRepeatMode(),
+                });
+            },
+
             play: async () => {
                 await TrackPlayer.play();
             },
@@ -228,6 +247,29 @@ export const useSongsStore = create<SongsStore>()(
                     await TrackPlayer.add([song]);
                     get().addSongToConsciousHistory(song.id);
                 }
+                set({ queue: await TrackPlayer.getQueue() });
+            },
+
+            // meant for 1 song at a time + conscious press
+            addToQueueFirst: async (
+                song,
+                redirect = false,
+                override = false
+            ) => {
+                if (!override) {
+                    // do nothing if same song playing
+                    const current = await TrackPlayer.getActiveTrack();
+                    if (song.id === current?.id) {
+                        console.log("same song playing! Not adding to queue.");
+
+                        return;
+                    }
+                }
+
+                await TrackPlayer.load(song);
+                get().addSongToConsciousHistory(song.id);
+                set({ queue: await TrackPlayer.getQueue() });
+                if (redirect) router.push("/player");
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
@@ -252,8 +294,26 @@ export const useSongsStore = create<SongsStore>()(
                     get().addSongToConsciousHistory(list[0].id);
                 }
 
+                set({ queue: await TrackPlayer.getQueue() });
                 await TrackPlayer.play();
                 if (redirect) router.push("/player");
+            },
+
+            getQueue: async (): Promise<Song[]> => {
+                const queue = await TrackPlayer.getQueue();
+                const songs = await Promise.all(
+                    queue.map(async (track) => {
+                        const song = get().getSong(track.id);
+                        if (song === undefined) {
+                            console.error(
+                                `could not find song with id ${track.id}`
+                            );
+                            return;
+                        }
+                        return song;
+                    })
+                );
+                return songs.filter((song) => song !== undefined) as Song[];
             },
 
             shuffle: async () => {},
@@ -261,6 +321,7 @@ export const useSongsStore = create<SongsStore>()(
             shuffleList: async (list, redirect = false) => {
                 const shuffledList = [...list].sort(() => Math.random() - 0.5);
                 await TrackPlayer.setQueue(shuffledList);
+                set({ queue: await TrackPlayer.getQueue() });
                 await TrackPlayer.play();
                 get().addSongToConsciousHistory(shuffledList[0].id);
                 if (redirect) router.push("/player");

@@ -1,0 +1,125 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { useCallback, useRef, useState } from "react";
+import { Menu } from "react-native-paper";
+import SongSheet from "../Components/BottomSheets/Song/SongSheet";
+import SongListItem from "../Components/SongListItem";
+import SheetHeader from "../Components/UI/Headers/SheetHeader";
+import IconButton from "../Components/UI/IconButton";
+import { useSongsStore } from "../store/songs";
+import { Colors, Spacing } from "../styles/constants";
+import { Song } from "../types/song";
+import SwipeDownScreen from "../Components/UI/Utils/SwipeDownScreen";
+import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
+import { ScrollView } from "react-native-gesture-handler";
+import { View } from "react-native";
+
+const HistoryScreen = () => {
+    const { history, getSong, setSelectedSong, addToQueueFirst } =
+        useSongsStore();
+
+    const SongRef = useRef<BottomSheetModal>(null);
+    const openSong = useCallback(() => {
+        SongRef.current?.present();
+    }, []);
+
+    const dismissSong = useCallback(() => {
+        SongRef.current?.dismiss();
+    }, []);
+
+    return (
+        <>
+            <SwipeDownScreen>
+                <SheetHeader title="History" headerRight={<MenuButton />} />
+                <ScrollView>
+                    {history.history.map((item) => {
+                        const song = getSong(item.song);
+                        if (!song) return null;
+
+                        return (
+                            <SongListItem
+                                key={song.id}
+                                item={song}
+                                showImage
+                                onPress={() => {
+                                    setSelectedSong(song);
+                                    addToQueueFirst(song);
+                                }}
+                                onLongPress={() => {
+                                    setSelectedSong(song);
+                                    openSong();
+                                }}
+                                onSecondaryButtonPress={() => {
+                                    setSelectedSong(song);
+                                    openSong();
+                                }}
+                                secondaryButtonIcon={"dots-vertical"}
+                            />
+                        );
+                    })}
+                </ScrollView>
+            </SwipeDownScreen>
+            <SongSheet ref={SongRef} dismiss={dismissSong} />
+        </>
+    );
+};
+
+const MenuButton = () => {
+    const [visible, setVisible] = useState(false);
+
+    const { getHistory, getSong, shuffleList, addToQueue } = useSongsStore();
+
+    function getSongsFromHistory() {
+        const history = getHistory().history;
+
+        const songs: Song[] = history
+            .map((historyItem) => {
+                const song = getSong(historyItem.song);
+                if (!song) return undefined;
+                return song;
+            })
+            .filter((song) => song !== undefined) as Song[];
+
+        return songs;
+    }
+
+    return (
+        <Menu
+            visible={visible}
+            contentStyle={{ backgroundColor: Colors.input }}
+            anchorPosition="top"
+            onDismiss={() => setVisible(false)}
+            anchor={
+                <IconButton
+                    icon={"dots-vertical"}
+                    touchableOpacityProps={{
+                        onPress: () => setVisible(true),
+                    }}
+                />
+            }
+        >
+            <Menu.Item
+                onPress={() => {
+                    shuffleList(getSongsFromHistory());
+                }}
+                title="Shuffle"
+                leadingIcon={"shuffle"}
+                titleStyle={{ color: Colors.primary }}
+            />
+            <Menu.Item
+                onPress={() => {
+                    addToQueue(getSongsFromHistory());
+                }}
+                title="Add to queue"
+                leadingIcon={"album"}
+                titleStyle={{ color: Colors.primary }}
+            />
+            <Menu.Item
+                title="Add to playlist"
+                leadingIcon={"playlist-plus"}
+                titleStyle={{ color: Colors.primary }}
+            />
+        </Menu>
+    );
+};
+
+export default HistoryScreen;

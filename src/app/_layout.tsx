@@ -3,6 +3,7 @@ import { Stack, router } from "expo-router";
 import { useEffect } from "react";
 import { Linking } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PaperProvider } from "react-native-paper";
 import TrackPlayer, {
     AppKilledPlaybackBehavior,
     Capability,
@@ -10,13 +11,17 @@ import TrackPlayer, {
     RepeatMode,
 } from "react-native-track-player";
 import { PlaybackService } from "../../PlaybackService";
+import { useSongsStore } from "../store/songs";
 import { Colors } from "../styles/constants";
 
 export default function App() {
+    const { startup } = useSongsStore();
+
     useEffect(() => {
         async function setup() {
             try {
                 await TrackPlayer.getActiveTrack();
+                await startup();
             } catch (error) {
                 TrackPlayer.registerPlaybackService(() => PlaybackService);
 
@@ -39,7 +44,9 @@ export default function App() {
                         Capability.SeekTo,
                     ],
                 });
-                await TrackPlayer.setRepeatMode(RepeatMode.Queue);
+                await TrackPlayer.setRepeatMode(RepeatMode.Off);
+                await startup();
+
                 console.log("Setup!");
             }
         }
@@ -66,9 +73,11 @@ export default function App() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: Colors.bg }}>
-            <BottomSheetModalProvider>
-                <DefaultLayout />
-            </BottomSheetModalProvider>
+            <PaperProvider>
+                <BottomSheetModalProvider>
+                    <DefaultLayout />
+                </BottomSheetModalProvider>
+            </PaperProvider>
         </GestureHandlerRootView>
     );
 }
@@ -86,6 +95,22 @@ function DefaultLayout() {
             <Stack.Screen name="(tabs)" options={{}} />
             <Stack.Screen
                 name="player"
+                options={{
+                    animation: "slide_from_bottom",
+                    contentStyle: { backgroundColor: "transparent" },
+                    presentation: "transparentModal",
+                }}
+            />
+            <Stack.Screen
+                name="history"
+                options={{
+                    animation: "slide_from_bottom",
+                    contentStyle: { backgroundColor: "transparent" },
+                    presentation: "transparentModal",
+                }}
+            />
+            <Stack.Screen
+                name="queue"
                 options={{
                     animation: "slide_from_bottom",
                     contentStyle: { backgroundColor: "transparent" },

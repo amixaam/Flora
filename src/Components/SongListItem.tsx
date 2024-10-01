@@ -111,7 +111,6 @@ const SongListItem = ({
                                 onPress: onSecondaryButtonPress,
                             }}
                             icon={secondaryButtonIcon}
-                            size={IconSizes.sm}
                         />
                     )}
                     <LikeButton
@@ -174,7 +173,6 @@ const LikeButton = ({
                 onPress: () => (isLiked ? unlikeSong(id) : likeSong(id)),
             }}
             icon={isLiked ? "heart" : "heart-outline"}
-            size={IconSizes.sm}
         />
     );
 };

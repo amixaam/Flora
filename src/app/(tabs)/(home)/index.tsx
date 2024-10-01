@@ -41,15 +41,6 @@ export default function PlaylistsTab() {
         ContainerOptionsRef.current?.dismiss();
     }, []);
 
-    const HistoryRef = useRef<BottomSheetModal>(null);
-    const openHistory = useCallback(() => {
-        HistoryRef.current?.present();
-    }, []);
-
-    const dismissHistory = useCallback(() => {
-        HistoryRef.current?.dismiss();
-    }, []);
-
     return (
         <ScrollView style={mainStyles.container}>
             <BackgroundImageAbsolute />
@@ -62,8 +53,19 @@ export default function PlaylistsTab() {
                     marginHorizontal: Spacing.appPadding,
                 }}
             >
-                <TouchableOpacity onPress={openHistory}>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/history");
+                    }}
+                >
                     <Text style={textStyles.text}>History</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/queue");
+                    }}
+                >
+                    <Text style={textStyles.text}>Queue</Text>
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 1, gap: Spacing.md }}>
@@ -95,7 +97,6 @@ export default function PlaylistsTab() {
                 ref={ContainerOptionsRef}
                 dismiss={dismissContainerOptions}
             />
-            <HistorySheet ref={HistoryRef} dismiss={dismissHistory} />
         </ScrollView>
     );
 }

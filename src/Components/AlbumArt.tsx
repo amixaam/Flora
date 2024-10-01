@@ -5,7 +5,7 @@ import { Spacing } from "../styles/constants";
 type AlbumArtProps = {
     style?: StyleProp<ViewStyle>;
     radius?: Spacing;
-    image: Playlist["artwork"] | Album["artwork"];
+    image?: Playlist["artwork"] | Album["artwork"];
 };
 
 const AlbumArt = ({ image, radius = Spacing.radius, style }: AlbumArtProps) => {

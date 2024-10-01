@@ -7,6 +7,11 @@ export const mainStyles = StyleSheet.create({
         backgroundColor: Colors.bg,
     },
 
+    sheetContainer: {
+        flex: 1,
+        backgroundColor: Colors.secondary,
+    },
+
     topbarContainer: {
         backgroundColor: "transparent",
         paddingHorizontal: Spacing.appPadding,
