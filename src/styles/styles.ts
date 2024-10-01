@@ -25,8 +25,8 @@ export const mainStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: Spacing.lg,
-        paddingVertical: Spacing.sm,
-        paddingTop: Spacing.sm + 2,
+        paddingVertical: Spacing.mmd,
+        paddingTop: Spacing.mmd + 2,
         borderRadius: Spacing.radiusSm,
     },
 
@@ -75,10 +75,15 @@ export const mainStyles = StyleSheet.create({
         position: "absolute",
     },
     modal: {
-        borderRadius: Spacing.radius,
-        padding: Spacing.appPadding,
-        margin: Spacing.appPadding,
+        padding: Spacing.lg,
         gap: Spacing.md,
+
+        borderRadius: Spacing.radius,
+        margin: Spacing.appPadding,
+
+        backgroundColor: Colors.secondary,
+        shadowColor: "black",
+        elevation: 20,
     },
 });
 

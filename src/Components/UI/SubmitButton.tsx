@@ -4,13 +4,13 @@ import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import { Colors } from "../../styles/constants";
 
-const SubmitButton = ({ handleSubmitForm = () => {}, text = "Submit" }) => {
+const SubmitButton = ({ handleSubmitForm = () => {}, text = "Submit", flex = false }) => {
     return (
         <TouchableNativeFeedback onPress={handleSubmitForm}>
             <View
                 style={[
                     mainStyles.button_skeleton,
-                    { backgroundColor: Colors.primary },
+                    { backgroundColor: Colors.primary, flex: flex ? 1 : 0 },
                 ]}
             >
                 <Text style={[textStyles.text, { color: Colors.bg }]}>

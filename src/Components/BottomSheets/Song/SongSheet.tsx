@@ -1,6 +1,11 @@
 import { forwardRef, useCallback, useRef } from "react";
 import { useSongsStore } from "../../../store/songs";
-import { SnapPoints, Spacing } from "../../../styles/constants";
+import {
+    Colors,
+    IconSizes,
+    SnapPoints,
+    Spacing,
+} from "../../../styles/constants";
 import LargeOptionButton from "../../UI/LargeOptionButton";
 import SheetOptionsButton from "../../UI/SheetOptionsButton";
 import AddPlaylistToSong from "./AddPlaylistToSong";
@@ -10,6 +15,13 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import SongStatistics from "./SongStatistics";
 import { UISeperator } from "../../UI/UISeperator";
 import { router } from "expo-router";
+import { textStyles } from "../../../styles/text";
+import { Easing, Text } from "react-native";
+import { Song } from "../../../types/song";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import AlbumArt from "../../AlbumArt";
+import { IconButton } from "react-native-paper";
+import TextTicker from "react-native-text-ticker";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -43,15 +55,6 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             }
         };
 
-        const handleToggleLike = () => {
-            props.dismiss?.();
-            if (selectedSong.isLiked) {
-                unlikeSong(selectedSong.id);
-            } else {
-                likeSong(selectedSong.id);
-            }
-        };
-
         const handleAddToQueue = () => {
             props.dismiss?.();
             addToQueue(selectedSong);
@@ -59,11 +62,14 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
         return (
             <>
-                <SheetModalLayout ref={ref} title={selectedSong.title}>
+                <SheetModalLayout
+                    ref={ref}
+                    customHeader={<SongSheetHeader song={selectedSong} />}
+                >
                     <BottomSheetView
                         style={{
-                            marginHorizontal: Spacing.appPadding,
                             gap: Spacing.md,
+                            marginHorizontal: Spacing.appPadding,
                         }}
                     >
                         <BottomSheetView
@@ -73,9 +79,9 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <LargeOptionButton
-                                icon="album"
-                                text="Add to queue"
-                                onPress={handleAddToQueue}
+                                icon="chart-timeline-variant-shimmer"
+                                text="View statistics"
+                                onPress={openSongStatistics}
                                 disabled={selectedSong.isHidden}
                             />
                             <LargeOptionButton
@@ -84,36 +90,24 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 onPress={openAddPlaylist}
                                 disabled={selectedSong.isHidden}
                             />
-
                             <LargeOptionButton
-                                icon={
-                                    selectedSong.isLiked
-                                        ? "heart"
-                                        : "heart-outline"
-                                }
-                                text={
-                                    selectedSong.isLiked
-                                        ? "Remove favourite"
-                                        : "Add favourite"
-                                }
-                                onPress={handleToggleLike}
+                                icon="album"
+                                text="Add to queue"
+                                onPress={handleAddToQueue}
                                 disabled={selectedSong.isHidden}
                             />
                         </BottomSheetView>
 
                         <UISeperator />
 
-                        <BottomSheetView style={{ marginTop: -Spacing.sm }}>
-                            <SheetOptionsButton
-                                icon="chart-timeline-variant-shimmer"
-                                buttonContent="View statistics"
-                                onPress={() => {
-                                    openSongStatistics();
-                                }}
-                            />
+                        <BottomSheetView
+                            style={{
+                                marginTop: -Spacing.sm,
+                            }}
+                        >
                             <SheetOptionsButton
                                 icon="album"
-                                buttonContent="View album"
+                                buttonContent="Go to album"
                                 onPress={() => {
                                     props.dismiss?.();
                                     router.push(
@@ -132,7 +126,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
 
                             <SheetOptionsButton
-                                icon={selectedSong.isHidden ? "eye" : "eye-off"}
+                                icon={selectedSong.isHidden ? "eye-off" : "eye"}
                                 buttonContent={
                                     selectedSong.isHidden
                                         ? "Show song"
@@ -142,7 +136,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
                             <SheetOptionsButton
                                 icon={"trash-can"}
-                                buttonContent={"Delete song"}
+                                buttonContent={"Delete from device"}
                                 isDisabled={true}
                             />
                         </BottomSheetView>
@@ -154,5 +148,76 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         );
     }
 );
+
+const SongSheetHeader = ({ song }: { song: Song }) => {
+    const { likeSong, unlikeSong } = useSongsStore();
+
+    const handleToggleLike = () => {
+        if (song.isLiked) {
+            unlikeSong(song.id);
+        } else {
+            likeSong(song.id);
+        }
+    };
+    return (
+        <BottomSheetView
+            style={{
+                marginBottom: Spacing.mmd,
+                marginTop: -6,
+                marginHorizontal: Spacing.appPadding,
+
+                gap: Spacing.md,
+
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+            }}
+        >
+            <BottomSheetView
+                style={{
+                    gap: Spacing.mmd,
+                    flex: 1,
+
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+            >
+                <AlbumArt
+                    image={song.artwork}
+                    style={{ width: 42 }}
+                    radius={Spacing.radiusSm}
+                />
+                <BottomSheetView style={{ flex: 1 }}>
+                    <TextTicker
+                        key={song.title}
+                        style={textStyles.h6}
+                        duration={12 * 1000}
+                        marqueeDelay={2 * 1000}
+                        easing={Easing.linear}
+                        bounce={false}
+                        scroll={false}
+                        loop
+                    >
+                        {song.title}
+                    </TextTicker>
+                    <Text
+                        style={[
+                            textStyles.small,
+                            { marginBottom: -2, opacity: 0.75 },
+                        ]}
+                    >
+                        {CombineStrings([song.artist, song.year])}
+                    </Text>
+                </BottomSheetView>
+            </BottomSheetView>
+            <IconButton
+                icon={song.isLiked ? "heart" : "heart-outline"}
+                onPress={handleToggleLike}
+                iconColor={Colors.primary}
+                size={IconSizes.md}
+            />
+        </BottomSheetView>
+    );
+};
 
 export default SongSheet;

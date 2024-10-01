@@ -13,6 +13,13 @@ import EditPlaylist from "../Playlist/EditPlaylist";
 import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
 import AlbumRanking from "../Album/AlbumRanking";
+import { Album, Playlist } from "../../../types/song";
+import AlbumArt from "../../AlbumArt";
+import TextTicker from "react-native-text-ticker";
+import { textStyles } from "../../../styles/text";
+import { Easing, Text } from "react-native";
+import Pluralize from "../../../utils/Pluralize";
+import { CombineStrings } from "../../../utils/CombineStrings";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -103,7 +110,12 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
         return (
             <>
-                <SheetModalLayout ref={ref} title={selectedContainer.title}>
+                <SheetModalLayout
+                    ref={ref}
+                    customHeader={
+                        <ContainerSheetHeader container={selectedContainer} />
+                    }
+                >
                     <BottomSheetView
                         style={{
                             marginHorizontal: Spacing.appPadding,
@@ -117,16 +129,15 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <LargeOptionButton
-                                icon="album"
-                                text="Add to queue"
-                                onPress={handleAddToQueue}
-                            />
-                            <LargeOptionButton
                                 icon="shuffle"
                                 text="Shuffle play"
                                 onPress={handleShufflePlay}
                             />
-
+                            <LargeOptionButton
+                                icon="album"
+                                text="Add to queue"
+                                onPress={handleAddToQueue}
+                            />
                             <LargeOptionButton
                                 icon="playlist-plus"
                                 text="Add songs"
@@ -186,5 +197,71 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         );
     }
 );
+
+const ContainerSheetHeader = ({
+    container,
+}: {
+    container: Playlist | Album;
+}) => {
+    let smallText: string;
+    if ("description" in container) {
+        smallText = Pluralize(container.songs.length, "song", "songs");
+    } else {
+        smallText = CombineStrings([container.artist, container.year]);
+    }
+
+    return (
+        <BottomSheetView
+            style={{
+                marginBottom: Spacing.md,
+                marginHorizontal: Spacing.appPadding,
+
+                gap: Spacing.md,
+
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+            }}
+        >
+            <BottomSheetView
+                style={{
+                    gap: Spacing.mmd,
+                    flex: 1,
+
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+            >
+                <AlbumArt
+                    image={container.artwork}
+                    style={{ width: 42 }}
+                    radius={Spacing.radiusSm}
+                />
+                <BottomSheetView style={{ flex: 1 }}>
+                    <TextTicker
+                        key={container.title}
+                        style={textStyles.h6}
+                        duration={12 * 1000}
+                        marqueeDelay={2 * 1000}
+                        easing={Easing.linear}
+                        bounce={false}
+                        scroll={false}
+                        loop
+                    >
+                        {container.title}
+                    </TextTicker>
+                    <Text
+                        style={[
+                            textStyles.small,
+                            { marginBottom: -2, opacity: 0.75 },
+                        ]}
+                    >
+                        {smallText}
+                    </Text>
+                </BottomSheetView>
+            </BottomSheetView>
+        </BottomSheetView>
+    );
+};
 
 export default ContainerSheet;

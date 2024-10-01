@@ -22,23 +22,15 @@ const DeleteContainer = ({
             title={"Delete " + containerType + "?"}
             dismiss={dismiss}
         >
-            <View style={{ gap: Spacing.xs }}>
-                <Text style={[textStyles.text, { textAlign: "center" }]}>
-                    Are you sure you want to delete this {containerType}?
-                </Text>
-                <Text style={[textStyles.text, { textAlign: "center" }]}>
-                    You cannot undo this action.
-                </Text>
-            </View>
+            <Text style={[textStyles.text]}>This action is permanent.</Text>
             <View
                 style={{
-                    gap: 8,
+                    gap: Spacing.sm,
                     flexDirection: "row",
-                    justifyContent: "center",
                 }}
             >
-                <SubmitButton text="Delete" handleSubmitForm={confirm} />
-                <CancelButton handlePress={dismiss} />
+                <SubmitButton text="Delete" handleSubmitForm={confirm} flex />
+                <CancelButton handlePress={dismiss} flex />
             </View>
         </ModalLayout>
     );

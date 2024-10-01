@@ -8,6 +8,7 @@ import {
     Spacing,
 } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
+import { TouchableRipple } from "react-native-paper";
 
 const LargeOptionButton = ({
     icon = DefaultIcon,

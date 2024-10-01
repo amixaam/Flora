@@ -4,13 +4,17 @@ import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import { Colors } from "../../styles/constants";
 
-const CancelButton = ({ handlePress = () => {}, text = "Cancel" }) => {
+const CancelButton = ({
+    handlePress = () => {},
+    text = "Cancel",
+    flex = false,
+}) => {
     return (
         <TouchableNativeFeedback onPress={handlePress}>
             <View
                 style={[
                     mainStyles.button_skeleton,
-                    { backgroundColor: Colors.input },
+                    { backgroundColor: Colors.input, flex: flex ? 1 : 0 },
                 ]}
             >
                 <Text style={[textStyles.text, { color: Colors.primary }]}>

@@ -3,6 +3,7 @@ import React from "react";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import { Colors, Spacing } from "../../styles/constants";
+import { UISeperator } from "../UI/UISeperator";
 
 const ModalLayout = ({
     title = "Modal title",
@@ -31,19 +32,12 @@ const ModalLayout = ({
                     }}
                 >
                     <TouchableWithoutFeedback>
-                        <View
-                            style={[
-                                mainStyles.modal,
-                                {
-                                    backgroundColor: Colors.secondary,
-                                    paddingVertical: Spacing.xl,
-                                    shadowColor: "black",
-                                    elevation: 10,
-                                },
-                            ]}
-                        >
+                        <View style={mainStyles.modal}>
                             <Text
-                                style={[textStyles.h4, { textAlign: "center" }]}
+                                style={[
+                                    textStyles.h4,
+                                    { marginBottom: -Spacing.sm },
+                                ]}
                             >
                                 {title}
                             </Text>
