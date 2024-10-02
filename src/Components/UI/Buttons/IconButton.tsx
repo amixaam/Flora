@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Colors, DefaultIcon, IconSizes } from "../../styles/constants";
+import { Colors, DefaultIcon, IconSizes } from "../../../styles/constants";
 
 type IconButtonTypes = {
     touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;

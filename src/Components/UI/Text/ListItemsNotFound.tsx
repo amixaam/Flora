@@ -6,8 +6,8 @@ import {
     DefaultIcon,
     IconSizes,
     Spacing,
-} from "../../styles/constants";
-import { textStyles } from "../../styles/text";
+} from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
 
 const ListItemsNotFound = ({
     icon = DefaultIcon,

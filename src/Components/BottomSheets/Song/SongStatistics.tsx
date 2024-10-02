@@ -13,16 +13,15 @@ import {
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
 import { abbreviateNumber, ordinateNumber } from "../../../utils/FormatNumber";
-import LargeTextButton from "../../UI/LargeTextButton";
-import ListItemsNotFound from "../../UI/ListItemsNotFound";
-import SmallStatisticText from "../../UI/SmallStatisticText";
-import { UISeperator } from "../../UI/UISeperator";
 import { SheetModalLayout } from "../SheetModalLayout";
+import LargeTextButton from "../../UI/Buttons/LargeTextButton";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import SmallStatisticText from "../../UI/Text/SmallStatisticText";
+import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { selectedSong, getSongRanking } = useSongsStore();
-
         if (selectedSong === undefined) return;
 
         const statistics = selectedSong.statistics;

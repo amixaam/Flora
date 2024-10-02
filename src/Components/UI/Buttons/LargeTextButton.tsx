@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, TouchableNativeFeedback, View } from "react-native";
-import { Colors, Spacing } from "../../styles/constants";
-import { textStyles } from "../../styles/text";
+import { Colors, Spacing } from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
 
 const LargeTextButton = ({
     mainText = "XX",

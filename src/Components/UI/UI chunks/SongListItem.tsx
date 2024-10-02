@@ -2,15 +2,14 @@ import { ImageBackground, TouchableNativeFeedback, View } from "react-native";
 import { Text } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { useActiveTrack } from "react-native-track-player";
-import { useSongsStore } from "../store/songs";
-import { Colors, IconSizes, Spacing } from "../styles/constants";
-import { mainStyles, newStyles } from "../styles/styles";
-import { textStyles } from "../styles/text";
-import { Song } from "../types/song";
-import Checkbox from "./UI/Checkbox";
-import IconButton from "./UI/IconButton";
-import { CombineStrings } from "../utils/CombineStrings";
+import { useSongsStore } from "../../../store/songs";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
+import { newStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
+import { Song } from "../../../types/song";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import Checkbox from "../Buttons/Checkbox";
+import IconButton from "../Buttons/IconButton";
 
 export interface SongListItemProps {
     item: Song;
@@ -43,9 +42,10 @@ const SongListItem = ({
     onLongPress = () => {},
     onPress = () => {},
 }: SongListItemProps) => {
-    const activeTrack = useActiveTrack();
+    const { activeSong } = useSongsStore();
 
     const name = item.isHidden ? "(Hidden) " + item.title : item.title;
+
     return (
         <TouchableNativeFeedback
             onPress={onPress}
@@ -55,7 +55,7 @@ const SongListItem = ({
             <View
                 style={[
                     newStyles.songListItem,
-                    activeTrack?.id === item.id &&
+                    activeSong?.id === item.id &&
                         newStyles.songListItemSelected,
                     item.isHidden && newStyles.songListItemHidden,
                 ]}
@@ -71,11 +71,11 @@ const SongListItem = ({
                     <Numeration
                         index={index}
                         showNumeration={showNumeration}
-                        isCurrentTrack={activeTrack?.id === item.id}
+                        isCurrentTrack={activeSong?.id === item.id}
                     />
                     <PlayingIndicator
                         image={item.artwork}
-                        isCurrentTrack={activeTrack?.id === item.id}
+                        isCurrentTrack={activeSong?.id === item.id}
                         showImage={showImage}
                     />
                     <View
@@ -116,7 +116,9 @@ const SongListItem = ({
                     <LikeButton
                         isLiked={item.isLiked}
                         id={item.id}
-                        isSelectMode={isSelectMode || secondaryButtonIcon !== undefined}
+                        isSelectMode={
+                            isSelectMode || secondaryButtonIcon !== undefined
+                        }
                     />
                 </View>
             </View>
@@ -192,7 +194,7 @@ const PlayingIndicator = ({
                 source={
                     image
                         ? { uri: image }
-                        : require("../../assets/images/empty-cover.png")
+                        : require("../../../../assets/images/empty-cover.png")
                 }
                 style={{
                     height: 48,
@@ -211,7 +213,7 @@ const PlayingIndicator = ({
                 source={
                     image
                         ? { uri: image }
-                        : require("../../assets/images/empty-cover.png")
+                        : require("../../../../assets/images/empty-cover.png")
                 }
                 style={{
                     height: 48,

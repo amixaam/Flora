@@ -5,9 +5,8 @@ import {
     View,
     ViewStyle,
 } from "react-native";
-import { useSongsStore } from "../store/songs";
+import { useSongsStore } from "../../../store/songs";
 import AlbumArt from "./AlbumArt";
-import IconButton from "./UI/IconButton";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -22,23 +21,17 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withSpring,
-    withTiming
+    withTiming,
 } from "react-native-reanimated";
 import TextTicker from "react-native-text-ticker";
-import {
-    Track,
-    useActiveTrack,
-    usePlaybackState,
-    useProgress,
-} from "react-native-track-player";
-import { Colors, IconSizes, Spacing } from "../styles/constants";
-import { newStyles } from "../styles/styles";
-import { textStyles } from "../styles/text";
-import { CombineStrings } from "../utils/CombineStrings";
+import { usePlaybackState, useProgress } from "react-native-track-player";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
+import { newStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import IconButton from "../Buttons/IconButton";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
-    const activeTrack = useActiveTrack();
-
     const translateX = useSharedValue(0);
     const opacity = useSharedValue(1);
 
@@ -61,7 +54,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
         );
     };
 
-    const { next, previous } = useSongsStore();
+    const { next, previous, activeSong } = useSongsStore();
 
     const onSongChange = (direction: 1 | -1) => {
         if (direction === -1) {
@@ -104,13 +97,13 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
         router.push("/player");
     };
 
-    if (!activeTrack) return;
+    if (!activeSong) return null;
+
     return (
         <View style={style}>
             <TouchableNativeFeedback onPress={openPlayer}>
                 <View style={newStyles.miniPlayer}>
                     <SongDetails
-                        activeTrack={activeTrack}
                         skipGesture={skipGesture}
                         animatedStyle={animatedStyle}
                     />
@@ -130,16 +123,14 @@ interface d {
 }
 
 interface SongDetailsProps {
-    activeTrack: Track;
     skipGesture: GestureType;
     animatedStyle: d;
 }
 
-const SongDetails = ({
-    activeTrack,
-    skipGesture,
-    animatedStyle,
-}: SongDetailsProps) => {
+const SongDetails = ({ skipGesture, animatedStyle }: SongDetailsProps) => {
+    const { activeSong } = useSongsStore();
+    if (!activeSong) return null;
+
     return (
         <View
             style={{
@@ -175,7 +166,7 @@ const SongDetails = ({
                     ]}
                 >
                     <AlbumArt
-                        image={activeTrack.artwork}
+                        image={activeSong.artwork}
                         style={{ height: 46 }}
                     />
 
@@ -187,7 +178,7 @@ const SongDetails = ({
                         }}
                     >
                         <TextTicker
-                            key={activeTrack.title}
+                            key={activeSong.title}
                             style={textStyles.h6}
                             duration={12 * 1000}
                             marqueeDelay={2 * 1000}
@@ -196,12 +187,12 @@ const SongDetails = ({
                             scroll={false}
                             loop
                         >
-                            {activeTrack.title}
+                            {activeSong.title}
                         </TextTicker>
                         <Text style={textStyles.small} numberOfLines={1}>
                             {CombineStrings([
-                                activeTrack.artist,
-                                activeTrack.year,
+                                activeSong.artist,
+                                activeSong.year,
                             ])}
                         </Text>
                     </View>

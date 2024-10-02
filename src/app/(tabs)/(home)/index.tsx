@@ -1,6 +1,5 @@
 import { router } from "expo-router";
 import {
-    Button,
     ImageBackground,
     Text,
     TouchableNativeFeedback,
@@ -9,15 +8,13 @@ import {
 } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
-import IconButton from "../../../Components/UI/IconButton";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
@@ -25,21 +22,19 @@ import { Album, Playlist } from "../../../types/song";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
-import ContainerItem from "../../../Components/UI/ContainerItem";
-import HistorySheet from "../../../Components/BottomSheets/Misc/HistorySheet";
+import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
 
 export default function PlaylistsTab() {
-    const { albums, getRecentlyPlayed } = useSongsStore();
+    const { albums, activeSong, getRecentlyPlayed } = useSongsStore();
     const insets = useSafeAreaInsets();
 
-    const ContainerOptionsRef = useRef<BottomSheetModal>(null);
-    const openContainerOptions = useCallback(() => {
-        ContainerOptionsRef.current?.present();
-    }, []);
-
-    const dismissContainerOptions = useCallback(() => {
-        ContainerOptionsRef.current?.dismiss();
-    }, []);
+    const {
+        sheetRef: containerRef,
+        open: openContainer,
+        close: closeContainer,
+    } = useBottomSheetModal();
 
     return (
         <ScrollView style={mainStyles.container}>
@@ -68,6 +63,9 @@ export default function PlaylistsTab() {
                     <Text style={textStyles.text}>Queue</Text>
                 </TouchableOpacity>
             </View>
+            <Text style={textStyles.text}>
+                {JSON.stringify(activeSong, null, 8)}
+            </Text>
             <View style={{ flex: 1, gap: Spacing.md }}>
                 {/* <RecapBanner /> */}
                 <HomeHeader text="Recently played" />
@@ -75,7 +73,7 @@ export default function PlaylistsTab() {
                 {/* Limit to ~10 entries */}
                 <HorizontalList
                     list={getRecentlyPlayed()}
-                    longPress={openContainerOptions}
+                    longPress={openContainer}
                 />
                 <View style={{ gap: Spacing.xs }}>
                     <HomeHeader text="Mood board" />
@@ -83,20 +81,14 @@ export default function PlaylistsTab() {
                         buttons={["Sleep", "Focus", "Energize", "sad"]}
                     />
                 </View>
-                <HorizontalList
-                    list={albums}
-                    longPress={openContainerOptions}
-                />
+                <HorizontalList list={albums} longPress={openContainer} />
                 {/* <HomeHeader text="Most played" />
                 <HomeHeader text="Recaps" /> */}
             </View>
             <View
                 style={{ paddingBottom: insets.bottom + Spacing.miniPlayer }}
             />
-            <ContainerSheet
-                ref={ContainerOptionsRef}
-                dismiss={dismissContainerOptions}
-            />
+            <ContainerSheet ref={containerRef} dismiss={closeContainer} />
         </ScrollView>
     );
 }
@@ -172,8 +164,8 @@ const HorizontalList = ({
                         onPress: () => {
                             router.push(`./${item.id}`);
                         },
-                        onLongPress: () => {
-                            setSelectedContainer(item);
+                        onLongPress: async () => {
+                            await setSelectedContainer(item);
                             longPress();
                         },
                     }}

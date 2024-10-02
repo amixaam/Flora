@@ -1,38 +1,31 @@
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import { forwardRef, useCallback, useRef } from "react";
+import { Easing, Text } from "react-native";
+import { IconButton } from "react-native-paper";
+import TextTicker from "react-native-text-ticker";
 import { useSongsStore } from "../../../store/songs";
 import {
     Colors,
     IconSizes,
-    SnapPoints,
-    Spacing,
+    Spacing
 } from "../../../styles/constants";
-import LargeOptionButton from "../../UI/LargeOptionButton";
-import SheetOptionsButton from "../../UI/SheetOptionsButton";
-import AddPlaylistToSong from "./AddPlaylistToSong";
-import { SheetModalLayout } from "../SheetModalLayout";
-import { BottomSheetProps } from "../../../types/other";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import SongStatistics from "./SongStatistics";
-import { UISeperator } from "../../UI/UISeperator";
-import { router } from "expo-router";
 import { textStyles } from "../../../styles/text";
-import { Easing, Text } from "react-native";
+import { BottomSheetProps } from "../../../types/other";
 import { Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
-import AlbumArt from "../../AlbumArt";
-import { IconButton } from "react-native-paper";
-import TextTicker from "react-native-text-ticker";
+import AlbumArt from "../../UI/UI chunks/AlbumArt";
+import { SheetModalLayout } from "../SheetModalLayout";
+import AddPlaylistToSong from "./AddPlaylistToSong";
+import SongStatistics from "./SongStatistics";
+import LargeOptionButton from "../../UI/Buttons/LargeOptionButton";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const {
-            selectedSong,
-            hideSong,
-            unhideSong,
-            likeSong,
-            unlikeSong,
-            addToQueue,
-        } = useSongsStore();
+        const { selectedSong, hideSong, unhideSong, addToQueue } =
+            useSongsStore();
 
         const addPlaylistRef = useRef<BottomSheetModal>(null);
         const openAddPlaylist = useCallback(() => {
@@ -44,10 +37,11 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
             songStatisticsRef.current?.present();
         }, []);
 
-        if (selectedSong === undefined) return;
+        if (!selectedSong) {
+            return null;
+        }
 
         const handleHideSong = () => {
-            props.dismiss?.();
             if (selectedSong.isHidden) {
                 unhideSong(selectedSong.id);
             } else {

@@ -1,15 +1,15 @@
 import { useNavigation } from "expo-router";
 import { View } from "react-native";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSongsStore } from "../../../store/songs";
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import CreatePlaylist from "../../../Components/BottomSheets/Playlist/CreatePlaylist";
-import IconButton from "../../../Components/UI/IconButton";
-import { TwoColContainerList } from "../../../Components/UI/TwoColContainerList";
+import { TwoColContainerList } from "../../../Components/UI/UI chunks/TwoColContainerList";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { mainStyles } from "../../../styles/styles";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
 
 export default function PlaylistsTab() {
     useSongsStore();
@@ -28,15 +28,11 @@ export default function PlaylistsTab() {
         });
     }, [navigation]);
 
-    const CreatePlaylistRef = useRef<BottomSheetModal>(null);
-    const openCreatePlaylist = useCallback(
-        () => CreatePlaylistRef.current?.present(),
-        []
-    );
-    const dismissCreatePlaylist = useCallback(
-        () => CreatePlaylistRef.current?.dismiss(),
-        []
-    );
+    const {
+        sheetRef: CreatePlaylistRef,
+        open: openCreatePlaylist,
+        close: dismissCreatePlaylist,
+    } = useBottomSheetModal();
 
     return (
         <View style={[mainStyles.container]}>

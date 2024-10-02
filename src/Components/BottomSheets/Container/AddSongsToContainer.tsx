@@ -2,13 +2,13 @@ import React, { forwardRef, useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, SnapPoints, Spacing } from "../../../styles/constants";
-import SongListItem from "../../SongListItem";
-import ListItemsNotFound from "../../UI/ListItemsNotFound";
+import SongListItem from "../../UI/UI chunks/SongListItem";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { SheetModalLayout } from "../SheetModalLayout";
 import { BottomSheetProps } from "../../../types/other";
-import TextInput from "../../UI/TextInput";
 import { Song } from "../../../types/song";
+import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
+import TextInput from "../../UI/Inputs/TextInput";
 
 const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -115,7 +115,6 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
                         <SongListItem
                             item={item}
                             isSelected={selectedSongs.includes(item.id)}
-                            onSelect={() => changeList(item.id)}
                             onPress={() => {
                                 changeList(item.id);
                             }}

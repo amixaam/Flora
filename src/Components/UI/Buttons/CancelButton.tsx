@@ -1,8 +1,8 @@
 import { View, Text, TouchableNativeFeedback } from "react-native";
 import React from "react";
-import { mainStyles } from "../../styles/styles";
-import { textStyles } from "../../styles/text";
-import { Colors } from "../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
+import { Colors } from "../../../styles/constants";
 
 const CancelButton = ({
     handlePress = () => {},

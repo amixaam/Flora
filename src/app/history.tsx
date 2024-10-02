@@ -1,30 +1,25 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useState } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 import { Menu } from "react-native-paper";
 import SongSheet from "../Components/BottomSheets/Song/SongSheet";
-import SongListItem from "../Components/SongListItem";
+import SongListItem from "../Components/UI/UI chunks/SongListItem";
 import SheetHeader from "../Components/UI/Headers/SheetHeader";
-import IconButton from "../Components/UI/IconButton";
-import { useSongsStore } from "../store/songs";
-import { Colors, Spacing } from "../styles/constants";
-import { Song } from "../types/song";
 import SwipeDownScreen from "../Components/UI/Utils/SwipeDownScreen";
-import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
-import { ScrollView } from "react-native-gesture-handler";
-import { View } from "react-native";
+import useBottomSheetModal from "../hooks/useBottomSheetModal";
+import { useSongsStore } from "../store/songs";
+import { Colors } from "../styles/constants";
+import { Song } from "../types/song";
+import IconButton from "../Components/UI/Buttons/IconButton";
 
 const HistoryScreen = () => {
     const { history, getSong, setSelectedSong, addToQueueFirst } =
         useSongsStore();
 
-    const SongRef = useRef<BottomSheetModal>(null);
-    const openSong = useCallback(() => {
-        SongRef.current?.present();
-    }, []);
-
-    const dismissSong = useCallback(() => {
-        SongRef.current?.dismiss();
-    }, []);
+    const {
+        sheetRef: SongRef,
+        open: openSong,
+        close: dismissSong,
+    } = useBottomSheetModal();
 
     return (
         <>
@@ -40,16 +35,16 @@ const HistoryScreen = () => {
                                 key={song.id}
                                 item={song}
                                 showImage
-                                onPress={() => {
-                                    setSelectedSong(song);
+                                onPress={async () => {
+                                    await setSelectedSong(song);
                                     addToQueueFirst(song);
                                 }}
-                                onLongPress={() => {
-                                    setSelectedSong(song);
+                                onLongPress={async () => {
+                                    await setSelectedSong(song);
                                     openSong();
                                 }}
-                                onSecondaryButtonPress={() => {
-                                    setSelectedSong(song);
+                                onSecondaryButtonPress={async () => {
+                                    await setSelectedSong(song);
                                     openSong();
                                 }}
                                 secondaryButtonIcon={"dots-vertical"}

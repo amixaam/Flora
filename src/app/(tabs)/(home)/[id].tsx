@@ -1,19 +1,15 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AlbumArt from "../../../Components/AlbumArt";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
-import ImageBlurBackground from "../../../Components/ImageBlurBackground";
 import SongListItem, {
     SongListItemProps,
-} from "../../../Components/SongListItem";
-import IconButton from "../../../Components/UI/IconButton";
-import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
+} from "../../../Components/UI/UI chunks/SongListItem";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
@@ -21,6 +17,10 @@ import { textStyles } from "../../../styles/text";
 import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
+import ListItemsNotFound from "../../../Components/UI/Text/ListItemsNotFound";
+import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackground";
+import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
 
 export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -58,23 +58,19 @@ export default function ContainerScreen() {
 
     let songData = getSongsFromContainer(id);
 
-    const SongOptionsRef = useRef<BottomSheetModal>(null);
-    const openSongOptions = useCallback(() => {
-        SongOptionsRef.current?.present();
-    }, []);
-    const dismissSongOptions = useCallback(() => {
-        SongOptionsRef.current?.dismiss();
-    }, []);
+    const {
+        sheetRef: SongOptionsRef,
+        open: openSongOptions,
+        close: dismissSongOptions,
+    } = useBottomSheetModal();
 
-    const ContainerOptionsRef = useRef<BottomSheetModal>(null);
-    const openContainerOptions = useCallback(() => {
-        setSelectedContainer(data);
-        ContainerOptionsRef.current?.present();
-    }, []);
-
-    const dismissContainerOptions = useCallback(() => {
-        ContainerOptionsRef.current?.dismiss();
-    }, []);
+    const {
+        sheetRef: ContainerOptionsRef,
+        open: openContainerOptions,
+        close: dismissContainerOptions,
+    } = useBottomSheetModal(async () => {
+        await setSelectedContainer(data);
+    });
 
     const insets = useSafeAreaInsets();
 
@@ -206,6 +202,11 @@ const SongList = ({
 }: SongListProps) => {
     const { setSelectedSong, addListToQueue } = useSongsStore();
 
+    const openSongSheet = async (song: Song) => {
+        await setSelectedSong(song);
+        openSongOptions();
+    };
+
     return (
         <View style={{ minHeight: 5 }}>
             <FlashList
@@ -243,8 +244,7 @@ const SongList = ({
                             addListToQueue(songData, item, true);
                         }}
                         onLongPress={() => {
-                            setSelectedSong(item);
-                            openSongOptions();
+                            openSongSheet(item);
                         }}
                         {...songProps}
                     />

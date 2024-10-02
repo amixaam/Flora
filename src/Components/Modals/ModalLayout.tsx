@@ -1,9 +1,8 @@
-import { View, Text, Modal, TouchableWithoutFeedback } from "react-native";
 import React from "react";
+import { Modal, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Spacing } from "../../styles/constants";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
-import { Colors, Spacing } from "../../styles/constants";
-import { UISeperator } from "../UI/UISeperator";
 
 const ModalLayout = ({
     title = "Modal title",

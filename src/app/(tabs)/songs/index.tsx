@@ -1,22 +1,19 @@
 import { FlashList } from "@shopify/flash-list";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as MediaLibrary from "expo-media-library";
-import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
-import SongListItem from "../../../Components/SongListItem";
-import ListItemsNotFound from "../../../Components/UI/ListItemsNotFound";
-import useSearchBar from "../../../hooks/useSearchBar";
+import SongListItem from "../../../Components/UI/UI chunks/SongListItem";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Album, Song } from "../../../types/song";
 import { MusicInfo } from "../../../utils/TagReader";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
-import { TopButtonControls } from "../../../Components/TopPlaybackSorting";
+import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
 
 export default function SongsTab() {
     const {
@@ -30,14 +27,6 @@ export default function SongsTab() {
         addSongToAlbum,
         doesSongExist,
     } = useSongsStore();
-
-    const search = useSearchBar();
-
-    const filteredSongs = songs.filter(
-        (song) =>
-            song.title.toLowerCase().includes(search.toLowerCase()) ||
-            song.artist.toLowerCase().includes(search.toLowerCase())
-    );
 
     const processData = async (asset: MediaLibrary.Asset) => {
         if (doesSongExist(asset.id)) return "Song already exists";
@@ -157,15 +146,11 @@ export default function SongsTab() {
         getFiles();
     }, []);
 
-    const SongOptionsRef = useRef<BottomSheetModal>(null);
-    const openSongOptions = useCallback(
-        () => SongOptionsRef.current?.present(),
-        []
-    );
-    const closeSongOptions = useCallback(
-        () => SongOptionsRef.current?.dismiss(),
-        []
-    );
+    const {
+        sheetRef: SongOptionsRef,
+        open: openSongOptions,
+        close: closeSongOptions,
+    } = useBottomSheetModal();
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
@@ -180,12 +165,12 @@ export default function SongsTab() {
             <BackgroundImageAbsolute />
 
             <FlashList
-                data={filteredSongs}
+                data={songs}
                 estimatedItemSize={1000}
                 ListHeaderComponent={
                     <TopButtonControls
                         horizontalMargins={Spacing.md}
-                        songs={filteredSongs ? filteredSongs : []}
+                        songs={songs}
                     />
                 }
                 refreshControl={
@@ -197,12 +182,6 @@ export default function SongsTab() {
                         progressBackgroundColor={Colors.primary}
                     />
                 }
-                ListEmptyComponent={
-                    <ListItemsNotFound
-                        text={`Search "${search}" didn't find any results!`}
-                        icon="magnify"
-                    />
-                }
                 contentContainerStyle={{
                     paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
@@ -212,12 +191,12 @@ export default function SongsTab() {
                         <SongListItem
                             item={item}
                             showImage={true}
-                            onLongPress={() => {
-                                setSelectedSong(item);
+                            onLongPress={async () => {
+                                await setSelectedSong(item);
                                 openSongOptions();
                             }}
-                            onPress={() => {
-                                setSelectedSong(item);
+                            onPress={async () => {
+                                await setSelectedSong(item);
                                 addListToQueue(songs, item, true);
                             }}
                         />

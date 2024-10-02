@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { Colors } from "../../styles/constants";
+import { Colors } from "../../../styles/constants";
 
 export const UISeperator = () => {
     return (

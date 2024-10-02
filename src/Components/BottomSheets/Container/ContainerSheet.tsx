@@ -1,25 +1,25 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
-import { SnapPoints, Spacing } from "../../../styles/constants";
-import LargeOptionButton from "../../UI/LargeOptionButton";
-import SheetOptionsButton from "../../UI/SheetOptionsButton";
+import { Spacing } from "../../../styles/constants";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { Easing, Text } from "react-native";
+import TextTicker from "react-native-text-ticker";
+import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
+import { Album, Playlist } from "../../../types/song";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import Pluralize from "../../../utils/Pluralize";
 import DeleteContainer from "../../Modals/DeleteContainer";
-import { UISeperator } from "../../UI/UISeperator";
+import AlbumRanking from "../Album/AlbumRanking";
 import EditAlbum from "../Album/EditAlbum";
 import EditPlaylist from "../Playlist/EditPlaylist";
 import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
-import AlbumRanking from "../Album/AlbumRanking";
-import { Album, Playlist } from "../../../types/song";
-import AlbumArt from "../../AlbumArt";
-import TextTicker from "react-native-text-ticker";
-import { textStyles } from "../../../styles/text";
-import { Easing, Text } from "react-native";
-import Pluralize from "../../../utils/Pluralize";
-import { CombineStrings } from "../../../utils/CombineStrings";
+import LargeOptionButton from "../../UI/Buttons/LargeOptionButton";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
+import AlbumArt from "../../UI/UI chunks/AlbumArt";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {

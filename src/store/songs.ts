@@ -16,18 +16,16 @@ type SongsStore = {
     queue: Track[];
 
     selectedSong: Song | undefined;
-    selectedPlaylist: Playlist | undefined;
-    selectedAlbum: Album | undefined;
+    activeSong: Song | undefined;
 
     selectedContainer: Playlist | Album | undefined;
 
-    setSelectedSong: (song: Song) => void;
+    setSelectedSong: (song: Song) => Promise<void>;
+    setSelectedContainer: (container: Playlist | Album) => Promise<void>;
 
-    // to be replaced by containers
-    setSelectedPlaylist: (playlist: Playlist) => void;
-    setSelectedAlbum: (album: Album) => void;
-
-    setSelectedContainer: (container: Playlist | Album) => void;
+    // updateSong: (songId: string) => void;
+    updateSelectedAndActiveSong: (songId: string) => void;
+    updateSelectedContainer: (containerId: string) => void;
 
     repeatMode: RepeatMode; // enum
 
@@ -61,11 +59,14 @@ type SongsStore = {
     shuffle: () => void;
     shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
 
+    updateActiveSong: (songId: string) => void;
+
     // // songs
     setSongs: (songs: Song[]) => void;
     addSongs: (songs: Song[]) => void;
-    doesSongExist: (id: string) => boolean;
     getSong: (id: string) => Song | undefined;
+
+    doesSongExist: (id: string) => boolean;
     likeSong: (id: string) => void;
     unlikeSong: (id: string) => void;
     hideSong: (id: string) => void;
@@ -74,6 +75,7 @@ type SongsStore = {
     isSongInAnyAlbum: (songId: string) => boolean;
     autoUpdateSongTags: (songId: string) => void;
     updateSongTagsByAlbum: (albumId: string) => void;
+
     // // UPDATE SONG TAGS
 
     // // statistics
@@ -151,27 +153,17 @@ export const useSongsStore = create<SongsStore>()(
 
             queue: [],
             repeatMode: RepeatMode.Off,
+            activeSong: undefined,
 
             // menus
             selectedSong: undefined,
-            selectedPlaylist: undefined,
-            selectedAlbum: undefined,
-
             selectedContainer: undefined,
 
-            setSelectedSong: (song) => {
+            setSelectedSong: async (song) => {
                 set({ selectedSong: song });
             },
 
-            setSelectedAlbum: (album) => {
-                set({ selectedAlbum: album });
-            },
-
-            setSelectedPlaylist: (playlist) => {
-                set({ selectedPlaylist: playlist });
-            },
-
-            setSelectedContainer: (container) => {
+            setSelectedContainer: async (container) => {
                 set({ selectedContainer: container });
             },
 
@@ -208,7 +200,12 @@ export const useSongsStore = create<SongsStore>()(
                 set({
                     queue: await TrackPlayer.getQueue(),
                     repeatMode: await TrackPlayer.getRepeatMode(),
+                    activeSong: (await TrackPlayer.getActiveTrack()) as Song,
                 });
+            },
+
+            updateActiveSong: (songId) => {
+                set({ activeSong: get().getSong(songId) });
             },
 
             play: async () => {
@@ -335,6 +332,46 @@ export const useSongsStore = create<SongsStore>()(
                 }));
             },
             getSong: (id) => get().songs.find((song) => song.id === id),
+
+            // updateSong: (songId) => {
+            //     set((state) => ({
+            //         songs: state.songs.map((song) =>
+            //             song.id === songId ? { ...song, ...updatedSong } : song
+            //         ),
+            //     }));
+            // },
+
+            updateSelectedAndActiveSong: (songId) => {
+                const selectedSong = get().selectedSong;
+                if (songId === selectedSong?.id) {
+                    const updatedSong = get().getSong(songId);
+                    set({
+                        selectedSong: { ...selectedSong, ...updatedSong },
+                    });
+                }
+
+                const activeSong = get().activeSong;
+                if (songId === activeSong?.id) {
+                    const updatedSong = get().getSong(songId);
+                    set({
+                        activeSong: { ...activeSong, ...updatedSong },
+                    });
+                }
+            },
+
+            updateSelectedContainer: (containerId) => {
+                const selectedContainer = get().selectedContainer;
+                if (containerId === selectedContainer?.id) {
+                    const updatedContainer = get().getContainer(containerId);
+                    set({
+                        selectedContainer: {
+                            ...selectedContainer,
+                            ...updatedContainer,
+                        },
+                    });
+                }
+            },
+
             doesSongExist: (id) => {
                 return get().songs.some((song) => song.id === id);
             },
@@ -352,6 +389,8 @@ export const useSongsStore = create<SongsStore>()(
                         song.id === id ? { ...song, isHidden: true } : song
                     ),
                 }));
+
+                get().updateSelectedAndActiveSong(id);
             },
 
             unhideSong: (id) => {
@@ -360,6 +399,8 @@ export const useSongsStore = create<SongsStore>()(
                         song.id === id ? { ...song, isHidden: false } : song
                     ),
                 }));
+
+                get().updateSelectedAndActiveSong(id);
             },
 
             updateSongStatistics: (id) => {
@@ -378,6 +419,8 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
+                get().updateSelectedAndActiveSong(id);
+
                 console.log("updated statistics for: " + id);
             },
 
@@ -395,6 +438,8 @@ export const useSongsStore = create<SongsStore>()(
                             : song
                     ),
                 }));
+
+                get().updateSelectedAndActiveSong(id);
             },
             // statistics ---------------------------------------------------------
             addSongToHistory: (id) => {
@@ -547,14 +592,14 @@ export const useSongsStore = create<SongsStore>()(
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === id
-                            ? {
-                                  ...playlist,
-                                  ...inputFields,
-                              }
+                            ? { ...playlist, ...inputFields }
                             : playlist
                     ),
                 }));
+
+                get().updateSelectedContainer(id);
             },
+
             deletePlaylist: (id) => {
                 set((state) => ({
                     playlists: state.playlists.filter(
@@ -593,56 +638,58 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addSongToPlaylist: (playlistId, songId) => {
-                const playlist = get().getPlaylist(playlistId);
-
-                if (playlist?.songs.includes(songId)) return;
-
-                if (playlistId === "1") {
-                    set((state) => {
-                        const song = state.songs.find((s) => s.id === songId);
-                        if (song) song.isLiked = true;
-                        return state;
-                    });
-                }
-
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === playlistId
                             ? {
                                   ...playlist,
-                                  songs: [...playlist.songs, songId],
+                                  // Check if song already exists before adding
+                                  songs: playlist.songs.includes(songId)
+                                      ? playlist.songs
+                                      : [...playlist.songs, songId],
                               }
                             : playlist
                     ),
+                    // Update isLiked if default playlist
+                    songs:
+                        playlistId === "1"
+                            ? state.songs.map((song) =>
+                                  song.id === songId
+                                      ? { ...song, isLiked: true }
+                                      : song
+                              )
+                            : state.songs,
                 }));
+
+                get().updateSelectedContainer(playlistId);
+                get().updateSelectedAndActiveSong(songId);
             },
 
             removeSongFromPlaylist: (playlistId, songId) => {
-                set((state) => {
-                    const playlist = state.playlists.find(
-                        (p) => p.id === playlistId
-                    );
+                set((state) => ({
+                    playlists: state.playlists.map((playlist) =>
+                        playlist.id === playlistId
+                            ? {
+                                  ...playlist,
+                                  songs: playlist.songs.filter(
+                                      (id) => id !== songId
+                                  ),
+                              }
+                            : playlist
+                    ),
+                    // Update isLiked if default playlist
+                    songs:
+                        playlistId === "1"
+                            ? state.songs.map((song) =>
+                                  song.id === songId
+                                      ? { ...song, isLiked: false }
+                                      : song
+                              )
+                            : state.songs,
+                }));
 
-                    if (playlistId === "1") {
-                        const song = state.songs.find((s) => s.id === songId);
-                        if (song) song.isLiked = false;
-                    }
-
-                    if (!playlist?.songs.includes(songId)) return state;
-
-                    return {
-                        playlists: state.playlists.map((playlist) =>
-                            playlist.id === playlistId
-                                ? {
-                                      ...playlist,
-                                      songs: playlist.songs.filter(
-                                          (id) => id !== songId
-                                      ),
-                                  }
-                                : playlist
-                        ),
-                    };
-                });
+                get().updateSelectedContainer(playlistId);
+                get().updateSelectedAndActiveSong(songId);
             },
 
             // Albums ----------------------------------------------------------
@@ -689,6 +736,7 @@ export const useSongsStore = create<SongsStore>()(
                 }));
 
                 get().updateSongTagsByAlbum(id);
+                get().updateSelectedContainer(id);
             },
 
             deleteAlbum: (id) => {
@@ -777,6 +825,8 @@ export const useSongsStore = create<SongsStore>()(
                 }
 
                 get().autoUpdateSongTags(songId);
+                get().updateSelectedContainer(albumId);
+                get().updateSelectedAndActiveSong(songId);
             },
 
             removeSongFromAlbum: (albumId, songId) => {
@@ -811,6 +861,8 @@ export const useSongsStore = create<SongsStore>()(
                 }
 
                 get().autoUpdateSongTags(songId);
+                get().updateSelectedContainer(albumId);
+                get().updateSelectedAndActiveSong(songId);
             },
 
             updateSongTagsByAlbum: (albumId) => {
@@ -850,6 +902,8 @@ export const useSongsStore = create<SongsStore>()(
                             : s
                     ),
                 }));
+
+                get().updateSelectedAndActiveSong(songId);
             },
 
             // Algo

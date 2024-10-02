@@ -1,9 +1,9 @@
 import React from "react";
 import { Text, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Colors, DefaultIcon, IconSizes } from "../../styles/constants";
-import { mainStyles } from "../../styles/styles";
-import { textStyles } from "../../styles/text";
+import { Colors, DefaultIcon, IconSizes } from "../../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
 
 interface SmallTitleBigTextProps {
     icon?: string;

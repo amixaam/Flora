@@ -1,6 +1,6 @@
 import { Image, StyleProp, View, ViewStyle } from "react-native";
-import { Album, Playlist } from "../types/song";
-import { Spacing } from "../styles/constants";
+import { Album, Playlist } from "../../../types/song";
+import { Spacing } from "../../../styles/constants";
 
 type AlbumArtProps = {
     style?: StyleProp<ViewStyle>;
@@ -11,7 +11,7 @@ type AlbumArtProps = {
 const AlbumArt = ({ image, radius = Spacing.radius, style }: AlbumArtProps) => {
     const source = image
         ? { uri: image }
-        : require("../../assets/images/empty-cover.png");
+        : require("../../../../assets/images/empty-cover.png");
 
     return (
         <View style={[style, { aspectRatio: 1, borderRadius: radius }]}>

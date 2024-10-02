@@ -1,8 +1,8 @@
 import React from "react";
 import { TouchableNativeFeedback } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { mainStyles } from "../../styles/styles";
-import {  Colors, DefaultIcon, IconSizes } from "../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { Colors, DefaultIcon, IconSizes } from "../../../styles/constants";
 
 const PrimaryRoundIconButton = ({
     icon = DefaultIcon,

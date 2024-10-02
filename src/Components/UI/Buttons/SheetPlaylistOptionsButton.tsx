@@ -1,11 +1,11 @@
 import { View, Text, TouchableNativeFeedback } from "react-native";
 import React from "react";
-import AlbumArt from "../AlbumArt";
-import { mainStyles } from "../../styles/styles";
-import { textStyles } from "../../styles/text";
+import { mainStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
 import Checkbox from "./Checkbox";
-import { Spacing } from "../../styles/constants";
-import { Playlist } from "../../types/song";
+import { Spacing } from "../../../styles/constants";
+import { Playlist } from "../../../types/song";
+import AlbumArt from "../UI chunks/AlbumArt";
 
 interface Props {
     playlist: Playlist;
@@ -55,7 +55,7 @@ const SheetPlaylistOptionsButton = ({
                             {playlist.songs.length} songs
                         </Text>
                     </View>
-                    <Checkbox onPress={onPress} isSelected={isSelected} />
+                    <Checkbox isSelected={isSelected} />
                 </View>
             </View>
         </TouchableNativeFeedback>

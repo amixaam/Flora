@@ -1,8 +1,8 @@
 import { Stack } from "expo-router";
 import React from "react";
-import Header from "../../../Components/Header";
 import { Colors } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
+import Header from "../../../Components/UI/Headers/Header";
 
 const SongsLayout = () => {
     return (

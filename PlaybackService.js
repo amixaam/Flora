@@ -54,6 +54,8 @@ export const PlaybackService = async function () {
     let previousTrackId;
     let previousTimestamp = Date.now();
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
+        useSongsStore.getState().updateActiveSong(event.track.id);
+
         const condition =
             previousTrackId !== event.track?.id ||
             Date.now() - previousTimestamp >= 1000;

@@ -1,11 +1,11 @@
 import React from "react";
 import { Text, TouchableNativeFeedback, View } from "react-native";
-import { Spacing } from "../../styles/constants";
-import { textStyles } from "../../styles/text";
-import { Album, Playlist } from "../../types/song";
-import { CombineStrings } from "../../utils/CombineStrings";
-import Pluralize from "../../utils/Pluralize";
-import AlbumArt from "../AlbumArt";
+import { Spacing } from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
+import { Album, Playlist } from "../../../types/song";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import Pluralize from "../../../utils/Pluralize";
+import AlbumArt from "./AlbumArt";
 
 type ContainerItemProps = {
     item: Playlist | Album;

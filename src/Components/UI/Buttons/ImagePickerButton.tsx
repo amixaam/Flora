@@ -2,8 +2,8 @@ import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Colors } from "../../styles/constants";
-import { textStyles } from "../../styles/text";
+import { Colors } from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
 
 type ImagePickerTypes = {
     touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;

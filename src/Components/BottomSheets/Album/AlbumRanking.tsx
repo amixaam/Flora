@@ -27,11 +27,11 @@ import { Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { abbreviateNumber } from "../../../utils/FormatNumber";
 import Pluralize from "../../../utils/Pluralize";
-import SmallStatisticText from "../../UI/SmallStatisticText";
-import { UISeperator } from "../../UI/UISeperator";
 import { SheetModalLayout } from "../SheetModalLayout";
 import { FlatList } from "react-native-gesture-handler";
-import ListItemsNotFound from "../../UI/ListItemsNotFound";
+import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import SmallStatisticText from "../../UI/Text/SmallStatisticText";
 
 const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {

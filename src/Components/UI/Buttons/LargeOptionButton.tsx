@@ -1,14 +1,13 @@
-import { View, Text, TouchableNativeFeedback } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
+import { Text, TouchableNativeFeedback, View } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
     Colors,
     DefaultIcon,
     IconSizes,
     Spacing,
-} from "../../styles/constants";
-import { textStyles } from "../../styles/text";
-import { TouchableRipple } from "react-native-paper";
+} from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
 
 const LargeOptionButton = ({
     icon = DefaultIcon,

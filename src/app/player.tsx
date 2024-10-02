@@ -1,6 +1,5 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { Dimensions, Easing, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -11,49 +10,35 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import TextTicker from "react-native-text-ticker";
-import { useActiveTrack } from "react-native-track-player";
 import {
     skipToNext,
     skipToPrevious,
 } from "react-native-track-player/lib/src/trackPlayer";
-import AlbumArt from "../Components/AlbumArt";
 import SongSheet from "../Components/BottomSheets/Song/SongSheet";
-import ImageBlurBackground from "../Components/ImageBlurBackground";
-import PlaybackControls from "../Components/PlaybackControls";
-import IconButton from "../Components/UI/IconButton";
-import PrimaryRoundIconButton from "../Components/UI/PrimaryRoundIconButton";
+import PlaybackControls from "../Components/UI/UI chunks/PlaybackControls";
+import useBottomSheetModal from "../hooks/useBottomSheetModal";
 import { useSongsStore } from "../store/songs";
 import { Spacing } from "../styles/constants";
 import { mainStyles } from "../styles/styles";
 import { textStyles } from "../styles/text";
 import { Direction } from "../types/other";
 import { CombineStrings } from "../utils/CombineStrings";
+import ImageBlurBackground from "../Components/UI/UI chunks/ImageBlurBackground";
+import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
+import PrimaryRoundIconButton from "../Components/UI/Buttons/PrimaryRoundIconButton";
+import IconButton from "../Components/UI/Buttons/IconButton";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const PlayerScreen = () => {
-    const { likeSong, unlikeSong, setSelectedSong, getSong } = useSongsStore();
-    const activeTrack = useActiveTrack();
+    const { activeSong, likeSong, unlikeSong, setSelectedSong } =
+        useSongsStore();
 
-    const SongOptionsRef = useRef<BottomSheetModal>(null);
-    const openSongOptions = useCallback(() => {
-        SongOptionsRef.current?.present();
-    }, []);
-    const dismissSongoptions = useCallback(() => {
-        SongOptionsRef.current?.dismiss();
-    }, []);
-
-    const handleLikeButtonPress = () => {
-        if (activeTrack) {
-            if (activeTrack.isLiked) {
-                unlikeSong(activeTrack.id);
-                activeTrack.isLiked = false;
-            } else {
-                likeSong(activeTrack.id);
-                activeTrack.isLiked = true;
-            }
-        }
-    };
+    const {
+        sheetRef: SongOptionsRef,
+        open: openSongOptions,
+        close: dismissSongOptions,
+    } = useBottomSheetModal();
 
     const goBack = () => {
         router.back();
@@ -165,6 +150,10 @@ const PlayerScreen = () => {
         };
     });
 
+    if (!activeSong) {
+        return null;
+    }
+
     return (
         <GestureDetector gesture={dismissGesture}>
             <Animated.View
@@ -175,7 +164,7 @@ const PlayerScreen = () => {
                 ]}
             >
                 <ImageBlurBackground
-                    image={activeTrack?.artwork}
+                    image={activeSong.artwork}
                     blur={15}
                     style={{
                         height: "85%",
@@ -209,7 +198,7 @@ const PlayerScreen = () => {
                         >
                             <View>
                                 <AlbumArt
-                                    image={activeTrack?.artwork}
+                                    image={activeSong.artwork}
                                     style={{
                                         aspectRatio: 1,
                                         borderRadius: Spacing.radius,
@@ -217,12 +206,9 @@ const PlayerScreen = () => {
                                 />
                                 <PrimaryRoundIconButton
                                     icon="pencil"
-                                    onPress={() => {
-                                        let song = getSong(activeTrack?.id);
-                                        if (song) {
-                                            setSelectedSong(song);
-                                            openSongOptions();
-                                        }
+                                    onPress={async () => {
+                                        await setSelectedSong(activeSong);
+                                        openSongOptions();
                                     }}
                                     style={{
                                         position: "absolute",
@@ -247,7 +233,7 @@ const PlayerScreen = () => {
                                     }}
                                 >
                                     <TextTicker
-                                        key={activeTrack?.title}
+                                        key={activeSong.title}
                                         style={textStyles.h5}
                                         duration={12 * 1000}
                                         marqueeDelay={2 * 1000}
@@ -256,21 +242,24 @@ const PlayerScreen = () => {
                                         scroll={false}
                                         loop
                                     >
-                                        {activeTrack?.title}
+                                        {activeSong.title}
                                     </TextTicker>
                                     <Text style={[textStyles.text]}>
                                         {CombineStrings([
-                                            activeTrack?.artist,
-                                            activeTrack?.year,
+                                            activeSong.artist,
+                                            activeSong.year,
                                         ])}
                                     </Text>
                                 </View>
                                 <IconButton
                                     touchableOpacityProps={{
-                                        onPress: handleLikeButtonPress,
+                                        onPress: () =>
+                                            activeSong.isLiked
+                                                ? unlikeSong(activeSong.id)
+                                                : likeSong(activeSong.id),
                                     }}
                                     icon={
-                                        activeTrack?.isLiked
+                                        activeSong.isLiked
                                             ? "heart"
                                             : "heart-outline"
                                     }
@@ -280,7 +269,7 @@ const PlayerScreen = () => {
                     </GestureDetector>
                     <PlaybackControls animation={triggerSkipAnimation} />
                 </View>
-                <SongSheet ref={SongOptionsRef} dismiss={dismissSongoptions} />
+                <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
             </Animated.View>
         </GestureDetector>
     );

@@ -1,14 +1,14 @@
 import { useNavigation } from "expo-router";
 import { View } from "react-native";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import BackgroundImageAbsolute from "../../../Components/BackgroundImageAbsolute";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import CreateAlbum from "../../../Components/BottomSheets/Album/CreateAlbum";
-import IconButton from "../../../Components/UI/IconButton";
-import { TwoColContainerList } from "../../../Components/UI/TwoColContainerList";
+import { TwoColContainerList } from "../../../Components/UI/UI chunks/TwoColContainerList";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { mainStyles } from "../../../styles/styles";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
 
 export default function AlbumsTab() {
     const navigation = useNavigation();
@@ -25,15 +25,11 @@ export default function AlbumsTab() {
         });
     }, [navigation]);
 
-    const CreateAlbumRef = useRef<BottomSheetModal>(null);
-    const openCreateAlbum = useCallback(
-        () => CreateAlbumRef.current?.present(),
-        []
-    );
-    const dismissCreateAlbum = useCallback(
-        () => CreateAlbumRef.current?.dismiss(),
-        []
-    );
+    const {
+        sheetRef: CreateAlbumRef,
+        open: openCreateAlbum,
+        close: dismissCreateAlbum,
+    } = useBottomSheetModal();
 
     return (
         <View style={[mainStyles.container]}>

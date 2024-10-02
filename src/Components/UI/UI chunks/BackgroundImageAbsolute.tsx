@@ -4,7 +4,7 @@ import { ImageBackground } from "react-native";
 const BackgroundImageAbsolute = () => {
     return (
         <ImageBackground
-            source={require("../../assets/images/indexBlur.png")}
+            source={require("../../../../assets/images/indexBlur.png")}
             style={{
                 width: "100%",
                 height: "100%",

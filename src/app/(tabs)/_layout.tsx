@@ -2,7 +2,7 @@ import { withLayoutContext } from "expo-router";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MiniPlayer from "../../Components/MiniPlayer";
+import MiniPlayer from "../../Components/UI/UI chunks/MiniPlayer";
 import { IconSizes } from "../../styles/constants";
 
 const { Navigator } = createMaterialBottomTabNavigator();

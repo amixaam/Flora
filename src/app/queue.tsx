@@ -1,18 +1,18 @@
 import { Easing, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
-import { useActiveTrack, usePlaybackState } from "react-native-track-player";
-import AlbumArt from "../Components/AlbumArt";
-import SongListItem from "../Components/SongListItem";
+import { usePlaybackState } from "react-native-track-player";
+import SongListItem from "../Components/UI/UI chunks/SongListItem";
 import SheetHeader from "../Components/UI/Headers/SheetHeader";
-import ListItemsNotFound from "../Components/UI/ListItemsNotFound";
 import SwipeDownScreen from "../Components/UI/Utils/SwipeDownScreen";
 import { useSongsStore } from "../store/songs";
 import { Colors, Spacing } from "../styles/constants";
 import { textStyles } from "../styles/text";
-import { CombineStrings } from "../utils/CombineStrings";
 import { Song } from "../types/song";
-import { ScrollView } from "react-native-gesture-handler";
+import { CombineStrings } from "../utils/CombineStrings";
+import ListItemsNotFound from "../Components/UI/Text/ListItemsNotFound";
+import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
 
 const QueueScreen = () => {
     const { queue } = useSongsStore();
@@ -22,26 +22,6 @@ const QueueScreen = () => {
             <SheetHeader title="Queue" />
             <NowPlayingItem />
             <ScrollView style={{ flex: 1 }}>
-                {/* <FlashList
-                    data={queue}
-                    keyExtractor={(item, index) => `${item.id}-${index}`}
-                    estimatedItemSize={50}
-                    ListEmptyComponent={
-                        <ListItemsNotFound
-                            text={`Queue is empty`}
-                            icon="music-note"
-                        />
-                    }
-                    renderItem={({ item }) => {
-                        return (
-                            <SongListItem
-                                key={item.id}
-                                item={item as Song}
-                                showImage
-                            />
-                        );
-                    }}
-                /> */}
                 {queue.length === 0 && (
                     <ListItemsNotFound
                         text={`Queue is empty`}
@@ -62,15 +42,14 @@ const QueueScreen = () => {
 
 const NowPlayingItem = () => {
     const playback = usePlaybackState();
-    const activeTrack = useActiveTrack();
-    const { play, pause } = useSongsStore();
-
-    if (activeTrack === undefined) return null;
+    const { play, pause, activeSong } = useSongsStore();
 
     const hanldePlayPausePress = () => {
         if (playback.state === "playing") pause();
         else play();
     };
+
+    if (!activeSong) return null;
 
     return (
         <View
@@ -85,7 +64,7 @@ const NowPlayingItem = () => {
             }}
         >
             <View style={{ flex: 1, flexDirection: "row", gap: Spacing.md }}>
-                <AlbumArt image={activeTrack.artwork} />
+                <AlbumArt image={activeSong.artwork} />
                 <View
                     style={{
                         flexDirection: "column",
@@ -95,7 +74,7 @@ const NowPlayingItem = () => {
                     }}
                 >
                     <TextTicker
-                        key={activeTrack.title}
+                        key={activeSong.title}
                         style={textStyles.h6}
                         duration={12 * 1000}
                         marqueeDelay={2 * 1000}
@@ -104,7 +83,7 @@ const NowPlayingItem = () => {
                         scroll={false}
                         loop
                     >
-                        {activeTrack.title}
+                        {activeSong.title}
                     </TextTicker>
                     <Text
                         style={[
@@ -113,7 +92,7 @@ const NowPlayingItem = () => {
                         ]}
                         numberOfLines={1}
                     >
-                        {CombineStrings([activeTrack.artist, activeTrack.year])}
+                        {CombineStrings([activeSong.artist, activeSong.year])}
                     </Text>
                 </View>
             </View>

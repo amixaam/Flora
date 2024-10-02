@@ -1,9 +1,9 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React from "react";
 import { TextInput as RNTextInput } from "react-native";
-import { mainStyles } from "../../styles/styles";
-import { textStyles } from "../../styles/text";
-import { Colors } from "../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
+import { Colors } from "../../../styles/constants";
 
 interface Props {
     bottomSheet?: boolean;

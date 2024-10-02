@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
 import React from "react";
-import Header from "../../../Components/Header";
-import IconButton from "../../../Components/UI/IconButton";
 import { Colors } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
+import Header from "../../../Components/UI/Headers/Header";
 
 const PlaylistsLayout = () => {
     return (

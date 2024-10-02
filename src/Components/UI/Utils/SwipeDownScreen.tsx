@@ -7,7 +7,7 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from "react-native-reanimated";
-import { Colors, Spacing } from "../../../styles/constants";
+import { Colors } from "../../../styles/constants";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -24,16 +24,21 @@ const SwipeDownScreen = ({
             translateY.value = Math.max(0, event.translationY);
         })
         .onEnd((event) => {
-            const DISMISS_THRESHOLD = 100;
+            const DISMISS_THRESHOLD = 10;
 
             // Swipe Down - Dismiss Screen
             if (event.translationY > DISMISS_THRESHOLD) {
                 runOnJS(router.back)();
-                translateY.value = withTiming(SCREEN_HEIGHT, {}, () => {});
+                translateY.value = withTiming(
+                    SCREEN_HEIGHT,
+                    { duration: 100 },
+                    () => {}
+                );
             } else {
                 translateY.value = withTiming(0); // Reset if swipe was not enough
             }
         })
+        .requireExternalGestureToFail()
         .minDistance(2)
         .failOffsetX(1);
 

@@ -1,13 +1,13 @@
 import { Text, View } from "react-native";
-import { useSongsStore } from "../store/songs";
-import IconButton from "./UI/IconButton";
+import { useSongsStore } from "../../../store/songs";
 
 import { usePlaybackState, useProgress } from "react-native-track-player";
-import { IconSizes, Spacing } from "../styles/constants";
-import { textStyles } from "../styles/text";
-import { FormatSecs } from "../utils/FormatMillis";
-import PlaybackSlider from "./PlaybackSlider";
-import { Direction } from "../types/other";
+import { IconSizes, Spacing } from "../../../styles/constants";
+import { textStyles } from "../../../styles/text";
+import { FormatSecs } from "../../../utils/FormatMillis";
+import PlaybackSlider from "../Utils/PlaybackSlider";
+import { Direction } from "../../../types/other";
+import IconButton from "../Buttons/IconButton";
 
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},

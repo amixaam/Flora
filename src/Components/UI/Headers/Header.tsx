@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Colors } from "../styles/constants";
+import { Colors } from "../../../styles/constants";
 
 const Header = () => {
     return (
