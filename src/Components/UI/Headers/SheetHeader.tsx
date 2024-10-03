@@ -7,14 +7,14 @@ import { textStyles } from "../../../styles/text";
 import IconButton from "../Buttons/IconButton";
 
 interface SheetHeaderProps {
-    title?: string;
+    title?: string | React.ReactElement;
     titleStyle?: StyleProp<TextStyle | TextStyleAndroid>;
     headerbgColor?: Colors;
-    headerLeft?: headerButtonProps;
-    headerRight?: headerButtonProps | React.ReactElement;
+    headerLeft?: IconButtonProps;
+    headerRight?: IconButtonProps | React.ReactElement;
 }
 
-interface headerButtonProps {
+export interface IconButtonProps {
     icon?: string;
     onPress?: () => void;
 }
@@ -49,6 +49,26 @@ const SheetHeader = ({
         }
     };
 
+    const Title = (): React.ReactNode => {
+        if (React.isValidElement(title)) {
+            return title;
+        } else {
+            return (
+                <Text
+                    style={[
+                        textStyles.h5,
+                        { paddingTop: 2 },
+                        // ^ potentially overriden ^
+                        titleStyle,
+                        { flex: 1 },
+                    ]}
+                >
+                    {title}
+                </Text>
+            );
+        }
+    };
+
     return (
         <SafeAreaView
             edges={["top"]}
@@ -61,17 +81,7 @@ const SheetHeader = ({
             }}
         >
             {headerLeftDisplay()}
-            <Text
-                style={[
-                    textStyles.h5,
-                    { paddingTop: 2 },
-                    // ^ potentially overriden ^
-                    titleStyle,
-                    { flex: 1 },
-                ]}
-            >
-                {title}
-            </Text>
+            {Title()}
             {headerRightDisplay()}
         </SafeAreaView>
     );
@@ -80,7 +90,7 @@ const SheetHeader = ({
 const HeaderButton = ({
     icon = "alert-circle",
     onPress = () => {},
-}: headerButtonProps) => {
+}: IconButtonProps) => {
     return (
         <IconButton
             icon={icon}

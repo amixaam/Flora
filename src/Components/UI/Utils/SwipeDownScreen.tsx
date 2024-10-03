@@ -19,6 +19,7 @@ const SwipeDownScreen = ({
     bgColor?: Colors;
 }) => {
     const translateY = useSharedValue(0);
+
     const dismissGesture = Gesture.Pan()
         .onUpdate((event) => {
             translateY.value = Math.max(0, event.translationY);
@@ -39,8 +40,8 @@ const SwipeDownScreen = ({
             }
         })
         .requireExternalGestureToFail()
-        .minDistance(2)
-        .failOffsetX(1);
+        .minDistance(5)
+        .failOffsetX(4);
 
     const animatedVerticalStyle = useAnimatedStyle(() => {
         return {

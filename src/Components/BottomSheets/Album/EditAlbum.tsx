@@ -105,6 +105,9 @@ const EditAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                             year: value,
                                         })
                                     }
+                                    inputProps={{
+                                        inputMode: "numeric",
+                                    }}
                                 />
                             </BottomSheetView>
 

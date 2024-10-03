@@ -6,7 +6,6 @@ import {
     ViewStyle,
 } from "react-native";
 import { useSongsStore } from "../../../store/songs";
-import AlbumArt from "./AlbumArt";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -30,6 +29,7 @@ import { newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import IconButton from "../Buttons/IconButton";
+import AlbumArt from "./AlbumArt";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     const translateX = useSharedValue(0);

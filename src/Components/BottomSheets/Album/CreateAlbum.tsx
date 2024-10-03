@@ -90,6 +90,9 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                         year: value,
                                     })
                                 }
+                                inputProps={{
+                                    inputMode: "numeric",
+                                }}
                             />
                         </BottomSheetView>
 

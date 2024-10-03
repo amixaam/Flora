@@ -13,8 +13,8 @@ import { useSongsStore } from "../../../store/songs";
 
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
@@ -22,12 +22,12 @@ import { Album, Playlist } from "../../../types/song";
 
 // @ts-ignore
 import RecapGradient from "../../../../assets/images/recap-gradient.png";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import IconButton from "../../../Components/UI/Buttons/IconButton";
 
 export default function PlaylistsTab() {
-    const { albums, activeSong, getRecentlyPlayed } = useSongsStore();
+    const { albums, getRecentlyPlayed } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const {
@@ -62,10 +62,14 @@ export default function PlaylistsTab() {
                 >
                     <Text style={textStyles.text}>Queue</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        router.push("/search");
+                    }}
+                >
+                    <Text style={textStyles.text}>Search</Text>
+                </TouchableOpacity>
             </View>
-            <Text style={textStyles.text}>
-                {JSON.stringify(activeSong, null, 8)}
-            </Text>
             <View style={{ flex: 1, gap: Spacing.md }}>
                 {/* <RecapBanner /> */}
                 <HomeHeader text="Recently played" />

@@ -117,6 +117,14 @@ function DefaultLayout() {
                     presentation: "transparentModal",
                 }}
             />
+            <Stack.Screen
+                name="search"
+                options={{
+                    animation: "slide_from_bottom",
+                    contentStyle: { backgroundColor: "transparent" },
+                    presentation: "transparentModal",
+                }}
+            />
         </Stack>
     );
 }

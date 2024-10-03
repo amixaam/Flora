@@ -9,12 +9,14 @@ interface Props {
     bottomSheet?: boolean;
     placeholder?: string;
     value?: string;
+    inputProps?: React.ComponentProps<typeof RNTextInput>;
     setValue?: (value: string) => void;
 }
 
 const TextInput = ({
     bottomSheet = false,
     placeholder = "Placeholder",
+    inputProps,
     value,
     setValue,
 }: Props) => {
@@ -27,6 +29,7 @@ const TextInput = ({
                     { backgroundColor: Colors.input },
                 ]}
                 placeholderTextColor={Colors.primary90}
+                {...inputProps}
                 placeholder={placeholder}
                 value={value}
                 onChangeText={setValue}
@@ -41,6 +44,7 @@ const TextInput = ({
                 { backgroundColor: Colors.input },
             ]}
             placeholderTextColor={Colors.primary90}
+            {...inputProps}
             placeholder={placeholder}
             value={value}
             onChangeText={setValue}
