@@ -111,7 +111,7 @@ export const MetadataReader = async (uri: string) => {
                             return ["year", value];
                         case "TRACKNUMBER":
                             return ["track", value];
-                        case "COVER" || "METADATA_BLOCK_PICTURE":
+                        case "METADATA_BLOCK_PICTURE":
                             return ["artwork", value];
                         default:
                             return [key, value];

@@ -27,6 +27,7 @@ import ImageBlurBackground from "../Components/UI/UI chunks/ImageBlurBackground"
 import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
 import PrimaryRoundIconButton from "../Components/UI/Buttons/PrimaryRoundIconButton";
 import IconButton from "../Components/UI/Buttons/IconButton";
+import TrackPlayer from "react-native-track-player";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -150,7 +151,8 @@ const PlayerScreen = () => {
         };
     });
 
-    if (!activeSong) {
+    const currentTrack = TrackPlayer.getActiveTrack();
+    if (!activeSong || !currentTrack) {
         return null;
     }
 

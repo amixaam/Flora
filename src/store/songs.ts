@@ -41,6 +41,7 @@ type SongsStore = {
     seekToPosition: (position: number) => Promise<void>;
 
     setRepeatMode: (mode: RepeatMode) => Promise<void>;
+    toggleRepeatMode: () => Promise<void>;
 
     addToQueue: (song: Song | Song[]) => Promise<void>;
     addToQueueFirst: (
@@ -206,6 +207,7 @@ export const useSongsStore = create<SongsStore>()(
 
             updateActiveSong: (songId) => {
                 set({ activeSong: get().getSong(songId) });
+                console.log("updated active song: ", songId);
             },
 
             play: async () => {
@@ -234,6 +236,28 @@ export const useSongsStore = create<SongsStore>()(
             },
             setRepeatMode: async (mode) => {
                 await TrackPlayer.setRepeatMode(mode);
+            },
+
+            toggleRepeatMode: async () => {
+                const current = await TrackPlayer.getRepeatMode();
+                let setRepeat: RepeatMode;
+
+                switch (current) {
+                    case RepeatMode.Off:
+                        setRepeat = RepeatMode.Track;
+                        break;
+                    case RepeatMode.Track:
+                        setRepeat = RepeatMode.Queue;
+                        break;
+                    case RepeatMode.Queue:
+                        setRepeat = RepeatMode.Off;
+                        break;
+                    default:
+                        setRepeat = RepeatMode.Off;
+                        break;
+                }
+                await TrackPlayer.setRepeatMode(setRepeat);
+                set({ repeatMode: setRepeat });
             },
 
             addToQueue: async (song) => {
@@ -313,7 +337,18 @@ export const useSongsStore = create<SongsStore>()(
                 return songs.filter((song) => song !== undefined) as Song[];
             },
 
-            shuffle: async () => {},
+            shuffle: async () => {
+                const queue = await TrackPlayer.getQueue();
+                const current = await TrackPlayer.getActiveTrackIndex();
+                if (!current) return;
+
+                const futureTracks = queue.slice(current + 1);
+                await TrackPlayer.removeUpcomingTracks();
+                await TrackPlayer.add(
+                    futureTracks.sort(() => Math.random() - 0.5)
+                );
+                set({ queue: await TrackPlayer.getQueue() });
+            },
 
             shuffleList: async (list, redirect = false) => {
                 const shuffledList = [...list].sort(() => Math.random() - 0.5);

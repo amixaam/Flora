@@ -1,7 +1,11 @@
 import { Text, View } from "react-native";
 import { useSongsStore } from "../../../store/songs";
 
-import { usePlaybackState, useProgress } from "react-native-track-player";
+import TrackPlayer, {
+    RepeatMode,
+    usePlaybackState,
+    useProgress,
+} from "react-native-track-player";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { FormatSecs } from "../../../utils/FormatMillis";
@@ -12,13 +16,35 @@ import IconButton from "../Buttons/IconButton";
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},
 }) => {
-    const { play, pause, next, previous, seekToPosition } = useSongsStore();
+    const {
+        play,
+        pause,
+        next,
+        previous,
+        seekToPosition,
+        shuffle,
+        toggleRepeatMode,
+        repeatMode,
+    } = useSongsStore();
     const playbackState = usePlaybackState();
     const progress = useProgress();
 
     const hanldePlayPausePress = () => {
         if (playbackState.state === "playing") pause();
         else play();
+    };
+
+    const getRepeatIcon = () => {
+        switch (repeatMode) {
+            case RepeatMode.Off:
+                return "repeat-off";
+            case RepeatMode.Track:
+                return "repeat-once";
+            case RepeatMode.Queue:
+                return "repeat";
+            default:
+                return "repeat-off";
+        }
     };
 
     return (
@@ -40,7 +66,7 @@ const PlaybackControls = ({
                     icon={"shuffle"}
                     size={IconSizes.lg}
                     touchableOpacityProps={{
-                        disabled: true,
+                        onPress: shuffle,
                     }}
                 />
                 <IconButton
@@ -77,10 +103,10 @@ const PlaybackControls = ({
                     size={IconSizes.xl}
                 />
                 <IconButton
-                    icon={"repeat"}
+                    icon={getRepeatIcon()}
                     size={IconSizes.lg}
                     touchableOpacityProps={{
-                        disabled: true,
+                        onPress: toggleRepeatMode,
                     }}
                 />
             </View>
