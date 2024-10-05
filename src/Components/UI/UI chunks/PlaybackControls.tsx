@@ -8,10 +8,11 @@ import TrackPlayer, {
 } from "react-native-track-player";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
-import { FormatSecs } from "../../../utils/FormatMillis";
+import { CalculateDurationLeft, FormatSecs } from "../../../utils/FormatMillis";
 import PlaybackSlider from "../Utils/PlaybackSlider";
 import { Direction } from "../../../types/other";
 import IconButton from "../Buttons/IconButton";
+import { router } from "expo-router";
 
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},
@@ -110,16 +111,31 @@ const PlaybackControls = ({
                     }}
                 />
             </View>
-            <PlaybackSlider
-                trackDuration={progress.duration}
-                trackPosition={progress.position}
-                skipPosition={seekToPosition}
-            />
-            <Text style={[textStyles.small, { textAlign: "center" }]}>
-                {FormatSecs(progress.position)}
-                {" / "}
-                {FormatSecs(progress.duration)}
-            </Text>
+            <View style={{ gap: Spacing.sm }}>
+                <PlaybackSlider
+                    trackDuration={progress.duration}
+                    trackPosition={progress.position}
+                    skipPosition={seekToPosition}
+                />
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Text style={[textStyles.small]}>
+                        {FormatSecs(progress.position)}
+                    </Text>
+                    <Text style={[textStyles.small]}>
+                        -
+                        {CalculateDurationLeft(
+                            progress.position,
+                            progress.duration
+                        )}
+                    </Text>
+                </View>
+            </View>
+            
         </View>
     );
 };

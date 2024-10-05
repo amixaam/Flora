@@ -142,7 +142,9 @@ export const parseFlacMetadata = (buffer) => {
         const headerByte = buffer.readUInt8(offset);
         const isLast = (headerByte & 0x80) !== 0;
         const blockType = headerByte & 0x7f;
-        const blockLength = buffer.readUInt32BE(offset + 1);
+
+        // Correctly read block length as big-endian 24-bit integer
+        const blockLength = buffer.readUIntBE(offset + 1, 3);
 
         console.log(`FLAC header byte: ${headerByte}`);
         console.log(`Is last: ${isLast}`);
@@ -153,18 +155,35 @@ export const parseFlacMetadata = (buffer) => {
 
         if (blockType === 4) {
             // VORBIS_COMMENT block
+            console.log(`Found VORBIS_COMMENT block at offset ${offset}`);
+
             const vendorLength = buffer.readUInt32LE(offset);
-            offset += 4 + vendorLength; // Skip vendor string
+            offset += 4;
+            console.log(`Vendor length: ${vendorLength}`);
+
+            const vendorString = buffer.toString(
+                "utf8",
+                offset,
+                offset + vendorLength
+            );
+            console.log(`Vendor string: ${vendorString}`);
+            offset += vendorLength;
 
             const commentListLength = buffer.readUInt32LE(offset);
             offset += 4;
-
-            console.log(`Vendor length: ${vendorLength}`);
             console.log(`Comment list length: ${commentListLength}`);
 
             for (let i = 0; i < commentListLength; i++) {
+                if (offset + 4 > buffer.length) {
+                    console.log(`Buffer overrun at comment ${i}`);
+                    break;
+                }
                 const commentLength = buffer.readUInt32LE(offset);
                 offset += 4;
+                if (offset + commentLength > buffer.length) {
+                    console.log(`Buffer overrun at comment ${i} content`);
+                    break;
+                }
                 const comment = buffer.toString(
                     "utf8",
                     offset,
@@ -172,24 +191,26 @@ export const parseFlacMetadata = (buffer) => {
                 );
                 offset += commentLength;
 
-                console.log(`Comment length: ${commentLength}`);
-                console.log(`Comment: ${comment}`);
-
                 const separatorIndex = comment.indexOf("=");
                 if (separatorIndex !== -1) {
                     const key = comment.slice(0, separatorIndex).toUpperCase();
                     const value = comment.slice(separatorIndex + 1);
                     tags[key] = value;
+                    console.log(`Parsed tag: ${key} = ${value}`);
+                } else {
+                    console.log(`Invalid comment format: ${comment}`);
                 }
             }
 
-            break;
+            break; // We've found and parsed the VORBIS_COMMENT block, so we can stop
         }
 
         offset += blockLength;
 
-        if (isLast) break;
+        if (isLast || offset >= buffer.length) break;
     }
+
+    console.log("FLAC tags:", tags);
 
     return tags;
 };

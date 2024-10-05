@@ -28,12 +28,15 @@ import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
 import PrimaryRoundIconButton from "../Components/UI/Buttons/PrimaryRoundIconButton";
 import IconButton from "../Components/UI/Buttons/IconButton";
 import TrackPlayer from "react-native-track-player";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const PlayerScreen = () => {
     const { activeSong, likeSong, unlikeSong, setSelectedSong } =
         useSongsStore();
+
+    const { bottom } = useSafeAreaInsets();
 
     const {
         sheetRef: SongOptionsRef,
@@ -270,6 +273,40 @@ const PlayerScreen = () => {
                         </Animated.View>
                     </GestureDetector>
                     <PlaybackControls animation={triggerSkipAnimation} />
+                </View>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        gap: Spacing.xl,
+                        position: "absolute",
+                        bottom: Spacing.appPadding + bottom,
+                        right: Spacing.appPadding,
+                        left: Spacing.appPadding,
+                    }}
+                >
+                    <IconButton
+                        icon="playlist-play"
+                        touchableOpacityProps={{
+                            onPress: () => router.push("/queue"),
+                        }}
+                    />
+                    <IconButton
+                        icon="alarm"
+                        touchableOpacityProps={{
+                            onPress: () => router.push("/queue"),
+                            disabled: true,
+                        }}
+                    />
+                    <IconButton
+                        icon="dots-vertical"
+                        touchableOpacityProps={{
+                            onPress: async () => {
+                                await setSelectedSong(activeSong);
+                                openSongOptions();
+                            },
+                        }}
+                    />
                 </View>
                 <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
             </Animated.View>

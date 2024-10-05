@@ -15,6 +15,15 @@ const FormatSecs = (seconds) => {
         .padStart(2, "0")}`;
 };
 
+const CalculateDurationLeft = (position, duration) => {
+    const durationLeft = duration - position;
+    const minutes = Math.floor(durationLeft / 60);
+    const seconds = Math.floor(durationLeft % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+};
+
 const CalculateTotalDuration = (songs) => {
     let totalDuration = 0;
     songs.forEach((song) => {
@@ -23,4 +32,9 @@ const CalculateTotalDuration = (songs) => {
     return FormatSecs(totalDuration);
 };
 
-export { FormatMillis, FormatSecs, CalculateTotalDuration };
+export {
+    FormatMillis,
+    FormatSecs,
+    CalculateTotalDuration,
+    CalculateDurationLeft,
+};

@@ -109,6 +109,8 @@ export default function SongsTab() {
             hasNextPage = batchHasNextPage;
         }
 
+        // console.log(assets.map((asset) => asset.uri));
+
         // check if there are new songs
         const newSongs = assets.filter(
             (asset) => !songs.some((song) => song.id === asset.id)
@@ -121,6 +123,13 @@ export default function SongsTab() {
 
     useEffect(() => {
         getFiles();
+
+        // async function getMet() {
+        //     await MetadataReader(
+        //         "file:///storage/emulated/0/Download/Frog96 - Be, be, be, be!.flac"
+        //     );
+        // }
+        // getMet();
     }, []);
 
     const {

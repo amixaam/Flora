@@ -24,7 +24,7 @@ const PlaybackSlider = ({
             minimumTrackTintColor="#E8DEF8"
             maximumTrackTintColor="#E8DEF8"
             style={{
-                marginHorizontal: -12,
+                marginHorizontal: -16,
             }}
         />
     );

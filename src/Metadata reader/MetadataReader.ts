@@ -1,6 +1,10 @@
 import { Buffer } from "buffer";
 import RNFS from "react-native-fs";
-import { parseID3Tags, parseOpusMetadata } from "./id3-tag-parser";
+import {
+    parseFlacMetadata,
+    parseID3Tags,
+    parseOpusMetadata,
+} from "./id3-tag-parser";
 
 // SUPPORTS OPUS AND MP3 SO FAR
 export const MetadataReader = async (uri: string) => {
@@ -10,7 +14,9 @@ export const MetadataReader = async (uri: string) => {
 
     try {
         // Read file using react-native-fs and convert to Buffer
-        const fileContent = await RNFS.readFile(uri, "base64");
+        const fileContent = await RNFS.read(uri, 1024 * 1024, 0, "base64");
+        console.log("running: ", uri);
+
         // Convert file content to Buffer
         const buffer = Buffer.from(fileContent, "base64");
 
@@ -23,9 +29,9 @@ export const MetadataReader = async (uri: string) => {
             buffer.toString("ascii", 28, 32) === "Opus"
         ) {
             detectedFileType = "opus";
+        } else if (buffer.toString("ascii", 0, 4) === "fLaC") {
+            detectedFileType = "flac";
         }
-        // else if (buffer.toString("ascii", 0, 4) === "fLaC") {
-        //     detectedFileType = "flac";
         // } else if (buffer.toString("ascii", 4, 8) === "ftyp") {
         //     detectedFileType = "m4a";
         // }
@@ -54,15 +60,17 @@ export const MetadataReader = async (uri: string) => {
                     error = err;
                 }
                 break;
-            // case "flac":
-            //     // Parse FLAC metadata blocks
-            //     try {
-            //         tags = parseFlacMetadata(buffer);
-            //     } catch (err) {
-            //         console.log(err);
-            //         error = err;
-            //     }
-            //     break;
+            case "flac":
+                // Parse FLAC metadata blocks
+                console.log("in flac");
+
+                try {
+                    tags = parseFlacMetadata(buffer);
+                } catch (err) {
+                    console.log(err);
+                    error = err;
+                }
+                break;
             default:
                 throw new Error("Unsupported file type");
         }
