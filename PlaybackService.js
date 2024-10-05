@@ -68,8 +68,4 @@ export const PlaybackService = async function () {
             previousTimestamp = Date.now();
         }
     });
-
-    // TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
-    //     console.log("Event.PlaybackState", event);
-    // });
 };

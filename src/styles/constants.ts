@@ -12,6 +12,7 @@ export enum Spacing {
     radiusLg = 25,
     round = 9999,
     miniPlayer = 60,
+    bottomTab = 80, // + bottom safe area inset (which is dependant on device)
 }
 
 export enum IconSizes {
@@ -34,11 +35,13 @@ export enum FontSize {
 }
 
 export enum Colors {
+    transparent = "transparent",
     primary = "#E8DEF8",
     primary90 = "#E8DEF890",
     primary30 = "#E8DEF830",
     secondary = "#16151B",
     bg = "#050506",
+    bg70 = "#05050670",
     input = "#2B2931",
     input60 = "#2B293160",
     neon10 = "#9747FF10",

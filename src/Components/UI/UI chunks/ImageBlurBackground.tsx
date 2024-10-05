@@ -7,6 +7,7 @@ import Animated, {
     useSharedValue,
 } from "react-native-reanimated";
 import { Album, Playlist } from "../../../types/song";
+import { getArtworkLocation } from "../../../utils/getArtworkLocation";
 
 interface ImageBlurBackgroundProps {
     image: Playlist["artwork"] | Album["artwork"];
@@ -23,8 +24,6 @@ const ImageBlurBackground = ({
     blur = 20,
     opacity = useSharedValue(1),
 }: ImageBlurBackgroundProps) => {
-    const backup = require("../../../../assets/images/empty-cover.png");
-
     // Use animated style for opacity
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -41,7 +40,7 @@ const ImageBlurBackground = ({
                 }}
             >
                 <Animated.Image
-                    source={image ? { uri: image } : backup}
+                    source={getArtworkLocation(image)}
                     style={[styles.AbsoluteFill, animatedStyle]}
                     resizeMode="cover"
                     blurRadius={blur}

@@ -14,6 +14,8 @@ import { mainStyles } from "../../../styles/styles";
 import * as MediaLibrary from "expo-media-library";
 import { MetadataReader } from "../../../Metadata reader/MetadataReader";
 import { Song } from "../../../types/song";
+import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
+import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 
 export default function SongsTab() {
     const {
@@ -142,22 +144,22 @@ export default function SongsTab() {
                 data={songs}
                 estimatedItemSize={1000}
                 ListHeaderComponent={
-                    <TopButtonControls
-                        horizontalMargins={Spacing.md}
-                        songs={songs}
-                    />
+                    <MainHeader title="Songs" />
+                    // <TopButtonControls
+                    //     horizontalMargins={Spacing.md}
+                    //     songs={songs}
+                    // />
                 }
+                stickyHeaderHiddenOnScroll={true}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        progressViewOffset={insets.top * 2}
                         onRefresh={onRefresh}
                         colors={[Colors.bg]}
                         progressBackgroundColor={Colors.primary}
                     />
                 }
                 contentContainerStyle={{
-                    paddingTop: insets.top * 2,
                     paddingBottom: insets.bottom + Spacing.miniPlayer,
                 }}
                 renderItem={({ item }) => {

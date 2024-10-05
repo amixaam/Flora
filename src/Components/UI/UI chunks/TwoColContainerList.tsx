@@ -46,12 +46,11 @@ export const TwoColContainerList = ({
                 // @ts-ignore
                 data={data}
                 keyExtractor={(item) => item.id}
-                ListHeaderComponent={
-                    <TopButtonControls songs={allSongs ? allSongs : []} />
-                }
+                // ListHeaderComponent={
+                //     <TopButtonControls songs={allSongs ? allSongs : []} />
+                // }
                 contentContainerStyle={{
-                    paddingTop: insets.top * 2,
-                    paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    paddingBottom: Spacing.md + Spacing.miniPlayer,
                     paddingHorizontal: Spacing.appPadding - Spacing.sm,
                 }}
                 ListEmptyComponent={

@@ -10,7 +10,7 @@ interface SheetHeaderProps {
     title?: string | React.ReactElement;
     titleStyle?: StyleProp<TextStyle | TextStyleAndroid>;
     headerbgColor?: Colors;
-    headerLeft?: IconButtonProps;
+    headerLeft?: IconButtonProps | React.ReactElement;
     headerRight?: IconButtonProps | React.ReactElement;
 }
 

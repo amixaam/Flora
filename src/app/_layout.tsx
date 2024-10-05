@@ -89,39 +89,32 @@ function DefaultLayout() {
                 headerShown: false,
                 statusBarStyle: "light",
                 navigationBarColor: "transparent",
-                statusBarColor: "transparent",
+                statusBarColor: Colors.transparent,
+                animation: "slide_from_bottom",
             }}
         >
-            <Stack.Screen name="(tabs)" options={{}} />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen
                 name="player"
                 options={{
-                    animation: "slide_from_bottom",
-                    contentStyle: { backgroundColor: "transparent" },
                     presentation: "transparentModal",
                 }}
             />
             <Stack.Screen
                 name="history"
                 options={{
-                    animation: "slide_from_bottom",
-                    contentStyle: { backgroundColor: "transparent" },
                     presentation: "transparentModal",
                 }}
             />
             <Stack.Screen
                 name="queue"
                 options={{
-                    animation: "slide_from_bottom",
-                    contentStyle: { backgroundColor: "transparent" },
                     presentation: "transparentModal",
                 }}
             />
             <Stack.Screen
                 name="search"
                 options={{
-                    animation: "slide_from_bottom",
-                    contentStyle: { backgroundColor: "transparent" },
                     presentation: "transparentModal",
                 }}
             />

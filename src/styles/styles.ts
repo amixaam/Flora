@@ -7,6 +7,10 @@ export const mainStyles = StyleSheet.create({
         backgroundColor: Colors.bg,
     },
 
+    transparentContainer: {
+        flex: 1,
+    },
+
     sheetContainer: {
         flex: 1,
         backgroundColor: Colors.secondary,

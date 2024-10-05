@@ -20,9 +20,8 @@ const ImagePickerButton = ({
         await ImagePicker.getMediaLibraryPermissionsAsync();
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
+            allowsEditing: false,
             aspect: [1, 1],
-            quality: 1,
         });
 
         if (!result.canceled) setImage(result.assets[0].uri);

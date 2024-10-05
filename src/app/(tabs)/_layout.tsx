@@ -3,7 +3,7 @@ import { createMaterialBottomTabNavigator } from "react-native-paper/react-navig
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MiniPlayer from "../../Components/UI/UI chunks/MiniPlayer";
-import { IconSizes } from "../../styles/constants";
+import { IconSizes, Spacing } from "../../styles/constants";
 
 const { Navigator } = createMaterialBottomTabNavigator();
 
@@ -19,11 +19,16 @@ export default function TabLayout() {
                     backgroundColor: "#16151B",
                 }}
                 shifting={true}
+                sceneAnimationEnabled={true}
+                sceneAnimationType="shifting"
                 theme={{
                     colors: {
                         secondaryContainer: "#2B2931",
                         elevation: "black",
                     },
+                }}
+                barStyle={{
+                    height: Spacing.bottomTab + insets.bottom,
                 }}
             >
                 <MaterialBottomTabs.Screen
@@ -90,7 +95,7 @@ export default function TabLayout() {
             <MiniPlayer
                 style={{
                     position: "absolute",
-                    bottom: insets.bottom * 4.3,
+                    bottom: Spacing.bottomTab + insets.bottom,
                     left: 0,
                     right: 0,
                 }}

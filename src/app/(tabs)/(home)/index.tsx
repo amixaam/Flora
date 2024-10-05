@@ -3,7 +3,6 @@ import {
     ImageBackground,
     Text,
     TouchableNativeFeedback,
-    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -14,17 +13,16 @@ import { useSongsStore } from "../../../store/songs";
 import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
-import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import { IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
 
-// @ts-ignore
-import RecapGradient from "../../../../assets/images/recap-gradient.png";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
+import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 
 export default function PlaylistsTab() {
     const { albums, getRecentlyPlayed } = useSongsStore();
@@ -37,63 +35,51 @@ export default function PlaylistsTab() {
     } = useBottomSheetModal();
 
     return (
-        <ScrollView style={mainStyles.container}>
+        <View style={mainStyles.container}>
             <BackgroundImageAbsolute />
-            <View style={{ paddingTop: insets.top * 2.3 }} />
-            <View
+            <ScrollView style={mainStyles.transparentContainer}>
+                <MainHeader />
+                {/* <View
                 style={{
                     flexDirection: "row",
                     gap: Spacing.md,
                     paddingBottom: Spacing.md,
                     marginHorizontal: Spacing.appPadding,
-                }}
-            >
-                <TouchableOpacity
-                    onPress={() => {
-                        router.push("/history");
                     }}
-                >
-                    <Text style={textStyles.text}>History</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                    >
+                    <TouchableOpacity
                     onPress={() => {
                         router.push("/queue");
-                    }}
-                >
-                    <Text style={textStyles.text}>Queue</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => {
-                        router.push("/search");
-                    }}
-                >
-                    <Text style={textStyles.text}>Search</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1, gap: Spacing.md }}>
-                {/* <RecapBanner /> */}
-                <HomeHeader text="Recently played" />
-                {/* Pin Liked songs playlist to first position */}
-                {/* Limit to ~10 entries */}
-                <HorizontalList
-                    list={getRecentlyPlayed()}
-                    longPress={openContainer}
-                />
-                <View style={{ gap: Spacing.xs }}>
-                    <HomeHeader text="Mood board" />
-                    <CategoriesSelector
-                        buttons={["Sleep", "Focus", "Energize", "sad"]}
+                        }}
+                        >
+                        <Text style={textStyles.text}>Queue</Text>
+                        </TouchableOpacity>
+                        </View> */}
+                <View style={{ flex: 1, gap: Spacing.md }}>
+                    {/* <RecapBanner /> */}
+                    <HomeHeader text="Recently played" />
+                    <HorizontalList
+                        list={getRecentlyPlayed()}
+                        longPress={openContainer}
                     />
+                    {/* sorted by date modified */}
+                    <HomeHeader text="Albums" />
+                    <HorizontalList list={albums} longPress={openContainer} />
+
+                    <HomeHeader text="Most played" />
+                    <HorizontalList list={albums} longPress={openContainer} />
+
+                    <HomeHeader text="Forgotten favourites" />
+                    <HorizontalList list={albums} longPress={openContainer} />
                 </View>
-                <HorizontalList list={albums} longPress={openContainer} />
-                {/* <HomeHeader text="Most played" />
-                <HomeHeader text="Recaps" /> */}
-            </View>
-            <View
-                style={{ paddingBottom: insets.bottom + Spacing.miniPlayer }}
-            />
-            <ContainerSheet ref={containerRef} dismiss={closeContainer} />
-        </ScrollView>
+                <View
+                    style={{
+                        paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    }}
+                />
+                <ContainerSheet ref={containerRef} dismiss={closeContainer} />
+            </ScrollView>
+        </View>
     );
 }
 
@@ -187,6 +173,7 @@ const HomeHeader = ({ text = "Header" }) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 paddingHorizontal: Spacing.appPadding,
+                marginTop: Spacing.md,
             }}
         >
             <Text
@@ -201,7 +188,7 @@ const HomeHeader = ({ text = "Header" }) => {
             >
                 {text}
             </Text>
-            <View style={{ flexDirection: "row", gap: Spacing.xs }}>
+            <View style={{ flexDirection: "row", gap: Spacing.md }}>
                 <IconButton icon="play" />
                 <IconButton icon="shuffle" />
             </View>

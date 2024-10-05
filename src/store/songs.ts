@@ -140,7 +140,7 @@ export const useSongsStore = create<SongsStore>()(
                     id: "1",
                     title: "Liked songs",
                     description: "Your songs that you liked.",
-                    artwork: undefined,
+                    artwork: "Liked songs",
                     songs: [], //contains only id's
                     lastModified: undefined,
                     createdAt: new Date().toString(),
@@ -176,7 +176,7 @@ export const useSongsStore = create<SongsStore>()(
                             id: "1",
                             title: "Liked songs",
                             description: "Your songs that you liked.",
-                            artwork: undefined,
+                            artwork: "Liked songs",
                             songs: [],
                             lastModified: undefined,
                             createdAt: new Date().toString(),
@@ -206,7 +206,8 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             updateActiveSong: (songId) => {
-                set({ activeSong: get().getSong(songId) });
+                const song = get().getSong(songId);
+                set({ activeSong: song });
                 console.log("updated active song: ", songId);
             },
 
@@ -614,7 +615,7 @@ export const useSongsStore = create<SongsStore>()(
                         ? inputFields.artwork
                         : undefined,
                     songs: [],
-                    lastModified: undefined,
+                    lastModified: new Date().toString(),
                     createdAt: new Date().toString(),
                 };
 
@@ -627,7 +628,11 @@ export const useSongsStore = create<SongsStore>()(
                 set((state) => ({
                     playlists: state.playlists.map((playlist) =>
                         playlist.id === id
-                            ? { ...playlist, ...inputFields }
+                            ? {
+                                  ...playlist,
+                                  ...inputFields,
+                                  lastModified: new Date().toString(),
+                              }
                             : playlist
                     ),
                 }));
@@ -747,7 +752,7 @@ export const useSongsStore = create<SongsStore>()(
                     artwork: inputFields.artwork
                         ? inputFields.artwork
                         : undefined,
-                    lastModified: undefined,
+                    lastModified: new Date().toString(),
                     createdAt: new Date().toString(),
                 };
 
@@ -765,6 +770,7 @@ export const useSongsStore = create<SongsStore>()(
                             ? {
                                   ...album,
                                   ...inputFields,
+                                  lastModified: new Date().toString(),
                               }
                             : album
                     ),
@@ -861,7 +867,6 @@ export const useSongsStore = create<SongsStore>()(
 
                 get().autoUpdateSongTags(songId);
                 get().updateSelectedContainer(albumId);
-                get().updateSelectedAndActiveSong(songId);
             },
 
             removeSongFromAlbum: (albumId, songId) => {
@@ -897,7 +902,6 @@ export const useSongsStore = create<SongsStore>()(
 
                 get().autoUpdateSongTags(songId);
                 get().updateSelectedContainer(albumId);
-                get().updateSelectedAndActiveSong(songId);
             },
 
             updateSongTagsByAlbum: (albumId) => {
@@ -930,9 +934,9 @@ export const useSongsStore = create<SongsStore>()(
                         s.id === songId
                             ? {
                                   ...s,
-                                  artist: relatedAlbum.artist,
+                                  //   artist: relatedAlbum.artist,
+                                  //   year: relatedAlbum.year,
                                   artwork: relatedAlbum.artwork,
-                                  year: relatedAlbum.year,
                               }
                             : s
                     ),
