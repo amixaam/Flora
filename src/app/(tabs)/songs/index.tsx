@@ -17,6 +17,8 @@ import { Song } from "../../../types/song";
 import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 
+import * as TagReader from "expo-tag-reader";
+
 export default function SongsTab() {
     const {
         songs,
@@ -28,6 +30,8 @@ export default function SongsTab() {
         doesSongExist,
         getAlbumByName,
     } = useSongsStore();
+
+    console.log(readAudioFiles());
 
     const SaveSong = async (asset: MediaLibrary.Asset) => {
         // Song already exists

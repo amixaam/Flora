@@ -30,6 +30,7 @@
         "expo-navigation-bar": "~2.8.1",
         "expo-router": "~3.4.10",
         "expo-status-bar": "~1.11.1",
+        "expo-tag-reader": "^0.1.0",
         "react": "18.2.0",
         "react-native": "0.73.6",
         "react-native-fs": "^2.20.0",
