@@ -2,22 +2,20 @@ import { FlashList } from "@shopify/flash-list";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
+import * as MediaLibrary from "expo-media-library";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
+import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import SongListItem from "../../../Components/UI/UI chunks/SongListItem";
-import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
+import { MetadataReader } from "../../../Metadata reader/MetadataReader";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import * as MediaLibrary from "expo-media-library";
-import { MetadataReader } from "../../../Metadata reader/MetadataReader";
 import { Song } from "../../../types/song";
-import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
-import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 
-import * as TagReader from "expo-tag-reader";
+import { readAudioFiles } from "expo-tag-reader";
 
 export default function SongsTab() {
     const {

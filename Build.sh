@@ -3,9 +3,6 @@
 # Get the project name from the directory name
 project_name=$(basename $(pwd))
 
-# set correct java version
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-
 # Move to android directory (assuming standard structure)
 cd android
 
