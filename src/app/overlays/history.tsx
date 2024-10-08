@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Menu } from "react-native-paper";
-import SongSheet from "../Components/BottomSheets/Song/SongSheet";
-import SongListItem from "../Components/UI/UI chunks/SongListItem";
-import SheetHeader from "../Components/UI/Headers/SheetHeader";
-import SwipeDownScreen from "../Components/UI/Utils/SwipeDownScreen";
-import useBottomSheetModal from "../hooks/useBottomSheetModal";
-import { useSongsStore } from "../store/songs";
-import { Colors } from "../styles/constants";
-import { Song } from "../types/song";
-import IconButton from "../Components/UI/Buttons/IconButton";
+import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
+import SongListItem from "../../Components/UI/UI chunks/SongListItem";
+import SheetHeader from "../../Components/UI/Headers/SheetHeader";
+import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
+import useBottomSheetModal from "../../hooks/useBottomSheetModal";
+import { useSongsStore } from "../../store/songs";
+import { Colors } from "../../styles/constants";
+import { Song } from "../../types/song";
+import IconButton from "../../Components/UI/Buttons/IconButton";
 
 const HistoryScreen = () => {
     const { history, getSong, setSelectedSong, addToQueueFirst } =

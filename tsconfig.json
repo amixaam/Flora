@@ -2,8 +2,7 @@
     "compilerOptions": {
         "strict": true,
         "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true
+        "noImplicitReturns": true
     },
     "extends": "expo/tsconfig.base"
 }

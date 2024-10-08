@@ -13,10 +13,10 @@ import TrackPlayer, {
 import { PlaybackService } from "../../PlaybackService";
 import { useSongsStore } from "../store/songs";
 import { Colors } from "../styles/constants";
-
+import * as NavigationBar from "expo-navigation-bar";
+import { UpdateMetadata } from "../utils/UpdateMetadata";
 export default function App() {
     const { startup } = useSongsStore();
-
     useEffect(() => {
         async function setup() {
             try {
@@ -49,6 +49,8 @@ export default function App() {
 
                 console.log("Setup!");
             }
+
+            await UpdateMetadata();
         }
         setup();
         function deepLinkHandler(data: { url: string }) {
@@ -83,40 +85,22 @@ export default function App() {
 }
 
 function DefaultLayout() {
+    NavigationBar.setPositionAsync("absolute");
+    NavigationBar.setBackgroundColorAsync("#ffffff00");
+
     return (
         <Stack
             screenOptions={{
                 headerShown: false,
                 statusBarStyle: "light",
-                navigationBarColor: "transparent",
-                statusBarColor: Colors.transparent,
+                statusBarTranslucent: true,
                 animation: "slide_from_bottom",
             }}
         >
             <Stack.Screen name="(tabs)" />
             <Stack.Screen
-                name="player"
-                options={{
-                    presentation: "transparentModal",
-                }}
-            />
-            <Stack.Screen
-                name="history"
-                options={{
-                    presentation: "transparentModal",
-                }}
-            />
-            <Stack.Screen
-                name="queue"
-                options={{
-                    presentation: "transparentModal",
-                }}
-            />
-            <Stack.Screen
-                name="search"
-                options={{
-                    presentation: "transparentModal",
-                }}
+                name="overlays"
+                options={{ presentation: "transparentModal" }}
             />
         </Stack>
     );

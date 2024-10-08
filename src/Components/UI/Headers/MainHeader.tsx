@@ -1,10 +1,11 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { textStyles } from "../../../styles/text";
 import SheetHeader from "./SheetHeader";
-import { Spacing } from "../../../styles/constants";
+import { Colors, Spacing } from "../../../styles/constants";
 import IconButton from "../Buttons/IconButton";
 import { router } from "expo-router";
-import BackgroundImageAbsolute from "../UI chunks/BackgroundImageAbsolute";
+import { useSongsStore } from "../../../store/songs";
+import { ActivityIndicator } from "react-native-paper";
 
 interface MainHeaderProps {
     title?: string;
@@ -28,6 +29,7 @@ export const MainHeader = ({
 };
 
 const IconHeaders = ({ headerRight }: { headerRight?: React.ReactNode }) => {
+    const { isReadingSongs } = useSongsStore();
     return (
         <View
             style={{
@@ -37,16 +39,20 @@ const IconHeaders = ({ headerRight }: { headerRight?: React.ReactNode }) => {
             }}
         >
             {headerRight}
+            <ActivityIndicator
+                animating={isReadingSongs}
+                color={Colors.primary}
+            />
             <IconButton
                 icon="history"
                 touchableOpacityProps={{
-                    onPress: () => router.push("/history"),
+                    onPress: () => router.push("/overlays/history"),
                 }}
             />
             <IconButton
                 icon="magnify"
                 touchableOpacityProps={{
-                    onPress: () => router.push("/search"),
+                    onPress: () => router.push("/overlays/search"),
                 }}
             />
         </View>

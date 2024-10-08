@@ -3,13 +3,20 @@ import { Text } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { useSongsStore } from "../../../store/songs";
-import { Colors, IconSizes, Spacing } from "../../../styles/constants";
+import {
+    Colors,
+    IconSizes,
+    ImageSources,
+    Spacing,
+} from "../../../styles/constants";
 import { newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import Checkbox from "../Buttons/Checkbox";
 import IconButton from "../Buttons/IconButton";
+import { getArtworkLocation } from "../../../utils/getArtworkLocation";
+import AlbumArt from "./AlbumArt";
 
 export interface SongListItemProps {
     item: Song;
@@ -191,11 +198,8 @@ const PlayingIndicator = ({
     if (!isCurrentTrack && showImage) {
         return (
             <ImageBackground
-                source={
-                    image
-                        ? { uri: image }
-                        : require("../../../../assets/images/empty-cover.png")
-                }
+                source={getArtworkLocation(image)}
+                defaultSource={ImageSources.cover}
                 style={{
                     height: 48,
                     aspectRatio: 1,
@@ -210,11 +214,8 @@ const PlayingIndicator = ({
     if (showImage) {
         return (
             <ImageBackground
-                source={
-                    image
-                        ? { uri: image }
-                        : require("../../../../assets/images/empty-cover.png")
-                }
+                source={getArtworkLocation(image)}
+                defaultSource={ImageSources.cover}
                 style={{
                     height: 48,
                     aspectRatio: 1,

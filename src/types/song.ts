@@ -59,7 +59,7 @@ interface Album {
     artist: string;
     year: string;
     artwork: string | undefined;
-    songs: string[];
+    songs: string[]; // song id's
     lastModified: string | undefined;
     createdAt: string;
 }

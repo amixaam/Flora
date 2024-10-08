@@ -15,11 +15,13 @@ type SongsStore = {
     history: History;
     queue: Track[];
 
+    isReadingSongs: boolean;
     selectedSong: Song | undefined;
     activeSong: Song | undefined;
 
     selectedContainer: Playlist | Album | undefined;
 
+    setIsReadingSongs: (value: boolean) => void;
     setSelectedSong: (song: Song) => Promise<void>;
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
 
@@ -112,6 +114,10 @@ type SongsStore = {
 
     // // albums
     createAlbum: (inputFields: Partial<Album>) => string;
+    addAlbums: (
+        albumFields: { [key: Album["title"]]: Partial<Album> },
+        songIds: { [key: Album["title"]]: Song["id"][] }
+    ) => void;
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
 
@@ -156,9 +162,14 @@ export const useSongsStore = create<SongsStore>()(
             repeatMode: RepeatMode.Off,
             activeSong: undefined,
 
+            isReadingSongs: false,
             // menus
             selectedSong: undefined,
             selectedContainer: undefined,
+
+            setIsReadingSongs: (value) => {
+                set({ isReadingSongs: value });
+            },
 
             setSelectedSong: async (song) => {
                 set({ selectedSong: song });
@@ -291,7 +302,7 @@ export const useSongsStore = create<SongsStore>()(
                 await TrackPlayer.load(song);
                 get().addSongToConsciousHistory(song.id);
                 set({ queue: await TrackPlayer.getQueue() });
-                if (redirect) router.push("/player");
+                if (redirect) router.push("/overlays/player");
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
@@ -318,7 +329,7 @@ export const useSongsStore = create<SongsStore>()(
 
                 set({ queue: await TrackPlayer.getQueue() });
                 await TrackPlayer.play();
-                if (redirect) router.push("/player");
+                if (redirect) router.push("/overlays/player");
             },
 
             getQueue: async (): Promise<Song[]> => {
@@ -357,7 +368,7 @@ export const useSongsStore = create<SongsStore>()(
                 set({ queue: await TrackPlayer.getQueue() });
                 await TrackPlayer.play();
                 get().addSongToConsciousHistory(shuffledList[0].id);
-                if (redirect) router.push("/player");
+                if (redirect) router.push("/overlays/player");
             },
 
             // songs ----------------------------------------------------------
@@ -763,6 +774,33 @@ export const useSongsStore = create<SongsStore>()(
                 return id;
             },
 
+            addAlbums: (albumFields, songIds) => {
+                const ids: string[] = [];
+                set((state) => {
+                    const newAlbums = Object.entries(albumFields).map(
+                        ([title, albumData]) => {
+                            const songList = songIds[title] || [];
+                            ids.push(albumData.id as string);
+
+                            return {
+                                id: albumData.id,
+                                title: title,
+                                artist: albumData.artist || "No artist",
+                                artwork: albumData.artwork || undefined,
+                                year: albumData.year || "No year",
+                                songs: songList,
+                                lastModified: new Date().toString(),
+                                createdAt: new Date().toString(),
+                            } as Album;
+                        }
+                    );
+
+                    return {
+                        albums: [...state.albums, ...newAlbums],
+                    };
+                });
+            },
+
             editAlbum: (id, inputFields) => {
                 set((state) => ({
                     albums: state.albums.map((album) =>
@@ -864,8 +902,6 @@ export const useSongsStore = create<SongsStore>()(
                         ),
                     }));
                 }
-
-                get().autoUpdateSongTags(songId);
                 get().updateSelectedContainer(albumId);
             },
 
@@ -900,7 +936,6 @@ export const useSongsStore = create<SongsStore>()(
                     }));
                 }
 
-                get().autoUpdateSongTags(songId);
                 get().updateSelectedContainer(albumId);
             },
 

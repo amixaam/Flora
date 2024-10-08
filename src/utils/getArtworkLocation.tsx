@@ -1,12 +1,17 @@
 import { ImageSourcePropType } from "react-native";
+import { ImageSources } from "../styles/constants";
 
-export const getArtworkLocation = (fileUri: string | undefined) => {
-    let uri: ImageSourcePropType = require("../../assets/images/empty-cover.png");
+export const getArtworkLocation = (image: string | undefined) => {
+    let uri: ImageSourcePropType = ImageSources.cover;
 
-    if (fileUri === "Liked songs") {
-        uri = require("../../assets/images/liked-songs-cover.png");
-    } else if (fileUri) {
-        uri = { uri: fileUri };
+    if (image === "Liked songs") {
+        uri = ImageSources.likedSongsCover;
+    } else if (image) {
+        if (image.startsWith("file:///")) {
+            uri = { uri: image };
+        } else {
+            uri = { uri: `data:image/jpeg;base64,${image}` };
+        }
     }
 
     return uri;

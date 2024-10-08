@@ -3,16 +3,16 @@ import { ScrollView } from "react-native-gesture-handler";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
 import { usePlaybackState } from "react-native-track-player";
-import SongListItem from "../Components/UI/UI chunks/SongListItem";
-import SheetHeader from "../Components/UI/Headers/SheetHeader";
-import SwipeDownScreen from "../Components/UI/Utils/SwipeDownScreen";
-import { useSongsStore } from "../store/songs";
-import { Colors, Spacing } from "../styles/constants";
-import { textStyles } from "../styles/text";
-import { Song } from "../types/song";
-import { CombineStrings } from "../utils/CombineStrings";
-import ListItemsNotFound from "../Components/UI/Text/ListItemsNotFound";
-import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
+import SongListItem from "../../Components/UI/UI chunks/SongListItem";
+import SheetHeader from "../../Components/UI/Headers/SheetHeader";
+import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
+import { useSongsStore } from "../../store/songs";
+import { Colors, Spacing } from "../../styles/constants";
+import { textStyles } from "../../styles/text";
+import { Song } from "../../types/song";
+import { CombineStrings } from "../../utils/CombineStrings";
+import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
+import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 
 const QueueScreen = () => {
     const { queue } = useSongsStore();

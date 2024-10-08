@@ -20,7 +20,7 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/system/adaptive-icon.png",
-                "backgroundColor": "#000000"
+                "backgroundColor": "#050506"
             },
             "package": "com.anonymous.Flora",
             "permissions": ["WAKE_LOCK"]
@@ -44,9 +44,6 @@
         "extra": {
             "router": {
                 "origin": false
-            },
-            "eas": {
-                "projectId": "39abf8de-c6dc-4b0b-b412-239f936d7927"
             }
         }
     }

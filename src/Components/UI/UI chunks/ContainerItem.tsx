@@ -26,10 +26,7 @@ const ContainerItem = ({
                     <Text style={textStyles.h6} numberOfLines={1}>
                         {item.title}
                     </Text>
-                    <Text
-                        style={[textStyles.small, { width: "100%" }]}
-                        numberOfLines={1}
-                    >
+                    <Text style={[textStyles.small]} numberOfLines={1}>
                         {/* Differentiate between albums and playlists */}
                         {"artist" in item
                             ? CombineStrings([item.artist, item.year])

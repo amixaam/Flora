@@ -94,7 +94,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     });
 
     const openPlayer = () => {
-        router.push("/player");
+        router.push("/overlays/player");
     };
 
     if (!activeSong) return null;

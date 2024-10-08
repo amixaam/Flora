@@ -14,19 +14,19 @@ import {
     skipToNext,
     skipToPrevious,
 } from "react-native-track-player/lib/src/trackPlayer";
-import SongSheet from "../Components/BottomSheets/Song/SongSheet";
-import PlaybackControls from "../Components/UI/UI chunks/PlaybackControls";
-import useBottomSheetModal from "../hooks/useBottomSheetModal";
-import { useSongsStore } from "../store/songs";
-import { Spacing } from "../styles/constants";
-import { mainStyles } from "../styles/styles";
-import { textStyles } from "../styles/text";
-import { Direction } from "../types/other";
-import { CombineStrings } from "../utils/CombineStrings";
-import ImageBlurBackground from "../Components/UI/UI chunks/ImageBlurBackground";
-import AlbumArt from "../Components/UI/UI chunks/AlbumArt";
-import PrimaryRoundIconButton from "../Components/UI/Buttons/PrimaryRoundIconButton";
-import IconButton from "../Components/UI/Buttons/IconButton";
+import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
+import PlaybackControls from "../../Components/UI/UI chunks/PlaybackControls";
+import useBottomSheetModal from "../../hooks/useBottomSheetModal";
+import { useSongsStore } from "../../store/songs";
+import { Spacing } from "../../styles/constants";
+import { mainStyles } from "../../styles/styles";
+import { textStyles } from "../../styles/text";
+import { Direction } from "../../types/other";
+import { CombineStrings } from "../../utils/CombineStrings";
+import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackground";
+import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
+import PrimaryRoundIconButton from "../../Components/UI/Buttons/PrimaryRoundIconButton";
+import IconButton from "../../Components/UI/Buttons/IconButton";
 import TrackPlayer from "react-native-track-player";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

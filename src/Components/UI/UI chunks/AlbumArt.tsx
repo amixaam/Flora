@@ -1,6 +1,6 @@
 import { Image, StyleProp, View, ViewStyle } from "react-native";
 import { Album, Playlist } from "../../../types/song";
-import { Spacing } from "../../../styles/constants";
+import { ImageSources, Spacing } from "../../../styles/constants";
 import { getArtworkLocation } from "../../../utils/getArtworkLocation";
 
 type AlbumArtProps = {
@@ -10,11 +10,11 @@ type AlbumArtProps = {
 };
 
 const AlbumArt = ({ image, radius = Spacing.radius, style }: AlbumArtProps) => {
-
     return (
         <View style={[style, { aspectRatio: 1, borderRadius: radius }]}>
             <Image
                 source={getArtworkLocation(image)}
+                defaultSource={ImageSources.cover}
                 style={{
                     width: "100%",
                     height: "100%",
