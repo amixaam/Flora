@@ -11,16 +11,17 @@ import SongListItem, {
 } from "../../../Components/UI/UI chunks/SongListItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
-import { IconSizes, Spacing } from "../../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
-import IconButton from "../../../Components/UI/Buttons/IconButton";
 import ListItemsNotFound from "../../../Components/UI/Text/ListItemsNotFound";
 import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackground";
 import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
+import SongItem from "../../../Components/UI/UI chunks/SongItem";
+import { IconButton } from "react-native-paper";
 
 export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,20 +29,6 @@ export default function ContainerScreen() {
 
     const { setSelectedContainer, getSongsFromContainer, getContainer } =
         useSongsStore();
-
-    const navigation = useNavigation();
-    useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => (
-                <IconButton
-                    icon="tune"
-                    touchableOpacityProps={{
-                        onPress: openContainerOptions,
-                    }}
-                />
-            ),
-        });
-    }, [navigation]);
 
     let data: Album | Playlist | undefined = getContainer(id);
 
@@ -87,14 +74,12 @@ export default function ContainerScreen() {
             <View style={{ flex: 1, gap: Spacing.appPadding }}>
                 <AlbumInfo
                     data={data}
-                    controlProps={{ songData, openContainerOptions }}
+                    songData={songData}
+                    openContainerOptions={openContainerOptions}
                 />
                 <SongList
                     songData={songData}
-                    songProps={{
-                        showImage: "description" in data,
-                        showNumeration: "artist" in data,
-                    }}
+                    isAlbum={"artist" in data}
                     openSongOptions={openSongOptions}
                 />
             </View>
@@ -114,12 +99,16 @@ export default function ContainerScreen() {
 
 type AlbumInfoProps = {
     data: Playlist | Album;
-    controlProps: {
-        songData: Song[];
-        openContainerOptions: () => void;
-    };
+    songData: Song[];
+    openContainerOptions: () => void;
 };
-const AlbumInfo = ({ data, controlProps }: AlbumInfoProps) => {
+const AlbumInfo = ({
+    data,
+    songData,
+    openContainerOptions,
+}: AlbumInfoProps) => {
+    const { shuffleList, addListToQueue } = useSongsStore();
+
     const isAlbum = "artist" in data;
 
     return (
@@ -144,48 +133,33 @@ const AlbumInfo = ({ data, controlProps }: AlbumInfoProps) => {
                         : data?.description}
                 </Text>
             </View>
-            <Controls {...controlProps} />
-        </View>
-    );
-};
-
-const Controls = ({
-    songData,
-    openContainerOptions,
-}: {
-    songData: Song[];
-    openContainerOptions: () => void;
-}) => {
-    const { shuffleList, addListToQueue } = useSongsStore();
-
-    return (
-        <View
-            style={{
-                flexDirection: "row",
-                flex: 1,
-                columnGap: 20,
-                alignItems: "center",
-            }}
-        >
-            <IconButton
-                icon="shuffle"
-                touchableOpacityProps={{
-                    onPress: () => shuffleList(songData, true),
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: -Spacing.md,
                 }}
-            />
-            <IconButton
-                touchableOpacityProps={{
-                    onPress: () => addListToQueue(songData, undefined, true),
-                }}
-                size={IconSizes.xl}
-                icon="play-circle"
-            />
-            <IconButton
-                icon="tune"
-                touchableOpacityProps={{
-                    onPress: openContainerOptions,
-                }}
-            />
+            >
+                <IconButton
+                    icon="shuffle"
+                    size={IconSizes.md}
+                    onPress={() => shuffleList(songData, true)}
+                    iconColor={Colors.primary}
+                />
+                <IconButton
+                    icon="play-circle"
+                    size={IconSizes.md * 2}
+                    style={{ marginHorizontal: -Spacing.xxs }}
+                    onPress={() => addListToQueue(songData, undefined, true)}
+                    iconColor={Colors.primary}
+                />
+                <IconButton
+                    icon="tune"
+                    size={IconSizes.md}
+                    onPress={openContainerOptions}
+                    iconColor={Colors.primary}
+                />
+            </View>
         </View>
     );
 };
@@ -193,19 +167,14 @@ const Controls = ({
 type SongListProps = {
     songData: Song[];
     openSongOptions?: () => void;
-    songProps?: Omit<SongListItemProps, "item">;
+    isAlbum?: boolean;
 };
 const SongList = ({
     songData,
     openSongOptions = () => {},
-    songProps,
+    isAlbum,
 }: SongListProps) => {
     const { setSelectedSong, addListToQueue } = useSongsStore();
-
-    const openSongSheet = async (song: Song) => {
-        await setSelectedSong(song);
-        openSongOptions();
-    };
 
     return (
         <View style={{ minHeight: 5 }}>
@@ -236,17 +205,21 @@ const SongList = ({
                     ) : null
                 }
                 renderItem={({ item, index }) => (
-                    <SongListItem
-                        item={item}
-                        index={index}
-                        showImage={true}
+                    <SongItem
+                        song={item}
+                        rightSideProps={{
+                            count: isAlbum ? index + 1 : undefined,
+                        }}
                         onPress={() => {
+                            setSelectedSong(item);
                             addListToQueue(songData, item, true);
                         }}
-                        onLongPress={() => {
-                            openSongSheet(item);
+                        controls={{
+                            onPress: async () => {
+                                await setSelectedSong(item);
+                                openSongOptions();
+                            },
                         }}
-                        {...songProps}
                     />
                 )}
                 keyExtractor={(item) => item.id.toString()}

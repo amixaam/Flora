@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Dimensions } from "react-native";
+import { Dimensions, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
@@ -14,10 +14,24 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SwipeDownScreen = ({
     children,
     bgColor = Colors.secondary,
+    disable = false,
 }: {
     children?: React.ReactNode;
     bgColor?: Colors;
+    disable?: boolean;
 }) => {
+    if (disable) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: bgColor,
+                }}
+            >
+                {children}
+            </View>
+        );
+    }
     const translateY = useSharedValue(0);
 
     const dismissGesture = Gesture.Pan()

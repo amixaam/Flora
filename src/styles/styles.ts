@@ -96,6 +96,25 @@ export const mainStyles = StyleSheet.create({
     },
 });
 
+export const utilStyles = StyleSheet.create({
+    center: {
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    absoluteCover: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+
+    selected: {
+        backgroundColor: `${Colors.badgeRare}20`,
+    },
+});
+
 export const newStyles = StyleSheet.create({
     chip: {
         backgroundColor: Colors.bg,

@@ -81,7 +81,7 @@ const MenuButton = () => {
         <Menu
             visible={visible}
             contentStyle={{ backgroundColor: Colors.input }}
-            anchorPosition="top"
+            anchorPosition="bottom"
             onDismiss={() => setVisible(false)}
             anchor={
                 <IconButton

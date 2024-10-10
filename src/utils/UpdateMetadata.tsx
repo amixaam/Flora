@@ -1,21 +1,18 @@
 import { AudioFile } from "expo-tag-reader/build/ExpoTagReader.types";
 import * as MediaLibrary from "expo-media-library";
-import { readNewAudioFiles } from "expo-tag-reader";
+import * as TagReader from "expo-tag-reader";
 import { Album, Song } from "../types/song";
 import { useSongsStore } from "../store/songs";
+import { skip } from "react-native-track-player/lib/src/trackPlayer";
 
 export const UpdateMetadata = async () => {
     useSongsStore.getState().setIsReadingSongs(true);
     await loadAllAudioFiles(useSongsStore.getState().songs.map((s) => s.id));
+    await checkDeletedFiles(useSongsStore.getState().songs.map((s) => s.id));
     useSongsStore.getState().setIsReadingSongs(false);
 };
 
-async function loadAllAudioFiles(songIds: string[]) {
-    const pageSize = 5;
-    let pageNumber = 1;
-    let allAudioFiles: AudioFile[] = [];
-    let currentPage: AudioFile[];
-
+async function RequestReadPermissions() {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
         alert(
@@ -23,12 +20,36 @@ async function loadAllAudioFiles(songIds: string[]) {
         );
         return;
     }
+}
+
+async function checkDeletedFiles(ids: string[]) {
+    await RequestReadPermissions();
+    const removedIds = await TagReader.getRemovedAudioFiles(ids);
+
+    if (removedIds.length > 0) {
+        useSongsStore.getState().removeSongs(removedIds);
+        console.log("Removed audio files: ", removedIds);
+    } else {
+        console.log("No removed audio files found");
+    }
+}
+
+async function loadAllAudioFiles(songIds: string[]) {
+    const pageSize = 5;
+    let pageNumber = 1;
+    let allAudioFiles: AudioFile[] = [];
+    let currentPage: AudioFile[];
+
+    await RequestReadPermissions();
 
     const startTime = Date.now();
-    console.log("start");
 
     do {
-        currentPage = await readNewAudioFiles(songIds, pageSize, pageNumber);
+        currentPage = await TagReader.readNewAudioFiles(
+            songIds,
+            pageSize,
+            pageNumber
+        );
         pageNumber++;
 
         allAudioFiles = allAudioFiles.concat(currentPage);
@@ -41,72 +62,95 @@ async function loadAllAudioFiles(songIds: string[]) {
         }ms`
     );
 
-    if (allAudioFiles.length === 0) {
-        console.log("No audio files found");
-        return;
-    } else {
+    if (allAudioFiles.length > 0) {
         saveAllAudioFiles(allAudioFiles);
     }
 }
 
 const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
     const newSongs: Song[] = [];
-    const albums: { [key: Album["title"]]: Song["id"][] } = {};
-    const albumData: { [key: Album["title"]]: Partial<Album> } = {};
+    const albumMap: {
+        [key: string]: { songs: string[]; data: Partial<Album> };
+    } = {};
+    const existingAlbums = useSongsStore
+        .getState()
+        .albums.reduce((obj, album) => {
+            obj[album.title] = album.id;
+            return obj;
+        }, {} as { [key: string]: string });
 
-    console.log("length of songs: ", audioFiles.length);
+    audioFiles.forEach((file) => {
+        const tags = file.tags;
+        const songId = file.internalId;
+        const albumTitle = tags.album || "Unknown Album";
 
-    try {
-        audioFiles.forEach((file) => {
-            const tags = file.tags;
+        if (!albumMap[albumTitle]) {
             const albumId =
-                "A" +
-                Date.now().toString(36) +
-                Math.random().toString(36).substr(2, 5).toUpperCase();
-
-            if (tags.album) {
-                if (!albums[tags.album]) {
-                    albums[tags.album] = [];
-                    albumData[tags.album] = {};
-                }
-                albums[tags.album].push(file.internalId);
-
-                albumData[tags.album] = {
-                    artist: tags.artist,
-                    year: tags.year,
-                    artwork: tags.albumArt,
+                existingAlbums[albumTitle] ||
+                `A${Date.now().toString(36)}${Math.random()
+                    .toString(36)
+                    .substr(2, 5)
+                    .toUpperCase()}`;
+            albumMap[albumTitle] = {
+                songs: [],
+                data: {
                     id: albumId,
-                };
-            }
-
-            const song: Song = {
-                id: file.internalId,
-                albumIds: tags.album ? [albumId] : [],
-                url: file.uri,
-                title:
-                    tags.title ||
-                    file.fileName.split(".").slice(0, -1).join("."),
-                artist: tags.artist || "No artist",
-                year: tags.year || "No year",
-                artwork: tags.albumArt,
-                duration: parseInt(file.duration),
-                isLiked: false,
-                isHidden: false,
-                statistics: {
-                    creationDate: file.creationDate,
-                    lastPlayed: undefined,
-                    playCount: 0,
-                    skipCount: 0,
-                    lastModified: undefined,
+                    artist: tags.artist || "Unknown Artist",
+                    year: tags.year
+                        ? tags.year.substring(0, 4)
+                        : "Unknown Year",
+                    artwork: tags.albumArt,
                 },
             };
+        }
 
-            newSongs.push(song);
-        });
+        albumMap[albumTitle].songs.push(songId);
 
-        useSongsStore.getState().addSongs(newSongs);
-        useSongsStore.getState().addAlbums(albumData, albums);
-    } catch (error) {
-        alert("Error: " + error);
-    }
+        const song: Song = {
+            id: songId,
+            albumIds: [albumMap[albumTitle].data.id as string],
+            url: file.uri,
+            extension: file.extension,
+            duration: parseInt(tags.duration),
+            title:
+                tags.title || file.fileName.split(".").slice(0, -1).join("."),
+            artist: tags.artist || "Unknown Artist",
+            year: tags.year ? tags.year.substring(0, 4) : "Unknown Year",
+            sampleRate: parseInt(tags.sampleRate),
+            bitRate: parseInt(tags.bitrate),
+            channels: parseInt(tags.channels),
+            trackNumber: tags.track ? parseInt(tags.track) : undefined,
+            artwork: tags.albumArt,
+            isLiked: false,
+            isHidden: false,
+            statistics: {
+                creationDate: file.creationDate,
+                lastPlayed: undefined,
+                playCount: 0,
+                skipCount: 0,
+                lastModified: undefined,
+            },
+        };
+
+        newSongs.push(song);
+    });
+
+    const albumsToAdd: { [key: string]: Partial<Album> } = {};
+    const songIdsToAdd: { [key: string]: string[] } = {};
+
+    Object.entries(albumMap).forEach(([title, { songs, data }]) => {
+        if (!existingAlbums[title]) {
+            albumsToAdd[title] = {
+                ...data,
+                title,
+                songs,
+                lastModified: new Date().toString(),
+                createdAt: new Date().toString(),
+            };
+            songIdsToAdd[title] = songs;
+        }
+    });
+
+    useSongsStore.getState().addSongs(newSongs);
+    useSongsStore.getState().addAlbums(albumsToAdd, songIdsToAdd);
 };

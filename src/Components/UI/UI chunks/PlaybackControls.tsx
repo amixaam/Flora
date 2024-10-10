@@ -1,18 +1,18 @@
 import { Text, View } from "react-native";
 import { useSongsStore } from "../../../store/songs";
 
-import TrackPlayer, {
+import {
     RepeatMode,
     usePlaybackState,
     useProgress,
 } from "react-native-track-player";
-import { IconSizes, Spacing } from "../../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
+import { Direction } from "../../../types/other";
 import { CalculateDurationLeft, FormatSecs } from "../../../utils/FormatMillis";
 import PlaybackSlider from "../Utils/PlaybackSlider";
-import { Direction } from "../../../types/other";
-import IconButton from "../Buttons/IconButton";
-import { router } from "expo-router";
+import { IconButton } from "react-native-paper";
+import CustomSlider from "../Utils/PlaybackSlider";
 
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},
@@ -61,54 +61,56 @@ const PlaybackControls = ({
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    marginVertical: -Spacing.md,
                 }}
             >
                 <IconButton
-                    icon={"shuffle"}
+                    icon={getRepeatIcon()}
                     size={IconSizes.lg}
-                    touchableOpacityProps={{
-                        onPress: shuffle,
-                    }}
+                    onPress={toggleRepeatMode}
+                    iconColor={Colors.primary}
+                    style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
-                    touchableOpacityProps={{
-                        onPress: () => {
-                            previous();
-                            if (progress.position < 3) {
-                                animation(Direction.RIGHT, true);
-                            }
-                        },
+                    onPress={() => {
+                        previous();
+                        if (progress.position < 3) {
+                            animation(Direction.RIGHT, true);
+                        }
                     }}
                     icon={"skip-previous"}
                     size={IconSizes.xl}
+                    iconColor={Colors.primary}
+                    style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
-                    touchableOpacityProps={{
-                        onPress: hanldePlayPausePress,
-                    }}
+                    onPress={hanldePlayPausePress}
                     icon={
                         playbackState.state === "playing"
                             ? "pause-circle"
                             : "play-circle"
                     }
                     size={IconSizes.xxl}
+                    iconColor={Colors.primary}
+                    style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
-                    touchableOpacityProps={{
-                        onPress: () => {
-                            next();
-                            animation(Direction.LEFT, true);
-                        },
+                    onPress={() => {
+                        next();
+                        animation(Direction.LEFT, true);
                     }}
                     icon={"skip-next"}
                     size={IconSizes.xl}
+                    iconColor={Colors.primary}
+                    style={{ marginHorizontal: -Spacing.mmd }}
                 />
+
                 <IconButton
-                    icon={getRepeatIcon()}
+                    icon={"shuffle"}
                     size={IconSizes.lg}
-                    touchableOpacityProps={{
-                        onPress: toggleRepeatMode,
-                    }}
+                    onPress={shuffle}
+                    iconColor={Colors.primary}
+                    style={{ marginHorizontal: -Spacing.mmd }}
                 />
             </View>
             <View style={{ gap: Spacing.sm }}>
@@ -135,7 +137,6 @@ const PlaybackControls = ({
                     </Text>
                 </View>
             </View>
-            
         </View>
     );
 };

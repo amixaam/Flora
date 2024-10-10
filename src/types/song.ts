@@ -13,11 +13,18 @@ interface Song {
     albumIds: string[]; // could be in many albums, main one being 1st element
 
     url: string;
+    duration: number;
+    extension: string;
+
     title: string;
     artist: string;
     year: string;
+    trackNumber: number | undefined;
     artwork: string | undefined;
-    duration: number;
+
+    sampleRate: number;
+    bitRate: number;
+    channels: number;
 
     isHidden: boolean;
     isLiked: boolean;
@@ -55,6 +62,8 @@ interface Recap {
 
 interface Album {
     readonly id: string;
+    readonly autoCreated: boolean;
+
     title: string;
     artist: string;
     year: string;

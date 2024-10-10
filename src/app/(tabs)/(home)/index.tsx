@@ -3,6 +3,7 @@ import {
     ImageBackground,
     Text,
     TouchableNativeFeedback,
+    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -39,22 +40,6 @@ export default function PlaylistsTab() {
             <BackgroundImageAbsolute />
             <ScrollView style={mainStyles.transparentContainer}>
                 <MainHeader />
-                {/* <View
-                style={{
-                    flexDirection: "row",
-                    gap: Spacing.md,
-                    paddingBottom: Spacing.md,
-                    marginHorizontal: Spacing.appPadding,
-                    }}
-                    >
-                    <TouchableOpacity
-                    onPress={() => {
-                        router.push("/queue");
-                        }}
-                        >
-                        <Text style={textStyles.text}>Queue</Text>
-                        </TouchableOpacity>
-                        </View> */}
                 <View style={{ flex: 1, gap: Spacing.md }}>
                     {/* <RecapBanner /> */}
                     <HomeHeader text="Recently played" />

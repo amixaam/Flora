@@ -7,6 +7,7 @@ import { textStyles } from "../../../styles/text";
 import { Spacing } from "../../../styles/constants";
 import Pluralize from "../../../utils/Pluralize";
 import { CombineStrings } from "../../../utils/CombineStrings";
+import { IconButton } from "react-native-paper";
 
 interface ContainerListItemProps {
     container: Playlist | Album;
@@ -23,7 +24,10 @@ const ContainerListItem = ({
 }: ContainerListItemProps) => {
     return (
         <TouchableNativeFeedback {...touchableNativeProps}>
-            <View style={newStyles.songListItem} {...viewProps}>
+            <View
+                style={[newStyles.songListItem, { alignItems: "center" }]}
+                {...viewProps}
+            >
                 <View
                     style={{
                         flexDirection: "row",
@@ -36,7 +40,6 @@ const ContainerListItem = ({
                         style={{
                             flexDirection: "column",
                             justifyContent: "center",
-                            flex: 1,
                             gap: Spacing.xs,
                         }}
                     >
@@ -60,6 +63,7 @@ const ContainerListItem = ({
                         </Text>
                     </View>
                 </View>
+                <IconButton icon={"dots-vertical"} />
             </View>
         </TouchableNativeFeedback>
     );

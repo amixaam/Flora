@@ -12,6 +12,7 @@ import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Album, Playlist, Song } from "../../types/song";
 import Pluralize from "../../utils/Pluralize";
+import { router } from "expo-router";
 
 interface filteredDataProps {
     songs?: Song[];
@@ -136,9 +137,25 @@ const SearchScreen = () => {
                 />
             );
         } else if ("artist" in item) {
-            return <ContainerListItem key={item.id} container={item} />;
+            return (
+                <ContainerListItem
+                    key={item.id}
+                    container={item}
+                    touchableNativeProps={{
+                        onPress: () => router.push(`/${item.id}`),
+                    }}
+                />
+            );
         } else {
-            return <ContainerListItem key={item.id} container={item} />;
+            return (
+                <ContainerListItem
+                    key={item.id}
+                    container={item}
+                    touchableNativeProps={{
+                        onPress: () => router.push(`/${item.id}`),
+                    }}
+                />
+            );
         }
     };
 
@@ -146,21 +163,6 @@ const SearchScreen = () => {
         let songList: React.ReactNode;
         let albumList: React.ReactNode;
         let playlistList: React.ReactNode;
-
-        if (array.songs && array.songs.length > 0) {
-            songList = (
-                <View>
-                    <ListHeader
-                        text={Pluralize(
-                            filteredData.songs?.length,
-                            "song",
-                            "songs"
-                        )}
-                    />
-                    {array.songs.map((song) => renderItem({ item: song }))}
-                </View>
-            );
-        }
 
         if (array.albums && array.albums.length > 0) {
             albumList = (
@@ -194,12 +196,31 @@ const SearchScreen = () => {
             );
         }
 
+        if (array.songs && array.songs.length > 0) {
+            songList = (
+                <View>
+                    <ListHeader
+                        text={Pluralize(
+                            filteredData.songs?.length,
+                            "song",
+                            "songs"
+                        )}
+                    />
+                    {array.songs.map((song) => renderItem({ item: song }))}
+                </View>
+            );
+        }
+
         if (!songList && !albumList && !playlistList) {
             return (
                 <View style={{ paddingTop: Spacing.xl }}>
                     <ListItemsNotFound
-                        icon="magnify"
-                        text={`Search ${selectedFilter}`}
+                        icon={filter == "" ? "magnify" : "alert-circle"}
+                        text={
+                            filter == ""
+                                ? `Search ${selectedFilter}`
+                                : "No results"
+                        }
                     />
                 </View>
             );
@@ -212,9 +233,9 @@ const SearchScreen = () => {
                     marginTop: Spacing.mmd,
                 }}
             >
-                {songList}
                 {albumList}
                 {playlistList}
+                {songList}
             </ScrollView>
         );
     };

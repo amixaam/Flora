@@ -27,9 +27,9 @@ const CalculateDurationLeft = (position, duration) => {
 const CalculateTotalDuration = (songs) => {
     let totalDuration = 0;
     songs.forEach((song) => {
-        totalDuration += song.duration;
+        totalDuration += parseInt(song.duration);
     });
-    return FormatSecs(totalDuration);
+    return FormatMillis(totalDuration);
 };
 
 export {

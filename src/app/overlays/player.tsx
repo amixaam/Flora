@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import React from "react";
 import { Dimensions, Easing, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { IconButton as PaperIconButton } from "react-native-paper";
 import Animated, {
     runOnJS,
     useAnimatedStyle,
@@ -9,26 +10,23 @@ import Animated, {
     withSpring,
     withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TextTicker from "react-native-text-ticker";
 import {
     skipToNext,
     skipToPrevious,
 } from "react-native-track-player/lib/src/trackPlayer";
 import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
+import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
+import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackground";
 import PlaybackControls from "../../Components/UI/UI chunks/PlaybackControls";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../store/songs";
-import { Spacing } from "../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../styles/constants";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import { Direction } from "../../types/other";
 import { CombineStrings } from "../../utils/CombineStrings";
-import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackground";
-import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
-import PrimaryRoundIconButton from "../../Components/UI/Buttons/PrimaryRoundIconButton";
-import IconButton from "../../Components/UI/Buttons/IconButton";
-import TrackPlayer from "react-native-track-player";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -154,11 +152,6 @@ const PlayerScreen = () => {
         };
     });
 
-    const currentTrack = TrackPlayer.getActiveTrack();
-    if (!activeSong || !currentTrack) {
-        return null;
-    }
-
     return (
         <GestureDetector gesture={dismissGesture}>
             <Animated.View
@@ -169,7 +162,7 @@ const PlayerScreen = () => {
                 ]}
             >
                 <ImageBlurBackground
-                    image={activeSong.artwork}
+                    image={activeSong?.artwork}
                     blur={15}
                     style={{
                         height: "85%",
@@ -201,31 +194,17 @@ const PlayerScreen = () => {
                         <Animated.View
                             style={[{ gap: Spacing.md }, animatedStyle]}
                         >
-                            <View>
-                                <AlbumArt
-                                    image={activeSong.artwork}
-                                    style={{
-                                        aspectRatio: 1,
-                                        borderRadius: Spacing.radius,
-                                    }}
-                                />
-                                <PrimaryRoundIconButton
-                                    icon="pencil"
-                                    onPress={async () => {
-                                        await setSelectedSong(activeSong);
-                                        openSongOptions();
-                                    }}
-                                    style={{
-                                        position: "absolute",
-                                        bottom: Spacing.md,
-                                        right: Spacing.md,
-                                    }}
-                                />
-                            </View>
+                            <AlbumArt
+                                image={activeSong?.artwork}
+                                style={{
+                                    aspectRatio: 1,
+                                    borderRadius: Spacing.radius,
+                                }}
+                            />
                             <View
                                 style={{
                                     marginBottom: Spacing.xl,
-                                    gap: Spacing.xl,
+                                    gap: Spacing.sm,
                                     flexDirection: "row",
                                     justifyContent: "space-between",
                                     alignItems: "center",
@@ -238,7 +217,7 @@ const PlayerScreen = () => {
                                     }}
                                 >
                                     <TextTicker
-                                        key={activeSong.title}
+                                        key={activeSong?.title}
                                         style={textStyles.h5}
                                         duration={12 * 1000}
                                         marqueeDelay={2 * 1000}
@@ -247,28 +226,46 @@ const PlayerScreen = () => {
                                         scroll={false}
                                         loop
                                     >
-                                        {activeSong.title}
+                                        {activeSong?.title}
                                     </TextTicker>
                                     <Text style={[textStyles.text]}>
                                         {CombineStrings([
-                                            activeSong.artist,
-                                            activeSong.year,
+                                            activeSong?.artist as string,
+                                            activeSong?.year as string,
                                         ])}
                                     </Text>
                                 </View>
-                                <IconButton
-                                    touchableOpacityProps={{
-                                        onPress: () =>
-                                            activeSong.isLiked
-                                                ? unlikeSong(activeSong.id)
-                                                : likeSong(activeSong.id),
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
                                     }}
-                                    icon={
-                                        activeSong.isLiked
-                                            ? "heart"
-                                            : "heart-outline"
-                                    }
-                                />
+                                >
+                                    <PaperIconButton
+                                        icon={"playlist-plus"}
+                                        size={IconSizes.md}
+                                        iconColor={Colors.primary}
+                                        style={{ marginRight: -Spacing.xs }}
+                                        disabled={!activeSong}
+                                    />
+                                    <PaperIconButton
+                                        onPress={() =>
+                                            activeSong?.isLiked
+                                                ? unlikeSong(activeSong.id)
+                                                : likeSong(
+                                                      activeSong?.id as string
+                                                  )
+                                        }
+                                        icon={
+                                            activeSong?.isLiked
+                                                ? "heart"
+                                                : "heart-outline"
+                                        }
+                                        iconColor={Colors.primary}
+                                        style={{ marginRight: -Spacing.sm }}
+                                        disabled={!activeSong}
+                                    />
+                                </View>
                             </View>
                         </Animated.View>
                     </GestureDetector>
@@ -276,37 +273,54 @@ const PlayerScreen = () => {
                 </View>
                 <View
                     style={{
-                        flexDirection: "row",
                         justifyContent: "center",
-                        gap: Spacing.xl,
+                        alignItems: "center",
                         position: "absolute",
                         bottom: Spacing.appPadding + bottom,
                         right: Spacing.appPadding,
                         left: Spacing.appPadding,
+                        gap: Spacing.xl * 1.5,
                     }}
                 >
-                    <IconButton
-                        icon="playlist-play"
-                        touchableOpacityProps={{
-                            onPress: () => router.push("/queue"),
+                    <View>
+                        {activeSong && (
+                            <Text style={textStyles.small}>
+                                {CombineStrings([
+                                    activeSong.extension.toUpperCase(),
+                                    Math.round(activeSong.sampleRate / 100) /
+                                        10 +
+                                        " kHz",
+                                    Math.floor(activeSong.bitRate / 1000) +
+                                        " kb/s",
+                                ])}
+                            </Text>
+                        )}
+                    </View>
+                    <View
+                        style={{
+                            flexDirection: "row",
                         }}
-                    />
-                    <IconButton
-                        icon="alarm"
-                        touchableOpacityProps={{
-                            onPress: () => router.push("/queue"),
-                            disabled: true,
-                        }}
-                    />
-                    <IconButton
-                        icon="dots-vertical"
-                        touchableOpacityProps={{
-                            onPress: async () => {
+                    >
+                        <PaperIconButton
+                            icon="playlist-play"
+                            onPress={() => router.push("/overlays/queue")}
+                            iconColor={Colors.primary}
+                        />
+                        <PaperIconButton
+                            icon="alarm"
+                            iconColor={Colors.primary}
+                            disabled
+                        />
+                        <PaperIconButton
+                            icon="dots-vertical"
+                            onPress={async () => {
                                 await setSelectedSong(activeSong);
                                 openSongOptions();
-                            },
-                        }}
-                    />
+                            }}
+                            disabled={!activeSong}
+                            iconColor={Colors.primary}
+                        />
+                    </View>
                 </View>
                 <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
             </Animated.View>

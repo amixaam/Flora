@@ -32,12 +32,8 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
             lastPlayed = new Date(lastPlayedUnfiltered).toLocaleDateString();
         }
 
-        const registerDate = new Date(
-            statistics.creationDate
-        ).toLocaleDateString();
-
         var timeListened =
-            selectedSong.statistics.playCount * selectedSong.duration;
+            (selectedSong.statistics.playCount * selectedSong.duration) / 1000;
 
         var formattedTimeListened;
 
@@ -111,7 +107,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             <SmallStatisticText
                                 icon="heart"
                                 header="Last played"
-                                text={"Since " + registerDate}
+                                text={"Since " + statistics.creationDate}
                             />
                             <SmallStatisticText
                                 icon="skip-next"

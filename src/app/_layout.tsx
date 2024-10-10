@@ -56,7 +56,7 @@ export default function App() {
         function deepLinkHandler(data: { url: string }) {
             console.log("deepLinkHandler", data.url);
             if (data.url === "trackplayer://notification.click") {
-                router.navigate("/player");
+                router.navigate("/overlays/player");
             }
         }
 

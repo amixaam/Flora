@@ -1,4 +1,4 @@
-import { FlashList } from "@shopify/flash-list";
+import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
@@ -12,6 +12,9 @@ import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { UpdateMetadata } from "../../../utils/UpdateMetadata";
+import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
+import SongItem from "../../../Components/UI/UI chunks/SongItem";
+import { Divider } from "react-native-paper";
 
 export default function SongsTab() {
     const { songs, setSelectedSong, addListToQueue } = useSongsStore();
@@ -23,6 +26,7 @@ export default function SongsTab() {
     }, []);
 
     const onRefresh = useCallback(async () => {
+        if (refreshing) return;
         setRefreshing(true);
         await UpdateMetadata();
         setRefreshing(false);
@@ -39,15 +43,16 @@ export default function SongsTab() {
             <BackgroundImageAbsolute />
             <FlashList
                 data={songs}
-                estimatedItemSize={1000}
+                estimatedItemSize={200}
                 ListHeaderComponent={
-                    <MainHeader title="Songs" />
-                    // <TopButtonControls
-                    //     horizontalMargins={Spacing.md}
-                    //     songs={songs}
-                    // />
+                    <>
+                        <MainHeader title="Songs" />
+                        <TopButtonControls
+                            horizontalMargins={Spacing.md}
+                            songs={songs}
+                        />
+                    </>
                 }
-                stickyHeaderHiddenOnScroll={true}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -61,12 +66,13 @@ export default function SongsTab() {
                 }}
                 renderItem={({ item }) => {
                     return (
-                        <SongListItem
-                            item={item}
-                            showImage={true}
-                            onLongPress={async () => {
-                                await setSelectedSong(item);
-                                openSongOptions();
+                        <SongItem
+                            song={item}
+                            controls={{
+                                onPress: async () => {
+                                    await setSelectedSong(item);
+                                    openSongOptions();
+                                },
                             }}
                             onPress={async () => {
                                 await setSelectedSong(item);

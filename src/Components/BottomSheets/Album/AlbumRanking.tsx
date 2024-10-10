@@ -65,7 +65,7 @@ const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
             const totalPlaytime = songs.reduce((total, song) => {
                 const playCount = song.statistics.playCount ?? 0;
                 const duration = song.duration ?? 0;
-                return total + playCount * duration;
+                return total + playCount * (duration / 1000);
             }, 0);
             const formattedPlaytime =
                 totalPlaytime > 0

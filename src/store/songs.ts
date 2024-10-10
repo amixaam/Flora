@@ -45,6 +45,14 @@ type SongsStore = {
     setRepeatMode: (mode: RepeatMode) => Promise<void>;
     toggleRepeatMode: () => Promise<void>;
 
+    updateActiveSong: (songId: string) => void;
+    setActiveSong: () => Promise<void>;
+
+    shuffle: () => void;
+    shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
+
+    // // Queue
+
     addToQueue: (song: Song | Song[]) => Promise<void>;
     addToQueueFirst: (
         song: Song,
@@ -58,16 +66,13 @@ type SongsStore = {
     ) => Promise<void>;
 
     getQueue: () => Promise<Song[]>;
-
-    shuffle: () => void;
-    shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
-
-    updateActiveSong: (songId: string) => void;
+    setQueue: (queue: Song[]) => void;
 
     // // songs
     setSongs: (songs: Song[]) => void;
     addSongs: (songs: Song[]) => void;
     getSong: (id: string) => Song | undefined;
+    removeSongs: (ids: string[]) => void;
 
     doesSongExist: (id: string) => boolean;
     likeSong: (id: string) => void;
@@ -98,6 +103,7 @@ type SongsStore = {
     // // container
     getSongsFromContainer: (id: string) => Song[];
     getContainer: (id: string) => Playlist | Album | undefined;
+    checkForDeletedSongs: () => void;
 
     // // playlists
     createPlaylist: (inputFields: Partial<Playlist>) => void;
@@ -120,6 +126,7 @@ type SongsStore = {
     ) => void;
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
     deleteAlbum: (id: string) => void;
+    removeEmptyAutoAlbums: () => void;
 
     doesAlbumExist: (name: string) => boolean;
 
@@ -219,7 +226,14 @@ export const useSongsStore = create<SongsStore>()(
             updateActiveSong: (songId) => {
                 const song = get().getSong(songId);
                 set({ activeSong: song });
-                console.log("updated active song: ", songId);
+            },
+
+            setActiveSong: async () => {
+                const activeTrack =
+                    (await TrackPlayer.getActiveTrack()) as Song;
+                set({
+                    activeSong: activeTrack,
+                });
             },
 
             play: async () => {
@@ -229,19 +243,21 @@ export const useSongsStore = create<SongsStore>()(
                 await TrackPlayer.pause();
             },
             next: async () => {
-                const current = await TrackPlayer.getActiveTrack();
-                get().updateSongSkip(current?.id);
+                get().updateSongSkip(get().activeSong?.id as string);
 
                 await TrackPlayer.skipToNext();
+
+                await get().setActiveSong();
             },
             previous: async () => {
                 const playbackProgress = await TrackPlayer.getProgress();
 
                 if (playbackProgress.position >= 3) {
-                    await TrackPlayer.seekTo(0);
-                } else {
-                    await TrackPlayer.skipToPrevious();
+                    return await TrackPlayer.seekTo(0);
                 }
+
+                await TrackPlayer.skipToPrevious();
+                await get().setActiveSong();
             },
             seekToPosition: async (position) => {
                 await TrackPlayer.seekTo(position);
@@ -273,13 +289,17 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addToQueue: async (song) => {
+                let consciousHistory: string;
+
                 if (Array.isArray(song)) {
+                    consciousHistory = song[0].id;
                     await TrackPlayer.add(song);
-                    get().addSongToConsciousHistory(song[0].id);
                 } else {
+                    consciousHistory = song.id;
                     await TrackPlayer.add([song]);
-                    get().addSongToConsciousHistory(song.id);
                 }
+
+                get().addSongToConsciousHistory(consciousHistory);
                 set({ queue: await TrackPlayer.getQueue() });
             },
 
@@ -300,12 +320,20 @@ export const useSongsStore = create<SongsStore>()(
                 }
 
                 await TrackPlayer.load(song);
+                await get().setActiveSong();
+
                 get().addSongToConsciousHistory(song.id);
                 set({ queue: await TrackPlayer.getQueue() });
                 if (redirect) router.push("/overlays/player");
             },
 
             addListToQueue: async (list, selectedSong, redirect = false) => {
+                if (redirect) router.push("/overlays/player");
+
+                let queue: Song[] = list;
+                let consciousHistory: Song["id"] =
+                    selectedSong?.id ?? list[0].id;
+
                 if (selectedSong) {
                     const selectedSongIndex = list.findIndex(
                         (song) => song.id === selectedSong.id
@@ -314,22 +342,15 @@ export const useSongsStore = create<SongsStore>()(
                     if (selectedSongIndex > 0) {
                         const songsBefore = list.slice(0, selectedSongIndex);
                         const songsAfter = list.slice(selectedSongIndex);
-                        await TrackPlayer.setQueue([
-                            ...songsAfter,
-                            ...songsBefore,
-                        ]);
-                    } else {
-                        await TrackPlayer.setQueue(list);
+                        queue = [...songsBefore, ...songsAfter];
                     }
-                    get().addSongToConsciousHistory(selectedSong.id);
-                } else {
-                    await TrackPlayer.setQueue(list);
-                    get().addSongToConsciousHistory(list[0].id);
                 }
 
-                set({ queue: await TrackPlayer.getQueue() });
+                await TrackPlayer.setQueue(queue);
                 await TrackPlayer.play();
-                if (redirect) router.push("/overlays/player");
+
+                set({ queue: await TrackPlayer.getQueue() });
+                get().addSongToConsciousHistory(consciousHistory);
             },
 
             getQueue: async (): Promise<Song[]> => {
@@ -349,6 +370,11 @@ export const useSongsStore = create<SongsStore>()(
                 return songs.filter((song) => song !== undefined) as Song[];
             },
 
+            setQueue: async (queue) => {
+                await TrackPlayer.setQueue(queue);
+                set({ queue: queue });
+            },
+
             shuffle: async () => {
                 const queue = await TrackPlayer.getQueue();
                 const current = await TrackPlayer.getActiveTrackIndex();
@@ -359,16 +385,21 @@ export const useSongsStore = create<SongsStore>()(
                 await TrackPlayer.add(
                     futureTracks.sort(() => Math.random() - 0.5)
                 );
+
                 set({ queue: await TrackPlayer.getQueue() });
             },
 
             shuffleList: async (list, redirect = false) => {
-                const shuffledList = [...list].sort(() => Math.random() - 0.5);
-                await TrackPlayer.setQueue(shuffledList);
-                set({ queue: await TrackPlayer.getQueue() });
-                await TrackPlayer.play();
-                get().addSongToConsciousHistory(shuffledList[0].id);
                 if (redirect) router.push("/overlays/player");
+
+                const shuffledList = [...list].sort(() => Math.random() - 0.5);
+                get().updateActiveSong(shuffledList[0].id);
+
+                await TrackPlayer.setQueue(shuffledList);
+                await TrackPlayer.play();
+
+                set({ queue: shuffledList });
+                get().addSongToConsciousHistory(shuffledList[0].id);
             },
 
             // songs ----------------------------------------------------------
@@ -379,29 +410,29 @@ export const useSongsStore = create<SongsStore>()(
                 }));
             },
             getSong: (id) => get().songs.find((song) => song.id === id),
+            removeSongs: (ids) => {
+                set((state) => ({
+                    songs: state.songs.filter((song) => !ids.includes(song.id)),
+                }));
 
-            // updateSong: (songId) => {
-            //     set((state) => ({
-            //         songs: state.songs.map((song) =>
-            //             song.id === songId ? { ...song, ...updatedSong } : song
-            //         ),
-            //     }));
-            // },
+                get().checkForDeletedSongs();
+            },
 
             updateSelectedAndActiveSong: (songId) => {
-                const selectedSong = get().selectedSong;
-                if (songId === selectedSong?.id) {
-                    const updatedSong = get().getSong(songId);
+                const currentlySelected = get().selectedSong;
+                const currentlyActive = get().activeSong;
+
+                const updatedSong = get().getSong(songId);
+
+                if (songId === currentlySelected?.id) {
                     set({
-                        selectedSong: { ...selectedSong, ...updatedSong },
+                        selectedSong: updatedSong,
                     });
                 }
 
-                const activeSong = get().activeSong;
-                if (songId === activeSong?.id) {
-                    const updatedSong = get().getSong(songId);
+                if (songId === currentlyActive?.id) {
                     set({
-                        activeSong: { ...activeSong, ...updatedSong },
+                        activeSong: updatedSong,
                     });
                 }
             },
@@ -608,6 +639,25 @@ export const useSongsStore = create<SongsStore>()(
                 }
             },
 
+            checkForDeletedSongs: () => {
+                const songIds = get().songs.map((song) => song.id);
+                // checks songs array for albums and playlists for songs that no longer exist
+                set((state) => ({
+                    albums: state.albums.map((album) => ({
+                        ...album,
+                        songs: album.songs.filter((id) => songIds.includes(id)),
+                    })),
+                    playlists: state.playlists.map((playlist) => ({
+                        ...playlist,
+                        songs: playlist.songs.filter((id) =>
+                            songIds.includes(id)
+                        ),
+                    })),
+                }));
+
+                get().removeEmptyAutoAlbums();
+            },
+
             // playlists ----------------------------------------------------------
             createPlaylist: (inputFields) => {
                 const newPlaylist: Playlist = {
@@ -752,6 +802,7 @@ export const useSongsStore = create<SongsStore>()(
                 ).toUpperCase();
                 const newAlbum: Album = {
                     id: id,
+                    autoCreated: false,
                     songs: [],
                     title: inputFields.title
                         ? inputFields.title
@@ -775,12 +826,10 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             addAlbums: (albumFields, songIds) => {
-                const ids: string[] = [];
                 set((state) => {
                     const newAlbums = Object.entries(albumFields).map(
                         ([title, albumData]) => {
                             const songList = songIds[title] || [];
-                            ids.push(albumData.id as string);
 
                             return {
                                 id: albumData.id,
@@ -821,6 +870,15 @@ export const useSongsStore = create<SongsStore>()(
             deleteAlbum: (id) => {
                 set((state) => ({
                     albums: state.albums.filter((a) => a.id !== id),
+                }));
+            },
+
+            removeEmptyAutoAlbums: () => {
+                set((state) => ({
+                    // remove albums that has an empty songs array and has autoCreated to True
+                    albums: state.albums.filter(
+                        (album) => album.songs.length > 0 && !album.autoCreated
+                    ),
                 }));
             },
 

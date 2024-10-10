@@ -5,11 +5,7 @@ import { Easing, Text } from "react-native";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
 import { useSongsStore } from "../../../store/songs";
-import {
-    Colors,
-    IconSizes,
-    Spacing
-} from "../../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
 import { Song } from "../../../types/song";
@@ -105,7 +101,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 onPress={() => {
                                     props.dismiss?.();
                                     router.push(
-                                        `./${selectedSong.albumIds[0]}`
+                                        `albums/${selectedSong.albumIds[0]}`
                                     );
                                 }}
                                 isDisabled={selectedSong.albumIds.length === 0}
@@ -181,7 +177,7 @@ const SongSheetHeader = ({ song }: { song: Song }) => {
                     style={{ width: 42 }}
                     radius={Spacing.radiusSm}
                 />
-                <BottomSheetView style={{ flex: 1 }}>
+                <BottomSheetView style={{ flex: 1, gap: 2 }}>
                     <TextTicker
                         key={song.title}
                         style={textStyles.h6}
