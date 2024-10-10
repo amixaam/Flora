@@ -94,6 +94,7 @@ function DefaultLayout() {
                 headerShown: false,
                 statusBarStyle: "light",
                 statusBarTranslucent: true,
+                // statusBarColor:"#00000070",
                 animation: "slide_from_bottom",
             }}
         >

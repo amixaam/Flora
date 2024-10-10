@@ -50,6 +50,8 @@ export default function SongsTab() {
                         <TopButtonControls
                             horizontalMargins={Spacing.md}
                             songs={songs}
+                            count={songs.length}
+                            type="song"
                         />
                     </>
                 }

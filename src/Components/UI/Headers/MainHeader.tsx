@@ -17,14 +17,12 @@ export const MainHeader = ({
     headerRight,
 }: MainHeaderProps) => {
     return (
-        <>
-            <SheetHeader
-                title={title}
-                titleStyle={textStyles.h4}
-                headerLeft={<></>}
-                headerRight={<IconHeaders headerRight={headerRight} />}
-            />
-        </>
+        <SheetHeader
+            title={title}
+            titleStyle={textStyles.h4}
+            headerLeft={<></>}
+            headerRight={<IconHeaders headerRight={headerRight} />}
+        />
     );
 };
 

@@ -3,7 +3,10 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+    SafeAreaView,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import SongListItem, {
@@ -22,6 +25,16 @@ import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackg
 import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
 import SongItem from "../../../Components/UI/UI chunks/SongItem";
 import { IconButton } from "react-native-paper";
+import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
+import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
+import AnimatedHeader from "../../../Components/UI/Headers/AnimatedHeader";
+import Animated, {
+    interpolate,
+    interpolateColor,
+    useAnimatedScrollHandler,
+    useAnimatedStyle,
+    useSharedValue,
+} from "react-native-reanimated";
 
 export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -61,39 +74,56 @@ export default function ContainerScreen() {
 
     const insets = useSafeAreaInsets();
 
+    const scrollY = useSharedValue(0);
+    const handleScroll = useAnimatedScrollHandler((event) => {
+        scrollY.value = event.contentOffset.y;
+    });
+
     return (
-        <ScrollView style={[mainStyles.container]}>
-            <ImageBlurBackground
-                image={data.artwork}
-                style={{ height: 500, top: 0 }}
-                blur={15}
-                gradient={{ colors: ["#050506", "#05050640", "#050506"] }}
+        <View style={[mainStyles.container, { position: "relative" }]}>
+            <AnimatedHeader
+                title={data.title}
+                scrollY={scrollY}
+                headerRight={{
+                    icon: "dots-vertical",
+                    onPress: openContainerOptions,
+                }}
             />
-            <View style={{ paddingTop: insets.top * 2.3 }} />
-
-            <View style={{ flex: 1, gap: Spacing.appPadding }}>
-                <AlbumInfo
-                    data={data}
-                    songData={songData}
-                    openContainerOptions={openContainerOptions}
+            <Animated.ScrollView onScroll={handleScroll} style={{ flex: 1 }}>
+                <SafeAreaView edges={["top"]} style={{ height: 105 }} />
+                <ImageBlurBackground
+                    image={data.artwork}
+                    style={{ height: 500, top: 0 }}
+                    blur={15}
+                    gradient={{ colors: ["#050506", "#05050640", "#050506"] }}
                 />
-                <SongList
-                    songData={songData}
-                    isAlbum={"artist" in data}
-                    openSongOptions={openSongOptions}
+
+                <View style={{ flex: 1, gap: Spacing.appPadding }}>
+                    <AlbumInfo
+                        data={data}
+                        songData={songData}
+                        openContainerOptions={openContainerOptions}
+                    />
+                    <SongList
+                        songData={songData}
+                        isAlbum={"artist" in data}
+                        openSongOptions={openSongOptions}
+                    />
+                </View>
+
+                <View
+                    style={{
+                        paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    }}
                 />
-            </View>
 
-            <View
-                style={{ paddingBottom: insets.bottom + Spacing.miniPlayer }}
-            />
-
-            <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
-            <ContainerSheet
-                ref={ContainerOptionsRef}
-                dismiss={dismissContainerOptions}
-            />
-        </ScrollView>
+                <SongSheet ref={SongOptionsRef} dismiss={dismissSongOptions} />
+                <ContainerSheet
+                    ref={ContainerOptionsRef}
+                    dismiss={dismissContainerOptions}
+                />
+            </Animated.ScrollView>
+        </View>
     );
 }
 
@@ -149,7 +179,6 @@ const AlbumInfo = ({
                 <IconButton
                     icon="play-circle"
                     size={IconSizes.md * 2}
-                    style={{ marginHorizontal: -Spacing.xxs }}
                     onPress={() => addListToQueue(songData, undefined, true)}
                     iconColor={Colors.primary}
                 />
