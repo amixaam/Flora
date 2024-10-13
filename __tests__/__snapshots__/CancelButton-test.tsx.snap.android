@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CancelButton renders correctly 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  focusable={true}
+  nativeBackgroundAndroid={
+    {
+      "attribute": "selectableItemBackground",
+      "rippleRadius": undefined,
+      "type": "ThemeAttrAndroid",
+    }
+  }
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "borderRadius": 5,
+        "flexDirection": "row",
+        "justifyContent": "center",
+        "paddingHorizontal": 24,
+        "paddingTop": 14,
+        "paddingVertical": 12,
+      },
+      {
+        "backgroundColor": "#2B2931",
+        "flex": 0,
+      },
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "color": "#E8DEF8",
+          "fontFamily": "Poppins-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0.5,
+          "lineHeight": 14.399999999999999,
+        },
+        {
+          "color": "#E8DEF8",
+        },
+      ]
+    }
+  >
+    Cancel
+  </Text>
+</View>
+`;
