@@ -1,17 +1,7 @@
-import {
-    BottomSheetFlatList,
-    BottomSheetModal,
-    BottomSheetScrollView,
-    BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef } from "react";
-import {
-    DimensionValue,
-    Easing,
-    FlexAlignType,
-    Text,
-    View,
-} from "react-native";
+import { DimensionValue, Easing, Text, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import TextTicker from "react-native-text-ticker";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSongsStore } from "../../../store/songs";
@@ -27,11 +17,10 @@ import { Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { abbreviateNumber } from "../../../utils/FormatNumber";
 import Pluralize from "../../../utils/Pluralize";
-import { SheetModalLayout } from "../SheetModalLayout";
-import { FlatList } from "react-native-gesture-handler";
 import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
-import { UISeperator } from "../../UI/Utils/UISeperator";
 import SmallStatisticText from "../../UI/Text/SmallStatisticText";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -40,6 +29,7 @@ const AlbumRanking = forwardRef<BottomSheetModal, BottomSheetProps>(
         if (!selectedContainer || !("artist" in selectedContainer)) return;
 
         const ranking = getAlbumRanking(selectedContainer.id);
+
         if (!ranking || ranking.length === 0)
             return (
                 <SheetModalLayout
@@ -190,24 +180,31 @@ const TopThreeSongs = ({ songs }: TopThreeSongsProps) => {
 
     return (
         <BottomSheetView style={{ gap: Spacing.md, flexDirection: "row" }}>
-            <Podium
-                height={SECOND_PLACE_HEIGHT}
-                song={songs[1]}
-                textColor={Colors.secondary}
-                bgColor={Colors.primary}
-            />
-            <Podium
-                height={FIRST_PLACE_HEIGHT}
-                song={songs[0]}
-                detailed={true}
-                textColor={Colors.secondary}
-                bgColor={Colors.badgeLegendary}
-            />
-            <Podium
-                height={THIRD_PLACE_HEIGHT}
-                song={songs[2]}
-                bgColor={Colors.badgeRare}
-            />
+            {songs[1] && (
+                <Podium
+                    height={SECOND_PLACE_HEIGHT}
+                    song={songs[1]}
+                    textColor={Colors.secondary}
+                    bgColor={Colors.primary}
+                />
+            )}
+            {songs[0] && (
+                <Podium
+                    height={FIRST_PLACE_HEIGHT}
+                    song={songs[0]}
+                    detailed={true}
+                    textColor={Colors.secondary}
+                    bgColor={Colors.badgeLegendary}
+                />
+            )}
+            {songs[2] && (
+                <Podium
+                    height={THIRD_PLACE_HEIGHT}
+                    song={songs[2]}
+                    detailed={true}
+                    bgColor={Colors.badgeRare}
+                />
+            )}
         </BottomSheetView>
     );
 };
@@ -225,9 +222,6 @@ const Podium = ({
     bgColor?: Colors;
     textColor?: Colors;
 }) => {
-    const textAlignment: FlexAlignType =
-        song.title.length >= 12 ? "stretch" : "center";
-
     return (
         <BottomSheetView
             style={{ flex: 1, gap: Spacing.sm, justifyContent: "flex-end" }}
@@ -263,7 +257,7 @@ const Podium = ({
                 style={{
                     flexDirection: "column",
                     justifyContent: "center",
-                    alignItems: textAlignment,
+                    alignItems: "center",
                     gap: Spacing.xs,
                     width: "100%",
                 }}

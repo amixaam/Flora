@@ -228,7 +228,10 @@ const PlayerScreen = () => {
                                     >
                                         {activeSong?.title}
                                     </TextTicker>
-                                    <Text style={[textStyles.text]}>
+                                    <Text
+                                        style={[textStyles.text]}
+                                        numberOfLines={1}
+                                    >
                                         {CombineStrings([
                                             activeSong?.artist as string,
                                             activeSong?.year as string,
@@ -241,13 +244,6 @@ const PlayerScreen = () => {
                                         alignItems: "center",
                                     }}
                                 >
-                                    <PaperIconButton
-                                        icon={"playlist-plus"}
-                                        size={IconSizes.md}
-                                        iconColor={Colors.primary}
-                                        style={{ marginRight: -Spacing.xs }}
-                                        disabled={!activeSong}
-                                    />
                                     <PaperIconButton
                                         onPress={() =>
                                             activeSong?.isLiked

@@ -1,5 +1,5 @@
 export interface BottomSheetProps {
-    dismiss?: () => void;
+    dismiss: () => void;
 }
 
 export enum Direction {

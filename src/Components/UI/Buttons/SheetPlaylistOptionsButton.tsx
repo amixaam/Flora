@@ -3,9 +3,11 @@ import React from "react";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import Checkbox from "./Checkbox";
-import { Spacing } from "../../../styles/constants";
+import { Colors, Spacing } from "../../../styles/constants";
 import { Playlist } from "../../../types/song";
 import AlbumArt from "../UI chunks/AlbumArt";
+import { IconButton, TouchableRipple } from "react-native-paper";
+import Pluralize from "../../../utils/Pluralize";
 
 interface Props {
     playlist: Playlist;
@@ -22,20 +24,24 @@ const SheetPlaylistOptionsButton = ({
     isDisabled = false,
 }: Props) => {
     return (
-        <TouchableNativeFeedback onPress={onPress} disabled={isDisabled}>
+        <TouchableRipple onPress={onPress} disabled={isDisabled}>
             <View
                 style={[
-                    mainStyles.textListItem,
                     isDisabled ? mainStyles.hiddenListItem : {},
-                    { justifyContent: "space-between" },
+                    {
+                        justifyContent: "space-between",
+                        paddingHorizontal: Spacing.appPadding,
+                        gap: Spacing.md,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingVertical: Spacing.sm,
+                    },
                 ]}
             >
                 <AlbumArt
                     image={playlist.artwork}
                     style={{
-                        width: 56,
-                        aspectRatio: 1,
-                        borderRadius: 5,
+                        width: 64,
                     }}
                 />
                 <View
@@ -47,18 +53,20 @@ const SheetPlaylistOptionsButton = ({
                         columnGap: Spacing.md,
                     }}
                 >
-                    <View style={{ flexDirection: "column", flex: 1 }}>
-                        <Text style={[textStyles.text]} numberOfLines={1}>
+                    <View style={{ gap: Spacing.xs, flex: 1 }}>
+                        <Text numberOfLines={2} style={textStyles.text}>
                             {playlist.title}
                         </Text>
-                        <Text style={textStyles.small}>
-                            {playlist.songs.length} songs
+                        <Text
+                            numberOfLines={1}
+                            style={[textStyles.small, { opacity: 0.75 }]}
+                        >
+                            {Pluralize(playlist.songs.length, "song")}
                         </Text>
                     </View>
-                    <Checkbox isSelected={isSelected} />
                 </View>
             </View>
-        </TouchableNativeFeedback>
+        </TouchableRipple>
     );
 };
 

@@ -118,7 +118,6 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                 >
                     <BottomSheetView
                         style={{
-                            marginHorizontal: Spacing.appPadding,
                             gap: Spacing.md,
                         }}
                     >
@@ -126,6 +125,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             style={{
                                 flexDirection: "row",
                                 columnGap: Spacing.md,
+                                marginHorizontal: Spacing.appPadding,
                             }}
                         >
                             <LargeOptionButton
@@ -144,6 +144,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 onPress={openAddSongsToContainer}
                             />
                         </BottomSheetView>
+
                         <UISeperator />
 
                         <BottomSheetView style={{ marginTop: -Spacing.sm }}>

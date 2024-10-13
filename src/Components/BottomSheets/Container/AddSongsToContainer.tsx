@@ -77,7 +77,7 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
             setselectedSongs([...selectedSongs, songId]);
             containerType === "album"
                 ? addSongToAlbum(selectedContainer.id, songId)
-                : addSongToPlaylist(selectedContainer.id, songId);
+                : addSongToPlaylist(selectedContainer.id, [songId]);
         };
 
         return (

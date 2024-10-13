@@ -1,11 +1,12 @@
 import React from "react";
 import { Text, TouchableNativeFeedback, View } from "react-native";
-import { Spacing } from "../../../styles/constants";
+import { Colors, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import Pluralize from "../../../utils/Pluralize";
 import AlbumArt from "./AlbumArt";
+import { IconButton } from "react-native-paper";
 
 type ContainerItemProps = {
     item: Playlist | Album;
@@ -19,8 +20,13 @@ const ContainerItem = ({
     viewProps,
 }: ContainerItemProps) => {
     return (
-        <TouchableNativeFeedback delayLongPress={250} {...touchableProps}>
-            <View style={[{ gap: Spacing.xs }, viewProps?.style]}>
+        <TouchableNativeFeedback delayLongPress={200} {...touchableProps}>
+            <View
+                style={[
+                    { gap: Spacing.xs, position: "relative" },
+                    viewProps?.style,
+                ]}
+            >
                 <AlbumArt image={item.artwork} style={{ width: "100%" }} />
                 <View>
                     <Text style={textStyles.h6} numberOfLines={1}>
@@ -33,6 +39,12 @@ const ContainerItem = ({
                             : Pluralize(item.songs.length, "song", "songs")}
                     </Text>
                 </View>
+                <IconButton
+                    icon="dots-vertical"
+                    style={{ position: "absolute", top: 0, right: 0 }}
+                    iconColor={Colors.primary}
+                    onPress={touchableProps.onLongPress}
+                />
             </View>
         </TouchableNativeFeedback>
     );

@@ -1,37 +1,40 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
-import { forwardRef, useCallback, useRef } from "react";
+import { forwardRef } from "react";
 import { Easing, Text } from "react-native";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
 import { Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
-import AlbumArt from "../../UI/UI chunks/AlbumArt";
-import { SheetModalLayout } from "../SheetModalLayout";
-import AddPlaylistToSong from "./AddPlaylistToSong";
-import SongStatistics from "./SongStatistics";
 import LargeOptionButton from "../../UI/Buttons/LargeOptionButton";
-import { UISeperator } from "../../UI/Utils/UISeperator";
 import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
+import AlbumArt from "../../UI/UI chunks/AlbumArt";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import { SheetModalLayout } from "../SheetModalLayout";
+import AddMultipleSongs from "./AddMultipleSongs";
+import SongStatistics from "./SongStatistics";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { selectedSong, hideSong, unhideSong, addToQueue } =
             useSongsStore();
 
-        const addPlaylistRef = useRef<BottomSheetModal>(null);
-        const openAddPlaylist = useCallback(() => {
-            addPlaylistRef.current?.present();
-        }, []);
+        const {
+            sheetRef: addPlaylistRef,
+            open: openAddPlaylist,
+            close: dismissAddPlaylist,
+        } = useBottomSheetModal();
 
-        const songStatisticsRef = useRef<BottomSheetModal>(null);
-        const openSongStatistics = useCallback(() => {
-            songStatisticsRef.current?.present();
-        }, []);
+        const {
+            sheetRef: songStatisticsRef,
+            open: openStatistics,
+            close: dismissStatistics,
+        } = useBottomSheetModal();
 
         if (!selectedSong) {
             return null;
@@ -59,19 +62,19 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     <BottomSheetView
                         style={{
                             gap: Spacing.md,
-                            marginHorizontal: Spacing.appPadding,
                         }}
                     >
                         <BottomSheetView
                             style={{
                                 flexDirection: "row",
+                                marginHorizontal: Spacing.appPadding,
                                 columnGap: Spacing.md,
                             }}
                         >
                             <LargeOptionButton
                                 icon="chart-timeline-variant-shimmer"
                                 text="View statistics"
-                                onPress={openSongStatistics}
+                                onPress={openStatistics}
                                 disabled={selectedSong.isHidden}
                             />
                             <LargeOptionButton
@@ -132,8 +135,15 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         </BottomSheetView>
                     </BottomSheetView>
                 </SheetModalLayout>
-                <AddPlaylistToSong ref={addPlaylistRef} />
-                <SongStatistics ref={songStatisticsRef} />
+                <AddMultipleSongs
+                    ref={addPlaylistRef}
+                    dismiss={dismissAddPlaylist}
+                    songs={[selectedSong.id]}
+                />
+                <SongStatistics
+                    ref={songStatisticsRef}
+                    dismiss={dismissStatistics}
+                />
             </>
         );
     }

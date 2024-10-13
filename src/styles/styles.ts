@@ -62,7 +62,7 @@ export const mainStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: Spacing.sm,
-        paddingVertical: Spacing.sm,
+        paddingVertical: Spacing.mmd,
     },
     hiddenListItem: { opacity: 0.5 },
 

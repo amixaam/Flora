@@ -4,10 +4,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import {
     Colors,
     DefaultIcon,
-    IconSizes
+    IconSizes,
+    Spacing,
 } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
+import { TouchableRipple } from "react-native-paper";
 
 interface SheetOptionsButtonProps {
     icon?: string;
@@ -23,11 +25,15 @@ const SheetOptionsButton = ({
     isDisabled = false,
 }: SheetOptionsButtonProps) => {
     return (
-        <TouchableNativeFeedback disabled={isDisabled} onPress={onPress}>
+        <TouchableRipple disabled={isDisabled} onPress={onPress}>
             <View
                 style={[
                     mainStyles.textListItem,
                     isDisabled ? mainStyles.hiddenListItem : {},
+                    {
+                        paddingHorizontal: Spacing.appPadding,
+                        gap: Spacing.md,
+                    },
                 ]}
             >
                 <MaterialCommunityIcons
@@ -37,7 +43,7 @@ const SheetOptionsButton = ({
                 />
                 <Text style={[textStyles.text]}>{buttonContent}</Text>
             </View>
-        </TouchableNativeFeedback>
+        </TouchableRipple>
     );
 };
 

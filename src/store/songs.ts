@@ -26,8 +26,8 @@ type SongsStore = {
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
 
     // updateSong: (songId: string) => void;
-    updateSelectedAndActiveSong: (songId: string) => void;
-    updateSelectedContainer: (containerId: string) => void;
+    updateSelectedAndActiveSong: () => void;
+    updateSelectedContainer: () => void;
 
     repeatMode: RepeatMode; // enum
 
@@ -115,7 +115,7 @@ type SongsStore = {
     getAllPlaylistSongs: () => Song[] | undefined;
     getSongsFromPlaylist: (id: string) => Song[];
 
-    addSongToPlaylist: (playlistId: string, songId: string) => void;
+    addSongToPlaylist: (playlistId: string, songIds: string[]) => void;
     removeSongFromPlaylist: (playlistId: string, songId: string) => void;
 
     // // albums
@@ -418,36 +418,23 @@ export const useSongsStore = create<SongsStore>()(
                 get().checkForDeletedSongs();
             },
 
-            updateSelectedAndActiveSong: (songId) => {
-                const currentlySelected = get().selectedSong;
-                const currentlyActive = get().activeSong;
-
-                const updatedSong = get().getSong(songId);
-
-                if (songId === currentlySelected?.id) {
-                    set({
-                        selectedSong: updatedSong,
-                    });
-                }
-
-                if (songId === currentlyActive?.id) {
-                    set({
-                        activeSong: updatedSong,
-                    });
-                }
+            updateSelectedAndActiveSong: () => {
+                set((state) => ({
+                    selectedSong: state.selectedSong
+                        ? state.getSong(state.selectedSong.id)
+                        : undefined,
+                    activeSong: state.activeSong
+                        ? state.getSong(state.activeSong.id)
+                        : undefined,
+                }));
             },
 
-            updateSelectedContainer: (containerId) => {
-                const selectedContainer = get().selectedContainer;
-                if (containerId === selectedContainer?.id) {
-                    const updatedContainer = get().getContainer(containerId);
-                    set({
-                        selectedContainer: {
-                            ...selectedContainer,
-                            ...updatedContainer,
-                        },
-                    });
-                }
+            updateSelectedContainer: () => {
+                set((state) => ({
+                    selectedContainer: state.selectedContainer
+                        ? state.getContainer(state.selectedContainer.id)
+                        : undefined,
+                }));
             },
 
             doesSongExist: (id) => {
@@ -455,7 +442,7 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             likeSong: (id) => {
-                get().addSongToPlaylist("1", id);
+                get().addSongToPlaylist("1", [id]);
             },
             unlikeSong: (id) => {
                 get().removeSongFromPlaylist("1", id);
@@ -468,7 +455,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedAndActiveSong(id);
+                get().updateSelectedAndActiveSong();
             },
 
             unhideSong: (id) => {
@@ -478,7 +465,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedAndActiveSong(id);
+                get().updateSelectedAndActiveSong();
             },
 
             updateSongStatistics: (id) => {
@@ -497,7 +484,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedAndActiveSong(id);
+                get().updateSelectedAndActiveSong();
 
                 console.log("updated statistics for: " + id);
             },
@@ -517,7 +504,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedAndActiveSong(id);
+                get().updateSelectedAndActiveSong();
             },
             // statistics ---------------------------------------------------------
             addSongToHistory: (id) => {
@@ -698,7 +685,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedContainer(id);
+                get().updateSelectedContainer();
             },
 
             deletePlaylist: (id) => {
@@ -738,32 +725,36 @@ export const useSongsStore = create<SongsStore>()(
                     .filter((s) => s !== undefined) as Song[];
             },
 
-            addSongToPlaylist: (playlistId, songId) => {
+            addSongToPlaylist: (playlistId, songIds) => {
+                // add songs to playlist, skipping any duplicates
+                // if playlist is default, set isLiked to true
                 set((state) => ({
-                    playlists: state.playlists.map((playlist) =>
-                        playlist.id === playlistId
-                            ? {
-                                  ...playlist,
-                                  // Check if song already exists before adding
-                                  songs: playlist.songs.includes(songId)
-                                      ? playlist.songs
-                                      : [...playlist.songs, songId],
-                              }
-                            : playlist
-                    ),
+                    playlists: state.playlists.map((playlist) => {
+                        if (playlist.id === playlistId) {
+                            return {
+                                ...playlist,
+                                songs: [
+                                    ...new Set([...playlist.songs, ...songIds]),
+                                ],
+                            };
+                        } else {
+                            return playlist;
+                        }
+                    }),
+
                     // Update isLiked if default playlist
                     songs:
                         playlistId === "1"
                             ? state.songs.map((song) =>
-                                  song.id === songId
+                                  songIds.includes(song.id)
                                       ? { ...song, isLiked: true }
                                       : song
                               )
                             : state.songs,
                 }));
 
-                get().updateSelectedContainer(playlistId);
-                get().updateSelectedAndActiveSong(songId);
+                get().updateSelectedContainer();
+                get().updateSelectedAndActiveSong();
             },
 
             removeSongFromPlaylist: (playlistId, songId) => {
@@ -789,8 +780,8 @@ export const useSongsStore = create<SongsStore>()(
                             : state.songs,
                 }));
 
-                get().updateSelectedContainer(playlistId);
-                get().updateSelectedAndActiveSong(songId);
+                get().updateSelectedContainer();
+                get().updateSelectedAndActiveSong();
             },
 
             // Albums ----------------------------------------------------------
@@ -864,7 +855,7 @@ export const useSongsStore = create<SongsStore>()(
                 }));
 
                 get().updateSongTagsByAlbum(id);
-                get().updateSelectedContainer(id);
+                get().updateSelectedContainer();
             },
 
             deleteAlbum: (id) => {
@@ -960,7 +951,7 @@ export const useSongsStore = create<SongsStore>()(
                         ),
                     }));
                 }
-                get().updateSelectedContainer(albumId);
+                get().updateSelectedContainer();
             },
 
             removeSongFromAlbum: (albumId, songId) => {
@@ -994,7 +985,7 @@ export const useSongsStore = create<SongsStore>()(
                     }));
                 }
 
-                get().updateSelectedContainer(albumId);
+                get().updateSelectedContainer();
             },
 
             updateSongTagsByAlbum: (albumId) => {
@@ -1035,7 +1026,7 @@ export const useSongsStore = create<SongsStore>()(
                     ),
                 }));
 
-                get().updateSelectedAndActiveSong(songId);
+                get().updateSelectedAndActiveSong();
             },
 
             // Algo
