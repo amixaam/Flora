@@ -20,6 +20,7 @@ const AlbumArt = ({ image, radius = Spacing.radius, style }: AlbumArtProps) => {
                     height: "100%",
                     borderRadius: radius,
                 }}
+                testID="album-art"
             />
         </View>
     );

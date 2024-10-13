@@ -1,4 +1,4 @@
-import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
+import { FlashList } from "@shopify/flash-list";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
@@ -6,15 +6,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
-import SongListItem from "../../../Components/UI/UI chunks/SongListItem";
+import SongItem from "../../../Components/UI/UI chunks/SongItem";
+import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { UpdateMetadata } from "../../../utils/UpdateMetadata";
-import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
-import SongItem from "../../../Components/UI/UI chunks/SongItem";
-import { Divider } from "react-native-paper";
 
 export default function SongsTab() {
     const { songs, setSelectedSong, addListToQueue } = useSongsStore();

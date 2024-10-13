@@ -5,7 +5,6 @@ import { Chip } from "react-native-paper";
 import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
 import ContainerListItem from "../../Components/UI/UI chunks/ContainerListItem";
-import SongListItem from "../../Components/UI/UI chunks/SongListItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
 import { useSongsStore } from "../../store/songs";
 import { Colors, Spacing } from "../../styles/constants";
@@ -13,6 +12,7 @@ import { textStyles } from "../../styles/text";
 import { Album, Playlist, Song } from "../../types/song";
 import Pluralize from "../../utils/Pluralize";
 import { router } from "expo-router";
+import SongItem from "../../Components/UI/UI chunks/SongItem";
 
 interface filteredDataProps {
     songs?: Song[];
@@ -128,14 +128,7 @@ const SearchScreen = () => {
 
     const renderItem = ({ item }: { item: Song | Album | Playlist }) => {
         if ("duration" in item) {
-            return (
-                <SongListItem
-                    key={item.id}
-                    item={item}
-                    showImage
-                    secondaryButtonIcon="dots-vertical"
-                />
-            );
+            return <SongItem key={item.id} song={item} />;
         } else if ("artist" in item) {
             return (
                 <ContainerListItem

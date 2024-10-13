@@ -100,7 +100,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     if (!activeSong) return null;
 
     return (
-        <View style={style}>
+        <View style={style} testID="mini-player">
             <TouchableNativeFeedback onPress={openPlayer}>
                 <View style={newStyles.miniPlayer}>
                     <SongDetails

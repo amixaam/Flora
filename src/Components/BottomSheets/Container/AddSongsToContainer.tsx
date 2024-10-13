@@ -2,13 +2,13 @@ import React, { forwardRef, useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, SnapPoints, Spacing } from "../../../styles/constants";
-import SongListItem from "../../UI/UI chunks/SongListItem";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { SheetModalLayout } from "../SheetModalLayout";
 import { BottomSheetProps } from "../../../types/other";
 import { Song } from "../../../types/song";
 import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
 import TextInput from "../../UI/Inputs/TextInput";
+import SongItem from "../../UI/UI chunks/SongItem";
 
 const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -112,14 +112,17 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
                     stickyHeaderIndices={[0]}
                     stickyHeaderHiddenOnScroll={true}
                     renderItem={({ item }) => (
-                        <SongListItem
-                            item={item}
-                            isSelected={selectedSongs.includes(item.id)}
+                        <SongItem
+                            song={item}
                             onPress={() => {
                                 changeList(item.id);
                             }}
-                            isSelectMode={true}
-                            showImage={true}
+                            controls={{
+                                icon: selectedSongs.includes(item.id)
+                                    ? "checkbox-marked-outline"
+                                    : "checkbox-blank-outline",
+                                onPress: () => changeList(item.id),
+                            }}
                         />
                     )}
                     keyExtractor={(item) => item.id}

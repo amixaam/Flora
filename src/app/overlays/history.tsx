@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Menu } from "react-native-paper";
 import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
-import SongListItem from "../../Components/UI/UI chunks/SongListItem";
 import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
@@ -10,6 +9,7 @@ import { useSongsStore } from "../../store/songs";
 import { Colors } from "../../styles/constants";
 import { Song } from "../../types/song";
 import IconButton from "../../Components/UI/Buttons/IconButton";
+import SongItem from "../../Components/UI/UI chunks/SongItem";
 
 const HistoryScreen = () => {
     const { history, getSong, setSelectedSong, addToQueueFirst } =
@@ -31,23 +31,18 @@ const HistoryScreen = () => {
                         if (!song) return null;
 
                         return (
-                            <SongListItem
+                            <SongItem
                                 key={song.id}
-                                item={song}
-                                showImage
-                                onPress={async () => {
-                                    await setSelectedSong(song);
+                                song={song}
+                                onPress={() => {
                                     addToQueueFirst(song);
                                 }}
-                                onLongPress={async () => {
-                                    await setSelectedSong(song);
-                                    openSong();
+                                controls={{
+                                    onPress: async () => {
+                                        await setSelectedSong(song);
+                                        openSong();
+                                    },
                                 }}
-                                onSecondaryButtonPress={async () => {
-                                    await setSelectedSong(song);
-                                    openSong();
-                                }}
-                                secondaryButtonIcon={"dots-vertical"}
                             />
                         );
                     })}

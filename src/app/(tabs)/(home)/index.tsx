@@ -1,32 +1,25 @@
 import { router } from "expo-router";
-import {
-    ImageBackground,
-    Text,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { Text, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 
-import { ScrollView, TouchableHighlight } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
-import { IconSizes, Spacing } from "../../../styles/constants";
-import { mainStyles, newStyles } from "../../../styles/styles";
+import { Spacing } from "../../../styles/constants";
+import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
 
 import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 
-export default function PlaylistsTab() {
-    const { albums, getRecentlyPlayed } = useSongsStore();
+export default function HomeTab() {
+    const { getRecentlyPlayed } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const {
@@ -38,71 +31,80 @@ export default function PlaylistsTab() {
     return (
         <View style={mainStyles.container}>
             <BackgroundImageAbsolute />
-            <ScrollView style={mainStyles.transparentContainer}>
+
+            <ScrollView
+                style={[
+                    mainStyles.transparentContainer,
+                    {
+                        paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    },
+                ]}
+            >
                 <MainHeader />
                 <View style={{ flex: 1, gap: Spacing.md }}>
-                    {/* <RecapBanner /> */}
-                    <HomeHeader text="Recently played" />
-                    <HorizontalList
+                    {/* feed */}
+                    <FeedSection
+                        text="Recently played"
                         list={getRecentlyPlayed()}
                         longPress={openContainer}
                     />
-                    {/* sorted by date modified */}
-                    <HomeHeader text="Albums" />
-                    <HorizontalList list={albums} longPress={openContainer} />
-
-                    <HomeHeader text="Most played" />
-                    <HorizontalList list={albums} longPress={openContainer} />
-
-                    <HomeHeader text="Forgotten favourites" />
-                    <HorizontalList list={albums} longPress={openContainer} />
                 </View>
-                <View
-                    style={{
-                        paddingBottom: insets.bottom + Spacing.miniPlayer,
-                    }}
-                />
-                <ContainerSheet ref={containerRef} dismiss={closeContainer} />
             </ScrollView>
+            <ContainerSheet ref={containerRef} dismiss={closeContainer} />
         </View>
     );
 }
 
-const RecapBanner = () => {
+type FeedSectionProps = {
+    text: string;
+    list: (Album | Playlist)[];
+    longPress: () => void;
+};
+
+const FeedSection = ({ text, list, longPress }: FeedSectionProps) => {
     return (
-        <TouchableHighlight>
-            <ImageBackground
-                source={RecapGradient}
-                style={newStyles.recapBanner}
-                imageStyle={{ borderRadius: Spacing.radiusLg }}
-            >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flex: 1,
-                        gap: Spacing.lg,
-                        paddingRight: Spacing.sm,
-                    }}
-                >
-                    <View
-                        style={{
-                            flex: 1,
-                        }}
-                    >
-                        <Text style={textStyles.h5}>Your recap is here!</Text>
-                        <Text style={textStyles.small}>
-                            Find out what you’ve been listening to for the last
-                            month!
-                        </Text>
-                    </View>
-                    <IconButton icon="play" size={IconSizes.lg} />
-                </View>
-            </ImageBackground>
-        </TouchableHighlight>
+        <>
+            <HomeHeader text={text} />
+            <HorizontalList list={list} longPress={longPress} />
+        </>
     );
 };
+
+// const RecapBanner = () => {
+//     return (
+//         <TouchableHighlight>
+//             <ImageBackground
+//                 source={RecapGradient}
+//                 style={newStyles.recapBanner}
+//                 imageStyle={{ borderRadius: Spacing.radiusLg }}
+//             >
+//                 <View
+//                     style={{
+//                         flexDirection: "row",
+//                         alignItems: "center",
+//                         justifyContent: "space-between",
+//                         flex: 1,
+//                         gap: Spacing.lg,
+//                         paddingRight: Spacing.sm,
+//                     }}
+//                 >
+//                     <View
+//                         style={{
+//                             flex: 1,
+//                         }}
+//                     >
+//                         <Text style={textStyles.h5}>Your recap is here!</Text>
+//                         <Text style={textStyles.small}>
+//                             Find out what you’ve been listening to for the last
+//                             month!
+//                         </Text>
+//                     </View>
+//                     <IconButton icon="play" size={IconSizes.lg} />
+//                 </View>
+//             </ImageBackground>
+//         </TouchableHighlight>
+//     );
+// };
 
 type HorizontalListProps = {
     list?: (Playlist | Album)[];
@@ -178,58 +180,5 @@ const HomeHeader = ({ text = "Header" }) => {
                 <IconButton icon="shuffle" />
             </View>
         </View>
-    );
-};
-
-type CategoriesSelectorProps = {
-    touchableNativeProps?: React.ComponentProps<typeof TouchableNativeFeedback>;
-    buttons: string[];
-};
-const CategoriesSelector = ({
-    buttons = ["Chip 1", "Chip 2"],
-    touchableNativeProps = {},
-}: CategoriesSelectorProps) => {
-    const [activeButton, setActiveButton] = useState(0);
-
-    return (
-        <View
-            style={{
-                flexDirection: "row",
-                gap: Spacing.sm,
-                paddingHorizontal: Spacing.appPadding,
-            }}
-        >
-            {buttons.map((button, index) => (
-                <Chip
-                    key={button + index}
-                    text={button}
-                    touchableNativeProps={{
-                        ...touchableNativeProps,
-                        onPress: () => setActiveButton(index),
-                    }}
-                    selected={activeButton === index}
-                />
-            ))}
-        </View>
-    );
-};
-
-type ButtonProps = {
-    touchableNativeProps?: React.ComponentProps<typeof TouchableNativeFeedback>;
-    text: string;
-    selected: boolean;
-};
-
-const Chip = ({
-    text = "Chip",
-    touchableNativeProps = {},
-    selected = false,
-}: ButtonProps) => {
-    return (
-        <TouchableNativeFeedback {...touchableNativeProps}>
-            <View style={[newStyles.chip, selected && newStyles.chipSelected]}>
-                <Text style={textStyles.text}>{text}</Text>
-            </View>
-        </TouchableNativeFeedback>
     );
 };

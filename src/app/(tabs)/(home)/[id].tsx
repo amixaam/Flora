@@ -1,17 +1,23 @@
 import { FlashList } from "@shopify/flash-list";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useEffect } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import React from "react";
 import { Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { IconButton } from "react-native-paper";
+import Animated, {
+    useAnimatedScrollHandler,
+    useSharedValue
+} from "react-native-reanimated";
 import {
     SafeAreaView,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
-import SongListItem, {
-    SongListItemProps,
-} from "../../../Components/UI/UI chunks/SongListItem";
+import AnimatedHeader from "../../../Components/UI/Headers/AnimatedHeader";
+import ListItemsNotFound from "../../../Components/UI/Text/ListItemsNotFound";
+import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
+import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackground";
+import SongItem from "../../../Components/UI/UI chunks/SongItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
@@ -20,21 +26,6 @@ import { textStyles } from "../../../styles/text";
 import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
-import ListItemsNotFound from "../../../Components/UI/Text/ListItemsNotFound";
-import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackground";
-import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
-import SongItem from "../../../Components/UI/UI chunks/SongItem";
-import { IconButton } from "react-native-paper";
-import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
-import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
-import AnimatedHeader from "../../../Components/UI/Headers/AnimatedHeader";
-import Animated, {
-    interpolate,
-    interpolateColor,
-    useAnimatedScrollHandler,
-    useAnimatedStyle,
-    useSharedValue,
-} from "react-native-reanimated";
 
 export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();

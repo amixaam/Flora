@@ -107,6 +107,7 @@ const LeftSide = ({ image, active = false, count }: LeftSideProps) => {
             name="volume-high"
             color={Colors.primary}
             size={IconSizes.md}
+            testID="volume-high"
         />
     );
 
