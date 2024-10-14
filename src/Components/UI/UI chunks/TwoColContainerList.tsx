@@ -1,19 +1,25 @@
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSongsStore } from "../../../store/songs";
-import { useCallback, useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
-import { Spacing } from "../../../styles/constants";
-import ContainerItem from "./ContainerItem";
 import { router } from "expo-router";
+import { useCallback, useRef } from "react";
+import { useSongsStore } from "../../../store/songs";
+import { Spacing } from "../../../styles/constants";
 import ContainerSheet from "../../BottomSheets/Container/ContainerSheet";
-import { TopButtonControls } from "./TopPlaybackSorting";
 import ListItemsNotFound from "../Text/ListItemsNotFound";
+import ContainerItem from "./ContainerItem";
+import { TopButtonControls } from "./TopPlaybackSorting";
+import { View } from "react-native";
 
 export const TwoColContainerList = ({
     type,
+    selectedItems,
+    toggle,
+    multiselectMode,
 }: {
     type: "album" | "playlist";
+    selectedItems: string[];
+    toggle: (item: string) => void;
+    multiselectMode: boolean;
 }) => {
     const {
         albums,
@@ -22,8 +28,6 @@ export const TwoColContainerList = ({
         getAllAlbumSongs,
         getAllPlaylistSongs,
     } = useSongsStore();
-
-    const insets = useSafeAreaInsets();
 
     const data = type === "album" ? albums : playlists;
 
@@ -39,12 +43,21 @@ export const TwoColContainerList = ({
         ContainerOptionsRef.current?.dismiss();
     }, []);
 
+    const onPress = (id: string) => {
+        if (selectedItems.length > 0) {
+            toggle(id);
+        } else {
+            router.push(`(tabs)/${type}s/${id}`);
+        }
+    };
+
     return (
         <>
             <FlashList
                 numColumns={2}
                 // @ts-ignore
                 data={data}
+                extraData={[data, selectedItems]}
                 keyExtractor={(item) => item.id}
                 ListHeaderComponent={
                     <TopButtonControls
@@ -55,7 +68,7 @@ export const TwoColContainerList = ({
                 }
                 contentContainerStyle={{
                     paddingBottom: Spacing.md + Spacing.miniPlayer,
-                    paddingHorizontal: Spacing.appPadding - Spacing.sm,
+                    paddingHorizontal: Spacing.sm,
                 }}
                 ListEmptyComponent={
                     <ListItemsNotFound
@@ -63,24 +76,27 @@ export const TwoColContainerList = ({
                         icon={type}
                     />
                 }
+                ItemSeparatorComponent={() => (
+                    <View style={{ height: Spacing.sm }} />
+                )}
                 estimatedItemSize={50}
                 renderItem={({ item }) => (
                     <ContainerItem
-                        viewProps={{
-                            style: {
-                                margin: Spacing.sm,
-                            },
-                        }}
                         item={item}
-                        touchableProps={{
-                            onPress: () => {
-                                router.push(`(tabs)/${type}s/${item.id}`);
-                            },
-                            onLongPress: () => {
-                                setSelectedContainer(item);
+                        selected={selectedItems.includes(item.id)}
+                        style={{
+                            marginHorizontal: Spacing.sm,
+                        }}
+                        icon={{
+                            onPress: async () => {
+                                await setSelectedContainer(item);
                                 openContainerOptions();
                             },
                         }}
+                        onLongPress={() => {
+                            toggle(item.id);
+                        }}
+                        onPress={() => onPress(item.id)}
                     />
                 )}
             />

@@ -236,25 +236,13 @@ const SongControls = ({ skipAnimation }: SongControlsProps) => {
                 gap: Spacing.mmd,
             }}
         >
+            <IconButton onPress={handlePlayPrevious} icon="skip-previous" />
             <IconButton
-                touchableOpacityProps={{
-                    onPress: handlePlayPrevious,
-                }}
-                icon="skip-previous"
-            />
-            <IconButton
-                touchableOpacityProps={{
-                    onPress: hanldePlayPausePress,
-                }}
+                onPress={hanldePlayPausePress}
                 size={IconSizes.lg}
                 icon={playbackState.state === "playing" ? "pause" : "play"}
             />
-            <IconButton
-                touchableOpacityProps={{
-                    onPress: handlePlayNext,
-                }}
-                icon="skip-next"
-            />
+            <IconButton onPress={handlePlayNext} icon="skip-next" />
         </View>
     );
 };

@@ -1,30 +1,42 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable, View } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Colors, DefaultIcon, IconSizes } from "../../../styles/constants";
+import {
+    Colors,
+    DefaultIcon,
+    IconSizes,
+    Spacing,
+} from "../../../styles/constants";
 
-type IconButtonTypes = {
-    touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;
+interface IconButtonTypes extends React.ComponentProps<typeof Pressable> {
     icon?: string;
+    iconColor?: Colors;
     size?: IconSizes;
-};
+}
 
 const IconButton = ({
-    touchableOpacityProps = {},
     icon = DefaultIcon,
+    iconColor = Colors.primary,
     size = IconSizes.md,
+    ...touchableOpacityProps
 }: IconButtonTypes) => {
     return (
-        <TouchableOpacity {...touchableOpacityProps}>
+        <Pressable
+            {...touchableOpacityProps}
+            android_ripple={{
+                borderless: true,
+                color: Colors.primary + "30",
+            }}
+        >
             <MaterialCommunityIcons
                 name={icon}
                 size={size}
                 style={[
-                    touchableOpacityProps.disabled && { opacity: 0.5 },
-                    { color: Colors.primary },
+                    touchableOpacityProps.disabled && { opacity: 0.25 },
+                    { color: iconColor },
                 ]}
             />
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 

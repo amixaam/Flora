@@ -4,14 +4,14 @@ import { Album, Playlist } from "../../../types/song";
 import { IconButtonProps } from "../Headers/SheetHeader";
 import AlbumArt from "./AlbumArt";
 import { textStyles } from "../../../styles/text";
-import { Spacing } from "../../../styles/constants";
+import { Colors, Spacing } from "../../../styles/constants";
 import Pluralize from "../../../utils/Pluralize";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { IconButton } from "react-native-paper";
 
 interface ContainerListItemProps {
     container: Playlist | Album;
-    options?: IconButtonProps | React.ReactElement;
+    options?: IconButtonProps;
     touchableNativeProps?: React.ComponentProps<typeof TouchableNativeFeedback>;
     viewProps?: React.ComponentProps<typeof View>;
 }
@@ -63,7 +63,11 @@ const ContainerListItem = ({
                         </Text>
                     </View>
                 </View>
-                <IconButton icon={"dots-vertical"} />
+                <IconButton
+                    icon={options?.icon || "dots-vertical"}
+                    onPress={options?.onPress}
+                    iconColor={Colors.primary}
+                />
             </View>
         </TouchableNativeFeedback>
     );

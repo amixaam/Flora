@@ -9,7 +9,7 @@ import { ActivityIndicator } from "react-native-paper";
 
 interface MainHeaderProps {
     title?: string;
-    headerRight?: React.ReactNode;
+    headerRight?: React.ReactElement;
 }
 
 export const MainHeader = ({
@@ -21,38 +21,37 @@ export const MainHeader = ({
             title={title}
             titleStyle={textStyles.h4}
             headerLeft={<></>}
-            headerRight={<IconHeaders headerRight={headerRight} />}
+            headerRight={
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: Spacing.md,
+                    }}
+                >
+                    {headerRight || <IconHeaders />}
+                </View>
+            }
         />
     );
 };
 
-const IconHeaders = ({ headerRight }: { headerRight?: React.ReactNode }) => {
+const IconHeaders = () => {
     const { isReadingSongs } = useSongsStore();
     return (
-        <View
-            style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: Spacing.md,
-            }}
-        >
-            {headerRight}
+        <>
             <ActivityIndicator
                 animating={isReadingSongs}
                 color={Colors.primary}
             />
             <IconButton
                 icon="history"
-                touchableOpacityProps={{
-                    onPress: () => router.push("/overlays/history"),
-                }}
+                onPress={() => router.push("/overlays/history")}
             />
             <IconButton
                 icon="magnify"
-                touchableOpacityProps={{
-                    onPress: () => router.push("/overlays/search"),
-                }}
+                onPress={() => router.push("/overlays/search")}
             />
-        </View>
+        </>
     );
 };

@@ -53,12 +53,7 @@ const HistoryScreen = () => {
                     <SheetHeader
                         title={`${multiselectedItems.length} selected`}
                         headerLeft={
-                            <IconButton
-                                icon="close"
-                                touchableOpacityProps={{
-                                    onPress: deselectAll,
-                                }}
-                            />
+                            <IconButton icon="close" onPress={deselectAll} />
                         }
                         headerRight={
                             <SelectedMenuButton
@@ -147,9 +142,7 @@ const SelectedMenuButton = ({
             anchor={
                 <IconButton
                     icon={"dots-vertical"}
-                    touchableOpacityProps={{
-                        onPress: () => setVisible(true),
-                    }}
+                    onPress={() => setVisible(true)}
                 />
             }
         >
@@ -221,9 +214,7 @@ const MenuButton = ({
             anchor={
                 <IconButton
                     icon={"dots-vertical"}
-                    touchableOpacityProps={{
-                        onPress: () => setVisible(true),
-                    }}
+                    onPress={() => setVisible(true)}
                 />
             }
         >

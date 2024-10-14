@@ -13,6 +13,9 @@ import { Album, Playlist, Song } from "../../types/song";
 import Pluralize from "../../utils/Pluralize";
 import { router } from "expo-router";
 import SongItem from "../../Components/UI/UI chunks/SongItem";
+import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
+import ContainerSheet from "../../Components/BottomSheets/Container/ContainerSheet";
+import useBottomSheetModal from "../../hooks/useBottomSheetModal";
 
 interface filteredDataProps {
     songs?: Song[];
@@ -29,11 +32,22 @@ const SearchScreen = () => {
         albums: [],
         playlists: [],
     });
-    const { songs, albums, playlists } = useSongsStore();
+    const { songs, albums, playlists, setSelectedContainer } = useSongsStore();
 
     useEffect(() => {
         filterData();
     }, [filter, selectedFilter, songs, albums, playlists]);
+
+    const {
+        close: closeSong,
+        open: openSong,
+        sheetRef: songRef,
+    } = useBottomSheetModal();
+    const {
+        close: closeContainer,
+        open: openContainer,
+        sheetRef: containerRef,
+    } = useBottomSheetModal();
 
     const filterData = () => {
         let filteredData: filteredDataProps = {
@@ -128,7 +142,15 @@ const SearchScreen = () => {
 
     const renderItem = ({ item }: { item: Song | Album | Playlist }) => {
         if ("duration" in item) {
-            return <SongItem key={item.id} song={item} />;
+            return (
+                <SongItem
+                    key={item.id}
+                    song={item}
+                    controls={{
+                        onPress: openSong,
+                    }}
+                />
+            );
         } else if ("artist" in item) {
             return (
                 <ContainerListItem
@@ -136,6 +158,12 @@ const SearchScreen = () => {
                     container={item}
                     touchableNativeProps={{
                         onPress: () => router.push(`/${item.id}`),
+                    }}
+                    options={{
+                        onPress: async () => {
+                            await setSelectedContainer(item);
+                            openContainer();
+                        },
                     }}
                 />
             );
@@ -146,6 +174,12 @@ const SearchScreen = () => {
                     container={item}
                     touchableNativeProps={{
                         onPress: () => router.push(`/${item.id}`),
+                    }}
+                    options={{
+                        onPress: async () => {
+                            await setSelectedContainer(item);
+                            openContainer();
+                        },
                     }}
                 />
             );
@@ -257,20 +291,22 @@ const SearchScreen = () => {
                                     setSelectedFilter(filter);
                                 }}
                                 selectedColor={Colors.primary}
-                                style={
-                                    selectedFilter === filter && {
-                                        backgroundColor: Colors.input,
-                                    }
-                                }
+                                style={{
+                                    backgroundColor:
+                                        selectedFilter === filter
+                                            ? Colors.input
+                                            : Colors.secondary,
+                                }}
                             >
                                 {filter}
                             </Chip>
                         ))}
                     </ScrollView>
                 </View>
-
                 {renderList(filteredData)}
             </View>
+            <SongSheet ref={songRef} dismiss={closeSong} />
+            <ContainerSheet ref={containerRef} dismiss={closeContainer} />
         </SwipeDownScreen>
     );
 };
@@ -304,7 +340,6 @@ const HeaderInput = ({
         <View style={{ flex: 1, marginTop: 1 }}>
             <TextInput
                 placeholder="Search..."
-                value={filter}
                 onChangeText={setFilter}
                 placeholderTextColor={Colors.primary90}
                 style={[textStyles.text]}

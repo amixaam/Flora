@@ -127,25 +127,26 @@ const HorizontalList = ({
                 paddingHorizontal: Spacing.appPadding,
             }}
             ItemSeparatorComponent={() => (
-                <View style={{ width: Spacing.appPadding }} />
+                <View style={{ width: Spacing.md }} />
             )}
             renderItem={({ item }) => (
                 <ContainerItem
-                    viewProps={{
-                        style: {
-                            width: 160,
-                        },
+                    style={{
+                        width: 160,
                     }}
+                    selectPadding={false}
                     item={item}
-                    touchableProps={{
-                        onPress: () => {
-                            router.push(`./${item.id}`);
-                        },
-                        onLongPress: async () => {
+                    icon={{
+                        onPress: async () => {
                             await setSelectedContainer(item);
                             longPress();
                         },
                     }}
+                    onLongPress={async () => {
+                        await setSelectedContainer(item);
+                        longPress();
+                    }}
+                    onPress={() => router.push(`/${item.id}`)}
                 />
             )}
         />
