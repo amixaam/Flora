@@ -3,32 +3,32 @@ import { forwardRef, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
-import { Album } from "../../../types/song";
-import { SheetModalLayout } from "../SheetModalLayout";
 import ImagePickerButton from "../../UI/Buttons/ImagePickerButton";
 import TextInput from "../../UI/Inputs/TextInput";
-import SubmitButton from "../../UI/Buttons/SubmitButton";
-import CancelButton from "../../UI/Buttons/CancelButton";
+import { SheetModalLayout } from "../SheetModalLayout";
+import MainButton from "../../UI/Buttons/MainButton";
 
 const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { createAlbum } = useSongsStore();
-        const [inputFields, setInputFields] = useState<Partial<Album>>({
-            title: "",
-            artist: "",
-            year: "",
-            artwork: undefined,
-        });
+        const [title, setTitle] = useState("");
+        const [artist, setArtist] = useState("");
+        const [year, setYear] = useState("");
+        const [image, setImage] = useState("");
 
         const handleSubmit = () => {
             props.dismiss?.();
-            createAlbum(inputFields);
-            setInputFields({
-                title: "",
-                artist: "",
-                year: "",
-                artwork: undefined,
+            createAlbum({
+                title: title,
+                artist: artist,
+                year: year,
+                artwork: image,
             });
+
+            setTitle("");
+            setArtist("");
+            setYear("");
+            setImage("");
         };
 
         return (
@@ -44,55 +44,27 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                         marginHorizontal: Spacing.appPadding,
                     }}
                 >
-                    <ImagePickerButton
-                        image={inputFields.artwork}
-                        setImage={(artwork: string) =>
-                            setInputFields({ ...inputFields, artwork })
-                        }
-                        touchableOpacityProps={{
-                            style: {
-                                flex: 1,
-                                width: 128,
-                            },
-                        }}
-                    />
+                    <ImagePickerButton image={image} setImage={setImage} />
                     <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
                         <BottomSheetView style={{ gap: Spacing.sm }}>
                             <TextInput
-                                bottomSheet={true}
+                                bottomSheet
                                 placeholder="Album name..."
-                                value={inputFields.title}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        title: value,
-                                    })
-                                }
+                                onChangeText={setTitle}
+                                defaultValue={title}
                             />
                             <TextInput
-                                bottomSheet={true}
+                                bottomSheet
                                 placeholder="Artist..."
-                                value={inputFields.artist}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        artist: value,
-                                    })
-                                }
+                                onChangeText={setArtist}
+                                defaultValue={artist}
                             />
                             <TextInput
-                                bottomSheet={true}
+                                bottomSheet
                                 placeholder="Year..."
-                                value={inputFields.year?.toString()}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        year: value,
-                                    })
-                                }
-                                inputProps={{
-                                    inputMode: "numeric",
-                                }}
+                                inputMode="numeric"
+                                onChangeText={setYear}
+                                defaultValue={year}
                             />
                         </BottomSheetView>
 
@@ -102,14 +74,11 @@ const CreateAlbum = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 gap: Spacing.sm,
                             }}
                         >
-                            <SubmitButton
-                                handleSubmitForm={handleSubmit}
-                                text="Create"
-                            />
-                            <CancelButton
-                                handlePress={() => {
-                                    props.dismiss?.();
-                                }}
+                            <MainButton onPress={handleSubmit} text="Create" />
+                            <MainButton
+                                onPress={props.dismiss}
+                                text="Cancel"
+                                type="secondary"
                             />
                         </BottomSheetView>
                     </BottomSheetView>

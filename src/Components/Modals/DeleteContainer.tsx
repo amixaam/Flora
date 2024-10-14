@@ -3,8 +3,7 @@ import React from "react";
 import ModalLayout from "./ModalLayout";
 import { textStyles } from "../../styles/text";
 import { Spacing } from "../../styles/constants";
-import SubmitButton from "../UI/Buttons/SubmitButton";
-import CancelButton from "../UI/Buttons/CancelButton";
+import MainButton from "../UI/Buttons/MainButton";
 
 const DeleteContainer = ({
     visible = false,
@@ -29,8 +28,13 @@ const DeleteContainer = ({
                     flexDirection: "row",
                 }}
             >
-                <SubmitButton text="Delete" handleSubmitForm={confirm} flex />
-                <CancelButton handlePress={dismiss} flex />
+                <MainButton flex text="Delete" onPress={confirm} />
+                <MainButton
+                    flex
+                    onPress={dismiss}
+                    text="Cancel"
+                    type="secondary"
+                />
             </View>
         </ModalLayout>
     );

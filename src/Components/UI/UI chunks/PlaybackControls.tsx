@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { useSongsStore } from "../../../store/songs";
 
+import { IconButton } from "react-native-paper";
 import {
     RepeatMode,
     usePlaybackState,
@@ -11,8 +12,6 @@ import { textStyles } from "../../../styles/text";
 import { Direction } from "../../../types/other";
 import { CalculateDurationLeft, FormatSecs } from "../../../utils/FormatMillis";
 import PlaybackSlider from "../Utils/PlaybackSlider";
-import { IconButton } from "react-native-paper";
-import CustomSlider from "../Utils/PlaybackSlider";
 
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},

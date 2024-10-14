@@ -105,7 +105,8 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
                             <TextInput
                                 // bottomSheet
                                 placeholder="Song name or artist..."
-                                setValue={(query) => handleSearch(query)}
+                                onChangeText={handleSearch}
+                                defaultValue=""
                             />
                         </BottomSheetView>
                     }

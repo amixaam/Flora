@@ -3,37 +3,36 @@ import { forwardRef, useEffect, useState } from "react";
 import { useSongsStore } from "../../../store/songs";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
-import { Playlist } from "../../../types/song";
-import { SheetModalLayout } from "../SheetModalLayout";
 import ImagePickerButton from "../../UI/Buttons/ImagePickerButton";
 import TextInput from "../../UI/Inputs/TextInput";
-import SubmitButton from "../../UI/Buttons/SubmitButton";
-import CancelButton from "../../UI/Buttons/CancelButton";
+import { SheetModalLayout } from "../SheetModalLayout";
+import MainButton from "../../UI/Buttons/MainButton";
 
 const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const { selectedContainer, editPlaylist } = useSongsStore();
-        const [inputFields, setInputFields] = useState<Partial<Playlist>>({
-            title: "",
-            description: undefined,
-            artwork: undefined,
-        });
+
+        const [image, setImage] = useState("");
+        const [title, setTitle] = useState("");
+        const [description, setDescription] = useState("");
 
         useEffect(() => {
             if (!selectedContainer || !("description" in selectedContainer))
                 return;
-            setInputFields({
-                title: selectedContainer.title,
-                description: selectedContainer.description,
-                artwork: selectedContainer.artwork,
-            });
-        }, [selectedContainer]);
+
+            setImage(selectedContainer.artwork as string);
+            setTitle(selectedContainer.title);
+            setDescription(selectedContainer.description as string);
+        });
 
         if (!selectedContainer || !("description" in selectedContainer)) return;
 
         const handleSubmitForm = () => {
-            if (!inputFields.title) inputFields.title = "Unnamed playlist";
-            editPlaylist(selectedContainer.id, inputFields);
+            editPlaylist(selectedContainer.id, {
+                title: title || "Unnamed playlist",
+                description: description,
+                artwork: image,
+            });
             props.dismiss?.();
         };
 
@@ -51,19 +50,9 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                     }}
                 >
                     <ImagePickerButton
-                        image={inputFields.artwork}
-                        setImage={(artwork: string) =>
-                            setInputFields({
-                                ...inputFields,
-                                artwork: artwork,
-                            })
-                        }
-                        touchableOpacityProps={{
-                            style: {
-                                flex: 1,
-                                width: 128,
-                            },
-                        }}
+                        image={image}
+                        defaultImage={selectedContainer.artwork}
+                        setImage={setImage}
                     />
 
                     <BottomSheetView style={{ flex: 1, gap: Spacing.md }}>
@@ -71,24 +60,14 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                             <TextInput
                                 bottomSheet={true}
                                 placeholder="Playlist name..."
-                                value={inputFields.title}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        title: value,
-                                    })
-                                }
+                                onChangeText={setTitle}
+                                defaultValue={selectedContainer.title}
                             />
                             <TextInput
                                 bottomSheet={true}
                                 placeholder="Description..."
-                                value={inputFields.description}
-                                setValue={(value) =>
-                                    setInputFields({
-                                        ...inputFields,
-                                        description: value,
-                                    })
-                                }
+                                onChangeText={setDescription}
+                                defaultValue={selectedContainer.description}
                             />
                         </BottomSheetView>
 
@@ -98,14 +77,14 @@ const EditPlaylist = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 gap: Spacing.sm,
                             }}
                         >
-                            <SubmitButton
-                                handleSubmitForm={handleSubmitForm}
+                            <MainButton
+                                onPress={handleSubmitForm}
                                 text="Save"
                             />
-                            <CancelButton
-                                handlePress={() => {
-                                    props.dismiss?.();
-                                }}
+                            <MainButton
+                                type="secondary"
+                                onPress={props.dismiss}
+                                text="Cancel"
                             />
                         </BottomSheetView>
                     </BottomSheetView>

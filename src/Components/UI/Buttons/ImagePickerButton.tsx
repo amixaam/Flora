@@ -1,23 +1,33 @@
 import * as ImagePicker from "expo-image-picker";
 import React from "react";
-import { Image, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Colors } from "../../../styles/constants";
-import { textStyles } from "../../../styles/text";
+import { PressableProps, StyleProp } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import AlbumArt from "../UI chunks/AlbumArt";
 
-type ImagePickerTypes = {
-    touchableOpacityProps?: React.ComponentProps<typeof TouchableOpacity>;
+interface ImagePickerTypes {
     image?: string;
+    defaultImage?: string;
     setImage: any;
-};
+    size?: number;
+    style?: StyleProp<PressableProps>;
+}
 
 const ImagePickerButton = ({
-    touchableOpacityProps,
     image,
+    defaultImage,
     setImage,
+    size = 128,
+    style,
 }: ImagePickerTypes) => {
     const pickImage = async () => {
-        await ImagePicker.getMediaLibraryPermissionsAsync();
+        const responde = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+        if (!responde.granted) {
+            const response =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!response.granted) return;
+        }
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
@@ -28,42 +38,25 @@ const ImagePickerButton = ({
     };
 
     return (
-        <TouchableOpacity onPress={pickImage} {...touchableOpacityProps}>
-            {image ? (
-                <Image
-                    source={{ uri: image }}
-                    style={[
-                        {
-                            backgroundColor: Colors.input,
-                            alignSelf: "center",
-                            width: "100%",
-                            aspectRatio: 1,
-                            borderRadius: 7,
-                        },
-                    ]}
-                />
-            ) : (
-                <View
-                    style={[
-                        {
-                            backgroundColor: Colors.input,
-                            alignSelf: "center",
-                            width: "100%",
-                            aspectRatio: 1,
-                            borderRadius: 7,
-                            justifyContent: "center",
-                            alignItems: "center",
-                        },
-                    ]}
-                >
-                    <Text
-                        style={[textStyles.text, { color: Colors.primary90 }]}
-                    >
-                        Select artwork
-                    </Text>
-                </View>
-            )}
-        </TouchableOpacity>
+        <TouchableRipple
+            onPress={pickImage}
+            style={[
+                {
+                    aspectRatio: 1,
+                    height: size,
+                    position: "relative",
+                },
+                style,
+            ]}
+        >
+            <AlbumArt
+                image={defaultImage || image}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                }}
+            />
+        </TouchableRipple>
     );
 };
 

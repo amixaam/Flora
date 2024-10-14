@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 import { IconButton } from "react-native-paper";
 import Animated, {
     useAnimatedScrollHandler,
-    useSharedValue
+    useSharedValue,
 } from "react-native-reanimated";
 import {
     SafeAreaView,

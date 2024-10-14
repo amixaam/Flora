@@ -16,12 +16,14 @@ interface MainButtonProps extends PressableProps {
     text?: string;
     type?: "primary" | "secondary" | "round";
     fitWidth?: boolean;
+    flex?: boolean;
 }
 
 const MainButton = ({
     children,
     text,
     type = "primary",
+    flex = false,
     ...pressableProps
 }: MainButtonProps) => {
     let style: StyleProp<ViewStyle> = [
@@ -47,7 +49,7 @@ const MainButton = ({
 
     return (
         <TouchableRipple
-            style={style}
+            style={[style, { flex: flex ? 1 : 0 }]}
             {...(pressableProps as TouchableRippleProps)}
         >
             {children ? children : <Text style={textStyle}>{text}</Text>}

@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { Menu } from "react-native-paper";
+import AddMultipleSongs from "../../Components/BottomSheets/Song/AddMultipleSongs";
 import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
+import IconButton from "../../Components/UI/Buttons/IconButton";
 import SheetHeader from "../../Components/UI/Headers/SheetHeader";
+import SongItem from "../../Components/UI/UI chunks/SongItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
+import useMultiSelect from "../../hooks/useMultiSelect";
 import { useSongsStore } from "../../store/songs";
 import { Colors } from "../../styles/constants";
 import { Song } from "../../types/song";
-import IconButton from "../../Components/UI/Buttons/IconButton";
-import SongItem from "../../Components/UI/UI chunks/SongItem";
-import AddMultipleSongs from "../../Components/BottomSheets/Song/AddMultipleSongs";
 
 const HistoryScreen = () => {
     const { history, getSong, setSelectedSong, addToQueueFirst } =
@@ -31,65 +32,42 @@ const HistoryScreen = () => {
 
     const onPress = (song: Song) => {
         if (multiselectMode) {
-            toggleSelectedSong(song.id);
+            toggle(song.id);
         } else {
             addToQueueFirst(song);
         }
     };
 
-    const onLongPress = (id: Song["id"]) => {
-        toggleSelectedSong(id);
-    };
-
-    // multiselect
-    const [multiselectedSongs, setMultiselectedSongs] = useState<Song["id"][]>(
-        []
-    );
-    const [multiselectMode, setMultiselectMode] = useState(false);
-
-    useEffect(() => {
-        if (multiselectedSongs.length == 0) {
-            setMultiselectMode(false);
-        } else {
-            setMultiselectMode(true);
-        }
-    }, [multiselectedSongs]);
-
-    const toggleSelectedSong = (id: Song["id"]) => {
-        if (multiselectedSongs.includes(id)) {
-            setMultiselectedSongs(multiselectedSongs.filter((s) => s !== id));
-        } else {
-            setMultiselectedSongs([...multiselectedSongs, id]);
-        }
-    };
-
-    const removeAllSelectedSongs = () => {
-        setMultiselectedSongs([]);
-    };
-
-    const selectAllSongs = () => {
-        const songs = history.history.map((item) => getSong(item.song) as Song);
-        setMultiselectedSongs(songs.map((song) => song.id));
-    };
+    const {
+        multiselectMode,
+        multiselectedItems,
+        toggle,
+        setSelection,
+        deselectAll,
+    } = useMultiSelect<Song["id"]>();
 
     return (
         <>
             <SwipeDownScreen>
-                {multiselectedSongs.length > 0 ? (
+                {multiselectedItems.length > 0 ? (
                     <SheetHeader
-                        title={`${multiselectedSongs.length} selected`}
+                        title={`${multiselectedItems.length} selected`}
                         headerLeft={
                             <IconButton
                                 icon="close"
                                 touchableOpacityProps={{
-                                    onPress: removeAllSelectedSongs,
+                                    onPress: deselectAll,
                                 }}
                             />
                         }
                         headerRight={
                             <SelectedMenuButton
-                                selectedSongs={multiselectedSongs}
-                                selectAll={selectAllSongs}
+                                selectedSongs={multiselectedItems}
+                                selectAll={() => {
+                                    setSelection(
+                                        history.history.map((item) => item.song)
+                                    );
+                                }}
                                 openAddToPlaylist={open}
                             />
                         }
@@ -111,13 +89,13 @@ const HistoryScreen = () => {
                                 song={song}
                                 isActive={
                                     multiselectMode &&
-                                    multiselectedSongs.includes(song.id)
+                                    multiselectedItems.includes(song.id)
                                 }
                                 onPress={() => {
                                     onPress(song);
                                 }}
                                 onLongPress={() => {
-                                    onLongPress(song.id);
+                                    toggle(song.id);
                                 }}
                                 controls={{
                                     onPress: () => {
@@ -133,9 +111,10 @@ const HistoryScreen = () => {
             <AddMultipleSongs
                 ref={sheetRef}
                 dismiss={close}
+                deselect={deselectAll}
                 songs={
-                    multiselectedSongs.length > 0
-                        ? multiselectedSongs
+                    multiselectedItems.length > 0
+                        ? multiselectedItems
                         : history.history.map((item) => item.song)
                 }
             />

@@ -1,22 +1,21 @@
-import { forwardRef, useCallback, useRef } from "react";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { forwardRef } from "react";
+import { FlatList } from "react-native-gesture-handler";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songs";
 import { SnapPoints, Spacing } from "../../../styles/constants";
-import { SheetModalLayout } from "../SheetModalLayout";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetProps } from "../../../types/other";
 import { Playlist, Song } from "../../../types/song";
-import CreatePlaylist from "../Playlist/CreatePlaylist";
-import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
+import MainButton from "../../UI/Buttons/MainButton";
 import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
 import SheetPlaylistOptionsButton from "../../UI/Buttons/SheetPlaylistOptionsButton";
-import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { FlatList } from "react-native-gesture-handler";
-import Pluralize from "../../../utils/Pluralize";
-import MainButton from "../../UI/Buttons/MainButton";
-import { View } from "react-native";
-import { BottomSheetProps } from "../../../types/other";
+import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
+import CreatePlaylist from "../Playlist/CreatePlaylist";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 interface AddMultipleSongsProps extends BottomSheetProps {
     songs: Song["id"][];
+    deselect?: () => void;
 }
 
 const AddMultipleSongs = forwardRef<BottomSheetModal, AddMultipleSongsProps>(
@@ -34,6 +33,7 @@ const AddMultipleSongs = forwardRef<BottomSheetModal, AddMultipleSongsProps>(
 
             addSongToPlaylist(playlist.id, props.songs);
 
+            props.deselect?.();
             props.dismiss();
         };
 

@@ -1,23 +1,22 @@
-import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
-import { Icon, IconButton } from "react-native-paper";
-import TextTicker from "react-native-text-ticker";
-import { usePlaybackState } from "react-native-track-player";
+import React from "react";
+import { Text, View } from "react-native";
 import DraggableFlatList, {
     DragEndParams,
     RenderItemParams,
 } from "react-native-draggable-flatlist";
+import { IconButton } from "react-native-paper";
+import TextTicker from "react-native-text-ticker";
+import { usePlaybackState } from "react-native-track-player";
 import SheetHeader from "../../Components/UI/Headers/SheetHeader";
+import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
+import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
+import SongItem from "../../Components/UI/UI chunks/SongItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
 import { useSongsStore } from "../../store/songs";
-import { Colors, IconSizes, Spacing } from "../../styles/constants";
+import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Song } from "../../types/song";
 import { CombineStrings } from "../../utils/CombineStrings";
-import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
-import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
-import SongListItem from "../../Components/UI/UI chunks/SongListItem";
-import SongItem from "../../Components/UI/UI chunks/SongItem";
 
 const QueueScreen = () => {
     const { queue, setQueue } = useSongsStore();

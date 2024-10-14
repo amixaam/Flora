@@ -1,12 +1,10 @@
-import { Text, TouchableNativeFeedback, View } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Text, View } from "react-native";
+import { IconButton } from "react-native-paper";
 import { useSongsStore } from "../../../store/songs";
-import { Colors, IconSizes, Spacing } from "../../../styles/constants";
-import { mainStyles } from "../../../styles/styles";
+import { Colors, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { Song } from "../../../types/song";
 import Pluralize from "../../../utils/Pluralize";
-import { IconButton } from "react-native-paper";
 
 interface TopButtonControlsProps {
     horizontalMargins?: number;

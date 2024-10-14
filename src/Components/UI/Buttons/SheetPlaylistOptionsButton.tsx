@@ -1,13 +1,12 @@
-import { View, Text, TouchableNativeFeedback } from "react-native";
 import React from "react";
+import { Text, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import Checkbox from "./Checkbox";
-import { Colors, Spacing } from "../../../styles/constants";
 import { Playlist } from "../../../types/song";
-import AlbumArt from "../UI chunks/AlbumArt";
-import { IconButton, TouchableRipple } from "react-native-paper";
 import Pluralize from "../../../utils/Pluralize";
+import AlbumArt from "../UI chunks/AlbumArt";
 
 interface Props {
     playlist: Playlist;
