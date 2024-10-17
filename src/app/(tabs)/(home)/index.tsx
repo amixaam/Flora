@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Text, View } from "react-native";
+import { ImageBackground, Text, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../../store/songs";
@@ -7,16 +7,18 @@ import { useSongsStore } from "../../../store/songs";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
-import { Spacing } from "../../../styles/constants";
-import { mainStyles } from "../../../styles/styles";
+import { Colors, ImageSources, Spacing } from "../../../styles/constants";
+import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist } from "../../../types/song";
 
+import { IconButton as PaperIconButton } from "react-native-paper";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
+import { TouchableRipple } from "react-native-paper";
 
 export default function HomeTab() {
     const { getRecentlyPlayed } = useSongsStore();
@@ -41,8 +43,10 @@ export default function HomeTab() {
                 ]}
             >
                 <MainHeader />
+
+                {/* feed */}
                 <View style={{ flex: 1, gap: Spacing.md }}>
-                    {/* feed */}
+                    <RecapBanner />
                     <FeedSection
                         text="Recently played"
                         list={getRecentlyPlayed()}
@@ -70,41 +74,46 @@ const FeedSection = ({ text, list, longPress }: FeedSectionProps) => {
     );
 };
 
-// const RecapBanner = () => {
-//     return (
-//         <TouchableHighlight>
-//             <ImageBackground
-//                 source={RecapGradient}
-//                 style={newStyles.recapBanner}
-//                 imageStyle={{ borderRadius: Spacing.radiusLg }}
-//             >
-//                 <View
-//                     style={{
-//                         flexDirection: "row",
-//                         alignItems: "center",
-//                         justifyContent: "space-between",
-//                         flex: 1,
-//                         gap: Spacing.lg,
-//                         paddingRight: Spacing.sm,
-//                     }}
-//                 >
-//                     <View
-//                         style={{
-//                             flex: 1,
-//                         }}
-//                     >
-//                         <Text style={textStyles.h5}>Your recap is here!</Text>
-//                         <Text style={textStyles.small}>
-//                             Find out what you’ve been listening to for the last
-//                             month!
-//                         </Text>
-//                     </View>
-//                     <IconButton icon="play" size={IconSizes.lg} />
-//                 </View>
-//             </ImageBackground>
-//         </TouchableHighlight>
-//     );
-// };
+const RecapBanner = () => {
+    const onPress = () => {
+        router.push("overlays/recap");
+    };
+
+    return (
+        <TouchableRipple onPress={onPress}>
+            <ImageBackground
+                source={ImageSources.banner}
+                style={newStyles.recapBanner}
+                imageStyle={{ borderRadius: Spacing.radiusLg }}
+            >
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flex: 1,
+                        gap: Spacing.lg,
+                        padding: Spacing.appPadding,
+                        backgroundColor: Colors.bg70,
+                    }}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                        }}
+                    >
+                        <Text style={textStyles.h5}>Your Recap is here!</Text>
+                    </View>
+                    <IconButton
+                        icon="arrow-right"
+                        iconColor={Colors.primary}
+                        onPress={onPress}
+                    />
+                </View>
+            </ImageBackground>
+        </TouchableRipple>
+    );
+};
 
 type HorizontalListProps = {
     list?: (Playlist | Album)[];

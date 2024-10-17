@@ -37,26 +37,30 @@ interface Song {
     };
 }
 
-enum RECAP_PERIOD {
+export enum RECAP_PERIOD {
+    DAILY = "DAILY",
     WEEKLY = "WEEKLY",
     MONTHLY = "MONTHLY",
     QUARTERLY = "QUARTERLY",
     YEARLY = "YEARLY",
 }
 
-interface RecapStatistics {
-    date: Date;
+// each song has its own entry per day
+export interface RecapStatistics {
+    date: string;
+    timesPlayed: string[]; // Last time played on this date,format HH:mm:ss.
+
     songId: Song["id"];
-    playCount: number;
-    playStartTime: Date | undefined;
-    lastPlayed: Date; // Last time played on this date, specify hours, minutes, etc.
     albumId: Album["id"] | undefined;
+
+    playCount: number;
     skipCount: number;
 }
 
-interface Recap {
+export interface Recap {
     period: RECAP_PERIOD; // WEEKLY, MONTHLY, etc.
-    lastUpdated: Date;
+    lastUpdated: string;
+    recapStarted: string;
     data: RecapStatistics[]; // Array of RecapStatistics objects
 }
 

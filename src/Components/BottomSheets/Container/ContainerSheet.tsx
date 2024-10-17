@@ -25,8 +25,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const {
             selectedContainer,
-            deleteAlbum,
-            deletePlaylist,
+            deleteContainer,
             shuffleList,
             getSongsFromContainer,
             addToQueue,
@@ -82,12 +81,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         const handleDeleteContainer = () => {
             props.dismiss?.();
             setDeleteConfirmModal(false);
-
-            if (containerType === "album") {
-                deleteAlbum(selectedContainer.id);
-            } else {
-                deletePlaylist(selectedContainer.id);
-            }
+            deleteContainer(selectedContainer.id);
         };
 
         const handleShufflePlay = () => {

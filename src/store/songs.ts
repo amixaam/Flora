@@ -4,7 +4,15 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
 import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
-import { Album, History, Playlist, Song } from "../types/song";
+import {
+    Album,
+    History,
+    Playlist,
+    Recap,
+    RECAP_PERIOD,
+    RecapStatistics,
+    Song,
+} from "../types/song";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -14,44 +22,51 @@ type SongsStore = {
     albums: Album[];
     history: History;
     queue: Track[];
-
+    recap: Recap;
     isReadingSongs: boolean;
     selectedSong: Song | undefined;
     activeSong: Song | undefined;
-
+    repeatMode: RepeatMode;
     selectedContainer: Playlist | Album | undefined;
+
+    resetAll: () => void;
 
     setIsReadingSongs: (value: boolean) => void;
     setSelectedSong: (song: Song) => Promise<void>;
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
+    setActiveSong: () => Promise<void>;
 
-    // updateSong: (songId: string) => void;
     updateSelectedAndActiveSong: () => void;
     updateSelectedContainer: () => void;
+    updateActiveSong: (songId: string) => void;
 
-    repeatMode: RepeatMode; // enum
+    // RECAP
+    startNewRecapPeriod: () => void;
+    setRecapPeriod: (period: RECAP_PERIOD) => void;
 
-    resetAll: () => void;
+    isRecapDue: () => boolean;
+    getRecapData: () => Recap;
 
-    // for music playback
+    // PLAYBACK
     resetPlayer: () => Promise<void>;
     startup: () => Promise<void>;
+
     play: () => Promise<void>;
     pause: () => Promise<void>;
     next: () => Promise<void>;
     previous: () => Promise<void>;
+
     seekToPosition: (position: number) => Promise<void>;
 
     setRepeatMode: (mode: RepeatMode) => Promise<void>;
     toggleRepeatMode: () => Promise<void>;
 
-    updateActiveSong: (songId: string) => void;
-    setActiveSong: () => Promise<void>;
-
     shuffle: () => void;
     shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
 
-    // // Queue
+    // QUEUE
+    getQueue: () => Promise<Song[]>;
+    setQueue: (queue: Song[]) => void;
 
     addToQueue: (song: Song | Song[]) => Promise<void>;
     addToQueueFirst: (
@@ -65,10 +80,7 @@ type SongsStore = {
         redirect?: boolean
     ) => Promise<void>;
 
-    getQueue: () => Promise<Song[]>;
-    setQueue: (queue: Song[]) => void;
-
-    // // songs
+    // SONG
     setSongs: (songs: Song[]) => void;
     addSongs: (songs: Song[]) => void;
     getSong: (id: string) => Song | undefined;
@@ -81,16 +93,13 @@ type SongsStore = {
     unhideSong: (id: string) => void;
 
     isSongInAnyAlbum: (songId: string) => boolean;
-    autoUpdateSongTags: (songId: string) => void;
     updateSongTagsByAlbum: (albumId: string) => void;
 
-    // // UPDATE SONG TAGS
-
-    // // statistics
+    // STATISTICS
     updateSongSkip: (id: string) => void;
     updateSongStatistics: (id: string) => void;
 
-    //  // history
+    // HISTORY
     addSongToHistory: (id: string) => void;
     addSongToConsciousHistory: (id: string) => void;
 
@@ -100,79 +109,81 @@ type SongsStore = {
     getAlbumRanking: (albumId: string) => Song[] | undefined;
     getSongRanking: (songId: string) => number;
 
-    // // container
+    // CONTAINER
     getSongsFromContainer: (id: string) => Song[];
     getContainer: (id: string) => Playlist | Album | undefined;
+
+    deleteContainer: (id: string) => void;
     checkForDeletedSongs: () => void;
 
-    // // playlists
+    // PLAYLIST SPECIFIC
     createPlaylist: (inputFields: Partial<Playlist>) => void;
     editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
-    deletePlaylist: (id: string) => void;
 
     getPlaylist: (id: string) => Playlist | undefined;
-
-    getAllPlaylistSongs: () => Song[] | undefined;
-    getSongsFromPlaylist: (id: string) => Song[];
+    getAllPlaylistSongs: () => Song[];
 
     addSongToPlaylist: (playlistId: string, songIds: string[]) => void;
     removeSongFromPlaylist: (playlistId: string, songId: string) => void;
 
-    // // albums
+    // ALBUM SPECIFIC
     createAlbum: (inputFields: Partial<Album>) => string;
     addAlbums: (
         albumFields: { [key: Album["title"]]: Partial<Album> },
         songIds: { [key: Album["title"]]: Song["id"][] }
     ) => void;
     editAlbum: (id: string, inputFields: Partial<Album>) => void;
-    deleteAlbum: (id: string) => void;
+
     removeEmptyAutoAlbums: () => void;
 
-    doesAlbumExist: (name: string) => boolean;
-
     getAlbum: (id: string) => Album | undefined;
-    getAlbumByName: (name: string) => Album | undefined;
+    getAllAlbumSongs: () => Song[];
     getAlbumBySong: (songId: string) => Album | undefined;
-
-    getAllAlbumSongs: () => Song[] | undefined;
-    getSongsFromAlbum: (id: string) => Song[];
 
     addSongToAlbum: (albumId: string, songId: string) => void;
     removeSongFromAlbum: (albumId: string, songId: string) => void;
 
-    // Algo
+    // ALGORITHMS
     getRecentlyPlayed: () => (Album | Playlist)[];
-    // getMostPlayed: () => (Album | Playlist)[];
 };
 export const useSongsStore = create<SongsStore>()(
     persist(
         (set, get) => ({
             songs: [],
+            albums: [],
+            queue: [],
             playlists: [
                 {
                     id: "1",
                     title: "Liked songs",
                     description: "Your songs that you liked.",
                     artwork: "Liked songs",
-                    songs: [], //contains only id's
+                    songs: [],
                     lastModified: undefined,
                     createdAt: new Date().toString(),
                 },
             ],
-            albums: [],
+
             history: {
                 history: [],
                 consciousHistory: [],
             },
 
-            queue: [],
+            recap: {
+                period: RECAP_PERIOD.DAILY,
+                recapStarted: new Date().toString(),
+                lastUpdated: new Date().toString(),
+                data: [],
+            },
+
             repeatMode: RepeatMode.Off,
             activeSong: undefined,
-
             isReadingSongs: false,
-            // menus
+
             selectedSong: undefined,
             selectedContainer: undefined,
+
+            // functions
 
             setIsReadingSongs: (value) => {
                 set({ isReadingSongs: value });
@@ -189,6 +200,8 @@ export const useSongsStore = create<SongsStore>()(
             resetAll: () => {
                 set({
                     songs: [],
+                    albums: [],
+                    queue: [],
                     playlists: [
                         {
                             id: "1",
@@ -200,14 +213,55 @@ export const useSongsStore = create<SongsStore>()(
                             createdAt: new Date().toString(),
                         },
                     ],
-                    albums: [],
                     history: {
                         history: [],
                         consciousHistory: [],
                     },
-                    queue: [],
+                    recap: {
+                        period: RECAP_PERIOD.DAILY,
+                        recapStarted: new Date().toString(),
+                        lastUpdated: new Date().toString(),
+                        data: [],
+                    },
                 });
                 console.log("reset all!");
+            },
+
+            // Recap ------------------------------------------------------------------
+
+            startNewRecapPeriod: () => {
+                set((state) => ({
+                    recap: {
+                        ...state.recap,
+                        recapStarted: new Date().toString(),
+                    },
+                }));
+            },
+
+            setRecapPeriod: (period) => {
+                set((state) => ({ recap: { ...state.recap, period } }));
+            },
+
+            getRecapData: () => {
+                return get().recap;
+            },
+
+            isRecapDue: () => {
+                const now = new Date();
+                const startDate = new Date(get().recap.recapStarted);
+
+                switch (get().recap.period) {
+                    case RECAP_PERIOD.DAILY:
+                        return now.getDate() !== startDate.getDate();
+                    case RECAP_PERIOD.WEEKLY:
+                        return now.getDay() !== startDate.getDay();
+                    case RECAP_PERIOD.MONTHLY:
+                        return now.getMonth() !== startDate.getMonth();
+                    case RECAP_PERIOD.QUARTERLY:
+                        return now.getMonth() % 3 !== startDate.getMonth() % 3;
+                    case RECAP_PERIOD.YEARLY:
+                        return now.getFullYear() !== startDate.getFullYear();
+                }
             },
 
             // Music playback ----------------------------------------------------------
@@ -490,8 +544,15 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             updateSongSkip: (id) => {
-                set((state) => ({
-                    songs: state.songs.map((song) =>
+                const song = get().getSong(id);
+                if (song === undefined) return;
+
+                // Get current date in YYYY-MM-DD format for comparison
+                const currentDate = new Date().toISOString().split("T")[0];
+
+                set((state) => {
+                    // Update song statistics
+                    const updatedSongs = state.songs.map((song) =>
                         song.id === id
                             ? {
                                   ...song,
@@ -501,11 +562,48 @@ export const useSongsStore = create<SongsStore>()(
                                   },
                               }
                             : song
-                    ),
-                }));
+                    );
+
+                    // Update recap data
+                    const recapData = [...state.recap.data];
+                    const todaysEntryIndex = recapData.findIndex((entry) => {
+                        const entryDate = new Date(entry.date)
+                            .toISOString()
+                            .split("T")[0];
+                        return entryDate === currentDate && entry.songId === id;
+                    });
+
+                    if (todaysEntryIndex !== -1) {
+                        // Update existing entry
+                        recapData[todaysEntryIndex] = {
+                            ...recapData[todaysEntryIndex],
+                            skipCount:
+                                recapData[todaysEntryIndex].skipCount + 1,
+                        };
+                    } else {
+                        // Create new entry for this day
+                        recapData.push({
+                            date: new Date().toString(),
+                            timesPlayed: [],
+                            songId: id,
+                            albumId: song.albumIds[0],
+                            skipCount: 1,
+                            playCount: 0,
+                        });
+                    }
+
+                    return {
+                        songs: updatedSongs,
+                        recap: {
+                            ...state.recap,
+                            data: recapData,
+                        },
+                    };
+                });
 
                 get().updateSelectedAndActiveSong();
             },
+
             // statistics ---------------------------------------------------------
             addSongToHistory: (id) => {
                 const song = get().getSong(id);
@@ -514,9 +612,7 @@ export const useSongsStore = create<SongsStore>()(
                 const history = get().history.history;
 
                 const index = history.findIndex((item) => item.song === id);
-                if (index !== -1) {
-                    history.splice(index, 1);
-                }
+                if (index !== -1) history.splice(index, 1);
 
                 history.unshift({
                     song: id,
@@ -524,19 +620,52 @@ export const useSongsStore = create<SongsStore>()(
                     containerId: song.albumIds[0],
                 });
 
-                set((state) => ({
-                    history: {
-                        ...state.history,
-                        history: history,
-                    },
-                }));
+                const currentDate = new Date().toISOString().split("T")[0];
+                const currentTime = new Date().toTimeString().split(" ")[0];
 
-                console.log(
-                    "added " +
-                        song.title +
-                        " to history at " +
-                        new Date().toLocaleTimeString()
-                );
+                set((state) => {
+                    const recapData = [...state.recap.data];
+                    const todaysEntryIndex = recapData.findIndex((entry) => {
+                        const entryDate = new Date(entry.date)
+                            .toISOString()
+                            .split("T")[0];
+                        return entryDate === currentDate && entry.songId === id;
+                    });
+
+                    if (todaysEntryIndex !== -1) {
+                        // Update existing entry
+                        recapData[todaysEntryIndex] = {
+                            ...recapData[todaysEntryIndex],
+                            timesPlayed: [
+                                ...recapData[todaysEntryIndex].timesPlayed,
+                                currentTime,
+                            ],
+                            playCount:
+                                recapData[todaysEntryIndex].playCount + 1,
+                        };
+                    } else {
+                        // Create new entry
+                        recapData.push({
+                            date: new Date().toString(),
+                            timesPlayed: [currentTime],
+                            songId: id,
+                            albumId: song.albumIds[0],
+                            skipCount: 0,
+                            playCount: 1,
+                        });
+                    }
+
+                    return {
+                        history: {
+                            ...state.history,
+                            history: history,
+                        },
+                        recap: {
+                            ...state.recap,
+                            data: recapData,
+                        },
+                    };
+                });
             },
 
             addSongToConsciousHistory: (id) => {
@@ -626,6 +755,20 @@ export const useSongsStore = create<SongsStore>()(
                 }
             },
 
+            deleteContainer: (id) => {
+                set((state) => ({
+                    albums: state.albums.filter((album) => album.id !== id),
+                    playlists: state.playlists.filter(
+                        (playlist) => playlist.id !== id
+                    ),
+                    songs: state.songs.filter((song) =>
+                        song.albumIds.includes(id)
+                    ),
+                }));
+
+                get().updateSelectedAndActiveSong();
+            },
+
             checkForDeletedSongs: () => {
                 const songIds = get().songs.map((song) => song.id);
                 // checks songs array for albums and playlists for songs that no longer exist
@@ -688,14 +831,6 @@ export const useSongsStore = create<SongsStore>()(
                 get().updateSelectedContainer();
             },
 
-            deletePlaylist: (id) => {
-                set((state) => ({
-                    playlists: state.playlists.filter(
-                        (playlist) => playlist.id !== id
-                    ),
-                }));
-            },
-
             getAllPlaylistSongs: () => {
                 const songs = get()
                     .playlists.map((playlist) => playlist.songs)
@@ -713,16 +848,6 @@ export const useSongsStore = create<SongsStore>()(
                 );
 
                 return playlist;
-            },
-
-            getSongsFromPlaylist: (id) => {
-                const playlist = get().getPlaylist(id);
-
-                return playlist?.songs
-                    .map((songId) =>
-                        get().songs.find((song) => song.id === songId)
-                    )
-                    .filter((s) => s !== undefined) as Song[];
             },
 
             addSongToPlaylist: (playlistId, songIds) => {
@@ -858,12 +983,6 @@ export const useSongsStore = create<SongsStore>()(
                 get().updateSelectedContainer();
             },
 
-            deleteAlbum: (id) => {
-                set((state) => ({
-                    albums: state.albums.filter((a) => a.id !== id),
-                }));
-            },
-
             removeEmptyAutoAlbums: () => {
                 set((state) => ({
                     // remove albums that has an empty songs array and has autoCreated to True
@@ -890,34 +1009,10 @@ export const useSongsStore = create<SongsStore>()(
                 return album;
             },
 
-            getAlbumByName: (name) => {
-                const albums = get().albums;
-                const album = albums.find((a) => a.title === name);
-
-                return album;
-            },
-
             isSongInAnyAlbum: (songId) => {
                 const albums = get().albums;
 
                 return albums.some((album) => album.songs.includes(songId));
-            },
-
-            doesAlbumExist: (name) => {
-                const albums = get().albums;
-                const album = albums.find((a) => a.title === name);
-                if (album) return true;
-                return false;
-            },
-
-            getSongsFromAlbum: (id) => {
-                const album = get().getAlbum(id);
-
-                return album?.songs
-                    .map((songId) =>
-                        get().songs.find((song) => song.id === songId)
-                    )
-                    .filter((s) => s !== undefined) as Song[];
             },
 
             getAlbumBySong: (songId) => {
@@ -992,39 +1087,24 @@ export const useSongsStore = create<SongsStore>()(
                 const album = get().getAlbum(albumId);
                 if (!album) return;
 
-                album.songs.forEach((song) => {
-                    get().autoUpdateSongTags(song);
+                album.songs.forEach((songId) => {
+                    const song = get().getSong(songId);
+
+                    if (song) {
+                        if (song.albumIds[0] !== albumId) return;
+
+                        set((state) => ({
+                            songs: state.songs.map((s) =>
+                                s.id === songId
+                                    ? {
+                                          ...s,
+                                          artwork: album.artwork,
+                                      }
+                                    : s
+                            ),
+                        }));
+                    }
                 });
-            },
-
-            autoUpdateSongTags: (songId) => {
-                const song = get().getSong(songId);
-                if (!song) return;
-
-                const relatedAlbum = get().getAlbum(song.albumIds[0]);
-                if (!relatedAlbum) {
-                    // remove just the artwork for the song
-                    set((state) => ({
-                        songs: state.songs.map((s) =>
-                            s.id === songId ? { ...s, artwork: undefined } : s
-                        ),
-                    }));
-
-                    return;
-                }
-
-                set((state) => ({
-                    songs: state.songs.map((s) =>
-                        s.id === songId
-                            ? {
-                                  ...s,
-                                  //   artist: relatedAlbum.artist,
-                                  //   year: relatedAlbum.year,
-                                  artwork: relatedAlbum.artwork,
-                              }
-                            : s
-                    ),
-                }));
 
                 get().updateSelectedAndActiveSong();
             },
@@ -1066,6 +1146,7 @@ export const useSongsStore = create<SongsStore>()(
                 playlists: state.playlists,
                 albums: state.albums,
                 history: state.history,
+                recap: state.recap,
             }),
         }
     )

@@ -1,15 +1,15 @@
+import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CreatePlaylist from "../../../Components/BottomSheets/Playlist/CreatePlaylist";
+import CustomFAB from "../../../Components/UI/Buttons/CustomFAB";
+import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
+import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import { TwoColContainerList } from "../../../Components/UI/UI chunks/TwoColContainerList";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { mainStyles } from "../../../styles/styles";
-import CustomFAB from "../../../Components/UI/Buttons/CustomFAB";
-import { View } from "react-native";
-import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
-import { Playlist } from "../../../types/song";
 import useMultiSelect from "../../../hooks/useMultiSelect";
-import IconButton from "../../../Components/UI/Buttons/IconButton";
+import { mainStyles } from "../../../styles/styles";
+import { Playlist } from "../../../types/song";
 
 export default function PlaylistsTab() {
     const {
@@ -20,10 +20,8 @@ export default function PlaylistsTab() {
 
     const {
         multiselectedItems,
-        multiselectMode,
         toggle,
         deselectAll,
-        setSelection,
     } = useMultiSelect<Playlist["id"]>();
 
     return (
@@ -49,7 +47,6 @@ export default function PlaylistsTab() {
                 )}
                 <TwoColContainerList
                     type="playlist"
-                    multiselectMode={multiselectMode}
                     selectedItems={multiselectedItems}
                     toggle={toggle}
                 />

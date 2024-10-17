@@ -141,9 +141,7 @@ export const newStyles = StyleSheet.create({
 
     recapBanner: {
         marginHorizontal: Spacing.appPadding,
-        padding: Spacing.appPadding,
         aspectRatio: 16 / 8,
-        justifyContent: "space-between",
         alignItems: "flex-end",
         flexDirection: "row",
     },

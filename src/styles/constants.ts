@@ -39,6 +39,7 @@ export enum ImageSources {
     cover = require("../../assets/images/empty-cover.png"),
     likedSongsCover = require("../../assets/images/liked-songs-cover.png"),
     AppBackground = require("../../assets/images/indexBlur.png"),
+    banner = require("../../assets/images/banner.png"),
 }
 
 export enum Colors {

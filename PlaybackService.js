@@ -31,14 +31,6 @@ export const PlaybackService = async function () {
         }
     });
 
-    // TrackPlayer.addEventListener(Event.RemoteSetRating, (event) => {
-    //     console.log("Event.RemoteLike", event);
-    // });
-
-    // TrackPlayer.addEventListener(Event.RemoteDislike, (event) => {
-    //     console.log("Event.RemoteDislike", event);
-    // });
-
     TrackPlayer.addEventListener(Event.RemoteJumpForward, async (event) => {
         await TrackPlayer.seekBy(event.interval);
     });
@@ -54,7 +46,6 @@ export const PlaybackService = async function () {
     let previousTrackId;
     let previousTimestamp = Date.now();
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
-        console.log("EVENT!!");
         useSongsStore.getState().updateActiveSong(event.track.id);
 
         const condition =
@@ -62,7 +53,6 @@ export const PlaybackService = async function () {
             Date.now() - previousTimestamp >= 1000;
 
         if (event.track && condition) {
-            console.log(Date.now() - previousTimestamp);
             useSongsStore.getState().updateSongStatistics(event.track.id);
             useSongsStore.getState().addSongToHistory(event.track.id);
             previousTrackId = event.track.id;

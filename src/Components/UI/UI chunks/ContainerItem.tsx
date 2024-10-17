@@ -44,15 +44,16 @@ const ContainerItem = ({
         });
     }, [selected]);
 
+    // // // // // idk man i think its better to just remove the padding animation
     const animatedStyle = useAnimatedStyle(() => {
         return {
-            padding: padding.value,
             backgroundColor: interpolateColor(
                 padding.value,
                 [0, Spacing.sm],
                 [Colors.transparent, Colors.badgeRare + "50"]
             ),
             borderRadius: Spacing.radius,
+            padding: Spacing.sm,
         };
     });
 

@@ -14,12 +14,10 @@ export const TwoColContainerList = ({
     type,
     selectedItems,
     toggle,
-    multiselectMode,
 }: {
     type: "album" | "playlist";
     selectedItems: string[];
     toggle: (item: string) => void;
-    multiselectMode: boolean;
 }) => {
     const {
         albums,
@@ -83,7 +81,7 @@ export const TwoColContainerList = ({
                 renderItem={({ item }) => (
                     <ContainerItem
                         item={item}
-                        selected={selectedItems.includes(item.id)}
+                        // selected={selectedItems.includes(item.id)}
                         style={{
                             marginHorizontal: Spacing.sm,
                         }}
@@ -93,8 +91,9 @@ export const TwoColContainerList = ({
                                 openContainerOptions();
                             },
                         }}
-                        onLongPress={() => {
-                            toggle(item.id);
+                        onLongPress={async () => {
+                            await setSelectedContainer(item);
+                            openContainerOptions();
                         }}
                         onPress={() => onPress(item.id)}
                     />
