@@ -5,7 +5,7 @@ import { Easing, Text } from "react-native";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";

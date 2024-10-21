@@ -4,7 +4,7 @@ import { DimensionValue, Easing, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import TextTicker from "react-native-text-ticker";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import {
     Colors,
     IconSizes,

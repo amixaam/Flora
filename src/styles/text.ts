@@ -47,4 +47,13 @@ export const textStyles = StyleSheet.create({
         lineHeight: FontSize.detail * 1.2,
         letterSpacing: 0.5,
     },
+
+    tip: {
+        fontFamily: "Poppins-Medium",
+        color: Colors.primary,
+        fontSize: FontSize.small,
+        lineHeight: FontSize.small * 1.2,
+        letterSpacing: 0.5,
+        opacity: 0.75,
+    },
 });

@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { ImageBackground, Text, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

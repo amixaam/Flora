@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useRef, useState } from "react";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Spacing } from "../../../styles/constants";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";

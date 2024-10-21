@@ -5,7 +5,7 @@ import {
     View,
     ViewStyle,
 } from "react-native";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";

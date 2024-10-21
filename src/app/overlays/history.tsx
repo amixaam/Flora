@@ -9,7 +9,7 @@ import SongItem from "../../Components/UI/UI chunks/SongItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
 import useMultiSelect from "../../hooks/useMultiSelect";
-import { useSongsStore } from "../../store/songs";
+import { useSongsStore } from "../../store/songsStore";
 import { Colors } from "../../styles/constants";
 import { Song } from "../../types/song";
 

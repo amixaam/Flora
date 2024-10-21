@@ -4,31 +4,25 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
 import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
-import {
-    Album,
-    History,
-    Playlist,
-    Recap,
-    RECAP_PERIOD,
-    RecapStatistics,
-    Song,
-} from "../types/song";
+import { Album, History, Playlist, Song } from "../types/song";
+import { useRecapStore } from "./recapStore";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
-type SongsStore = {
+interface SongsState {
     songs: Song[];
     playlists: Playlist[];
     albums: Album[];
     history: History;
     queue: Track[];
-    recap: Recap;
     isReadingSongs: boolean;
     selectedSong: Song | undefined;
     activeSong: Song | undefined;
     repeatMode: RepeatMode;
     selectedContainer: Playlist | Album | undefined;
+}
 
+interface SongsActions {
     resetAll: () => void;
 
     setIsReadingSongs: (value: boolean) => void;
@@ -39,13 +33,6 @@ type SongsStore = {
     updateSelectedAndActiveSong: () => void;
     updateSelectedContainer: () => void;
     updateActiveSong: (songId: string) => void;
-
-    // RECAP
-    startNewRecapPeriod: () => void;
-    setRecapPeriod: (period: RECAP_PERIOD) => void;
-
-    isRecapDue: () => boolean;
-    getRecapData: () => Recap;
 
     // PLAYBACK
     resetPlayer: () => Promise<void>;
@@ -145,8 +132,9 @@ type SongsStore = {
 
     // ALGORITHMS
     getRecentlyPlayed: () => (Album | Playlist)[];
-};
-export const useSongsStore = create<SongsStore>()(
+}
+
+export const useSongsStore = create<SongsState & SongsActions>()(
     persist(
         (set, get) => ({
             songs: [],
@@ -167,13 +155,6 @@ export const useSongsStore = create<SongsStore>()(
             history: {
                 history: [],
                 consciousHistory: [],
-            },
-
-            recap: {
-                period: RECAP_PERIOD.DAILY,
-                recapStarted: new Date().toString(),
-                lastUpdated: new Date().toString(),
-                data: [],
             },
 
             repeatMode: RepeatMode.Off,
@@ -217,51 +198,8 @@ export const useSongsStore = create<SongsStore>()(
                         history: [],
                         consciousHistory: [],
                     },
-                    recap: {
-                        period: RECAP_PERIOD.DAILY,
-                        recapStarted: new Date().toString(),
-                        lastUpdated: new Date().toString(),
-                        data: [],
-                    },
                 });
                 console.log("reset all!");
-            },
-
-            // Recap ------------------------------------------------------------------
-
-            startNewRecapPeriod: () => {
-                set((state) => ({
-                    recap: {
-                        ...state.recap,
-                        recapStarted: new Date().toString(),
-                    },
-                }));
-            },
-
-            setRecapPeriod: (period) => {
-                set((state) => ({ recap: { ...state.recap, period } }));
-            },
-
-            getRecapData: () => {
-                return get().recap;
-            },
-
-            isRecapDue: () => {
-                const now = new Date();
-                const startDate = new Date(get().recap.recapStarted);
-
-                switch (get().recap.period) {
-                    case RECAP_PERIOD.DAILY:
-                        return now.getDate() !== startDate.getDate();
-                    case RECAP_PERIOD.WEEKLY:
-                        return now.getDay() !== startDate.getDay();
-                    case RECAP_PERIOD.MONTHLY:
-                        return now.getMonth() !== startDate.getMonth();
-                    case RECAP_PERIOD.QUARTERLY:
-                        return now.getMonth() % 3 !== startDate.getMonth() % 3;
-                    case RECAP_PERIOD.YEARLY:
-                        return now.getFullYear() !== startDate.getFullYear();
-                }
             },
 
             // Music playback ----------------------------------------------------------
@@ -523,6 +461,8 @@ export const useSongsStore = create<SongsStore>()(
             },
 
             updateSongStatistics: (id) => {
+                useRecapStore.getState().recordPlay(get().getSong(id) as Song);
+
                 set((state) => ({
                     songs: state.songs.map((song) =>
                         song.id === id
@@ -547,8 +487,7 @@ export const useSongsStore = create<SongsStore>()(
                 const song = get().getSong(id);
                 if (song === undefined) return;
 
-                // Get current date in YYYY-MM-DD format for comparison
-                const currentDate = new Date().toISOString().split("T")[0];
+                useRecapStore.getState().recordSkip(song);
 
                 set((state) => {
                     // Update song statistics
@@ -564,40 +503,8 @@ export const useSongsStore = create<SongsStore>()(
                             : song
                     );
 
-                    // Update recap data
-                    const recapData = [...state.recap.data];
-                    const todaysEntryIndex = recapData.findIndex((entry) => {
-                        const entryDate = new Date(entry.date)
-                            .toISOString()
-                            .split("T")[0];
-                        return entryDate === currentDate && entry.songId === id;
-                    });
-
-                    if (todaysEntryIndex !== -1) {
-                        // Update existing entry
-                        recapData[todaysEntryIndex] = {
-                            ...recapData[todaysEntryIndex],
-                            skipCount:
-                                recapData[todaysEntryIndex].skipCount + 1,
-                        };
-                    } else {
-                        // Create new entry for this day
-                        recapData.push({
-                            date: new Date().toString(),
-                            timesPlayed: [],
-                            songId: id,
-                            albumId: song.albumIds[0],
-                            skipCount: 1,
-                            playCount: 0,
-                        });
-                    }
-
                     return {
                         songs: updatedSongs,
-                        recap: {
-                            ...state.recap,
-                            data: recapData,
-                        },
                     };
                 });
 
@@ -620,49 +527,11 @@ export const useSongsStore = create<SongsStore>()(
                     containerId: song.albumIds[0],
                 });
 
-                const currentDate = new Date().toISOString().split("T")[0];
-                const currentTime = new Date().toTimeString().split(" ")[0];
-
                 set((state) => {
-                    const recapData = [...state.recap.data];
-                    const todaysEntryIndex = recapData.findIndex((entry) => {
-                        const entryDate = new Date(entry.date)
-                            .toISOString()
-                            .split("T")[0];
-                        return entryDate === currentDate && entry.songId === id;
-                    });
-
-                    if (todaysEntryIndex !== -1) {
-                        // Update existing entry
-                        recapData[todaysEntryIndex] = {
-                            ...recapData[todaysEntryIndex],
-                            timesPlayed: [
-                                ...recapData[todaysEntryIndex].timesPlayed,
-                                currentTime,
-                            ],
-                            playCount:
-                                recapData[todaysEntryIndex].playCount + 1,
-                        };
-                    } else {
-                        // Create new entry
-                        recapData.push({
-                            date: new Date().toString(),
-                            timesPlayed: [currentTime],
-                            songId: id,
-                            albumId: song.albumIds[0],
-                            skipCount: 0,
-                            playCount: 1,
-                        });
-                    }
-
                     return {
                         history: {
                             ...state.history,
                             history: history,
-                        },
-                        recap: {
-                            ...state.recap,
-                            data: recapData,
                         },
                     };
                 });
@@ -1146,7 +1015,6 @@ export const useSongsStore = create<SongsStore>()(
                 playlists: state.playlists,
                 albums: state.albums,
                 history: state.history,
-                recap: state.recap,
             }),
         }
     )

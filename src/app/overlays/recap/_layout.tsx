@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-export default function OverlaysLayout() {
+export default function RecapsLayout() {
     return (
         <Stack
             screenOptions={{
@@ -9,11 +9,9 @@ export default function OverlaysLayout() {
                 contentStyle: { backgroundColor: "transparent" },
             }}
         >
-            <Stack.Screen name="player" />
+            <Stack.Screen name="index" />
+            <Stack.Screen name="[id]" />
             <Stack.Screen name="history" />
-            <Stack.Screen name="queue" />
-            <Stack.Screen name="search" />
-            <Stack.Screen name="recap" />
         </Stack>
     );
 }

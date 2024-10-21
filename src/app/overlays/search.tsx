@@ -6,7 +6,7 @@ import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
 import ContainerListItem from "../../Components/UI/UI chunks/ContainerListItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
-import { useSongsStore } from "../../store/songs";
+import { useSongsStore } from "../../store/songsStore";
 import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Album, Playlist, Song } from "../../types/song";

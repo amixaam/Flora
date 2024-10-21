@@ -19,7 +19,7 @@ import AlbumArt from "../../../Components/UI/UI chunks/AlbumArt";
 import ImageBlurBackground from "../../../Components/UI/UI chunks/ImageBlurBackground";
 import SongItem from "../../../Components/UI/UI chunks/SongItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";

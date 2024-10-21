@@ -11,7 +11,7 @@ import TrackPlayer, {
     RepeatMode,
 } from "react-native-track-player";
 import { PlaybackService } from "../../PlaybackService";
-import { useSongsStore } from "../store/songs";
+import { useSongsStore } from "../store/songsStore";
 import { Colors } from "../styles/constants";
 import * as NavigationBar from "expo-navigation-bar";
 import { UpdateMetadata } from "../utils/UpdateMetadata";

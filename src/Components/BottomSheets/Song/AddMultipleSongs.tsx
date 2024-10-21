@@ -2,7 +2,7 @@ import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
 import { Playlist, Song } from "../../../types/song";

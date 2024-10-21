@@ -12,7 +12,7 @@ import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
 import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 import SongItem from "../../Components/UI/UI chunks/SongItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
-import { useSongsStore } from "../../store/songs";
+import { useSongsStore } from "../../store/songsStore";
 import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Song } from "../../types/song";

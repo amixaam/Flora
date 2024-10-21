@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { IconButton, TouchableRipple } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { utilStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";

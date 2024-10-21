@@ -4,7 +4,7 @@ import SheetHeader from "./SheetHeader";
 import { Colors, Spacing } from "../../../styles/constants";
 import IconButton from "../Buttons/IconButton";
 import { router } from "expo-router";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { ActivityIndicator } from "react-native-paper";
 
 interface MainHeaderProps {

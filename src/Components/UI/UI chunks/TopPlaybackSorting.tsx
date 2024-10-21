@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { IconButton } from "react-native-paper";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Colors, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { Song } from "../../../types/song";

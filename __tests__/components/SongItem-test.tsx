@@ -4,7 +4,7 @@ import { Text } from "react-native";
 import { fireEvent, render } from "@testing-library/react-native";
 
 import SongItem from "../../src/Components/UI/UI chunks/SongItem";
-import { useSongsStore } from "../../src/store/songs";
+import { useSongsStore } from "../../src/store/songsStore";
 import testSongObject from "../../src/utils/testSong";
 
 jest.mock("../../src/store/songs", () => ({

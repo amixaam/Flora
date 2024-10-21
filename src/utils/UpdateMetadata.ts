@@ -2,7 +2,7 @@ import { AudioFile } from "expo-tag-reader/build/ExpoTagReader.types";
 import * as MediaLibrary from "expo-media-library";
 import * as TagReader from "expo-tag-reader";
 import { Album, Song } from "../types/song";
-import { useSongsStore } from "../store/songs";
+import { useSongsStore } from "../store/songsStore";
 import { skip } from "react-native-track-player/lib/src/trackPlayer";
 
 export const UpdateMetadata = async () => {

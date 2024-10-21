@@ -9,7 +9,7 @@ import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/Background
 import SongItem from "../../../Components/UI/UI chunks/SongItem";
 import { TopButtonControls } from "../../../Components/UI/UI chunks/TopPlaybackSorting";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { UpdateMetadata } from "../../../utils/UpdateMetadata";

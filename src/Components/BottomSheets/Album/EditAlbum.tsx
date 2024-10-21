@@ -1,6 +1,6 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { forwardRef, useEffect, useState } from "react";
-import { useSongsStore } from "../../../store/songs";
+import { useSongsStore } from "../../../store/songsStore";
 import { Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
 import ImagePickerButton from "../../UI/Buttons/ImagePickerButton";

@@ -21,7 +21,7 @@ import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackground";
 import PlaybackControls from "../../Components/UI/UI chunks/PlaybackControls";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
-import { useSongsStore } from "../../store/songs";
+import { useSongsStore } from "../../store/songsStore";
 import { Colors, IconSizes, Spacing } from "../../styles/constants";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
