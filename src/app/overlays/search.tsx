@@ -268,10 +268,11 @@ const SearchScreen = () => {
     };
 
     return (
-        <SwipeDownScreen>
-            <SheetHeader
-                title={<HeaderInput filter={filter} setFilter={setFilter} />}
-            />
+        <SwipeDownScreen
+            header={
+                <SheetHeader title={<HeaderInput setFilter={setFilter} />} />
+            }
+        >
             <View style={{ flex: 1, gap: Spacing.md }}>
                 <View
                     style={{
@@ -328,13 +329,7 @@ const ListHeader = ({ text = "List header", accent = "" }) => {
     );
 };
 
-const HeaderInput = ({
-    filter,
-    setFilter,
-}: {
-    filter: string;
-    setFilter: any;
-}) => {
+const HeaderInput = ({ setFilter }: { setFilter: any }) => {
     // TextInput from react native gesture handler
     return (
         <View style={{ flex: 1, marginTop: 1 }}>

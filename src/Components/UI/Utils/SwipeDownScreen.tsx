@@ -1,6 +1,10 @@
 import { router } from "expo-router";
 import { Dimensions, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+    Gesture,
+    GestureDetector,
+    ScrollView,
+} from "react-native-gesture-handler";
 import Animated, {
     runOnJS,
     useAnimatedStyle,
@@ -8,95 +12,105 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import { Colors } from "../../../styles/constants";
+import React from "react";
+import SheetHeader from "../Headers/SheetHeader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const HEADER_HEIGHT = 56;
+const VELOCITY_THRESHOLD = 500; // Pixels per second
+const DISTANCE_THRESHOLD = SCREEN_HEIGHT * 0.4; // % of window height
 
 const SwipeDownScreen = ({
     children,
     bgColor = Colors.secondary,
     disable = false,
+    header = <SheetHeader />,
 }: {
     children?: React.ReactNode;
     bgColor?: Colors;
     disable?: boolean;
+    header?: React.ReactNode;
 }) => {
     if (disable) {
         return (
-            <View
-                style={{
-                    flex: 1,
-                    backgroundColor: bgColor,
-                }}
-            >
+            <View style={{ flex: 1, backgroundColor: bgColor }}>
                 {children}
             </View>
         );
     }
+
     const translateY = useSharedValue(0);
     const scrollOffset = useSharedValue(0);
-    const isScrolling = useSharedValue(false);
-    const startY = useSharedValue(0);
-
-    const scrollGesture = Gesture.Native()
-        .onBegin(() => {
-            isScrolling.value = true;
-        })
-        .onEnd(() => {
-            isScrolling.value = false;
-        });
 
     const dismissGesture = Gesture.Pan()
-        .onStart((event) => {
-            startY.value = event.absoluteY;
-        })
         .onUpdate((event) => {
-            // Only allow dismissal if:
-            // 1. Scroll is at the top (scrollOffset is 0) OR
-            // 2. The gesture started in the header area
-            if (scrollOffset.value === 0 || startY.value < HEADER_HEIGHT) {
+            if (scrollOffset.value <= 0) {
                 translateY.value = Math.max(0, event.translationY);
             }
         })
         .onEnd((event) => {
-            const DISMISS_THRESHOLD = 10;
-
-            // Only process dismissal if we're actually tracking a dismiss gesture
-            if (translateY.value > 0) {
-                if (event.translationY > DISMISS_THRESHOLD) {
-                    runOnJS(router.back)();
-                    translateY.value = withTiming(
-                        SCREEN_HEIGHT,
-                        { duration: 100 },
-                        () => {}
-                    );
-                } else {
-                    translateY.value = withTiming(0);
-                }
+            if (
+                event.translationY > DISTANCE_THRESHOLD ||
+                event.velocityY > VELOCITY_THRESHOLD
+            ) {
+                runOnJS(router.back)();
+                translateY.value = withTiming(
+                    SCREEN_HEIGHT,
+                    { duration: 100 },
+                    () => {}
+                );
+            } else {
+                translateY.value = withTiming(0);
             }
-        })
-        .simultaneousWithExternalGesture(scrollGesture);
+        });
 
-    const animatedVerticalStyle = useAnimatedStyle(() => {
+    const headerGesture = Gesture.Pan()
+        .onUpdate((event) => {
+            translateY.value = Math.max(0, event.translationY);
+        })
+        .onEnd((event) => {
+            if (
+                event.translationY > DISTANCE_THRESHOLD ||
+                event.velocityY > VELOCITY_THRESHOLD
+            ) {
+                runOnJS(router.back)();
+                translateY.value = withTiming(
+                    SCREEN_HEIGHT,
+                    { duration: 100 },
+                    () => {}
+                );
+            } else {
+                translateY.value = withTiming(0);
+            }
+        });
+
+    const animatedStyle = useAnimatedStyle(() => {
         return {
             transform: [{ translateY: translateY.value }],
         };
     });
 
     return (
-        <GestureDetector gesture={dismissGesture}>
-            <Animated.View
-                style={[
-                    animatedVerticalStyle,
-                    {
-                        flex: 1,
-                        backgroundColor: bgColor,
-                    },
-                ]}
-            >
-                {children}
-            </Animated.View>
-        </GestureDetector>
+        <Animated.View
+            style={[
+                animatedStyle,
+                {
+                    flex: 1,
+                    backgroundColor: bgColor,
+                },
+            ]}
+        >
+            <GestureDetector gesture={headerGesture}>{header}</GestureDetector>
+            <GestureDetector gesture={dismissGesture}>
+                <ScrollView
+                    style={{ flex: 1 }}
+                    onScroll={(event) => {
+                        scrollOffset.value = event.nativeEvent.contentOffset.y;
+                    }}
+                >
+                    {children}
+                </ScrollView>
+            </GestureDetector>
+        </Animated.View>
     );
 };
 

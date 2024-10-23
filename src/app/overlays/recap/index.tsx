@@ -32,8 +32,7 @@ const RecapScreen = () => {
     const selectedActivePeriod = activePeriodsData.DAILY;
 
     return (
-        <SwipeDownScreen>
-            <SheetHeader title="Recaps" />
+        <SwipeDownScreen header={<SheetHeader title="Recaps" />}>
             <ScrollView style={{ paddingHorizontal: Spacing.md }}>
                 <SegmentedButtons
                     value={value}

@@ -71,16 +71,22 @@ const SpecificRecapScreen = () => {
     const topListenedHours = getTopListenedHours(recapData as RecapPeriodData);
 
     return (
-        <SwipeDownScreen>
-            <SheetHeader title={`${id} Recap`} />
-
-            <ScrollView 
+        <SwipeDownScreen
+            header={
+                <SheetHeader
+                    title={`${id} Recap`}
+                    headerContainerStyle={{
+                        borderBottomWidth: 2,
+                        borderColor: Colors.primary30,
+                    }}
+                />
+            }
+        >
+            <View
                 style={{
                     paddingHorizontal: Spacing.appPadding,
-                }}
-                contentContainerStyle={{
                     gap: Spacing.md,
-                    paddingBottom: Spacing.xl,
+                    marginBottom: Spacing.xl,
                 }}
             >
                 <Header text={"Let’s see your listening stats!"} />
@@ -252,7 +258,7 @@ const SpecificRecapScreen = () => {
                     })}
                 </View>
                 <Header text="Look at this new playlist!" />
-            </ScrollView>
+            </View>
         </SwipeDownScreen>
     );
 };

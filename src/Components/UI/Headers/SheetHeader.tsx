@@ -1,6 +1,12 @@
 import { router } from "expo-router";
 import React from "react";
-import { StyleProp, Text, TextStyle, TextStyleAndroid } from "react-native";
+import {
+    StyleProp,
+    Text,
+    TextStyle,
+    TextStyleAndroid,
+    ViewStyle,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
@@ -9,7 +15,7 @@ import IconButton from "../Buttons/IconButton";
 interface SheetHeaderProps {
     title?: string | React.ReactElement;
     titleStyle?: StyleProp<TextStyle | TextStyleAndroid>;
-    headerbgColor?: Colors;
+    headerContainerStyle?: StyleProp<ViewStyle>;
     headerLeft?: IconButtonProps | React.ReactElement;
     headerRight?: IconButtonProps | React.ReactElement;
 }
@@ -22,7 +28,7 @@ export interface IconButtonProps {
 const SheetHeader = ({
     title = "Modal title",
     titleStyle,
-    headerbgColor,
+    headerContainerStyle,
     headerLeft = {
         icon: "arrow-left",
         onPress: () => {
@@ -72,13 +78,15 @@ const SheetHeader = ({
     return (
         <SafeAreaView
             edges={["top"]}
-            style={{
-                gap: Spacing.xl,
-                flexDirection: "row",
-                paddingHorizontal: Spacing.appPadding,
-                paddingVertical: Spacing.md,
-                backgroundColor: headerbgColor && headerbgColor,
-            }}
+            style={[
+                {
+                    gap: Spacing.xl,
+                    flexDirection: "row",
+                    paddingHorizontal: Spacing.appPadding,
+                    paddingVertical: Spacing.md,
+                },
+                headerContainerStyle,
+            ]}
         >
             {headerLeftDisplay()}
             {Title()}

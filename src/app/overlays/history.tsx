@@ -48,31 +48,41 @@ const HistoryScreen = () => {
 
     return (
         <>
-            <SwipeDownScreen>
-                {multiselectedItems.length > 0 ? (
-                    <SheetHeader
-                        title={`${multiselectedItems.length} selected`}
-                        headerLeft={
-                            <IconButton icon="close" onPress={deselectAll} />
-                        }
-                        headerRight={
-                            <SelectedMenuButton
-                                selectedSongs={multiselectedItems}
-                                selectAll={() => {
-                                    setSelection(
-                                        history.history.map((item) => item.song)
-                                    );
-                                }}
-                                openAddToPlaylist={open}
-                            />
-                        }
-                    />
-                ) : (
-                    <SheetHeader
-                        title="History"
-                        headerRight={<MenuButton openAddToPlaylist={open} />}
-                    />
-                )}
+            <SwipeDownScreen
+                header={
+                    multiselectedItems.length > 0 ? (
+                        <SheetHeader
+                            title={`${multiselectedItems.length} selected`}
+                            headerLeft={
+                                <IconButton
+                                    icon="close"
+                                    onPress={deselectAll}
+                                />
+                            }
+                            headerRight={
+                                <SelectedMenuButton
+                                    selectedSongs={multiselectedItems}
+                                    selectAll={() => {
+                                        setSelection(
+                                            history.history.map(
+                                                (item) => item.song
+                                            )
+                                        );
+                                    }}
+                                    openAddToPlaylist={open}
+                                />
+                            }
+                        />
+                    ) : (
+                        <SheetHeader
+                            title="History"
+                            headerRight={
+                                <MenuButton openAddToPlaylist={open} />
+                            }
+                        />
+                    )
+                }
+            >
                 <ScrollView>
                     {history.history.map((item) => {
                         const song = getSong(item.song);

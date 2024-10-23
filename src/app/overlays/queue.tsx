@@ -7,7 +7,6 @@ import DraggableFlatList, {
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
 import { usePlaybackState } from "react-native-track-player";
-import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
 import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 import SongItem from "../../Components/UI/UI chunks/SongItem";
@@ -17,6 +16,7 @@ import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Song } from "../../types/song";
 import { CombineStrings } from "../../utils/CombineStrings";
+import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 
 const QueueScreen = () => {
     const { queue, setQueue } = useSongsStore();
@@ -41,8 +41,7 @@ const QueueScreen = () => {
     );
 
     return (
-        <SwipeDownScreen disable>
-            <SheetHeader title="Queue" />
+        <SwipeDownScreen header={<SheetHeader title={"Queue"} />}>
             <NowPlayingItem />
             {queue.length === 0 ? (
                 <ListItemsNotFound text="Queue is empty" icon="music-note" />
