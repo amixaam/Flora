@@ -1,12 +1,11 @@
+import { render } from "@testing-library/react-native";
 import React from "react";
-import { render, fireEvent } from "@testing-library/react-native";
-import { useSongsStore } from "../../src/store/songsStore";
-import testSongObject from "../../src/utils/testSong";
-import MiniPlayer from "../../src/Components/UI/UI chunks/MiniPlayer";
-import { router } from "expo-router";
 import { usePlaybackState, useProgress } from "react-native-track-player";
+import MiniPlayer from "../../../src/Components/UI/UI chunks/MiniPlayer";
+import { useSongsStore } from "../../../src/store/songsStore";
+import { testSongObject } from "../../../src/utils/TestData";
 
-jest.mock("../../src/store/songs", () => ({
+jest.mock("../../../src/store/songsStore", () => ({
     useSongsStore: jest.fn(),
 }));
 

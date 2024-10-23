@@ -1,0 +1,136 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SwipeDownScreen renders correctly with minimal props 1`] = `
+<View
+  collapsable={false}
+  jestAnimatedStyle={
+    {
+      "value": {
+        "transform": [
+          {
+            "translateY": 0,
+          },
+        ],
+      },
+    }
+  }
+  style={
+    {
+      "backgroundColor": "#16151B",
+      "flex": 1,
+      "transform": [
+        {
+          "translateY": 0,
+        },
+      ],
+    }
+  }
+>
+  <RNCSafeAreaView
+    edges={
+      {
+        "bottom": "off",
+        "left": "off",
+        "right": "off",
+        "top": "additive",
+      }
+    }
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "gap": 32,
+          "paddingHorizontal": 16,
+          "paddingVertical": 16,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      nativeBackgroundAndroid={
+        {
+          "borderless": true,
+          "color": 820567800,
+          "rippleRadius": undefined,
+          "type": "RippleAndroid",
+        }
+      }
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+    >
+      <Text />
+    </View>
+    <Text
+      style={
+        [
+          {
+            "color": "#E8DEF8",
+            "fontFamily": "Poppins-Bold",
+            "fontSize": 22,
+            "lineHeight": 26.4,
+          },
+          {
+            "paddingTop": 2,
+          },
+          undefined,
+          {
+            "flex": 1,
+          },
+        ]
+      }
+    >
+      Modal title
+    </Text>
+  </RNCSafeAreaView>
+  <RCTScrollView
+    collapsable={false}
+    handlerTag={3}
+    handlerType="NativeViewGestureHandler"
+    onGestureHandlerEvent={[Function]}
+    onGestureHandlerStateChange={[Function]}
+    onScroll={[Function]}
+    style={
+      {
+        "flex": 1,
+      }
+    }
+    waitFor={
+      [
+        {
+          "current": null,
+        },
+      ]
+    }
+  >
+    <View />
+  </RCTScrollView>
+</View>
+`;

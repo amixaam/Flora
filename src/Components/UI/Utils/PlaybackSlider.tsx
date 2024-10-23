@@ -11,6 +11,7 @@ const PlaybackSlider = ({
 }) => {
     return (
         <Slider
+            testID="slider"
             value={
                 trackPosition && trackDuration
                     ? trackPosition / trackDuration

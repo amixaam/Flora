@@ -64,6 +64,7 @@ const PlaybackControls = ({
                 }}
             >
                 <IconButton
+                    testID="repeat-button"
                     icon={getRepeatIcon()}
                     size={IconSizes.lg}
                     onPress={toggleRepeatMode}
@@ -71,6 +72,7 @@ const PlaybackControls = ({
                     style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
+                    testID="previous-button"
                     onPress={() => {
                         previous();
                         if (progress.position < 3) {
@@ -83,6 +85,7 @@ const PlaybackControls = ({
                     style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
+                    testID="play-pause-button"
                     onPress={hanldePlayPausePress}
                     icon={
                         playbackState.state === "playing"
@@ -94,6 +97,7 @@ const PlaybackControls = ({
                     style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
+                    testID="next-button"
                     onPress={() => {
                         next();
                         animation(Direction.LEFT, true);
@@ -105,6 +109,7 @@ const PlaybackControls = ({
                 />
 
                 <IconButton
+                    testID="shuffle-button"
                     icon={"shuffle"}
                     size={IconSizes.lg}
                     onPress={shuffle}

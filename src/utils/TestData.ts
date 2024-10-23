@@ -1,6 +1,6 @@
-import { Song } from "../types/song";
+import { Album, Song } from "../types/song";
 
-const testSongObject: Song = {
+export const testSongObject: Song = {
     id: "123",
     albumIds: ["A123"],
     url: "file:///examplesong.mp3",
@@ -28,4 +28,14 @@ const testSongObject: Song = {
     },
 };
 
-export default testSongObject;
+export const testAlbumObject: Album = {
+    id: "A123",
+    autoCreated: false,
+    title: "Album 1",
+    artist: "Artist 1",
+    year: "2024",
+    artwork: undefined,
+    songs: ["123"],
+    lastModified: "2024-01-01T00:00:00.000Z",
+    createdAt: "2024-01-01T00:00:00.000Z",
+};

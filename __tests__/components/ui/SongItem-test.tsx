@@ -3,11 +3,11 @@ import { Text } from "react-native";
 
 import { fireEvent, render } from "@testing-library/react-native";
 
-import SongItem from "../../src/Components/UI/UI chunks/SongItem";
-import { useSongsStore } from "../../src/store/songsStore";
-import testSongObject from "../../src/utils/testSong";
+import { testSongObject } from "../../../src/utils/TestData";
+import SongItem from "../../../src/Components/UI/UI chunks/SongItem";
+import { useSongsStore } from "../../../src/store/songsStore";
 
-jest.mock("../../src/store/songs", () => ({
+jest.mock("../../../src/store/songsStore", () => ({
     useSongsStore: jest.fn(),
 }));
 

@@ -21,7 +21,7 @@ interface MainButtonProps extends PressableProps {
 
 const MainButton = ({
     children,
-    text,
+    text = "Label",
     type = "primary",
     flex = false,
     ...pressableProps
