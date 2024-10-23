@@ -74,7 +74,7 @@ const SpecificRecapScreen = () => {
         <SwipeDownScreen>
             <SheetHeader title={`${id} Recap`} />
 
-            <ScrollView
+            <ScrollView 
                 style={{
                     paddingHorizontal: Spacing.appPadding,
                 }}

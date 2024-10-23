@@ -10,6 +10,7 @@ import Animated, {
 import { Colors } from "../../../styles/constants";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const HEADER_HEIGHT = 56;
 
 const SwipeDownScreen = ({
     children,
@@ -33,29 +34,48 @@ const SwipeDownScreen = ({
         );
     }
     const translateY = useSharedValue(0);
+    const scrollOffset = useSharedValue(0);
+    const isScrolling = useSharedValue(false);
+    const startY = useSharedValue(0);
+
+    const scrollGesture = Gesture.Native()
+        .onBegin(() => {
+            isScrolling.value = true;
+        })
+        .onEnd(() => {
+            isScrolling.value = false;
+        });
 
     const dismissGesture = Gesture.Pan()
+        .onStart((event) => {
+            startY.value = event.absoluteY;
+        })
         .onUpdate((event) => {
-            translateY.value = Math.max(0, event.translationY);
+            // Only allow dismissal if:
+            // 1. Scroll is at the top (scrollOffset is 0) OR
+            // 2. The gesture started in the header area
+            if (scrollOffset.value === 0 || startY.value < HEADER_HEIGHT) {
+                translateY.value = Math.max(0, event.translationY);
+            }
         })
         .onEnd((event) => {
             const DISMISS_THRESHOLD = 10;
 
-            // Swipe Down - Dismiss Screen
-            if (event.translationY > DISMISS_THRESHOLD) {
-                runOnJS(router.back)();
-                translateY.value = withTiming(
-                    SCREEN_HEIGHT,
-                    { duration: 100 },
-                    () => {}
-                );
-            } else {
-                translateY.value = withTiming(0); // Reset if swipe was not enough
+            // Only process dismissal if we're actually tracking a dismiss gesture
+            if (translateY.value > 0) {
+                if (event.translationY > DISMISS_THRESHOLD) {
+                    runOnJS(router.back)();
+                    translateY.value = withTiming(
+                        SCREEN_HEIGHT,
+                        { duration: 100 },
+                        () => {}
+                    );
+                } else {
+                    translateY.value = withTiming(0);
+                }
             }
         })
-        .requireExternalGestureToFail()
-        .minDistance(5)
-        .failOffsetX(4);
+        .simultaneousWithExternalGesture(scrollGesture);
 
     const animatedVerticalStyle = useAnimatedStyle(() => {
         return {

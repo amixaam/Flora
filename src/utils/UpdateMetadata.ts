@@ -120,7 +120,7 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
             bitRate: parseInt(tags.bitrate),
             channels: parseInt(tags.channels),
             trackNumber: tags.track ? parseInt(tags.track) : undefined,
-            artwork: tags.albumArt,
+            artwork: tags.albumArt as string,
             isLiked: false,
             isHidden: false,
             statistics: {
