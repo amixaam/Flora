@@ -23,10 +23,7 @@ export interface DailyListeningPattern {
 export interface RecapAggregates extends BaseStatistics {
     totalListeningTime: number; // in milliseconds
     uniqueSongs: number;
-    topAlbums: Array<{
-        albumId: string;
-        playCount: number;
-    }>;
+    topAlbums: TopAlbum[];
     topSongs: TopSong[];
     listeningPatterns: DailyListeningPattern[];
 }
@@ -36,6 +33,12 @@ export interface TopSong {
     playCount: number;
     skipCount: number;
     lastPlayed: string;
+}
+
+export interface TopAlbum {
+    albumId: string;
+    playCount: number;
+    totalDuration: number; // Total listening time in milliseconds
 }
 
 export interface RecapPeriodData {

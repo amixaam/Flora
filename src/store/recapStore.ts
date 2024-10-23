@@ -7,6 +7,7 @@ import {
     RECAP_PERIOD,
     RecapAggregates,
     RecapPeriodData,
+    TopAlbum,
     TopSong,
 } from "../types/recap";
 import { Song } from "../types/song";
@@ -127,7 +128,11 @@ export const useRecapStore = create<RecapState & RecapActions>()(
                     dayPattern.playCount++;
 
                     // update top albums and songs
-                    updateTopAlbums(currentPeriodData, song.albumIds[0]);
+                    updateTopAlbums(
+                        currentPeriodData,
+                        song.albumIds[0],
+                        song.duration
+                    );
                     updateTopSongs(currentPeriodData);
 
                     periodData[period][periodId] = currentPeriodData;
@@ -261,6 +266,7 @@ export const useRecapStore = create<RecapState & RecapActions>()(
                 const uniqueSongsSet = new Set<string>();
                 const albumPlayCounts = new Map<string, number>();
                 const songStats = new Map<string, TopSong>();
+                const albumStats = new Map<string, TopAlbum>();
 
                 // Aggregate data from all relevant periods
                 Object.entries(periodData).forEach(([_, data]) => {
@@ -304,12 +310,19 @@ export const useRecapStore = create<RecapState & RecapActions>()(
 
                         // Aggregate album plays
                         data.aggregates.topAlbums.forEach(
-                            ({ albumId, playCount }) => {
-                                albumPlayCounts.set(
+                            ({ albumId, playCount, totalDuration }) => {
+                                const existing = albumStats.get(albumId) || {
                                     albumId,
-                                    (albumPlayCounts.get(albumId) || 0) +
-                                        playCount
-                                );
+                                    playCount: 0,
+                                    totalDuration: 0,
+                                };
+
+                                albumStats.set(albumId, {
+                                    albumId,
+                                    playCount: existing.playCount + playCount,
+                                    totalDuration:
+                                        existing.totalDuration + totalDuration,
+                                });
                             }
                         );
 
@@ -322,8 +335,7 @@ export const useRecapStore = create<RecapState & RecapActions>()(
 
                 totalAggregate.uniqueSongs = uniqueSongsSet.size;
 
-                totalAggregate.topAlbums = Array.from(albumPlayCounts.entries())
-                    .map(([albumId, playCount]) => ({ albumId, playCount }))
+                totalAggregate.topAlbums = Array.from(albumStats.values())
                     .sort((a, b) => b.playCount - a.playCount)
                     .slice(0, 10);
 
@@ -429,17 +441,24 @@ function getDayPattern(
 
 function updateTopAlbums(
     periodData: RecapPeriodData,
-    albumId: string | undefined
+    albumId: string | undefined,
+    duration: number
 ) {
     if (!albumId) return;
 
     const albumIndex = periodData.aggregates.topAlbums.findIndex(
         (a) => a.albumId === albumId
     );
+
     if (albumIndex !== -1) {
         periodData.aggregates.topAlbums[albumIndex].playCount++;
+        periodData.aggregates.topAlbums[albumIndex].totalDuration += duration;
     } else {
-        periodData.aggregates.topAlbums.push({ albumId, playCount: 1 });
+        periodData.aggregates.topAlbums.push({
+            albumId,
+            playCount: 1,
+            totalDuration: duration,
+        });
     }
 
     periodData.aggregates.topAlbums.sort((a, b) => b.playCount - a.playCount);

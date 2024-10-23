@@ -53,7 +53,6 @@ const ContainerItem = ({
                 [Colors.transparent, Colors.badgeRare + "50"]
             ),
             borderRadius: Spacing.radius,
-            padding: Spacing.sm,
         };
     });
 
@@ -97,6 +96,9 @@ const ContainerItem = ({
             style={[
                 PressableProps.style as StyleProp<ViewStyle>,
                 animatedStyle,
+                {
+                    marginBottom: Spacing.sm,
+                },
             ]}
         >
             {albumInfo}

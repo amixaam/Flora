@@ -29,7 +29,7 @@ const RecapScreen = () => {
     const finishedPeriods = getFinishedPeriods();
     const activePeriodsData = getActivePeriodsData();
 
-    const selectedActivePeriod = activePeriodsData.DAILY as RecapPeriodData;
+    const selectedActivePeriod = activePeriodsData.DAILY;
 
     return (
         <SwipeDownScreen>
@@ -68,46 +68,54 @@ const RecapScreen = () => {
                         }`}
                     </Text>
                 </View>
-                <Pressable
-                    onPress={() => {
-                        router.push(
-                            `./recap/${
-                                selectedActivePeriod.endDate.split("T")[0]
-                            }?period=${RECAP_PERIOD.DAILY}`
-                        );
-                    }}
-                    style={{
-                        paddingVertical: Spacing.xl,
-                        marginVertical: Spacing.md,
-                        borderRadius: Spacing.radiusLg,
-                        backgroundColor: Colors.input,
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={textStyles.h3}>
-                        {selectedActivePeriod.endDate.split("T")[0]}
-                    </Text>
-                </Pressable>
-                <Pressable
-                    onPress={() => {
-                        router.push(
-                            `./recap/${finishedPeriods[0].periodId}?period=${finishedPeriods[0].period}`
-                        );
-                    }}
-                    style={{
-                        paddingVertical: Spacing.xl,
-                        marginVertical: Spacing.md,
-                        borderRadius: Spacing.radiusLg,
-                        backgroundColor: Colors.input,
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={textStyles.h3}>
-                        {finishedPeriods[0]
-                            ? `${finishedPeriods[0].data.endDate.split("T")[0]}`
-                            : "You don't have any finished periods yet."}
-                    </Text>
-                </Pressable>
+                {selectedActivePeriod && (
+                    <Pressable
+                        onPress={() => {
+                            router.push(
+                                `./recap/${
+                                    selectedActivePeriod.endDate.split("T")[0]
+                                }?period=${RECAP_PERIOD.DAILY}`
+                            );
+                        }}
+                        style={{
+                            paddingVertical: Spacing.xl,
+                            marginVertical: Spacing.md,
+                            borderRadius: Spacing.radiusLg,
+                            backgroundColor: Colors.input,
+                            alignItems: "center",
+                        }}
+                    >
+                        <Text style={textStyles.h3}>
+                            {selectedActivePeriod.endDate.split("T")[0]}
+                        </Text>
+                    </Pressable>
+                )}
+                {finishedPeriods.length > 0 && (
+                    <Pressable
+                        onPress={() => {
+                            router.push(
+                                `./recap/${finishedPeriods[0].periodId}?period=${finishedPeriods[0].period}`
+                            );
+                        }}
+                        style={{
+                            paddingVertical: Spacing.xl,
+                            marginVertical: Spacing.md,
+                            borderRadius: Spacing.radiusLg,
+                            backgroundColor: Colors.input,
+                            alignItems: "center",
+                        }}
+                    >
+                        <Text style={textStyles.h3}>
+                            {finishedPeriods[0]
+                                ? `${
+                                      finishedPeriods[0].data.endDate.split(
+                                          "T"
+                                      )[0]
+                                  }`
+                                : "You don't have any finished periods yet."}
+                        </Text>
+                    </Pressable>
+                )}
             </ScrollView>
         </SwipeDownScreen>
     );
