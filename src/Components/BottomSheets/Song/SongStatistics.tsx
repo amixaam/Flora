@@ -1,5 +1,6 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { forwardRef } from "react";
+import moment from "moment";
+import { forwardRef, StrictMode } from "react";
 import { Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -13,11 +14,11 @@ import {
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
 import { abbreviateNumber, ordinateNumber } from "../../../utils/FormatNumber";
-import { SheetModalLayout } from "../SheetModalLayout";
 import LargeTextButton from "../../UI/Buttons/LargeTextButton";
-import { UISeperator } from "../../UI/Utils/UISeperator";
-import SmallStatisticText from "../../UI/Text/SmallStatisticText";
 import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
+import SmallStatisticText from "../../UI/Text/SmallStatisticText";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import { SheetModalLayout } from "../SheetModalLayout";
 
 const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -25,12 +26,13 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
         if (selectedSong === undefined) return;
 
         const statistics = selectedSong.statistics;
-        const lastPlayedUnfiltered = statistics.lastPlayed;
 
-        let lastPlayed = "Never";
-        if (lastPlayedUnfiltered) {
-            lastPlayed = new Date(lastPlayedUnfiltered).toLocaleDateString();
-        }
+        const lastPlayed = moment(statistics.lastPlayed, true).fromNow();
+        const creationDate = moment(
+            statistics.creationDate,
+            "DD-MM-YYYY",
+            true
+        ).format("MMMM Do, YYYY");
 
         var timeListened =
             (selectedSong.statistics.playCount * selectedSong.duration) / 1000;
@@ -107,7 +109,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             <SmallStatisticText
                                 icon="heart"
                                 header="Last played"
-                                text={"Since " + statistics.creationDate}
+                                text={"Since " + creationDate}
                             />
                             <SmallStatisticText
                                 icon="skip-next"
@@ -136,6 +138,7 @@ const SongStatistics = forwardRef<BottomSheetModal, BottomSheetProps>(
                             contentContainerStyle={{ gap: Spacing.md }}
                             columnWrapperStyle={{ gap: Spacing.md }}
                             renderItem={() => <Badge />}
+                            // @ts-ignore
                             keyExtractor={(item) => item.toString()}
                         />
                     </BottomSheetView>

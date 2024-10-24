@@ -33,6 +33,7 @@ const SwipeDownScreen = ({
     if (disable) {
         return (
             <View style={{ flex: 1, backgroundColor: bgColor }}>
+                {header}
                 {children}
             </View>
         );

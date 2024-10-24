@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { Text, View } from "react-native";
 import DraggableFlatList, {
     DragEndParams,
     RenderItemParams,
+    ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { IconButton } from "react-native-paper";
 import TextTicker from "react-native-text-ticker";
@@ -21,52 +22,58 @@ import SheetHeader from "../../Components/UI/Headers/SheetHeader";
 const QueueScreen = () => {
     const { queue, setQueue } = useSongsStore();
 
-    const updateQueue = (item: DragEndParams<Song>) => {
-        setQueue(item.data);
-    };
+    // Optimistic update handler
+    const updateQueue = useCallback(
+        async ({ data: newQueue }: DragEndParams<Song>) => {
+            useSongsStore.setState({ queue: newQueue });
 
-    const renderItem = ({ item, drag, isActive }: RenderItemParams<Song>) => (
-        <SongItem
-            song={item}
-            isActive={isActive}
-            controls={
-                <IconButton
-                    icon={"drag"}
-                    iconColor={Colors.primary}
-                    onLongPress={drag}
-                    delayLongPress={100}
-                />
+            try {
+                await setQueue(newQueue);
+            } catch (error) {
+                console.error("Failed to update queue:", error);
+                useSongsStore.setState({ queue });
             }
-        />
+        },
+        [queue, setQueue]
     );
 
+    const renderItem = useCallback(
+        (params: RenderItemParams<Song>) => <QueueItem {...params} />,
+        []
+    );
+
+    const keyExtractor = useCallback((item: Song) => item.id, []);
+
+    const memoizedQueue = useMemo(() => queue as Song[], [queue]);
+
     return (
-        <SwipeDownScreen header={<SheetHeader title={"Queue"} />}>
+        <SwipeDownScreen disable header={<SheetHeader title="Queue" />}>
             <NowPlayingItem />
             {queue.length === 0 ? (
                 <ListItemsNotFound text="Queue is empty" icon="music-note" />
             ) : (
-                <View style={{ flex: 1 }}>
-                    <DraggableFlatList
-                        data={queue as Song[]}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        onDragEnd={updateQueue}
-                    />
-                </View>
+                <DraggableFlatList
+                    data={memoizedQueue}
+                    renderItem={renderItem}
+                    keyExtractor={keyExtractor}
+                    onDragEnd={updateQueue}
+                    containerStyle={{ flex: 1 }}
+                    dragHitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    activationDistance={5}
+                />
             )}
         </SwipeDownScreen>
     );
 };
 
-const NowPlayingItem = () => {
+const NowPlayingItem = memo(() => {
     const playback = usePlaybackState();
     const { play, pause, activeSong } = useSongsStore();
 
-    const handlePlayPausePress = () => {
+    const handlePlayPausePress = useCallback(() => {
         if (playback.state === "playing") pause();
         else play();
-    };
+    }, [playback.state, pause, play]);
 
     if (!activeSong) return null;
 
@@ -122,6 +129,27 @@ const NowPlayingItem = () => {
             />
         </View>
     );
-};
+});
+
+const QueueItem = React.memo(
+    ({ item, drag, isActive }: RenderItemParams<Song>) => {
+        return (
+            <ScaleDecorator activeScale={1.05}>
+                <SongItem
+                    song={item}
+                    isActive={isActive}
+                    controls={
+                        <IconButton
+                            icon="drag"
+                            iconColor={Colors.primary}
+                            onLongPress={drag}
+                            delayLongPress={50}
+                        />
+                    }
+                />
+            </ScaleDecorator>
+        );
+    }
+);
 
 export default QueueScreen;

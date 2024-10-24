@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
 import { Album, History, Playlist, Song } from "../types/song";
 import { useRecapStore } from "./recapStore";
+import moment from "moment";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -148,7 +149,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     artwork: "Liked songs",
                     songs: [],
                     lastModified: undefined,
-                    createdAt: new Date().toString(),
+                    createdAt: moment().toString(),
                 },
             ],
 
@@ -191,7 +192,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                             artwork: "Liked songs",
                             songs: [],
                             lastModified: undefined,
-                            createdAt: new Date().toString(),
+                            createdAt: moment().toString(),
                         },
                     ],
                     history: {
@@ -252,12 +253,12 @@ export const useSongsStore = create<SongsState & SongsActions>()(
 
                 switch (current) {
                     case RepeatMode.Off:
-                        setRepeat = RepeatMode.Track;
-                        break;
-                    case RepeatMode.Track:
                         setRepeat = RepeatMode.Queue;
                         break;
                     case RepeatMode.Queue:
+                        setRepeat = RepeatMode.Track;
+                        break;
+                    case RepeatMode.Track:
                         setRepeat = RepeatMode.Off;
                         break;
                     default:
@@ -350,8 +351,14 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             setQueue: async (queue) => {
-                await TrackPlayer.setQueue(queue);
-                set({ queue: queue });
+                try {
+                    await TrackPlayer.setQueue(queue);
+                    set({ queue });
+                    return true;
+                } catch (error) {
+                    console.error("Failed to set track player queue:", error);
+                    return false;
+                }
             },
 
             shuffle: async () => {
@@ -489,7 +496,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                                       ...s,
                                       statistics: {
                                           ...s.statistics,
-                                          lastPlayed: new Date().toString(),
+                                          lastPlayed: moment().toString(),
                                           playCount: s.statistics.playCount + 1,
                                       },
                                   }
@@ -500,7 +507,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                             history: [
                                 {
                                     song: trackId,
-                                    date: new Date(),
+                                    date: moment().toString(),
                                     containerId: song.albumIds[0],
                                 },
                                 ...state.history.history,
@@ -523,7 +530,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     ...history.consciousHistory.slice(-5),
                     {
                         song: id,
-                        date: new Date(),
+                        date: moment().toString(),
                         containerId: song.albumIds[0],
                     },
                 ];
@@ -652,8 +659,8 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                         ? inputFields.artwork
                         : undefined,
                     songs: [],
-                    lastModified: new Date().toString(),
-                    createdAt: new Date().toString(),
+                    lastModified: moment().toString(),
+                    createdAt: moment().toString(),
                 };
 
                 set((state) => ({
@@ -668,7 +675,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                             ? {
                                   ...playlist,
                                   ...inputFields,
-                                  lastModified: new Date().toString(),
+                                  lastModified: moment().toString(),
                               }
                             : playlist
                     ),
@@ -776,8 +783,8 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     artwork: inputFields.artwork
                         ? inputFields.artwork
                         : undefined,
-                    lastModified: new Date().toString(),
-                    createdAt: new Date().toString(),
+                    lastModified: moment().toString(),
+                    createdAt: moment().toString(),
                 };
 
                 set((state) => ({
@@ -800,8 +807,8 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                                 artwork: albumData.artwork || undefined,
                                 year: albumData.year || "No year",
                                 songs: songList,
-                                lastModified: new Date().toString(),
-                                createdAt: new Date().toString(),
+                                lastModified: moment().toString(),
+                                createdAt: moment().toString(),
                             } as Album;
                         }
                     );
@@ -819,7 +826,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                             ? {
                                   ...album,
                                   ...inputFields,
-                                  lastModified: new Date().toString(),
+                                  lastModified: moment().toString(),
                               }
                             : album
                     ),

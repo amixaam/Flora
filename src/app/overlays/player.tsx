@@ -22,10 +22,11 @@ import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackgrou
 import PlaybackControls from "../../Components/UI/UI chunks/PlaybackControls";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../store/songsStore";
-import { Colors, IconSizes, Spacing } from "../../styles/constants";
+import { Colors, Spacing } from "../../styles/constants";
 import { mainStyles } from "../../styles/styles";
 import { textStyles } from "../../styles/text";
 import { Direction } from "../../types/other";
+import { Song } from "../../types/song";
 import { CombineStrings } from "../../utils/CombineStrings";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -310,7 +311,7 @@ const PlayerScreen = () => {
                         <PaperIconButton
                             icon="dots-vertical"
                             onPress={async () => {
-                                await setSelectedSong(activeSong);
+                                await setSelectedSong(activeSong as Song);
                                 openSongOptions();
                             }}
                             disabled={!activeSong}

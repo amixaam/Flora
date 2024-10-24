@@ -84,13 +84,13 @@ const HistoryScreen = () => {
                 }
             >
                 <ScrollView>
-                    {history.history.map((item) => {
+                    {history.history.map((item, key) => {
                         const song = getSong(item.song);
                         if (!song) return null;
 
                         return (
                             <SongItem
-                                key={song.id}
+                                key={song.id + key}
                                 song={song}
                                 isActive={
                                     multiselectMode &&
