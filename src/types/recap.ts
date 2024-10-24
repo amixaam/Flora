@@ -75,3 +75,14 @@ export type PeriodIdentifier = {
     [RECAP_PERIOD.QUARTERLY]: string; // "2024-Q1"
     [RECAP_PERIOD.YEARLY]: string; // "2024"
 };
+
+export interface ExportData {
+    version: string;
+    exportDate: string;
+    data: {
+        periods: Record<RECAP_PERIOD, Record<string, RecapPeriodData>>;
+        lastUpdated: string;
+        recapStarted: string;
+        activePeriods: RECAP_PERIOD[];
+    };
+}

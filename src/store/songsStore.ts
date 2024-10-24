@@ -28,7 +28,6 @@ interface SongsActions {
     setIsReadingSongs: (value: boolean) => void;
     setSelectedSong: (song: Song) => Promise<void>;
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
-    setActiveSong: () => Promise<void>;
 
     updateSelectedAndActiveSong: () => void;
     updateSelectedContainer: () => void;
@@ -82,12 +81,13 @@ interface SongsActions {
     isSongInAnyAlbum: (songId: string) => boolean;
     updateSongTagsByAlbum: (albumId: string) => void;
 
+    getRecentlyAddedSongs: () => Song[];
+
     // STATISTICS
     updateSongSkip: (id: string) => void;
-    updateSongStatistics: (id: string) => void;
+    batchUpdateTrack: (trackId: string) => void;
 
     // HISTORY
-    addSongToHistory: (id: string) => void;
     addSongToConsciousHistory: (id: string) => void;
 
     getHistory: () => History;
@@ -220,14 +220,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 set({ activeSong: song });
             },
 
-            setActiveSong: async () => {
-                const activeTrack =
-                    (await TrackPlayer.getActiveTrack()) as Song;
-                set({
-                    activeSong: activeTrack,
-                });
-            },
-
             play: async () => {
                 await TrackPlayer.play();
             },
@@ -236,10 +228,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
             next: async () => {
                 get().updateSongSkip(get().activeSong?.id as string);
-
                 await TrackPlayer.skipToNext();
-
-                await get().setActiveSong();
             },
             previous: async () => {
                 const playbackProgress = await TrackPlayer.getProgress();
@@ -249,7 +238,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 }
 
                 await TrackPlayer.skipToPrevious();
-                await get().setActiveSong();
             },
             seekToPosition: async (position) => {
                 await TrackPlayer.seekTo(position);
@@ -312,7 +300,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 }
 
                 await TrackPlayer.load(song);
-                await get().setActiveSong();
 
                 get().addSongToConsciousHistory(song.id);
                 set({ queue: await TrackPlayer.getQueue() });
@@ -460,29 +447,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 get().updateSelectedAndActiveSong();
             },
 
-            updateSongStatistics: (id) => {
-                useRecapStore.getState().recordPlay(get().getSong(id) as Song);
-
-                set((state) => ({
-                    songs: state.songs.map((song) =>
-                        song.id === id
-                            ? {
-                                  ...song,
-                                  statistics: {
-                                      ...song.statistics,
-                                      lastPlayed: new Date().toString(),
-                                      playCount: song.statistics.playCount + 1,
-                                  },
-                              }
-                            : song
-                    ),
-                }));
-
-                get().updateSelectedAndActiveSong();
-
-                console.log("updated statistics for: " + id);
-            },
-
             updateSongSkip: (id) => {
                 const song = get().getSong(id);
                 if (song === undefined) return;
@@ -512,29 +476,42 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             // statistics ---------------------------------------------------------
-            addSongToHistory: (id) => {
-                const song = get().getSong(id);
-                if (song === undefined) return;
-
-                const history = get().history.history;
-
-                const index = history.findIndex((item) => item.song === id);
-                if (index !== -1) history.splice(index, 1);
-
-                history.unshift({
-                    song: id,
-                    date: new Date(),
-                    containerId: song.albumIds[0],
-                });
-
+            batchUpdateTrack: (trackId) => {
                 set((state) => {
+                    const song = state.getSong(trackId);
+                    if (!song) return state;
+
                     return {
+                        activeSong: song,
+                        songs: state.songs.map((s) =>
+                            s.id === trackId
+                                ? {
+                                      ...s,
+                                      statistics: {
+                                          ...s.statistics,
+                                          lastPlayed: new Date().toString(),
+                                          playCount: s.statistics.playCount + 1,
+                                      },
+                                  }
+                                : s
+                        ),
                         history: {
                             ...state.history,
-                            history: history,
+                            history: [
+                                {
+                                    song: trackId,
+                                    date: new Date(),
+                                    containerId: song.albumIds[0],
+                                },
+                                ...state.history.history,
+                            ],
                         },
                     };
                 });
+
+                useRecapStore
+                    .getState()
+                    .recordPlay(get().getSong(trackId) as Song);
             },
 
             addSongToConsciousHistory: (id) => {
@@ -976,6 +953,10 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 });
 
                 get().updateSelectedAndActiveSong();
+            },
+
+            getRecentlyAddedSongs: () => {
+                return get().songs.slice(-10).reverse();
             },
 
             // Algo

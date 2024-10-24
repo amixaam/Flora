@@ -26,10 +26,8 @@ export default function AlbumsTab() {
 
     const {
         multiselectedItems,
-        multiselectMode,
         toggle,
         deselectAll,
-        setSelection,
     } = useMultiSelect<Album["id"]>();
 
     const scrollY = useSharedValue(0);

@@ -1,7 +1,8 @@
 import { View } from "react-native";
+import SwipeDownScreen from "../../../Components/UI/Utils/SwipeDownScreen";
 
 const RecapHistoryScreen = () => {
-    return <View></View>;
+    return <SwipeDownScreen></SwipeDownScreen>;
 };
 
 export default RecapHistoryScreen;

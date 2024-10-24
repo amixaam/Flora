@@ -10,7 +10,7 @@ import ContainerSheet from "../../../Components/BottomSheets/Container/Container
 import { Colors, ImageSources, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { Album, Playlist } from "../../../types/song";
+import { Album, Playlist, Song } from "../../../types/song";
 
 import { IconButton as PaperIconButton } from "react-native-paper";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
@@ -19,9 +19,16 @@ import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/Background
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { TouchableRipple } from "react-native-paper";
+import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 
 export default function HomeTab() {
-    const { getRecentlyPlayed } = useSongsStore();
+    const {
+        getRecentlyPlayed,
+        getRecentlyAddedSongs,
+        setSelectedContainer,
+        setSelectedSong,
+        addListToQueue,
+    } = useSongsStore();
     const insets = useSafeAreaInsets();
 
     const {
@@ -30,165 +37,200 @@ export default function HomeTab() {
         close: closeContainer,
     } = useBottomSheetModal();
 
+    const {
+        sheetRef: songRef,
+        open: openSong,
+        close: closeSong,
+    } = useBottomSheetModal();
+
+    const onContainerLongPress = async (container: Album | Playlist) => {
+        await setSelectedContainer(container);
+        openContainer();
+    };
+    const onSongLongPress = async (song: Song) => {
+        await setSelectedSong(song);
+        openSong();
+    };
+
+    const recentlyAddedSongs = getRecentlyAddedSongs();
+
     return (
         <View style={mainStyles.container}>
             <BackgroundImageAbsolute />
 
             <ScrollView
-                style={[
-                    mainStyles.transparentContainer,
-                    {
-                        paddingBottom: insets.bottom + Spacing.miniPlayer,
-                    },
-                ]}
+                style={[mainStyles.transparentContainer]}
+                contentContainerStyle={{
+                    paddingBottom: Spacing.miniPlayer * 2,
+                }}
             >
                 <MainHeader />
-
-                {/* feed */}
-                <View style={{ flex: 1, gap: Spacing.md }}>
-                    <RecapBanner />
-                    <FeedSection
+                <RecapBanner />
+                <View style={{ marginTop: Spacing.md }}>
+                    <HorizontalList
+                        text="Recently added songs"
+                        list={recentlyAddedSongs}
+                        longPress={onSongLongPress}
+                    />
+                    <HorizontalList
                         text="Recently played"
                         list={getRecentlyPlayed()}
-                        longPress={openContainer}
+                        longPress={onContainerLongPress}
                     />
                 </View>
             </ScrollView>
             <ContainerSheet ref={containerRef} dismiss={closeContainer} />
+            <SongSheet ref={songRef} dismiss={closeSong} />
         </View>
     );
 }
-
-type FeedSectionProps = {
-    text: string;
-    list: (Album | Playlist)[];
-    longPress: () => void;
-};
-
-const FeedSection = ({ text, list, longPress }: FeedSectionProps) => {
-    return (
-        <>
-            <HomeHeader text={text} />
-            <HorizontalList list={list} longPress={longPress} />
-        </>
-    );
-};
 
 const RecapBanner = () => {
     const onPress = () => {
         router.push("overlays/recap");
     };
 
+    const radius = Spacing.radiusLg;
+
     return (
-        <TouchableRipple onPress={onPress}>
-            <ImageBackground
-                source={ImageSources.banner}
-                style={newStyles.recapBanner}
-                imageStyle={{ borderRadius: Spacing.radiusLg }}
+        <ImageBackground
+            source={ImageSources.banner}
+            style={newStyles.recapBanner}
+        >
+            <TouchableRipple
+                onPress={onPress}
+                style={[mainStyles.fullSize, { justifyContent: "flex-end" }]}
             >
                 <View
                     style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        flex: 1,
-                        gap: Spacing.lg,
                         padding: Spacing.appPadding,
-                        backgroundColor: Colors.bg70,
+                        backgroundColor: Colors.bg + "50",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
                     }}
                 >
-                    <View
-                        style={{
-                            flex: 1,
-                        }}
-                    >
-                        <Text style={textStyles.h5}>Your Recap is here!</Text>
-                    </View>
+                    <Text style={textStyles.h5}>Your Recap is here!</Text>
                     <IconButton
                         icon="arrow-right"
                         iconColor={Colors.primary}
                         onPress={onPress}
                     />
                 </View>
-            </ImageBackground>
-        </TouchableRipple>
+            </TouchableRipple>
+        </ImageBackground>
     );
 };
 
 type HorizontalListProps = {
-    list?: (Playlist | Album)[];
-    longPress?: () => void;
+    list?: (Playlist | Album | Song)[];
+    longPress?: any;
+    onPress?: any;
+    text?: string;
 };
 const HorizontalList = ({
     list = [],
-    longPress = () => {},
+    longPress,
+    onPress,
+    text = "List header",
 }: HorizontalListProps) => {
-    const { setSelectedContainer } = useSongsStore();
+    const { shuffleList, getSongsFromContainer, addListToQueue } =
+        useSongsStore();
 
-    return (
-        <FlashList
-            horizontal
-            data={list}
-            extraData={list}
-            keyExtractor={(item) => item.id}
-            estimatedItemSize={10}
-            contentContainerStyle={{
-                paddingHorizontal: Spacing.appPadding,
-            }}
-            ItemSeparatorComponent={() => (
-                <View style={{ width: Spacing.md }} />
-            )}
-            renderItem={({ item }) => (
-                <ContainerItem
-                    style={{
-                        width: 160,
-                    }}
-                    selectPadding={false}
-                    item={item}
-                    icon={{
-                        onPress: async () => {
-                            await setSelectedContainer(item);
-                            longPress();
-                        },
-                    }}
-                    onLongPress={async () => {
-                        await setSelectedContainer(item);
-                        longPress();
-                    }}
-                    onPress={() => router.push(`/${item.id}`)}
-                />
-            )}
-        />
-    );
-};
+    // shuffle list items
+    const onHeaderPress = async () => {
+        if (list.every((item) => "sampleRate" in item)) {
+            shuffleList(list);
+            return;
+        }
 
-const HomeHeader = ({ text = "Header" }) => {
+        // convert list of containers to list of songs
+        const songs = list
+            .map((container) => getSongsFromContainer(container.id))
+            .flat()
+            .filter((s) => s !== undefined) as Song[];
+
+        shuffleList(songs, true);
+    };
+
+    const onContainerPress = (item: Playlist | Album | Song) => {
+        if (onPress) {
+            onPress(item);
+            return;
+        }
+
+        if (list.every((item) => "sampleRate" in item)) {
+            addListToQueue(list, item as Song, true);
+            return;
+        }
+
+        router.push(`/${item.id}`);
+    };
+
     return (
         <View
             style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingHorizontal: Spacing.appPadding,
+                gap: Spacing.md,
                 marginTop: Spacing.md,
             }}
         >
-            <Text
-                style={[
-                    textStyles.h5,
-                    {
-                        flex: 1,
-                        marginRight: Spacing.md,
-                    },
-                ]}
-                numberOfLines={1}
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: Spacing.appPadding,
+                }}
             >
-                {text}
-            </Text>
-            <View style={{ flexDirection: "row", gap: Spacing.md }}>
-                <IconButton icon="play" />
-                <IconButton icon="shuffle" />
+                <Text
+                    style={[
+                        textStyles.h5,
+                        {
+                            flex: 1,
+                            marginRight: Spacing.md,
+                        },
+                    ]}
+                    numberOfLines={1}
+                >
+                    {text}
+                </Text>
+                <View style={{ flexDirection: "row", gap: Spacing.md }}>
+                    <IconButton icon="shuffle" onPress={onHeaderPress} />
+                </View>
             </View>
+            <FlashList
+                horizontal
+                data={list}
+                extraData={list}
+                keyExtractor={(item) => item.id}
+                estimatedItemSize={10}
+                contentContainerStyle={{
+                    paddingHorizontal: Spacing.appPadding,
+                }}
+                ItemSeparatorComponent={() => (
+                    <View style={{ width: Spacing.md }} />
+                )}
+                renderItem={({ item }) => (
+                    <ContainerItem
+                        style={{
+                            width: 160,
+                        }}
+                        selectPadding={false}
+                        item={item}
+                        icon={{
+                            onPress: () => {
+                                longPress(item);
+                            },
+                        }}
+                        onLongPress={() => {
+                            longPress(item);
+                        }}
+                        onPress={() => {
+                            onContainerPress(item);
+                        }}
+                    />
+                )}
+            />
         </View>
     );
 };

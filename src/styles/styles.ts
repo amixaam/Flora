@@ -16,6 +16,11 @@ export const mainStyles = StyleSheet.create({
         backgroundColor: Colors.secondary,
     },
 
+    fullSize: {
+        width: "100%",
+        height: "100%",
+    },
+
     topbarContainer: {
         backgroundColor: "transparent",
         paddingHorizontal: Spacing.appPadding,
@@ -140,10 +145,12 @@ export const newStyles = StyleSheet.create({
     songListItemHidden: { opacity: 0.5 },
 
     recapBanner: {
-        marginHorizontal: Spacing.appPadding,
         aspectRatio: 16 / 8,
         alignItems: "flex-end",
         flexDirection: "row",
+        marginHorizontal: Spacing.appPadding,
+        borderRadius: Spacing.radiusLg,
+        overflow: "hidden",
     },
 
     miniPlayer: {

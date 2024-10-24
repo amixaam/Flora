@@ -46,12 +46,14 @@ const QueueScreen = () => {
             {queue.length === 0 ? (
                 <ListItemsNotFound text="Queue is empty" icon="music-note" />
             ) : (
-                <DraggableFlatList
-                    data={queue as Song[]}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    onDragEnd={updateQueue}
-                />
+                <View style={{ flex: 1 }}>
+                    <DraggableFlatList
+                        data={queue as Song[]}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                        onDragEnd={updateQueue}
+                    />
+                </View>
             )}
         </SwipeDownScreen>
     );

@@ -49,7 +49,13 @@ const MainButton = ({
 
     return (
         <TouchableRipple
-            style={[style, { flex: flex ? 1 : 0 }]}
+            style={[
+                style,
+                {
+                    flex: flex ? 1 : 0,
+                    opacity: pressableProps.disabled ? 0.5 : 1,
+                },
+            ]}
             {...(pressableProps as TouchableRippleProps)}
         >
             {children ? children : <Text style={textStyle}>{text}</Text>}

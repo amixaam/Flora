@@ -83,19 +83,17 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
         const tags = file.tags;
         const songId = file.internalId;
         const albumTitle = tags.album || "Unknown Album";
+        const albumArtist = tags.artist || "Unknown Artist";
 
         if (!albumMap[albumTitle]) {
             const albumId =
                 existingAlbums[albumTitle] ||
-                `A${Date.now().toString(36)}${Math.random()
-                    .toString(36)
-                    .substr(2, 5)
-                    .toUpperCase()}`;
+                generateAlbumId(albumTitle, albumArtist);
             albumMap[albumTitle] = {
                 songs: [],
                 data: {
                     id: albumId,
-                    artist: tags.artist || "Unknown Artist",
+                    artist: albumArtist || "Unknown Artist",
                     year: tags.year
                         ? tags.year.substring(0, 4)
                         : "Unknown Year",
@@ -154,3 +152,32 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
     useSongsStore.getState().addSongs(newSongs);
     useSongsStore.getState().addAlbums(albumsToAdd, songIdsToAdd);
 };
+
+function generateAlbumId(title: string, artist: string): string {
+    // Convert title and artist to uppercase and remove special characters
+    const normalizedTitle = (title || "Unknown Album")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+    const normalizedArtist = (artist || "Unknown Artist")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+
+    // Create a simple hash function
+    function simpleHash(str: string): number {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = (hash << 5) - hash + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return Math.abs(hash);
+    }
+
+    // Generate hash from combined string
+    const combinedString = `${normalizedTitle}-${normalizedArtist}`;
+    const hash = simpleHash(combinedString);
+
+    // Convert to base36 and take first 8 characters
+    const base36Hash = hash.toString(36).toUpperCase();
+    return `A${base36Hash.slice(0, 7)}`;
+}

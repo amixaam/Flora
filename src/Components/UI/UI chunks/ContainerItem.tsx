@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { PressableProps, StyleProp, Text, View, ViewStyle } from "react-native";
-import { Colors, Spacing } from "../../../styles/constants";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
-import { Album, Playlist } from "../../../types/song";
+import { Album, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import Pluralize from "../../../utils/Pluralize";
 import AlbumArt from "./AlbumArt";
@@ -20,12 +20,14 @@ import Animated, {
     withSpring,
     withTiming,
 } from "react-native-reanimated";
+import { utilStyles } from "../../../styles/styles";
 
 interface ContainerItemProps extends PressableProps {
-    item: Playlist | Album;
+    item: Playlist | Album | Song;
     icon?: IconButtonProps;
     selected?: boolean;
     selectPadding?: boolean;
+    playOverlay?: boolean;
 }
 
 const ContainerItem = ({
@@ -33,6 +35,7 @@ const ContainerItem = ({
     icon,
     selected = false,
     selectPadding = true,
+    playOverlay = false,
     ...PressableProps
 }: ContainerItemProps) => {
     const padding = useSharedValue(0);
@@ -58,7 +61,7 @@ const ContainerItem = ({
 
     const albumInfo = (
         <View>
-            <View style={{ position: "relative" }}>
+            <View style={[utilStyles.center]}>
                 <AlbumArt
                     image={item.artwork}
                     style={{
@@ -67,10 +70,25 @@ const ContainerItem = ({
                         marginBottom: Spacing.sm,
                     }}
                 />
+                {"sampleRate" in item && (
+                    <IconButton
+                        icon={"play-circle"}
+                        iconColor={Colors.primary + "f0"}
+                        size={IconSizes.xl}
+                        style={{
+                            position: "absolute",
+                            backgroundColor: Colors.bg + "70",
+                        }}
+                    />
+                )}
                 <IconButton
                     icon={icon?.icon ? icon.icon : "dots-vertical"}
                     iconColor={Colors.primary}
-                    style={{ position: "absolute", top: 0, right: 0 }}
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                    }}
                     onPress={icon?.onPress}
                 />
             </View>

@@ -2,6 +2,11 @@ import TrackPlayer, { Event } from "react-native-track-player";
 import { useSongsStore } from "./src/store/songsStore";
 
 export const PlaybackService = async function () {
+    const handleTrackChange = async (trackId) => {
+        if (!trackId) return;
+        useSongsStore.getState().batchUpdateTrack(trackId);
+    };
+
     TrackPlayer.addEventListener(Event.RemotePlay, () => {
         TrackPlayer.play();
     });
@@ -16,9 +21,10 @@ export const PlaybackService = async function () {
 
     TrackPlayer.addEventListener(Event.RemoteNext, async () => {
         const track = await TrackPlayer.getActiveTrack();
+        if (track) {
+            useSongsStore.getState().updateSongSkip(track.id);
+        }
         await TrackPlayer.skipToNext();
-
-        useSongsStore.getState().updateSongSkip(track.id);
     });
 
     TrackPlayer.addEventListener(Event.RemotePrevious, async () => {
@@ -43,20 +49,29 @@ export const PlaybackService = async function () {
         TrackPlayer.seekTo(event.position);
     });
 
+    let updateTimeout;
     let previousTrackId;
     let previousTimestamp = Date.now();
+
     TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
-        useSongsStore.getState().updateActiveSong(event.track.id);
+        if (!event.track) return;
+
+        // Clear any pending updates
+        if (updateTimeout) {
+            clearTimeout(updateTimeout);
+        }
 
         const condition =
-            previousTrackId !== event.track?.id ||
+            previousTrackId !== event.track.id ||
             Date.now() - previousTimestamp >= 1000;
 
-        if (event.track && condition) {
-            useSongsStore.getState().updateSongStatistics(event.track.id);
-            useSongsStore.getState().addSongToHistory(event.track.id);
-            previousTrackId = event.track.id;
-            previousTimestamp = Date.now();
+        if (condition) {
+            // Debounce the update to prevent rapid consecutive updates
+            updateTimeout = setTimeout(() => {
+                handleTrackChange(event.track.id);
+                previousTrackId = event.track.id;
+                previousTimestamp = Date.now();
+            }, 100);
         }
     });
 };

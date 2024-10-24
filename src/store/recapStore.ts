@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import {
     DailyListeningPattern,
+    ExportData,
     FinishedPeriod,
     RECAP_PERIOD,
     RecapAggregates,
@@ -12,6 +13,10 @@ import {
 } from "../types/recap";
 import { Song } from "../types/song";
 import moment from "moment";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import * as DocumentPicker from "expo-document-picker";
+import * as MediaLibrary from "expo-media-library";
 
 interface RecapState {
     periods: Record<RECAP_PERIOD, Record<string, RecapPeriodData>>;
@@ -33,7 +38,6 @@ interface RecapActions {
         RecapPeriodData | undefined
     >;
     getPeriodIdentifier: (date: Date, period: RECAP_PERIOD) => string;
-    resetRecapData: () => void;
     getFinishedPeriods: () => FinishedPeriod[];
     getClosestPeriodEndDate: () => {
         period: RECAP_PERIOD;
@@ -45,6 +49,12 @@ interface RecapActions {
         startDate?: Date,
         endDate?: Date
     ) => RecapAggregates;
+
+    // data
+    resetRecapData: () => void;
+    exportData: () => Promise<void>;
+    importData: () => Promise<void>;
+    validateImportData: (data: any) => boolean;
 }
 
 const initialRecapState: RecapState = {
@@ -57,7 +67,12 @@ const initialRecapState: RecapState = {
     },
     lastUpdated: new Date().toISOString(),
     recapStarted: new Date().toISOString(),
-    activePeriods: [RECAP_PERIOD.YEARLY, RECAP_PERIOD.QUARTERLY],
+    activePeriods: [
+        RECAP_PERIOD.YEARLY,
+        RECAP_PERIOD.QUARTERLY,
+        RECAP_PERIOD.MONTHLY,
+        RECAP_PERIOD.WEEKLY,
+    ],
 };
 
 export const useRecapStore = create<RecapState & RecapActions>()(
@@ -264,7 +279,6 @@ export const useRecapStore = create<RecapState & RecapActions>()(
                 };
 
                 const uniqueSongsSet = new Set<string>();
-                const albumPlayCounts = new Map<string, number>();
                 const songStats = new Map<string, TopSong>();
                 const albumStats = new Map<string, TopAlbum>();
 
@@ -348,6 +362,160 @@ export const useRecapStore = create<RecapState & RecapActions>()(
 
             resetRecapData: () => {
                 set(initialRecapState);
+            },
+
+            exportData: async () => {
+                try {
+                    const currentState = get();
+                    const exportData: ExportData = {
+                        version: "1.0.0", // Version for compatibility checking
+                        exportDate: new Date().toISOString(),
+                        data: {
+                            periods: currentState.periods,
+                            lastUpdated: currentState.lastUpdated,
+                            recapStarted: currentState.recapStarted,
+                            activePeriods: currentState.activePeriods,
+                        },
+                    };
+
+                    // Create the export filename with timestamp
+                    const timestamp = moment().format("YYYY-MM-DD-HHmmss");
+                    const filename = `music-recap-export-${timestamp}.json`;
+
+                    // Get the app's documents directory
+                    const fileUri = `${FileSystem.documentDirectory}${filename}`;
+
+                    // Write the data to a file
+                    await FileSystem.writeAsStringAsync(
+                        fileUri,
+                        JSON.stringify(exportData, null, 2),
+                        {
+                            encoding: FileSystem.EncodingType.UTF8,
+                        }
+                    );
+
+                    // Share the file
+                    if (await Sharing.isAvailableAsync()) {
+                        await Sharing.shareAsync(fileUri, {
+                            mimeType: "application/json",
+                            dialogTitle: "Export Music Recap Data",
+                            UTI: "public.json", // for iOS
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error exporting data:", error);
+                    throw new Error("Failed to export recap data");
+                }
+            },
+
+            importData: async () => {
+                try {
+                    const { status } =
+                        await MediaLibrary.requestPermissionsAsync();
+                    if (status !== "granted") {
+                        alert(
+                            "Permission to access media library was denied. To view songs, please allow access."
+                        );
+                        return;
+                    }
+                    const result = await DocumentPicker.getDocumentAsync({
+                        type: "application/json",
+                        copyToCacheDirectory: true,
+                    });
+
+                    if (result.assets) {
+                        // Read the file content
+                        const content = await FileSystem.readAsStringAsync(
+                            result.assets[0].uri,
+                            {
+                                encoding: FileSystem.EncodingType.UTF8,
+                            }
+                        );
+
+                        const importData = JSON.parse(content) as ExportData;
+
+                        // Validate the import data
+                        if (!get().validateImportData(importData)) {
+                            throw new Error("Invalid import data format");
+                        }
+
+                        // Merge the imported data with existing data
+                        const currentState = get();
+                        const mergedPeriods: Record<
+                            RECAP_PERIOD,
+                            Record<string, RecapPeriodData>
+                        > = { ...currentState.periods };
+
+                        // Merge each period's data
+                        Object.entries(importData.data.periods).forEach(
+                            ([period, periodData]) => {
+                                mergedPeriods[period as RECAP_PERIOD] = {
+                                    ...mergedPeriods[period as RECAP_PERIOD],
+                                    ...periodData,
+                                };
+                            }
+                        );
+
+                        // Update the store with merged data
+                        set({
+                            periods: mergedPeriods,
+                            lastUpdated: new Date().toISOString(),
+                            // Keep the earlier recapStarted date
+                            recapStarted:
+                                currentState.recapStarted <
+                                importData.data.recapStarted
+                                    ? currentState.recapStarted
+                                    : importData.data.recapStarted,
+                            // Merge active periods
+                            activePeriods: Array.from(
+                                new Set([
+                                    ...currentState.activePeriods,
+                                    ...importData.data.activePeriods,
+                                ])
+                            ),
+                        });
+                    } else {
+                        throw new Error("No file selected");
+                    }
+                } catch (error) {
+                    console.error("Error importing data:", error);
+                    throw new Error("Failed to import recap data");
+                }
+            },
+
+            validateImportData: (data: any): boolean => {
+                // Check if the data has the required structure
+                if (!data || typeof data !== "object") return false;
+                if (!data.version || !data.exportDate || !data.data)
+                    return false;
+
+                const requiredKeys = [
+                    "periods",
+                    "lastUpdated",
+                    "recapStarted",
+                    "activePeriods",
+                ];
+
+                // Check if all required keys exist in the data
+                for (const key of requiredKeys) {
+                    if (!(key in data.data)) return false;
+                }
+
+                // Validate periods structure
+                const periods = data.data.periods;
+                if (typeof periods !== "object") return false;
+
+                // Check if all period types exist
+                for (const periodType of Object.values(RECAP_PERIOD)) {
+                    if (!(periodType in periods)) return false;
+                }
+
+                // Validate date formats
+                if (!moment(data.exportDate).isValid()) return false;
+                if (!moment(data.data.lastUpdated).isValid()) return false;
+                if (!moment(data.data.recapStarted).isValid()) return false;
+
+                return true;
             },
         }),
         {
@@ -502,28 +670,53 @@ function calculatePeriodDates(
     switch (period) {
         case RECAP_PERIOD.DAILY:
             start.setHours(0, 0, 0, 0);
-            end.setHours(23, 59, 59, 999);
+
+            end.setDate(end.getDate() + 1);
+            end.setHours(0, 0, 0, 0);
             break;
+
         case RECAP_PERIOD.WEEKLY:
+            // Start from beginning of week (Sunday)
             start.setDate(date.getDate() - date.getDay());
-            end.setDate(start.getDate() + 6);
-            end.setHours(23, 59, 59, 999);
+            start.setHours(0, 0, 0, 0);
+
+            end.setDate(start.getDate() + 7);
+            end.setHours(0, 0, 0, 0);
             break;
+
         case RECAP_PERIOD.MONTHLY:
             start.setDate(1);
-            end.setMonth(end.getMonth() + 1, 0);
-            end.setHours(23, 59, 59, 999);
+            start.setHours(0, 0, 0, 0);
+
+            // End at midnight of first day of next month
+            end.setMonth(end.getMonth() + 1, 1);
+            end.setHours(0, 0, 0, 0);
             break;
+
         case RECAP_PERIOD.QUARTERLY:
             const quarter = Math.floor(date.getMonth() / 3);
+            // Start from first day of quarter
             start.setMonth(quarter * 3, 1);
-            end.setMonth(quarter * 3 + 3, 0);
-            end.setHours(23, 59, 59, 999);
+            start.setHours(0, 0, 0, 0);
+
+            // End at midnight of first day of next quarter
+            end.setMonth((quarter + 1) * 3, 1);
+            end.setHours(0, 0, 0, 0);
             break;
+
         case RECAP_PERIOD.YEARLY:
+            // If we're in December, start is beginning of current year
+            // If we're before December, start is beginning of previous year
+            const isDecemberOrLater = date.getMonth() >= 11;
+            start.setFullYear(
+                isDecemberOrLater ? date.getFullYear() : date.getFullYear() - 1
+            );
             start.setMonth(0, 1);
-            end.setMonth(11, 31);
-            end.setHours(23, 59, 59, 999);
+            start.setHours(0, 0, 0, 0);
+
+            // End date is always December 1st at midnight
+            end.setMonth(11, 1); // December 1st
+            end.setHours(0, 0, 0, 0);
             break;
     }
 

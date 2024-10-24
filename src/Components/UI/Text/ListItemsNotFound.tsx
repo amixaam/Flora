@@ -26,7 +26,16 @@ const ListItemsNotFound = ({
                 size={IconSizes.md}
                 color={Colors.primary}
             />
-            <Text style={textStyles.h6}>{text}</Text>
+            <Text
+                style={[
+                    textStyles.h6,
+                    {
+                        textAlign: "center",
+                    },
+                ]}
+            >
+                {text}
+            </Text>
         </View>
     );
 };
