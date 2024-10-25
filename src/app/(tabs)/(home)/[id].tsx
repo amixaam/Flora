@@ -162,18 +162,21 @@ const AlbumInfo = ({
                 }}
             >
                 <IconButton
+                    testID="single-container-shuffle-button"
                     icon="shuffle"
                     size={IconSizes.md}
                     onPress={() => shuffleList(songData, true)}
                     iconColor={Colors.primary}
                 />
                 <IconButton
+                    testID="single-container-play-button"
                     icon="play-circle"
                     size={IconSizes.md * 2}
                     onPress={() => addListToQueue(songData, undefined, true)}
                     iconColor={Colors.primary}
                 />
                 <IconButton
+                    testID="single-container-options-button"
                     icon="tune"
                     size={IconSizes.md}
                     onPress={openContainerOptions}

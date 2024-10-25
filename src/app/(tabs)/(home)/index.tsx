@@ -5,7 +5,6 @@ import { FlashList } from "@shopify/flash-list";
 import { useSongsStore } from "../../../store/songsStore";
 
 import { ScrollView } from "react-native-gesture-handler";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContainerSheet from "../../../Components/BottomSheets/Container/ContainerSheet";
 import { Colors, ImageSources, Spacing } from "../../../styles/constants";
 import { mainStyles, newStyles } from "../../../styles/styles";
@@ -27,7 +26,6 @@ export default function HomeTab() {
         setSelectedContainer,
         setSelectedSong,
     } = useSongsStore();
-    const insets = useSafeAreaInsets();
 
     const {
         sheetRef: containerRef,
@@ -51,6 +49,7 @@ export default function HomeTab() {
     };
 
     const recentlyAddedSongs = getRecentlyAddedSongs();
+    const recentlyPlayedItems = getRecentlyPlayed();
 
     return (
         <View style={mainStyles.container}>
@@ -72,7 +71,7 @@ export default function HomeTab() {
                     />
                     <HorizontalList
                         text="Recently played"
-                        list={getRecentlyPlayed()}
+                        list={recentlyPlayedItems}
                         longPress={onContainerLongPress}
                     />
                 </View>
@@ -82,43 +81,6 @@ export default function HomeTab() {
         </View>
     );
 }
-
-const RecapBanner = () => {
-    const onPress = () => {
-        router.push("overlays/recap");
-    };
-
-    const radius = Spacing.radiusLg;
-
-    return (
-        <ImageBackground
-            source={ImageSources.banner}
-            style={newStyles.recapBanner}
-        >
-            <TouchableRipple
-                onPress={onPress}
-                style={[mainStyles.fullSize, { justifyContent: "flex-end" }]}
-            >
-                <View
-                    style={{
-                        padding: Spacing.appPadding,
-                        backgroundColor: Colors.bg + "50",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={textStyles.h5}>Your Recap is here!</Text>
-                    <IconButton
-                        icon="arrow-right"
-                        iconColor={Colors.primary}
-                        onPress={onPress}
-                    />
-                </View>
-            </TouchableRipple>
-        </ImageBackground>
-    );
-};
 
 type HorizontalListProps = {
     list?: (Playlist | Album | Song)[];
@@ -203,7 +165,6 @@ const HorizontalList = ({
             <FlashList
                 horizontal
                 data={list}
-                extraData={list}
                 keyExtractor={(item) => item.id}
                 estimatedItemSize={10}
                 contentContainerStyle={{
@@ -217,7 +178,6 @@ const HorizontalList = ({
                         style={{
                             width: 160,
                         }}
-                        selectPadding={false}
                         item={item}
                         icon={{
                             onPress: () => {
@@ -234,5 +194,40 @@ const HorizontalList = ({
                 )}
             />
         </View>
+    );
+};
+
+const RecapBanner = () => {
+    const onPress = () => {
+        router.push("overlays/recap");
+    };
+
+    return (
+        <ImageBackground
+            source={ImageSources.banner}
+            style={newStyles.recapBanner}
+        >
+            <TouchableRipple
+                onPress={onPress}
+                style={[mainStyles.fullSize, { justifyContent: "flex-end" }]}
+            >
+                <View
+                    style={{
+                        padding: Spacing.appPadding,
+                        backgroundColor: Colors.bg + "50",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <Text style={textStyles.h5}>Your Recap is here!</Text>
+                    <IconButton
+                        icon="arrow-right"
+                        iconColor={Colors.primary}
+                        onPress={onPress}
+                    />
+                </View>
+            </TouchableRipple>
+        </ImageBackground>
     );
 };

@@ -243,10 +243,10 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             setIsReadingSongs: (value) => {
                 set({ isReadingSongs: value });
             },
+
             setSelectedSong: async (song) => {
                 set({ selectedSong: song });
             },
-
             setSelectedContainer: async (container) => {
                 set({ selectedContainer: container });
             },

@@ -1,0 +1,124 @@
+appId: com.anonymous.Flora
+---
+- tapOn: "Flora"
+- assertVisible: "Flora"
+- tapOn:
+    id: "container-item"
+    index: 4
+- assertVisible:
+    text: "Burning Desires"
+    index: 0
+- assertNotVisible:
+    id: "mini-player"
+- assertVisible:
+    id: "single-container-options-button"
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Shuffle play"
+- assertVisible: "Add to queue"
+- assertVisible: "Add songs"
+- assertVisible: "Album ranking"
+- assertVisible: "Edit album"
+- assertVisible: "Delete album"
+- tapOn:
+    id: "Add to queue-large-option-button"
+- assertVisible:
+    id: "mini-player"
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Shuffle play"
+- tapOn:
+    id: "Shuffle play-large-option-button"
+- tapOn:
+    id: "mini-player"
+- assertVisible:
+    id: "pause-button"
+- tapOn:
+    id: "pause-button"
+- "back"
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Add songs"
+- tapOn:
+    id: "Add songs-large-option-button"
+- assertVisible: "Add songs to album"
+- tapOn: "super hopeful worried dreamer [dreamix], nelward, Braz_OS • 2016"
+- assertVisible:
+    id: "checkbox-marked-outline-button"
+- tapOn:
+    point: "50%,26%"
+- assertNotVisible: "Add songs to album"
+- tapOn:
+    point: "50%,26%"
+  assertNotVisible: "Add songs"
+- assertVisible: "2 songs • 05:26"
+- assertVisible: "2, super hopeful worried dreamer [dreamix], nelward, Braz_OS • 2016"
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Add songs"
+- tapOn:
+    id: "Add songs-large-option-button"
+- assertVisible: "Add songs to album"
+- tapOn: "super hopeful worried dreamer [dreamix], nelward, Braz_OS • 2016"
+- assertVisible:
+    id: "checkbox-blank-outline-button"
+    index: 0
+- tapOn:
+    point: "50%,26%"
+  assertNotVisible: "Add songs to album"
+- tapOn:
+    point: "50%,26%"
+  assertNotVisible: "Add songs"
+- assertVisible: "1 songs • 02:18"
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Album ranking"
+- tapOn: "Album ranking"
+- assertVisible: "Album ranking"
+- tapOn:
+    point: "50%,26%"
+  assertNotVisible: "Album ranking"
+- assertVisible: "Edit album"
+- tapOn: "Edit album"
+- assertVisible: "Edit Burning Desires"
+- tapOn:
+    text: "Burning Desires"
+    index: 1
+- "eraseText"
+- inputText: "Edited Burning Desires"
+- assertVisible: "Edited Burning Desires"
+- tapOn: "Sān-Z, HOYO-MiX"
+- "eraseText"
+- inputText: "Edited San-Z, HOYO-MIX"
+- assertVisible: "Edited San-Z, HOYO-MIX"
+- tapOn: "2024"
+- "eraseText"
+- inputText: 2025
+- assertVisible: "2025"
+- tapOn:
+    id: "album-art"
+    index: 1
+- assertVisible: "This app can only access the photos you select"
+- assertVisible:
+    id: "com.google.android.providers.media.module:id/icon_thumbnail"
+- tapOn:
+    id: "com.google.android.providers.media.module:id/icon_thumbnail"
+- tapOn: "Save"
+- tapOn:
+    point: "50%,26%"
+  assertNotVisible: "Album ranking"
+- tapOn:
+    text: "Edited Burning Desires"
+    index: 0
+- assertVisible:
+    text: "Edited San-Z, HOYO-MiX • 2025"
+    index: 0
+- tapOn:
+    id: "single-container-options-button"
+- assertVisible: "Delete album"
+- tapOn: "Delete album"
+- assertVisible: "Delete album?"
+- tapOn: "Cancel"
+- assertNotVisible: "Delete album?"
+- tapOn: "Delete album"
+- tapOn: "Delete"

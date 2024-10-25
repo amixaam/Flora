@@ -1,33 +1,18 @@
-import React, { useEffect } from "react";
-import {
-    Pressable,
-    PressableProps,
-    StyleProp,
-    Text,
-    View,
-    ViewStyle,
-} from "react-native";
-import { Colors, IconSizes, Spacing } from "../../../styles/constants";
-import { textStyles } from "../../../styles/text";
-import { Album, Playlist, Song } from "../../../types/song";
-import { CombineStrings } from "../../../utils/CombineStrings";
-import Pluralize from "../../../utils/Pluralize";
-import AlbumArt from "./AlbumArt";
+import React from "react";
+import { PressableProps, StyleProp, Text, View, ViewStyle } from "react-native";
 import {
     IconButton,
     TouchableRipple,
     TouchableRippleProps,
 } from "react-native-paper";
-import { IconButtonProps } from "../Headers/SheetHeader";
-import Animated, {
-    Easing,
-    interpolateColor,
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
-} from "react-native-reanimated";
+import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { utilStyles } from "../../../styles/styles";
+import { textStyles } from "../../../styles/text";
+import { Album, Playlist, Song } from "../../../types/song";
+import { CombineStrings } from "../../../utils/CombineStrings";
+import Pluralize from "../../../utils/Pluralize";
+import { IconButtonProps } from "../Headers/SheetHeader";
+import AlbumArt from "./AlbumArt";
 
 interface ContainerItemProps extends PressableProps {
     item: Playlist | Album | Song;

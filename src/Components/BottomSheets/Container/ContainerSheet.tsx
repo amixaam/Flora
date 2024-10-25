@@ -1,25 +1,26 @@
-import { forwardRef, useCallback, useRef, useState } from "react";
+import { forwardRef, useState } from "react";
 import { useSongsStore } from "../../../store/songsStore";
 import { Spacing } from "../../../styles/constants";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Easing, Text } from "react-native";
 import TextTicker from "react-native-text-ticker";
+import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { textStyles } from "../../../styles/text";
 import { BottomSheetProps } from "../../../types/other";
-import { Album, Playlist } from "../../../types/song";
+import { Album, ContainerType, Playlist } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import Pluralize from "../../../utils/Pluralize";
-import DeleteContainer from "../../Modals/DeleteContainer";
-import AlbumRanking from "../Album/AlbumRanking";
-import EditAlbum from "../Album/EditAlbum";
-import EditPlaylist from "../Playlist/EditPlaylist";
-import { SheetModalLayout } from "../SheetModalLayout";
-import AddSongsToContainer from "./AddSongsToContainer";
 import LargeOptionButton from "../../UI/Buttons/LargeOptionButton";
-import { UISeperator } from "../../UI/Utils/UISeperator";
 import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
 import AlbumArt from "../../UI/UI chunks/AlbumArt";
+import { UISeperator } from "../../UI/Utils/UISeperator";
+import { SheetModalLayout } from "../SheetModalLayout";
+import DeleteContainer from "../../Modals/DeleteContainer";
+import EditAlbum from "../Album/EditAlbum";
+import EditPlaylist from "../Playlist/EditPlaylist";
+import AlbumRanking from "../Album/AlbumRanking";
+import AddSongsToContainer from "./AddSongsToContainer";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -34,49 +35,31 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         const [deleteConfirmModal, setDeleteConfirmModal] =
             useState<boolean>(false);
 
-        const AddSongsToContainerRef = useRef<BottomSheetModal>(null);
-        const openAddSongsToContainer = useCallback(() => {
-            AddSongsToContainerRef.current?.present();
-        }, []);
+        const {
+            sheetRef: AddSongsToContainerRef,
+            open: openAddSongsToContainer,
+            close: dismissAddSongsToContainer,
+        } = useBottomSheetModal();
 
-        const dismissAddSongsToContainer = useCallback(() => {
-            AddSongsToContainerRef.current?.dismiss();
-        }, []);
+        const {
+            sheetRef: EditPlaylistRef,
+            open: openEditPlaylistRef,
+            close: dismissEditPlaylistRef,
+        } = useBottomSheetModal();
 
-        const EditPlaylistRef = useRef<BottomSheetModal>(null);
-        const openEditPlaylistRef = useCallback(() => {
-            EditPlaylistRef.current?.present();
-        }, []);
+        const {
+            sheetRef: EditAlbumRef,
+            open: openEditAlbumRef,
+            close: dismissEditAlbumRef,
+        } = useBottomSheetModal();
 
-        const dismissEditPlaylistRef = useCallback(() => {
-            EditPlaylistRef.current?.dismiss();
-        }, []);
-
-        const EditAlbumRef = useRef<BottomSheetModal>(null);
-        const openEditAlbumRef = useCallback(() => {
-            EditAlbumRef.current?.present();
-        }, []);
-
-        const dismissEditAlbumRef = useCallback(() => {
-            EditAlbumRef.current?.dismiss();
-        }, []);
-
-        const AlbumRankingRef = useRef<BottomSheetModal>(null);
-        const openAlbumRanking = useCallback(() => {
-            AlbumRankingRef.current?.present();
-        }, []);
-
-        const dismissAlbumRanking = useCallback(() => {
-            AlbumRankingRef.current?.dismiss();
-        }, []);
+        const {
+            sheetRef: AlbumRankingRef,
+            open: openAlbumRanking,
+            close: dismissAlbumRanking,
+        } = useBottomSheetModal();
 
         if (selectedContainer === undefined) return;
-
-        const containerType =
-            selectedContainer?.id[0] === "P" ||
-            parseInt(selectedContainer?.id[0]) == 1
-                ? "playlist"
-                : "album";
 
         const handleDeleteContainer = () => {
             props.dismiss?.();
@@ -95,11 +78,9 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         };
 
         const handleEditContainer = () => {
-            if (containerType === "album") {
+            if (selectedContainer.type === ContainerType.ALBUM)
                 openEditAlbumRef();
-            } else {
-                openEditPlaylistRef();
-            }
+            else openEditPlaylistRef();
         };
 
         return (
@@ -143,7 +124,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                         <UISeperator />
 
                         <BottomSheetView style={{ marginTop: -Spacing.sm }}>
-                            {containerType === "album" && (
+                            {selectedContainer.type === ContainerType.ALBUM && (
                                 <SheetOptionsButton
                                     icon="chart-timeline-variant-shimmer"
                                     buttonContent={"Album ranking"}
@@ -153,7 +134,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             )}
                             <SheetOptionsButton
                                 icon="playlist-edit"
-                                buttonContent={"Edit " + containerType}
+                                buttonContent={"Edit " + selectedContainer.type}
                                 isDisabled={selectedContainer.id === "1"}
                                 onPress={() => {
                                     handleEditContainer();
@@ -161,7 +142,9 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             />
                             <SheetOptionsButton
                                 icon="trash-can"
-                                buttonContent={"Delete " + containerType}
+                                buttonContent={
+                                    "Delete " + selectedContainer.type
+                                }
                                 isDisabled={selectedContainer.id === "1"}
                                 onPress={() => {
                                     setDeleteConfirmModal(true);
@@ -174,7 +157,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     visible={deleteConfirmModal}
                     dismiss={() => setDeleteConfirmModal(false)}
                     confirm={handleDeleteContainer}
-                    containerType={containerType}
+                    containerType={selectedContainer.type}
                 />
                 <AddSongsToContainer
                     ref={AddSongsToContainerRef}
@@ -200,7 +183,7 @@ const ContainerSheetHeader = ({
     container: Playlist | Album;
 }) => {
     let smallText: string;
-    if ("description" in container) {
+    if (container.type === ContainerType.PLAYLIST) {
         smallText = Pluralize(container.songs.length, "song", "songs");
     } else {
         smallText = CombineStrings([container.artist, container.year]);

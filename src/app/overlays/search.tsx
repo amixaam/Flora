@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Text, View } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Chip } from "react-native-paper";
@@ -17,31 +17,29 @@ import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
 import ContainerSheet from "../../Components/BottomSheets/Container/ContainerSheet";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
 
-interface filteredDataProps {
+interface FilteredDataProps {
     songs?: Song[];
     albums?: Album[];
     playlists?: Playlist[];
 }
 
+const DEBOUNCE_DELAY = 300; // milliseconds
+
 const SearchScreen = () => {
     const filters = ["All", "Songs", "Albums", "Playlists", "Year", "Artists"];
     const [selectedFilter, setSelectedFilter] = useState(filters[0]);
-    const [filter, setFilter] = useState("");
-    const [filteredData, setFilteredData] = useState<filteredDataProps>({
-        songs: [],
-        albums: [],
-        playlists: [],
-    });
-    const { getAllSongs, getAllAlbums, getAllPlaylists, setSelectedContainer } =
+    const [inputValue, setInputValue] = useState(""); // Immediate input value
+    const [debouncedFilter, setDebouncedFilter] = useState(""); // Debounced value for filtering
+    const { getAllSongs, getAllAlbums, getAllPlaylists, setSelectedContainer, setSelectedSong } =
         useSongsStore();
 
-    const songs = getAllSongs();
-    const albums = getAllAlbums();
-    const playlists = getAllPlaylists();
-
-    useEffect(() => {
-        filterData();
-    }, [filter, selectedFilter, songs, albums, playlists]);
+    // Convert Maps to arrays once and memoize them
+    const songs = useMemo(() => Array.from(getAllSongs()), [getAllSongs]);
+    const albums = useMemo(() => Array.from(getAllAlbums()), [getAllAlbums]);
+    const playlists = useMemo(
+        () => Array.from(getAllPlaylists()),
+        [getAllPlaylists]
+    );
 
     const {
         close: closeSong,
@@ -54,109 +52,98 @@ const SearchScreen = () => {
         sheetRef: containerRef,
     } = useBottomSheetModal();
 
-    const filterData = () => {
-        let filteredData: filteredDataProps = {
+    // Debounce the filter value
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedFilter(inputValue);
+        }, DEBOUNCE_DELAY);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [inputValue]);
+
+    // Memoize filtered data based on the debounced value
+    const filteredData = useMemo(() => {
+        if (!debouncedFilter) {
+            return {
+                songs: [],
+                albums: [],
+                playlists: [],
+            };
+        }
+
+        const normalizedSearch = debouncedFilter.toLowerCase();
+
+        const filterBySearch = (items: any[], fields: string[]) =>
+            items.filter((item) =>
+                fields.some((field) =>
+                    String(item[field]).toLowerCase().includes(normalizedSearch)
+                )
+            );
+
+        let result: FilteredDataProps = {
             songs: [],
             albums: [],
             playlists: [],
         };
-        if (filter == "")
-            return setFilteredData({
-                songs: [],
-                albums: [],
-                playlists: [],
-            });
-
-        function filterSongs(): Song[] {
-            return songs.filter(
-                (song) =>
-                    song.title.toLowerCase().includes(filter.toLowerCase()) ||
-                    song.artist.toLowerCase().includes(filter.toLowerCase())
-            );
-        }
-
-        function filterAlbums(): Album[] {
-            return albums.filter(
-                (album) =>
-                    album.title.toLowerCase().includes(filter.toLowerCase()) ||
-                    album.artist.toLowerCase().includes(filter.toLowerCase())
-            );
-        }
-
-        function filterPlaylists(): Playlist[] {
-            return playlists.filter((playlist) =>
-                playlist.title.toLowerCase().includes(filter.toLowerCase())
-            );
-        }
 
         switch (selectedFilter) {
             case "All":
-                filteredData = {
-                    songs: filterSongs(),
-                    albums: filterAlbums(),
-                    playlists: filterPlaylists(),
+                result = {
+                    songs: filterBySearch(songs, ["title", "artist"]),
+                    albums: filterBySearch(albums, ["title", "artist"]),
+                    playlists: filterBySearch(playlists, ["title"]),
                 };
                 break;
             case "Songs":
-                filteredData = {
-                    songs: filterSongs(),
-                    albums: [],
-                    playlists: [],
+                result = {
+                    songs: filterBySearch(songs, ["title", "artist"]),
                 };
                 break;
             case "Artists":
-                filteredData = {
-                    songs: songs.filter((song) =>
-                        song.artist.toString().includes(filter)
-                    ),
-                    albums: albums.filter((album) =>
-                        album.artist.toString().includes(filter)
-                    ),
+                result = {
+                    songs: filterBySearch(songs, ["artist"]),
+                    albums: filterBySearch(albums, ["artist"]),
                 };
                 break;
             case "Albums":
-                filteredData = {
-                    songs: [],
-                    albums: filterAlbums(),
-                    playlists: [],
+                result = {
+                    albums: filterBySearch(albums, ["title", "artist"]),
                 };
                 break;
             case "Playlists":
-                filteredData = {
-                    songs: [],
-                    albums: [],
-                    playlists: filterPlaylists(),
+                result = {
+                    playlists: filterBySearch(playlists, ["title"]),
                 };
                 break;
             case "Year":
-                filteredData = {
-                    songs: songs.filter((song) =>
-                        song.year.toString().includes(filter)
-                    ),
-                    albums: albums.filter((album) =>
-                        album.year.toString().includes(filter)
-                    ),
+                result = {
+                    songs: filterBySearch(songs, ["year"]),
+                    albums: filterBySearch(albums, ["year"]),
                 };
                 break;
-            default:
-                break;
         }
 
-        setFilteredData(filteredData);
-    };
+        return result;
+    }, [debouncedFilter, selectedFilter, songs, albums, playlists]);
 
-    const renderItem = ({ item }: { item: Song | Album | Playlist }) => {
-        if ("duration" in item) {
-            return (
-                <SongItem
-                    key={item.id}
-                    song={item}
-                    controls={{
-                        onPress: openSong,
-                    }}
-                />
-            );
-        } else if ("artist" in item) {
+    const renderItem = useCallback(
+        ({ item }: { item: Song | Album | Playlist }) => {
+            if ("duration" in item) {
+                return (
+                    <SongItem
+                        key={item.id}
+                        song={item}
+                        controls={{
+                            onPress: async()=> {
+                                await setSelectedSong(item);
+                                openSong();
+                            },
+                        }}
+                    />
+                );
+            }
             return (
                 <ContainerListItem
                     key={item.id}
@@ -172,139 +159,131 @@ const SearchScreen = () => {
                     }}
                 />
             );
-        } else {
+        },
+        [openSong, openContainer, setSelectedContainer]
+    );
+
+    const renderList = useCallback(
+        (data: FilteredDataProps): React.ReactNode => {
+            const hasNoResults =
+                !data.songs?.length &&
+                !data.albums?.length &&
+                !data.playlists?.length;
+
+            if (hasNoResults || !debouncedFilter) {
+                return (
+                    <View style={{ paddingTop: Spacing.xl }}>
+                        <ListItemsNotFound
+                            icon={!debouncedFilter ? "magnify" : "alert-circle"}
+                            text={
+                                !debouncedFilter
+                                    ? `Search ${selectedFilter}`
+                                    : "No results"
+                            }
+                        />
+                    </View>
+                );
+            }
+
             return (
-                <ContainerListItem
-                    key={item.id}
-                    container={item}
-                    touchableNativeProps={{
-                        onPress: () => router.push(`/${item.id}`),
+                <ScrollView
+                    contentContainerStyle={{
+                        gap: Spacing.md,
+                        marginTop: Spacing.mmd,
                     }}
-                    options={{
-                        onPress: async () => {
-                            await setSelectedContainer(item);
-                            openContainer();
-                        },
-                    }}
-                />
-            );
-        }
-    };
-
-    const renderList = (array: filteredDataProps): React.ReactNode => {
-        let songList: React.ReactNode;
-        let albumList: React.ReactNode;
-        let playlistList: React.ReactNode;
-
-        if (array.albums && array.albums.length > 0) {
-            albumList = (
-                <View>
-                    <ListHeader
-                        text={Pluralize(
-                            filteredData.albums?.length,
-                            "album",
-                            "albums"
-                        )}
-                    />
-                    {array.albums.map((album) => renderItem({ item: album }))}
-                </View>
-            );
-        }
-
-        if (array.playlists && array.playlists.length > 0) {
-            playlistList = (
-                <View>
-                    <ListHeader
-                        text={Pluralize(
-                            filteredData.playlists?.length,
-                            "playlist",
-                            "playlists"
-                        )}
-                    />
-                    {array.playlists.map((playlist) =>
-                        renderItem({ item: playlist })
+                >
+                    {data.albums && data.albums?.length > 0 && (
+                        <View>
+                            <ListHeader
+                                text={Pluralize(
+                                    data.albums.length,
+                                    "album",
+                                    "albums"
+                                )}
+                            />
+                            {data.albums.map((album) =>
+                                renderItem({ item: album })
+                            )}
+                        </View>
                     )}
-                </View>
+                    {data.playlists && data.playlists?.length > 0 && (
+                        <View>
+                            <ListHeader
+                                text={Pluralize(
+                                    data.playlists.length,
+                                    "playlist",
+                                    "playlists"
+                                )}
+                            />
+                            {data.playlists.map((playlist) =>
+                                renderItem({ item: playlist })
+                            )}
+                        </View>
+                    )}
+                    {data.songs && data.songs?.length > 0 && (
+                        <View>
+                            <ListHeader
+                                text={Pluralize(
+                                    data.songs.length,
+                                    "song",
+                                    "songs"
+                                )}
+                            />
+                            {data.songs.map((song) =>
+                                renderItem({ item: song })
+                            )}
+                        </View>
+                    )}
+                </ScrollView>
             );
-        }
+        },
+        [debouncedFilter, selectedFilter, renderItem]
+    );
 
-        if (array.songs && array.songs.length > 0) {
-            songList = (
-                <View>
-                    <ListHeader
-                        text={Pluralize(
-                            filteredData.songs?.length,
-                            "song",
-                            "songs"
-                        )}
-                    />
-                    {array.songs.map((song) => renderItem({ item: song }))}
-                </View>
-            );
-        }
-
-        if (!songList && !albumList && !playlistList) {
-            return (
-                <View style={{ paddingTop: Spacing.xl }}>
-                    <ListItemsNotFound
-                        icon={filter == "" ? "magnify" : "alert-circle"}
-                        text={
-                            filter == ""
-                                ? `Search ${selectedFilter}`
-                                : "No results"
-                        }
-                    />
-                </View>
-            );
-        }
-
-        return (
-            <ScrollView
-                contentContainerStyle={{
-                    gap: Spacing.md,
-                    marginTop: Spacing.mmd,
-                }}
-            >
-                {albumList}
-                {playlistList}
-                {songList}
-            </ScrollView>
-        );
-    };
+    const HeaderInput = useCallback(
+        ({ setFilter }: { setFilter: (value: string) => void }) => (
+            <View style={{ flex: 1, marginTop: 1 }}>
+                <TextInput
+                    placeholder="Search..."
+                    onChangeText={setFilter}
+                    placeholderTextColor={Colors.primary90}
+                    style={[textStyles.text]}
+                    autoCapitalize="sentences"
+                />
+            </View>
+        ),
+        []
+    );
 
     return (
         <SwipeDownScreen
             header={
-                <SheetHeader title={<HeaderInput setFilter={setFilter} />} />
+                <SheetHeader
+                    title={<HeaderInput setFilter={setInputValue} />}
+                />
             }
         >
             <View style={{ flex: 1, gap: Spacing.md }}>
-                <View
-                    style={{
-                        marginLeft: Spacing.appPadding,
-                    }}
-                >
+                <View style={{ marginLeft: Spacing.appPadding }}>
                     <ScrollView
                         horizontal
                         contentContainerStyle={{ gap: Spacing.sm }}
                     >
-                        {filters.map((filter) => (
+                        {filters.map((filterName) => (
                             <Chip
-                                key={filter}
+                                key={filterName}
                                 mode="outlined"
-                                selected={selectedFilter === filter}
-                                onPress={() => {
-                                    setSelectedFilter(filter);
-                                }}
+                                selected={selectedFilter === filterName}
+                                onPress={() => setSelectedFilter(filterName)}
                                 selectedColor={Colors.primary}
                                 style={{
                                     backgroundColor:
-                                        selectedFilter === filter
+                                        selectedFilter === filterName
                                             ? Colors.input
                                             : Colors.secondary,
                                 }}
                             >
-                                {filter}
+                                {filterName}
                             </Chip>
                         ))}
                     </ScrollView>
@@ -317,36 +296,18 @@ const SearchScreen = () => {
     );
 };
 
-const ListHeader = ({ text = "List header", accent = "" }) => {
-    return (
-        <View
-            style={{
-                flex: 1,
-                marginHorizontal: Spacing.appPadding,
-
-                flexDirection: "row",
-                justifyContent: "space-between",
-            }}
-        >
-            <Text style={textStyles.text}>{text}</Text>
-            <Text style={textStyles.text}>{accent}</Text>
-        </View>
-    );
-};
-
-const HeaderInput = ({ setFilter }: { setFilter: any }) => {
-    // TextInput from react native gesture handler
-    return (
-        <View style={{ flex: 1, marginTop: 1 }}>
-            <TextInput
-                placeholder="Search..."
-                onChangeText={setFilter}
-                placeholderTextColor={Colors.primary90}
-                style={[textStyles.text]}
-                autoCapitalize="sentences"
-            />
-        </View>
-    );
-};
+const ListHeader = ({ text = "List header", accent = "" }) => (
+    <View
+        style={{
+            flex: 1,
+            marginHorizontal: Spacing.appPadding,
+            flexDirection: "row",
+            justifyContent: "space-between",
+        }}
+    >
+        <Text style={textStyles.text}>{text}</Text>
+        <Text style={textStyles.text}>{accent}</Text>
+    </View>
+);
 
 export default SearchScreen;

@@ -150,6 +150,7 @@ const LeftSide = ({ image, active = false, count }: LeftSideProps) => {
 const RightSide = ({ icon = "dots-vertical", onPress }: IconButtonProps) => {
     return (
         <IconButton
+            testID={icon + "-button"}
             icon={icon}
             style={{ marginRight: -Spacing.sm }}
             onPress={onPress}
