@@ -1,24 +1,24 @@
-interface Playlist {
+interface Container {
     readonly id: string;
+    readonly type: ContainerType;
+    readonly createdAt: string;
+
     title: string;
-    description: string | undefined;
+    songs: string[]; // song id's
     artwork: string | undefined;
-    songs: string[];
     lastModified: string | undefined;
-    createdAt: string;
 }
 
-interface Album {
-    readonly id: string;
+interface Album extends Container {
+    readonly type: ContainerType.ALBUM;
     readonly autoCreated: boolean;
-
-    title: string;
     artist: string;
     year: string;
-    artwork: string | undefined;
-    songs: string[]; // song id's
-    lastModified: string | undefined;
-    createdAt: string;
+}
+
+interface Playlist extends Container {
+    readonly type: ContainerType.PLAYLIST;
+    description: string | undefined;
 }
 
 interface Song {
@@ -59,6 +59,11 @@ interface HistoryItem {
 interface History {
     history: HistoryItem[];
     consciousHistory: HistoryItem[];
+}
+
+export enum ContainerType {
+    ALBUM = "album",
+    PLAYLIST = "playlist",
 }
 
 export type { Song, Playlist, Album, History, HistoryItem };

@@ -32,7 +32,12 @@ const SearchScreen = () => {
         albums: [],
         playlists: [],
     });
-    const { songs, albums, playlists, setSelectedContainer } = useSongsStore();
+    const { getAllSongs, getAllAlbums, getAllPlaylists, setSelectedContainer } =
+        useSongsStore();
+
+    const songs = getAllSongs();
+    const albums = getAllAlbums();
+    const playlists = getAllPlaylists();
 
     useEffect(() => {
         filterData();

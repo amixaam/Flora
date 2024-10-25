@@ -1,4 +1,4 @@
-import { Album, Song } from "../types/song";
+import { Album, ContainerType, Song } from "../types/song";
 
 export const testSongObject: Song = {
     id: "123",
@@ -30,6 +30,7 @@ export const testSongObject: Song = {
 
 export const testAlbumObject: Album = {
     id: "A123",
+    type: ContainerType.ALBUM,
     autoCreated: false,
     title: "Album 1",
     artist: "Artist 1",

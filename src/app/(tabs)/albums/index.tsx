@@ -13,7 +13,7 @@ import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/Background
 import { TwoColContainerList } from "../../../Components/UI/UI chunks/TwoColContainerList";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import useMultiSelect from "../../../hooks/useMultiSelect";
-import { Colors } from "../../../styles/constants";
+import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Album } from "../../../types/song";
 
@@ -24,11 +24,8 @@ export default function AlbumsTab() {
         close: dismissCreateAlbum,
     } = useBottomSheetModal();
 
-    const {
-        multiselectedItems,
-        toggle,
-        deselectAll,
-    } = useMultiSelect<Album["id"]>();
+    const { multiselectedItems, toggle, deselectAll } =
+        useMultiSelect<Album["id"]>();
 
     const scrollY = useSharedValue(0);
     const handleScroll = useAnimatedScrollHandler((event) => {
@@ -45,7 +42,12 @@ export default function AlbumsTab() {
         <View style={[mainStyles.container, { position: "relative" }]}>
             <BackgroundImageAbsolute />
             <CustomFAB onPress={openCreateAlbum} />
-            <Animated.ScrollView onScroll={handleScroll}>
+            <Animated.ScrollView
+                onScroll={handleScroll}
+                contentContainerStyle={{
+                    paddingBottom: Spacing.miniPlayer,
+                }}
+            >
                 {multiselectedItems.length > 0 ? (
                     <MainHeader
                         title={`${multiselectedItems.length} selected`}

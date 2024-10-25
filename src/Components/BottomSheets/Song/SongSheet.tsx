@@ -21,7 +21,7 @@ import SongStatistics from "./SongStatistics";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedSong, hideSong, unhideSong, addToQueue } =
+        const { selectedSong, toggleSongVisibility, addToQueue } =
             useSongsStore();
 
         const {
@@ -41,11 +41,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         }
 
         const handleHideSong = () => {
-            if (selectedSong.isHidden) {
-                unhideSong(selectedSong.id);
-            } else {
-                hideSong(selectedSong.id);
-            }
+            toggleSongVisibility(selectedSong.id);
         };
 
         const handleAddToQueue = () => {

@@ -23,7 +23,7 @@ import { useSongsStore } from "../../../store/songsStore";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { Album, Playlist, Song } from "../../../types/song";
+import { Album, ContainerType, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
 
@@ -34,7 +34,7 @@ export default function ContainerScreen() {
     const { setSelectedContainer, getSongsFromContainer, getContainer } =
         useSongsStore();
 
-    let data: Album | Playlist | undefined = getContainer(id);
+    let data = getContainer(id);
 
     if (data === undefined) {
         return (
@@ -130,7 +130,7 @@ const AlbumInfo = ({
 }: AlbumInfoProps) => {
     const { shuffleList, addListToQueue } = useSongsStore();
 
-    const isAlbum = "artist" in data;
+    const isAlbum = data.type === ContainerType.ALBUM;
 
     return (
         <View

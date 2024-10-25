@@ -8,6 +8,7 @@ import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/Background
 import { TwoColContainerList } from "../../../Components/UI/UI chunks/TwoColContainerList";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import useMultiSelect from "../../../hooks/useMultiSelect";
+import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { Playlist } from "../../../types/song";
 
@@ -28,7 +29,11 @@ export default function PlaylistsTab() {
         <View style={mainStyles.container}>
             <BackgroundImageAbsolute />
             <CustomFAB onPress={openCreatePlaylist} />
-            <ScrollView>
+            <ScrollView
+                contentContainerStyle={{
+                    paddingBottom: Spacing.miniPlayer,
+                }}
+            >
                 {multiselectedItems.length > 0 ? (
                     <MainHeader
                         title={`${multiselectedItems.length} selected`}

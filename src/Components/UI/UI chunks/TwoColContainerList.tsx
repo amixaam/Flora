@@ -20,12 +20,15 @@ export const TwoColContainerList = ({
     toggle: (item: string) => void;
 }) => {
     const {
-        albums,
-        playlists,
+        getAllAlbums,
+        getAllPlaylists,
         setSelectedContainer,
         getAllAlbumSongs,
         getAllPlaylistSongs,
     } = useSongsStore();
+
+    const albums = getAllAlbums();
+    const playlists = getAllPlaylists();
 
     const data = type === "album" ? albums : playlists;
 

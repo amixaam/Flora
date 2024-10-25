@@ -4,16 +4,76 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { router } from "expo-router";
 import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
-import { Album, History, Playlist, Song } from "../types/song";
+import { Album, ContainerType, History, Playlist, Song } from "../types/song";
 import { useRecapStore } from "./recapStore";
 import moment from "moment";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
-interface SongsState {
+const getCurrentTimestamp = () => moment().toString();
+
+const defaultLikedPlaylist: Playlist = {
+    id: "1",
+    type: ContainerType.PLAYLIST,
+    title: "Liked songs",
+    description: "Your songs that you liked.",
+    artwork: "Liked songs",
+    songs: [],
+    lastModified: getCurrentTimestamp(),
+    createdAt: getCurrentTimestamp(),
+};
+
+const createPlaylistId = () =>
+    `P${Date.now().toString(36)}${Math.random()
+        .toString(36)
+        .substr(2, 5)}`.toUpperCase();
+
+export function createAlbumId(title: string, artist: string): string {
+    // Convert title and artist to uppercase and remove special characters
+    const normalizedTitle = (title || "Unknown Album")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+    const normalizedArtist = (artist || "Unknown Artist")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+
+    // Create a simple hash function
+    function simpleHash(str: string): number {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = (hash << 5) - hash + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return Math.abs(hash);
+    }
+
+    // Generate hash from combined string
+    const combinedString = `${normalizedTitle}-${normalizedArtist}`;
+    const hash = simpleHash(combinedString);
+
+    // Convert to base36 and take first 8 characters
+    const base36Hash = hash.toString(36).toUpperCase();
+    return `A${base36Hash.slice(0, 7)}`;
+}
+
+const mapToArray = <T extends { id: string }>(map: Map<string, T>): T[] =>
+    Array.from(map.values());
+
+const arrayToMap = <T extends { id: string }>(array: T[]): Map<string, T> =>
+    new Map(array.map((item) => [item.id, item]));
+
+interface PersistedState {
     songs: Song[];
-    playlists: Playlist[];
     albums: Album[];
+    playlists: Playlist[];
+    history: History;
+}
+
+interface SongsState {
+    songMap: Map<string, Song>;
+    albumMap: Map<string, Album>;
+    playlistMap: Map<string, Playlist>;
     history: History;
     queue: Track[];
     isReadingSongs: boolean;
@@ -30,9 +90,7 @@ interface SongsActions {
     setSelectedSong: (song: Song) => Promise<void>;
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
 
-    updateSelectedAndActiveSong: () => void;
-    updateSelectedContainer: () => void;
-    updateActiveSong: (songId: string) => void;
+    updateSelectedStates: () => void;
 
     // PLAYBACK
     resetPlayer: () => Promise<void>;
@@ -71,16 +129,15 @@ interface SongsActions {
     setSongs: (songs: Song[]) => void;
     addSongs: (songs: Song[]) => void;
     getSong: (id: string) => Song | undefined;
+    getSongs: (ids: string[]) => Song[];
+    getAllSongs: () => Song[];
+    getSongIds: () => string[];
     removeSongs: (ids: string[]) => void;
 
     doesSongExist: (id: string) => boolean;
     likeSong: (id: string) => void;
     unlikeSong: (id: string) => void;
-    hideSong: (id: string) => void;
-    unhideSong: (id: string) => void;
-
-    isSongInAnyAlbum: (songId: string) => boolean;
-    updateSongTagsByAlbum: (albumId: string) => void;
+    toggleSongVisibility: (id: string) => void;
 
     getRecentlyAddedSongs: () => Song[];
 
@@ -109,10 +166,11 @@ interface SongsActions {
     editPlaylist: (id: string, inputFields: Partial<Playlist>) => void;
 
     getPlaylist: (id: string) => Playlist | undefined;
+    getAllPlaylists: () => Playlist[];
     getAllPlaylistSongs: () => Song[];
 
     addSongToPlaylist: (playlistId: string, songIds: string[]) => void;
-    removeSongFromPlaylist: (playlistId: string, songId: string) => void;
+    removeSongFromPlaylist: (playlistId: string, songIds: string[]) => void;
 
     // ALBUM SPECIFIC
     createAlbum: (inputFields: Partial<Album>) => string;
@@ -124,6 +182,7 @@ interface SongsActions {
 
     removeEmptyAutoAlbums: () => void;
 
+    getAllAlbums: () => Album[];
     getAlbum: (id: string) => Album | undefined;
     getAllAlbumSongs: () => Song[];
     getAlbumBySong: (songId: string) => Album | undefined;
@@ -135,72 +194,61 @@ interface SongsActions {
     getRecentlyPlayed: () => (Album | Playlist)[];
 }
 
+const initialState: SongsState = {
+    songMap: new Map(),
+    albumMap: new Map(),
+    playlistMap: new Map([[defaultLikedPlaylist.id, defaultLikedPlaylist]]),
+    queue: [],
+
+    history: {
+        history: [],
+        consciousHistory: [],
+    },
+
+    repeatMode: RepeatMode.Off,
+    activeSong: undefined,
+    isReadingSongs: false, // for song discovering loading state
+
+    selectedSong: undefined,
+    selectedContainer: undefined,
+};
+
 export const useSongsStore = create<SongsState & SongsActions>()(
     persist(
         (set, get) => ({
-            songs: [],
-            albums: [],
-            queue: [],
-            playlists: [
-                {
-                    id: "1",
-                    title: "Liked songs",
-                    description: "Your songs that you liked.",
-                    artwork: "Liked songs",
-                    songs: [],
-                    lastModified: undefined,
-                    createdAt: moment().toString(),
-                },
-            ],
+            ...initialState,
 
-            history: {
-                history: [],
-                consciousHistory: [],
+            resetAll: () => set(initialState),
+
+            // map get
+            getSong: (id) => get().songMap.get(id),
+            getAlbum: (id) => get().albumMap.get(id),
+            getPlaylist: (id) => get().playlistMap.get(id),
+
+            getSongs: (ids) => {
+                return ids
+                    .map((id) => get().songMap.get(id))
+                    .filter((song): song is Song => song !== undefined);
             },
+            getSongIds: () => Array.from(get().songMap.keys()),
 
-            repeatMode: RepeatMode.Off,
-            activeSong: undefined,
-            isReadingSongs: false,
+            getAllSongs: () => Array.from(get().songMap.values()),
+            getAllAlbums: () => Array.from(get().albumMap.values()),
+            getAllPlaylists: () => Array.from(get().playlistMap.values()),
 
-            selectedSong: undefined,
-            selectedContainer: undefined,
-
-            // functions
-
+            // sets
+            setSongs: (songs) => {
+                set({ songMap: arrayToMap(songs) });
+            },
             setIsReadingSongs: (value) => {
                 set({ isReadingSongs: value });
             },
-
             setSelectedSong: async (song) => {
                 set({ selectedSong: song });
             },
 
             setSelectedContainer: async (container) => {
                 set({ selectedContainer: container });
-            },
-
-            resetAll: () => {
-                set({
-                    songs: [],
-                    albums: [],
-                    queue: [],
-                    playlists: [
-                        {
-                            id: "1",
-                            title: "Liked songs",
-                            description: "Your songs that you liked.",
-                            artwork: "Liked songs",
-                            songs: [],
-                            lastModified: undefined,
-                            createdAt: moment().toString(),
-                        },
-                    ],
-                    history: {
-                        history: [],
-                        consciousHistory: [],
-                    },
-                });
-                console.log("reset all!");
             },
 
             // Music playback ----------------------------------------------------------
@@ -214,11 +262,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     repeatMode: await TrackPlayer.getRepeatMode(),
                     activeSong: (await TrackPlayer.getActiveTrack()) as Song,
                 });
-            },
-
-            updateActiveSong: (songId) => {
-                const song = get().getSong(songId);
-                set({ activeSong: song });
             },
 
             play: async () => {
@@ -379,7 +422,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 if (redirect) router.push("/overlays/player");
 
                 const shuffledList = [...list].sort(() => Math.random() - 0.5);
-                get().updateActiveSong(shuffledList[0].id);
 
                 await TrackPlayer.setQueue(shuffledList);
                 await TrackPlayer.play();
@@ -389,22 +431,24 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             // songs ----------------------------------------------------------
-            setSongs: (songs) => set({ songs }),
-            addSongs: (songs) => {
-                set((state) => ({
-                    songs: [...state.songs, ...songs],
-                }));
+            addSongs: (newSongs) => {
+                set((state) => {
+                    const updatedMap = new Map(state.songMap);
+                    newSongs.forEach((song) => updatedMap.set(song.id, song));
+                    return { songMap: updatedMap };
+                });
             },
-            getSong: (id) => get().songs.find((song) => song.id === id),
-            removeSongs: (ids) => {
-                set((state) => ({
-                    songs: state.songs.filter((song) => !ids.includes(song.id)),
-                }));
 
+            removeSongs: (ids: string[]) => {
+                set((state) => {
+                    const updatedMap = new Map(state.songMap);
+                    ids.forEach((id) => updatedMap.delete(id));
+                    return { songMap: updatedMap };
+                });
                 get().checkForDeletedSongs();
             },
 
-            updateSelectedAndActiveSong: () => {
+            updateSelectedStates: () => {
                 set((state) => ({
                     selectedSong: state.selectedSong
                         ? state.getSong(state.selectedSong.id)
@@ -412,11 +456,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     activeSong: state.activeSong
                         ? state.getSong(state.activeSong.id)
                         : undefined,
-                }));
-            },
-
-            updateSelectedContainer: () => {
-                set((state) => ({
                     selectedContainer: state.selectedContainer
                         ? state.getContainer(state.selectedContainer.id)
                         : undefined,
@@ -424,90 +463,62 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             doesSongExist: (id) => {
-                return get().songs.some((song) => song.id === id);
+                return get().songMap.has(id);
             },
 
             likeSong: (id) => {
                 get().addSongToPlaylist("1", [id]);
             },
             unlikeSong: (id) => {
-                get().removeSongFromPlaylist("1", id);
+                get().removeSongFromPlaylist("1", [id]);
             },
 
-            hideSong: (id) => {
-                set((state) => ({
-                    songs: state.songs.map((song) =>
-                        song.id === id ? { ...song, isHidden: true } : song
-                    ),
-                }));
-
-                get().updateSelectedAndActiveSong();
-            },
-
-            unhideSong: (id) => {
-                set((state) => ({
-                    songs: state.songs.map((song) =>
-                        song.id === id ? { ...song, isHidden: false } : song
-                    ),
-                }));
-
-                get().updateSelectedAndActiveSong();
-            },
-
-            updateSongSkip: (id) => {
-                const song = get().getSong(id);
-                if (song === undefined) return;
-
-                useRecapStore.getState().recordSkip(song);
-
+            toggleSongVisibility: (id) => {
                 set((state) => {
-                    // Update song statistics
-                    const updatedSongs = state.songs.map((song) =>
-                        song.id === id
-                            ? {
-                                  ...song,
-                                  statistics: {
-                                      ...song.statistics,
-                                      skipCount: song.statistics.skipCount + 1,
-                                  },
-                              }
-                            : song
-                    );
+                    const song = state.songMap.get(id);
+                    if (!song) return state;
+
+                    const updatedSongMap = new Map(state.songMap);
+                    updatedSongMap.set(id, {
+                        ...song,
+                        isHidden: !song.isHidden,
+                    });
 
                     return {
-                        songs: updatedSongs,
+                        songMap: updatedSongMap,
                     };
                 });
 
-                get().updateSelectedAndActiveSong();
+                get().updateSelectedStates();
             },
 
             // statistics ---------------------------------------------------------
             batchUpdateTrack: (trackId) => {
                 set((state) => {
-                    const song = state.getSong(trackId);
+                    const song = state.songMap.get(trackId);
                     if (!song) return state;
 
+                    const updatedSong = {
+                        ...song,
+                        statistics: {
+                            ...song.statistics,
+                            lastPlayed: getCurrentTimestamp(),
+                            playCount: song.statistics.playCount + 1,
+                        },
+                    };
+
+                    const updatedSongMap = new Map(state.songMap);
+                    updatedSongMap.set(trackId, updatedSong);
+
                     return {
-                        activeSong: song,
-                        songs: state.songs.map((s) =>
-                            s.id === trackId
-                                ? {
-                                      ...s,
-                                      statistics: {
-                                          ...s.statistics,
-                                          lastPlayed: moment().toString(),
-                                          playCount: s.statistics.playCount + 1,
-                                      },
-                                  }
-                                : s
-                        ),
+                        songMap: updatedSongMap,
+                        activeSong: updatedSong,
                         history: {
                             ...state.history,
                             history: [
                                 {
                                     song: trackId,
-                                    date: moment().toString(),
+                                    date: getCurrentTimestamp(),
                                     containerId: song.albumIds[0],
                                 },
                                 ...state.history.history,
@@ -519,6 +530,30 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 useRecapStore
                     .getState()
                     .recordPlay(get().getSong(trackId) as Song);
+            },
+
+            updateSongSkip: (id) => {
+                set((state) => {
+                    const song = state.songMap.get(id);
+                    if (!song) return state;
+
+                    const updatedSong = {
+                        ...song,
+                        statistics: {
+                            ...song.statistics,
+                            skipCount: song.statistics.playCount + 1,
+                        },
+                    };
+
+                    const updatedSongMap = new Map(state.songMap);
+                    updatedSongMap.set(id, updatedSong);
+
+                    return {
+                        songMap: updatedSongMap,
+                    };
+                });
+
+                useRecapStore.getState().recordSkip(get().getSong(id) as Song);
             },
 
             addSongToConsciousHistory: (id) => {
@@ -584,224 +619,233 @@ export const useSongsStore = create<SongsState & SongsActions>()(
 
             getSongsFromContainer: (id) => {
                 const container = get().getContainer(id);
-
-                const songs = container?.songs
-                    .map((songId) =>
-                        get().songs.find((song) => song.id === songId)
-                    )
-                    .filter((s) => s !== undefined) as Song[];
-
-                if (container?.id[0] === "P" || container?.id === "1") {
-                    return songs?.slice().reverse();
-                } else {
-                    return songs;
-                }
+                if (!container) return [];
+                return get().getSongs(container.songs);
             },
 
             getContainer: (id) => {
+                // A - album, P - playlist
                 if (id[0] === "A") {
-                    // album
                     return get().getAlbum(id);
                 } else {
-                    // playlist
                     return get().getPlaylist(id);
                 }
             },
 
             deleteContainer: (id) => {
-                set((state) => ({
-                    albums: state.albums.filter((album) => album.id !== id),
-                    playlists: state.playlists.filter(
-                        (playlist) => playlist.id !== id
-                    ),
-                    songs: state.songs.filter((song) =>
-                        song.albumIds.includes(id)
-                    ),
-                }));
+                if (id[0] === "A") {
+                    const updatedAlbumMap = new Map(get().albumMap);
+                    updatedAlbumMap.delete(id);
+                    set({ albumMap: updatedAlbumMap });
+                } else {
+                    const updatedPlaylistMap = new Map(get().playlistMap);
+                    updatedPlaylistMap.delete(id);
+                    set({ playlistMap: updatedPlaylistMap });
+                }
 
-                get().updateSelectedAndActiveSong();
+                get().updateSelectedStates();
             },
 
             checkForDeletedSongs: () => {
-                const songIds = get().songs.map((song) => song.id);
-                // checks songs array for albums and playlists for songs that no longer exist
-                set((state) => ({
-                    albums: state.albums.map((album) => ({
-                        ...album,
-                        songs: album.songs.filter((id) => songIds.includes(id)),
-                    })),
-                    playlists: state.playlists.map((playlist) => ({
-                        ...playlist,
-                        songs: playlist.songs.filter((id) =>
-                            songIds.includes(id)
-                        ),
-                    })),
-                }));
+                set((state) => {
+                    const songIds = Array.from(state.songMap.keys());
+                    const editedAlbumMap = new Map(state.albumMap);
+                    const editedPlaylistMap = new Map(state.playlistMap);
+
+                    editedAlbumMap.forEach((album, id) => {
+                        editedAlbumMap.set(id, {
+                            ...album,
+                            songs: album.songs.filter((id) =>
+                                songIds.includes(id)
+                            ),
+                        });
+                    });
+
+                    editedPlaylistMap.forEach((playlist, id) => {
+                        editedPlaylistMap.set(id, {
+                            ...playlist,
+                            songs: playlist.songs.filter((id) =>
+                                songIds.includes(id)
+                            ),
+                        });
+                    });
+
+                    return {
+                        albumMap: editedAlbumMap,
+                        playlistMap: editedPlaylistMap,
+                    };
+                });
 
                 get().removeEmptyAutoAlbums();
             },
 
             // playlists ----------------------------------------------------------
             createPlaylist: (inputFields) => {
-                const newPlaylist: Playlist = {
-                    id: (
-                        "P" +
-                        Date.now().toString(36) +
-                        Math.random().toString(36).substr(2, 5)
-                    ).toUpperCase(),
-                    title: inputFields.title
-                        ? inputFields.title
-                        : "Unnamed playlist",
-                    description: inputFields.description
-                        ? inputFields.description
-                        : undefined,
-                    artwork: inputFields.artwork
-                        ? inputFields.artwork
-                        : undefined,
-                    songs: [],
-                    lastModified: moment().toString(),
-                    createdAt: moment().toString(),
-                };
+                const newPlaylist = {
+                    ...defaultLikedPlaylist,
+                    id: createPlaylistId(),
+                    title: inputFields.title || "Untitled Playlist",
+                    description: inputFields.description || "",
+                    artwork: inputFields.artwork,
+                    lastModified: getCurrentTimestamp(),
+                    createdAt: getCurrentTimestamp(),
+                } as Playlist;
 
-                set((state) => ({
-                    playlists: [...state.playlists, newPlaylist],
-                }));
+                set((state) => {
+                    const editedPlaylistMap = new Map(state.playlistMap);
+                    editedPlaylistMap.set(newPlaylist.id, newPlaylist);
+
+                    return {
+                        playlistMap: editedPlaylistMap,
+                    };
+                });
             },
 
             editPlaylist: (id, inputFields) => {
-                set((state) => ({
-                    playlists: state.playlists.map((playlist) =>
-                        playlist.id === id
-                            ? {
-                                  ...playlist,
-                                  ...inputFields,
-                                  lastModified: moment().toString(),
-                              }
-                            : playlist
-                    ),
-                }));
+                set((state) => {
+                    const editedPlaylistMap = new Map(state.playlistMap);
+                    const playlist = editedPlaylistMap.get(id);
+                    if (!playlist) return state;
 
-                get().updateSelectedContainer();
+                    editedPlaylistMap.set(id, {
+                        ...playlist,
+                        artwork: inputFields.artwork || playlist.artwork,
+                        title: inputFields.title || "Untitled Playlist",
+                        description: inputFields.description,
+                    });
+
+                    return {
+                        playlistMap: editedPlaylistMap,
+                    };
+                });
+
+                get().updateSelectedStates();
             },
 
             getAllPlaylistSongs: () => {
-                const songs = get()
-                    .playlists.map((playlist) => playlist.songs)
-                    .reduce((a, b) => a.concat(b), [])
-                    .map((songId) => get().songs.find((s) => s.id === songId))
-                    .filter((s) => s !== undefined) as Song[];
-
-                return songs;
-            },
-
-            getPlaylist: (id) => {
-                const playlists = get().playlists;
-                const playlist = playlists.find(
-                    (playlist) => playlist.id === id
+                const songIds = new Set(
+                    Array.from(get().playlistMap.values()).flatMap(
+                        (playlist) => playlist.songs
+                    )
                 );
-
-                return playlist;
+                return Array.from(songIds)
+                    .map((id) => get().songMap.get(id))
+                    .filter((song): song is Song => song !== undefined);
             },
 
             addSongToPlaylist: (playlistId, songIds) => {
                 // add songs to playlist, skipping any duplicates
                 // if playlist is default, set isLiked to true
-                set((state) => ({
-                    playlists: state.playlists.map((playlist) => {
-                        if (playlist.id === playlistId) {
-                            return {
-                                ...playlist,
-                                songs: [
-                                    ...new Set([...playlist.songs, ...songIds]),
-                                ],
-                            };
-                        } else {
-                            return playlist;
-                        }
-                    }),
 
-                    // Update isLiked if default playlist
-                    songs:
-                        playlistId === "1"
-                            ? state.songs.map((song) =>
-                                  songIds.includes(song.id)
-                                      ? { ...song, isLiked: true }
-                                      : song
-                              )
-                            : state.songs,
-                }));
+                set((state) => {
+                    const editedPlaylistMap = new Map(state.playlistMap);
+                    const editedSongsMap = new Map(state.songMap);
 
-                get().updateSelectedContainer();
-                get().updateSelectedAndActiveSong();
+                    const playlist = editedPlaylistMap.get(playlistId);
+                    if (!playlist) return state;
+
+                    const updatedPlaylist = {
+                        ...playlist,
+                        songs: [...new Set([...playlist.songs, ...songIds])], //set is unique values
+                    };
+                    editedPlaylistMap.set(playlistId, updatedPlaylist);
+
+                    if (playlistId === "1") {
+                        editedSongsMap.forEach((song, id) => {
+                            editedSongsMap.set(id, {
+                                ...song,
+                                isLiked: songIds.includes(id),
+                            });
+                        });
+                    }
+
+                    return {
+                        playlistMap: editedPlaylistMap,
+                        songMap: editedSongsMap,
+                    };
+                });
+
+                get().updateSelectedStates();
             },
 
-            removeSongFromPlaylist: (playlistId, songId) => {
-                set((state) => ({
-                    playlists: state.playlists.map((playlist) =>
-                        playlist.id === playlistId
-                            ? {
-                                  ...playlist,
-                                  songs: playlist.songs.filter(
-                                      (id) => id !== songId
-                                  ),
-                              }
-                            : playlist
-                    ),
-                    // Update isLiked if default playlist
-                    songs:
-                        playlistId === "1"
-                            ? state.songs.map((song) =>
-                                  song.id === songId
-                                      ? { ...song, isLiked: false }
-                                      : song
-                              )
-                            : state.songs,
-                }));
+            removeSongFromPlaylist: (playlistId, songIds) => {
+                set((state) => {
+                    const editedPlaylistMap = new Map(state.playlistMap);
+                    const editedSongsMap = new Map(state.songMap);
+                    const playlist = editedPlaylistMap.get(playlistId);
 
-                get().updateSelectedContainer();
-                get().updateSelectedAndActiveSong();
+                    if (!playlist) return state;
+
+                    const updatedPlaylist = {
+                        ...playlist,
+                        songs: playlist.songs.filter(
+                            (id) => !songIds.includes(id)
+                        ),
+                    };
+                    editedPlaylistMap.set(playlistId, updatedPlaylist);
+
+                    if (playlistId === "1") {
+                        editedSongsMap.forEach((song, id) => {
+                            editedSongsMap.set(id, {
+                                ...song,
+                                isLiked: !songIds.includes(id),
+                            });
+                        });
+                    }
+
+                    return {
+                        playlistMap: editedPlaylistMap,
+                        songMap: editedSongsMap,
+                    };
+                });
+
+                get().updateSelectedStates();
             },
 
             // Albums ----------------------------------------------------------
             createAlbum: (inputFields) => {
-                const id = (
-                    "A" +
-                    Date.now().toString(36) +
-                    Math.random().toString(36).substr(2, 5)
-                ).toUpperCase();
+                const id = createAlbumId(
+                    inputFields.title || "Untitled Album",
+                    inputFields.artist || "No artist"
+                );
+
                 const newAlbum: Album = {
                     id: id,
+                    type: ContainerType.ALBUM,
                     autoCreated: false,
-                    songs: [],
-                    title: inputFields.title
-                        ? inputFields.title
-                        : "Unnamed album",
-                    artist: inputFields.artist
-                        ? inputFields.artist
-                        : "No artist",
-                    year: inputFields.year ? inputFields.year : "No year",
-                    artwork: inputFields.artwork
-                        ? inputFields.artwork
-                        : undefined,
                     lastModified: moment().toString(),
                     createdAt: moment().toString(),
+
+                    songs: [],
+                    title: inputFields.title || "Untitled Album",
+                    artist: inputFields.artist || "No artist",
+                    year: inputFields.year || "No year",
+                    artwork: inputFields.artwork || undefined,
                 };
 
-                set((state) => ({
-                    albums: [...state.albums, newAlbum],
-                }));
+                set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
+                    editedAlbumMap.set(id, newAlbum);
+
+                    return {
+                        albumMap: editedAlbumMap,
+                    };
+                });
 
                 return id;
             },
 
             addAlbums: (albumFields, songIds) => {
                 set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
                     const newAlbums = Object.entries(albumFields).map(
                         ([title, albumData]) => {
                             const songList = songIds[title] || [];
 
                             return {
                                 id: albumData.id,
+                                type: ContainerType.ALBUM,
+                                autoCreated: false,
                                 title: title,
                                 artist: albumData.artist || "No artist",
                                 artwork: albumData.artwork || undefined,
@@ -813,59 +857,61 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                         }
                     );
 
+                    newAlbums.forEach((album) => {
+                        editedAlbumMap.set(album.id, album);
+                    });
+
                     return {
-                        albums: [...state.albums, ...newAlbums],
+                        albumMap: editedAlbumMap,
                     };
                 });
             },
 
             editAlbum: (id, inputFields) => {
-                set((state) => ({
-                    albums: state.albums.map((album) =>
-                        album.id === id
-                            ? {
-                                  ...album,
-                                  ...inputFields,
-                                  lastModified: moment().toString(),
-                              }
-                            : album
-                    ),
-                }));
+                set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
+                    const album = editedAlbumMap.get(id);
+                    if (!album) return state;
 
-                get().updateSongTagsByAlbum(id);
-                get().updateSelectedContainer();
+                    editedAlbumMap.set(id, {
+                        ...album,
+                        artwork: inputFields.artwork || album.artwork,
+                        title: inputFields.title || "Untitled Album",
+                        artist: inputFields.artist || "No artist",
+                    });
+
+                    return {
+                        albumMap: editedAlbumMap,
+                    };
+                });
+
+                get().updateSelectedStates();
             },
 
             removeEmptyAutoAlbums: () => {
-                set((state) => ({
-                    // remove albums that has an empty songs array and has autoCreated to True
-                    albums: state.albums.filter(
-                        (album) => album.songs.length > 0 && !album.autoCreated
-                    ),
-                }));
+                set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
+                    editedAlbumMap.forEach((album, id) => {
+                        if (album.songs.length === 0 && album.autoCreated) {
+                            editedAlbumMap.delete(id);
+                        }
+                    });
+
+                    return {
+                        albumMap: editedAlbumMap,
+                    };
+                });
             },
 
             getAllAlbumSongs: () => {
-                const songs = get()
-                    .albums.map((album) => album.songs)
-                    .reduce((a, b) => a.concat(b), [])
-                    .map((songId) => get().songs.find((s) => s.id === songId))
-                    .filter((s) => s !== undefined) as Song[];
-
-                return songs;
-            },
-
-            getAlbum: (id) => {
-                const albums = get().albums;
-                const album = albums.find((a) => a.id === id);
-
-                return album;
-            },
-
-            isSongInAnyAlbum: (songId) => {
-                const albums = get().albums;
-
-                return albums.some((album) => album.songs.includes(songId));
+                const songIds = new Set(
+                    Array.from(get().albumMap.values()).flatMap(
+                        (album) => album.songs
+                    )
+                );
+                return Array.from(songIds)
+                    .map((id) => get().songMap.get(id))
+                    .filter((song): song is Song => song !== undefined);
             },
 
             getAlbumBySong: (songId) => {
@@ -876,94 +922,88 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             addSongToAlbum: (albumId, songId) => {
-                const album = get().getAlbum(albumId);
+                set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
+                    const editedSongMap = new Map(state.songMap);
 
-                if (!album) return;
+                    const album = editedAlbumMap.get(albumId);
+                    const song = editedSongMap.get(songId);
 
-                if (!album.songs.includes(songId)) {
-                    set((state) => ({
-                        albums: state.albums.map((album) =>
-                            album.id === albumId
-                                ? { ...album, songs: [...album.songs, songId] }
-                                : album
-                        ),
-                    }));
-                    set((state) => ({
-                        songs: state.songs.map((song) =>
-                            song.id === songId
-                                ? {
-                                      ...song,
-                                      albumIds: [...song.albumIds, albumId],
-                                  }
-                                : song
-                        ),
-                    }));
-                }
-                get().updateSelectedContainer();
+                    if (!album || !song) return state;
+
+                    if (!album.songs.includes(songId)) {
+                        // Update album
+                        editedAlbumMap.set(albumId, {
+                            ...album,
+                            songs: [...album.songs, songId],
+                            lastModified: getCurrentTimestamp(),
+                        });
+
+                        // Update song
+                        editedSongMap.set(songId, {
+                            ...song,
+                            albumIds: [...song.albumIds, albumId],
+                        });
+
+                        return {
+                            albumMap: editedAlbumMap,
+                            songMap: editedSongMap,
+                        };
+                    }
+
+                    return state;
+                });
+
+                get().updateSelectedStates();
             },
 
             removeSongFromAlbum: (albumId, songId) => {
-                const album = get().getAlbum(albumId);
+                set((state) => {
+                    const editedAlbumMap = new Map(state.albumMap);
+                    const editedSongMap = new Map(state.songMap);
 
-                if (album?.songs.includes(songId)) {
-                    set((state) => ({
-                        albums: state.albums.map((album) =>
-                            album.id === albumId
-                                ? {
-                                      ...album,
-                                      songs: album.songs.filter(
-                                          (id) => id !== songId
-                                      ),
-                                  }
-                                : album
-                        ),
-                    }));
+                    const album = editedAlbumMap.get(albumId);
+                    const song = editedSongMap.get(songId);
 
-                    set((state) => ({
-                        songs: state.songs.map((song) =>
-                            song.id === songId
-                                ? {
-                                      ...song,
-                                      albumIds: song.albumIds.filter(
-                                          (id) => id !== albumId
-                                      ),
-                                  }
-                                : song
-                        ),
-                    }));
-                }
+                    if (!album || !song) return state;
 
-                get().updateSelectedContainer();
-            },
+                    if (album.songs.includes(songId)) {
+                        // Update album
+                        editedAlbumMap.set(albumId, {
+                            ...album,
+                            songs: album.songs.filter((id) => id !== songId),
+                            lastModified: getCurrentTimestamp(),
+                        });
 
-            updateSongTagsByAlbum: (albumId) => {
-                const album = get().getAlbum(albumId);
-                if (!album) return;
-
-                album.songs.forEach((songId) => {
-                    const song = get().getSong(songId);
-
-                    if (song) {
-                        if (song.albumIds[0] !== albumId) return;
-
-                        set((state) => ({
-                            songs: state.songs.map((s) =>
-                                s.id === songId
-                                    ? {
-                                          ...s,
-                                          artwork: album.artwork,
-                                      }
-                                    : s
+                        // Update song
+                        editedSongMap.set(songId, {
+                            ...song,
+                            albumIds: song.albumIds.filter(
+                                (id) => id !== albumId
                             ),
-                        }));
+                        });
+
+                        return {
+                            albumMap: editedAlbumMap,
+                            songMap: editedSongMap,
+                        };
                     }
+
+                    return state;
                 });
 
-                get().updateSelectedAndActiveSong();
+                get().updateSelectedStates();
             },
 
             getRecentlyAddedSongs: () => {
-                return get().songs.slice(-10).reverse();
+                const songs = Array.from(get().songMap.values());
+                return songs
+                    .sort(
+                        (a, b) =>
+                            new Date(b.statistics.creationDate).getTime() -
+                            new Date(a.statistics.creationDate).getTime()
+                    )
+                    .slice(0, 10);
             },
 
             // Algo
@@ -998,12 +1038,28 @@ export const useSongsStore = create<SongsState & SongsActions>()(
         {
             name: MARKED_SONGS_KEY,
             storage: createJSONStorage(() => AsyncStorage),
-            partialize: (state) => ({
-                songs: state.songs,
-                playlists: state.playlists,
-                albums: state.albums,
+            partialize: (state): PersistedState => ({
+                songs: mapToArray(state.songMap),
+                albums: mapToArray(state.albumMap),
+                playlists: mapToArray(state.playlistMap),
                 history: state.history,
             }),
+            onRehydrateStorage: () => (state) => {
+                if (!state) return;
+
+                // Type assertion to access the temporary array properties
+                const persistedState = state as unknown as PersistedState;
+
+                // Convert arrays to maps
+                state.songMap = arrayToMap(persistedState.songs);
+                state.albumMap = arrayToMap(persistedState.albums);
+                state.playlistMap = arrayToMap(persistedState.playlists);
+
+                // Clean up temporary arrays
+                delete (state as any).songs;
+                delete (state as any).albums;
+                delete (state as any).playlists;
+            },
         }
     )
 );

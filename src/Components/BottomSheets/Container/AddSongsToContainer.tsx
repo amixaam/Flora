@@ -13,7 +13,7 @@ import SongItem from "../../UI/UI chunks/SongItem";
 const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
         const {
-            songs,
+            getAllSongs,
             selectedContainer,
 
             addSongToPlaylist,
@@ -22,6 +22,8 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
             removeSongFromPlaylist,
             removeSongFromAlbum,
         } = useSongsStore();
+
+        const songs = getAllSongs();
         const [selectedSongs, setselectedSongs] = useState<string[]>([]);
 
         const [searchQuery, setSearchQuery] = useState("");
@@ -70,7 +72,7 @@ const AddSongsToContainer = forwardRef<BottomSheetModal, BottomSheetProps>(
                 setselectedSongs(selectedSongs.filter((id) => id !== songId));
                 containerType === "album"
                     ? removeSongFromAlbum(selectedContainer.id, songId)
-                    : removeSongFromPlaylist(selectedContainer.id, songId);
+                    : removeSongFromPlaylist(selectedContainer.id, [songId]);
                 return;
             }
 

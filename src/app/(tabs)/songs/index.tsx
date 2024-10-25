@@ -2,7 +2,6 @@ import { FlashList } from "@shopify/flash-list";
 import React, { useCallback, useEffect, useState } from "react";
 import { RefreshControl, View } from "react-native";
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
@@ -15,9 +14,10 @@ import { mainStyles } from "../../../styles/styles";
 import { UpdateMetadata } from "../../../utils/UpdateMetadata";
 
 export default function SongsTab() {
-    const { songs, setSelectedSong, addListToQueue } = useSongsStore();
+    const { getAllSongs, setSelectedSong, addListToQueue } = useSongsStore();
     const [refreshing, setRefreshing] = useState(false);
-    const insets = useSafeAreaInsets();
+
+    const songs = getAllSongs();
 
     useEffect(() => {
         UpdateMetadata();
@@ -62,7 +62,7 @@ export default function SongsTab() {
                     />
                 }
                 contentContainerStyle={{
-                    paddingBottom: insets.bottom + Spacing.miniPlayer,
+                    paddingBottom: Spacing.miniPlayer * 2,
                 }}
                 renderItem={({ item }) => {
                     return (

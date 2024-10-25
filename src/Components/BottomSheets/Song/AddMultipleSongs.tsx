@@ -20,7 +20,9 @@ interface AddMultipleSongsProps extends BottomSheetProps {
 
 const AddMultipleSongs = forwardRef<BottomSheetModal, AddMultipleSongsProps>(
     (props, ref) => {
-        const { playlists, addSongToPlaylist } = useSongsStore();
+        const { getAllPlaylists, addSongToPlaylist } = useSongsStore();
+
+        const playlists = getAllPlaylists();
 
         const {
             sheetRef: CreatePlaylistRef,

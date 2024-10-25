@@ -2,13 +2,14 @@ import { AudioFile } from "expo-tag-reader/build/ExpoTagReader.types";
 import * as MediaLibrary from "expo-media-library";
 import * as TagReader from "expo-tag-reader";
 import { Album, Song } from "../types/song";
-import { useSongsStore } from "../store/songsStore";
-import { skip } from "react-native-track-player/lib/src/trackPlayer";
+import { createAlbumId, useSongsStore } from "../store/songsStore";
 
 export const UpdateMetadata = async () => {
     useSongsStore.getState().setIsReadingSongs(true);
-    await loadAllAudioFiles(useSongsStore.getState().songs.map((s) => s.id));
-    await checkDeletedFiles(useSongsStore.getState().songs.map((s) => s.id));
+    const songIds = useSongsStore.getState().getSongIds();
+
+    await loadAllAudioFiles(songIds);
+    await checkDeletedFiles(songIds);
     useSongsStore.getState().setIsReadingSongs(false);
 };
 
@@ -74,7 +75,8 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
     } = {};
     const existingAlbums = useSongsStore
         .getState()
-        .albums.reduce((obj, album) => {
+        .getAllAlbums()
+        .reduce((obj, album) => {
             obj[album.title] = album.id;
             return obj;
         }, {} as { [key: string]: string });
@@ -88,7 +90,7 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
         if (!albumMap[albumTitle]) {
             const albumId =
                 existingAlbums[albumTitle] ||
-                generateAlbumId(albumTitle, albumArtist);
+                createAlbumId(albumTitle, albumArtist);
             albumMap[albumTitle] = {
                 songs: [],
                 data: {
@@ -152,32 +154,3 @@ const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
     useSongsStore.getState().addSongs(newSongs);
     useSongsStore.getState().addAlbums(albumsToAdd, songIdsToAdd);
 };
-
-function generateAlbumId(title: string, artist: string): string {
-    // Convert title and artist to uppercase and remove special characters
-    const normalizedTitle = (title || "Unknown Album")
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, "");
-    const normalizedArtist = (artist || "Unknown Artist")
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, "");
-
-    // Create a simple hash function
-    function simpleHash(str: string): number {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = (hash << 5) - hash + char;
-            hash = hash & hash; // Convert to 32-bit integer
-        }
-        return Math.abs(hash);
-    }
-
-    // Generate hash from combined string
-    const combinedString = `${normalizedTitle}-${normalizedArtist}`;
-    const hash = simpleHash(combinedString);
-
-    // Convert to base36 and take first 8 characters
-    const base36Hash = hash.toString(36).toUpperCase();
-    return `A${base36Hash.slice(0, 7)}`;
-}
