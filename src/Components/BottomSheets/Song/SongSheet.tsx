@@ -56,6 +56,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     customHeader={<SongSheetHeader song={selectedSong} />}
                 >
                     <BottomSheetView
+                        testID="song-sheet"
                         style={{
                             gap: Spacing.md,
                         }}
@@ -207,6 +208,9 @@ const SongSheetHeader = ({ song }: { song: Song }) => {
                 </BottomSheetView>
             </BottomSheetView>
             <IconButton
+                testID={
+                    song.isLiked ? "sheet-unlike-button" : "sheet-like-button"
+                }
                 icon={song.isLiked ? "heart" : "heart-outline"}
                 onPress={handleToggleLike}
                 iconColor={Colors.primary}

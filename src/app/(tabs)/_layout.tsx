@@ -37,6 +37,7 @@ export default function TabLayout() {
                         tabBarLabel: "Home",
                         tabBarIcon: ({ focused, color }: any) => (
                             <MaterialCommunityIcons
+                                testID="HomeTabIcon"
                                 name={focused ? "home" : "home-outline"}
                                 size={IconSizes.md}
                                 color={color}
@@ -50,6 +51,7 @@ export default function TabLayout() {
                         tabBarLabel: "Playlists",
                         tabBarIcon: ({ focused, color }: any) => (
                             <MaterialCommunityIcons
+                                testID="PlaylistsTabIcon"
                                 name={
                                     focused
                                         ? "playlist-music"
@@ -67,6 +69,7 @@ export default function TabLayout() {
                         tabBarLabel: "Albums",
                         tabBarIcon: ({ color }: any) => (
                             <MaterialCommunityIcons
+                                testID="AlbumsTabIcon"
                                 name="album"
                                 size={IconSizes.md}
                                 color={color}
@@ -80,6 +83,7 @@ export default function TabLayout() {
                         tabBarLabel: "Songs",
                         tabBarIcon: ({ focused, color }: any) => (
                             <MaterialCommunityIcons
+                                testID="SongsTabIcon"
                                 name={
                                     focused
                                         ? "music-note"

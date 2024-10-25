@@ -1,4 +1,4 @@
-import { Album, ContainerType, Song } from "../types/song";
+import { Album, ContainerType, Playlist, Song } from "../types/song";
 
 export const testSongObject: Song = {
     id: "123",
@@ -35,6 +35,17 @@ export const testAlbumObject: Album = {
     title: "Album 1",
     artist: "Artist 1",
     year: "2024",
+    artwork: undefined,
+    songs: ["123"],
+    lastModified: "2024-01-01T00:00:00.000Z",
+    createdAt: "2024-01-01T00:00:00.000Z",
+};
+
+export const testPlaylistObject: Playlist = {
+    id: "P123",
+    type: ContainerType.PLAYLIST,
+    title: "Playlist 1",
+    description: "Playlist 1 description",
     artwork: undefined,
     songs: ["123"],
     lastModified: "2024-01-01T00:00:00.000Z",

@@ -1,0 +1,109 @@
+appId: com.anonymous.Flora
+---
+- tapOn: "Flora"
+- assertVisible:
+    id: "container-item"
+    index: 0
+- tapOn:
+    id: "container-item"
+    index: 0
+- assertVisible:
+    text: "Burning Desires"
+    index: 0
+- assertVisible:
+    id: "pause-button"
+- tapOn:
+    id: "pause-button"
+- assertVisible:
+    id: "play-button"
+- tapOn:
+    id: "play-button"
+- assertVisible:
+    id: "pause-button"
+- tapOn:
+    id: "pause-button"
+- assertVisible:
+    id: "play-button"
+- tapOn:
+    id: "next-button"
+- assertVisible:
+    text: "Basics in Behavior (feat. Or3o) (Blue Version)"
+    index: 0
+- tapOn:
+    id: "previous-button"
+- assertVisible:
+    text: "Burning Desires"
+    index: 0
+- tapOn:
+    id: "like-button"
+- assertVisible:
+    id: "unlike-button"
+- tapOn:
+    id: "unlike-button"
+- assertVisible:
+    id: "like-button"
+- tapOn:
+    point: "23%,78%"
+- assertVisible: "00:24"
+- assertVisible: "-01:53"
+- assertVisible:
+    id: "repeat-off-button"
+- tapOn:
+    id: "repeat-off-button"
+- assertVisible:
+    id: "repeat-button"
+- tapOn:
+    id: "repeat-button"
+- assertVisible:
+    id: "repeat-once-button"
+- tapOn:
+    id: "repeat-once-button"
+- assertVisible:
+    id: "repeat-off-button"
+- tapOn:
+    id: "like-button"
+- assertVisible:
+    id: "unlike-button"
+- tapOn:
+    id: "options-button"
+- assertVisible: "Go to album"
+- assertVisible: "Add to queue"
+- assertVisible: "Hide song"
+- assertVisible: "Delete from device"
+- assertVisible: "Edit tags"
+- assertVisible: "Add to playlist"
+- assertVisible: "View statistics"
+- tapOn: "Go to album"
+- assertVisible: "Albums"
+- assertVisible: "1 songs • 02:18"
+- tapOn:
+    id: "PlaylistsTabIcon"
+- assertVisible: "Playlists"
+- tapOn: "Liked songs"
+- assertVisible: "Your songs that you liked."
+- assertVisible: "1 songs • 02:18"
+- assertVisible:
+    id: "volume-high"
+- tapOn:
+    id: "icon-button"
+    index: 3
+- assertVisible:
+    id: "sheet-unlike-button"
+- tapOn:
+    id: "sheet-unlike-button"
+- assertVisible:
+    id: "sheet-like-button"
+- tapOn:
+    point: "50%,26%"
+- assertNotVisible:
+    id: "sheet-like-button"
+- assertVisible: "No songs found, add some!"
+- tapOn:
+    id: "HomeTabIcon"
+- assertVisible: "Flora"
+- tapOn:
+    id: "history-button"
+- assertVisible: "History"
+- assertVisible:
+    text: "Burning Desires"
+    index: 0

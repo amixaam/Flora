@@ -1,0 +1,30 @@
+appId: com.anonymous.Flora
+---
+- tapOn: "Flora"
+- tapOn:
+    id: "PlaylistsTabIcon"
+- tapOn:
+    id: "fab-content"
+- assertVisible: "Create playlist"
+- tapOn:
+    id: "album-art"
+    index: 1
+- assertVisible: "This app can only access the photos you select"
+- assertVisible:
+    id: "com.google.android.providers.media.module:id/icon_thumbnail"
+- tapOn:
+    id: "com.google.android.providers.media.module:id/icon_thumbnail"
+- tapOn: "Title..."
+- inputText: "Test playlist 1"
+- assertVisible: "Test Playlist 1"
+- tapOn: "Description..."
+- inputText: "Description for Test playlist 1"
+- assertVisible: "Description for Test playlist 1"
+- tapOn: "Create"
+- assertVisible: "Test Playlist 1"
+- tapOn:
+    id: "fab-content"
+- tapOn: "Create"
+- assertVisible: "Untitled Playlist"
+- tapOn: "Untitled Playlist, 0 songs "
+- assertVisible: "No songs found, add some!"

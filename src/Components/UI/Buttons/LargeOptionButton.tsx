@@ -25,7 +25,11 @@ const LargeOptionButton = ({
                 gap: Spacing.sm,
             }}
         >
-            <TouchableNativeFeedback onPress={onPress} disabled={disabled}>
+            <TouchableNativeFeedback
+                onPress={onPress}
+                disabled={disabled}
+                testID={text + "-large-option-button"}
+            >
                 <View
                     style={{
                         width: "100%",

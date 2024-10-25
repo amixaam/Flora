@@ -49,13 +49,17 @@ exports[`ContainerItem renders correctly with minimal props 1`] = `
       },
     ]
   }
+  testID="container-item"
 >
   <View>
     <View
       style={
-        {
-          "position": "relative",
-        }
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+        ]
       }
     >
       <View

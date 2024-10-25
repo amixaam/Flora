@@ -1,0 +1,1604 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HomeTab renders correctly with all main components 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#050506",
+      "flex": 1,
+    }
+  }
+>
+  <View
+    accessibilityIgnoresInvertColors={true}
+    style={
+      {
+        "height": "100%",
+        "opacity": 0.25,
+        "position": "absolute",
+        "width": "100%",
+      }
+    }
+  >
+    <Image
+      source={1}
+      style={
+        [
+          {
+            "bottom": 0,
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          },
+          {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>
+  <RCTScrollView
+    collapsable={false}
+    contentContainerStyle={
+      {
+        "paddingBottom": 120,
+      }
+    }
+    handlerTag={1}
+    handlerType="NativeViewGestureHandler"
+    onGestureHandlerEvent={[Function]}
+    onGestureHandlerStateChange={[Function]}
+    style={
+      [
+        {
+          "flex": 1,
+        },
+      ]
+    }
+    waitFor={
+      [
+        {
+          "current": null,
+        },
+      ]
+    }
+  >
+    <View>
+      Flora
+      <View
+        accessibilityIgnoresInvertColors={true}
+        style={
+          {
+            "alignItems": "flex-end",
+            "aspectRatio": 2,
+            "borderRadius": 25,
+            "flexDirection": "row",
+            "marginHorizontal": 16,
+            "overflow": "hidden",
+          }
+        }
+      >
+        <Image
+          source={1}
+          style={
+            [
+              {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              },
+              {
+                "height": undefined,
+                "width": undefined,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": false,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            [
+              false,
+              [
+                {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                {
+                  "justifyContent": "flex-end",
+                },
+              ],
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#05050650",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "padding": 16,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#E8DEF8",
+                  "fontFamily": "Poppins-Bold",
+                  "fontSize": 22,
+                  "lineHeight": 26.4,
+                }
+              }
+            >
+              Your Recap is here!
+            </Text>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={true}
+              nativeBackgroundAndroid={
+                {
+                  "borderless": true,
+                  "color": 820567800,
+                  "rippleRadius": undefined,
+                  "type": "RippleAndroid",
+                }
+              }
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+            >
+              <Text />
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "marginTop": 16,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "gap": 16,
+              "marginTop": 16,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingHorizontal": 16,
+              }
+            }
+          >
+            <Text
+              numberOfLines={1}
+              style={
+                [
+                  {
+                    "color": "#E8DEF8",
+                    "fontFamily": "Poppins-Bold",
+                    "fontSize": 22,
+                    "lineHeight": 26.4,
+                  },
+                  {
+                    "flex": 1,
+                    "marginRight": 16,
+                  },
+                ]
+              }
+            >
+              Recently added songs
+            </Text>
+            <View
+              style={
+                {
+                  "flexDirection": "row",
+                  "gap": 16,
+                }
+              }
+            >
+              <View
+                accessibilityState={
+                  {
+                    "busy": undefined,
+                    "checked": undefined,
+                    "disabled": undefined,
+                    "expanded": undefined,
+                    "selected": undefined,
+                  }
+                }
+                accessibilityValue={
+                  {
+                    "max": undefined,
+                    "min": undefined,
+                    "now": undefined,
+                    "text": undefined,
+                  }
+                }
+                accessible={true}
+                collapsable={false}
+                focusable={true}
+                nativeBackgroundAndroid={
+                  {
+                    "borderless": true,
+                    "color": 820567800,
+                    "rippleRadius": undefined,
+                    "type": "RippleAndroid",
+                  }
+                }
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                testID="shuffle-button"
+              >
+                <Text />
+              </View>
+            </View>
+          </View>
+          <View
+            style={{}}
+          >
+            <RCTScrollView
+              ItemSeparatorComponent={[Function]}
+              applyWindowCorrection={[Function]}
+              canChangeSize={true}
+              contentContainerStyle={
+                {
+                  "backgroundColor": undefined,
+                  "minHeight": 1,
+                  "minWidth": 1,
+                  "paddingBottom": 0,
+                  "paddingTop": 0,
+                }
+              }
+              contentHeight={0}
+              contentWidth={0}
+              data={
+                [
+                  {
+                    "albumIds": [
+                      "A123",
+                    ],
+                    "artist": "Artist 1",
+                    "artwork": undefined,
+                    "bitRate": 128,
+                    "channels": 2,
+                    "duration": 100,
+                    "extension": "mp3",
+                    "id": "123",
+                    "isHidden": false,
+                    "isLiked": false,
+                    "sampleRate": 44100,
+                    "statistics": {
+                      "creationDate": "2024-01-01T00:00:00.000Z",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "lastPlayed": "2024-01-01T00:00:00.000Z",
+                      "playCount": 0,
+                      "skipCount": 0,
+                    },
+                    "title": "Song 1",
+                    "trackNumber": 1,
+                    "url": "file:///examplesong.mp3",
+                    "year": "2024",
+                  },
+                ]
+              }
+              dataProvider={
+                DataProvider {
+                  "_data": [
+                    {
+                      "albumIds": [
+                        "A123",
+                      ],
+                      "artist": "Artist 1",
+                      "artwork": undefined,
+                      "bitRate": 128,
+                      "channels": 2,
+                      "duration": 100,
+                      "extension": "mp3",
+                      "id": "123",
+                      "isHidden": false,
+                      "isLiked": false,
+                      "sampleRate": 44100,
+                      "statistics": {
+                        "creationDate": "2024-01-01T00:00:00.000Z",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "lastPlayed": "2024-01-01T00:00:00.000Z",
+                        "playCount": 0,
+                        "skipCount": 0,
+                      },
+                      "title": "Song 1",
+                      "trackNumber": 1,
+                      "url": "file:///examplesong.mp3",
+                      "year": "2024",
+                    },
+                  ],
+                  "_firstIndexToProcess": 0,
+                  "_hasStableIds": true,
+                  "_requiresDataChangeHandling": false,
+                  "_size": 1,
+                  "getStableId": [Function],
+                  "rowHasChanged": [Function],
+                }
+              }
+              disableRecycling={false}
+              estimatedItemSize={10}
+              extendedState={
+                {
+                  "value": [
+                    {
+                      "albumIds": [
+                        "A123",
+                      ],
+                      "artist": "Artist 1",
+                      "artwork": undefined,
+                      "bitRate": 128,
+                      "channels": 2,
+                      "duration": 100,
+                      "extension": "mp3",
+                      "id": "123",
+                      "isHidden": false,
+                      "isLiked": false,
+                      "sampleRate": 44100,
+                      "statistics": {
+                        "creationDate": "2024-01-01T00:00:00.000Z",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "lastPlayed": "2024-01-01T00:00:00.000Z",
+                        "playCount": 0,
+                        "skipCount": 0,
+                      },
+                      "title": "Song 1",
+                      "trackNumber": 1,
+                      "url": "file:///examplesong.mp3",
+                      "year": "2024",
+                    },
+                  ],
+                }
+              }
+              externalScrollView={[Function]}
+              extraData={
+                [
+                  {
+                    "albumIds": [
+                      "A123",
+                    ],
+                    "artist": "Artist 1",
+                    "artwork": undefined,
+                    "bitRate": 128,
+                    "channels": 2,
+                    "duration": 100,
+                    "extension": "mp3",
+                    "id": "123",
+                    "isHidden": false,
+                    "isLiked": false,
+                    "sampleRate": 44100,
+                    "statistics": {
+                      "creationDate": "2024-01-01T00:00:00.000Z",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "lastPlayed": "2024-01-01T00:00:00.000Z",
+                      "playCount": 0,
+                      "skipCount": 0,
+                    },
+                    "title": "Song 1",
+                    "trackNumber": 1,
+                    "url": "file:///examplesong.mp3",
+                    "year": "2024",
+                  },
+                ]
+              }
+              finalRenderAheadOffset={250}
+              forceNonDeterministicRendering={true}
+              horizontal={true}
+              initialOffset={0}
+              initialRenderIndex={0}
+              isHorizontal={true}
+              keyExtractor={[Function]}
+              layoutProvider={
+                GridLayoutProviderWithProps {
+                  "_acceptableRelayoutDelta": 1,
+                  "_getHeightOrWidth": [Function],
+                  "_getLayoutTypeForIndex": [Function],
+                  "_getSpan": [Function],
+                  "_hasExpired": false,
+                  "_maxSpan": 1,
+                  "_setLayoutForType": [Function],
+                  "_tempDim": {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "averageWindow": AverageWindow {
+                    "currentAverage": 10,
+                    "currentCount": 1,
+                    "inputValues": [
+                      10,
+                    ],
+                    "nextIndex": 1,
+                  },
+                  "defaultEstimatedItemSize": 100,
+                  "layoutObject": {
+                    "size": undefined,
+                    "span": undefined,
+                  },
+                  "props": {
+                    "ItemSeparatorComponent": [Function],
+                    "contentContainerStyle": {
+                      "paddingHorizontal": 16,
+                    },
+                    "data": [
+                      {
+                        "albumIds": [
+                          "A123",
+                        ],
+                        "artist": "Artist 1",
+                        "artwork": undefined,
+                        "bitRate": 128,
+                        "channels": 2,
+                        "duration": 100,
+                        "extension": "mp3",
+                        "id": "123",
+                        "isHidden": false,
+                        "isLiked": false,
+                        "sampleRate": 44100,
+                        "statistics": {
+                          "creationDate": "2024-01-01T00:00:00.000Z",
+                          "lastModified": "2024-01-01T00:00:00.000Z",
+                          "lastPlayed": "2024-01-01T00:00:00.000Z",
+                          "playCount": 0,
+                          "skipCount": 0,
+                        },
+                        "title": "Song 1",
+                        "trackNumber": 1,
+                        "url": "file:///examplesong.mp3",
+                        "year": "2024",
+                      },
+                    ],
+                    "estimatedItemSize": 10,
+                    "extraData": [
+                      {
+                        "albumIds": [
+                          "A123",
+                        ],
+                        "artist": "Artist 1",
+                        "artwork": undefined,
+                        "bitRate": 128,
+                        "channels": 2,
+                        "duration": 100,
+                        "extension": "mp3",
+                        "id": "123",
+                        "isHidden": false,
+                        "isLiked": false,
+                        "sampleRate": 44100,
+                        "statistics": {
+                          "creationDate": "2024-01-01T00:00:00.000Z",
+                          "lastModified": "2024-01-01T00:00:00.000Z",
+                          "lastPlayed": "2024-01-01T00:00:00.000Z",
+                          "playCount": 0,
+                          "skipCount": 0,
+                        },
+                        "title": "Song 1",
+                        "trackNumber": 1,
+                        "url": "file:///examplesong.mp3",
+                        "year": "2024",
+                      },
+                    ],
+                    "horizontal": true,
+                    "keyExtractor": [Function],
+                    "numColumns": 1,
+                    "renderItem": [Function],
+                  },
+                  "renderWindowInsets": {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shouldRefreshWithAnchoring": true,
+                }
+              }
+              maxRenderAhead={750}
+              numColumns={1}
+              onEndReached={[Function]}
+              onEndReachedThreshold={0}
+              onEndReachedThresholdRelative={0}
+              onItemLayout={[Function]}
+              onLayout={[Function]}
+              onScroll={[Function]}
+              onScrollBeginDrag={[Function]}
+              onSizeChanged={[Function]}
+              onVisibleIndicesChanged={[Function]}
+              removeClippedSubviews={false}
+              renderAheadOffset={0}
+              renderAheadStep={250}
+              renderContentContainer={[Function]}
+              renderItem={[Function]}
+              renderItemContainer={[Function]}
+              rowRenderer={[Function]}
+              scrollEventThrottle={16}
+              scrollThrottle={16}
+              scrollViewProps={
+                {
+                  "contentContainerStyle": {
+                    "backgroundColor": undefined,
+                    "minHeight": 1,
+                    "minWidth": 1,
+                    "paddingBottom": 0,
+                    "paddingTop": 0,
+                  },
+                  "onLayout": [Function],
+                  "onScrollBeginDrag": [Function],
+                  "refreshControl": undefined,
+                  "style": {
+                    "minHeight": 1,
+                    "minWidth": 1,
+                  },
+                }
+              }
+              style={
+                {
+                  "minHeight": 1,
+                  "minWidth": 1,
+                }
+              }
+              suppressBoundedSizeException={true}
+              windowCorrectionConfig={
+                {
+                  "applyToInitialOffset": true,
+                  "applyToItemScroll": true,
+                  "value": {
+                    "endCorrection": 0,
+                    "startCorrection": 0,
+                    "windowShift": -0,
+                  },
+                }
+              }
+            >
+              <View>
+                <View
+                  style={
+                    {
+                      "flexDirection": "row",
+                    }
+                  }
+                >
+                  <AutoLayoutView
+                    enableInstrumentation={false}
+                    horizontal={true}
+                    onBlankAreaEvent={[Function]}
+                    onLayout={[Function]}
+                    renderAheadOffset={0}
+                    scrollOffset={0}
+                    style={
+                      {
+                        "height": 0,
+                        "width": 0,
+                      }
+                    }
+                    windowSize={0}
+                  />
+                  <View
+                    pointerEvents="none"
+                    style={
+                      {
+                        "opacity": 0,
+                      }
+                    }
+                  >
+                    <View
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": false,
+                          "expanded": undefined,
+                          "selected": undefined,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          false,
+                          [
+                            {
+                              "width": 160,
+                            },
+                            {
+                              "marginBottom": 8,
+                            },
+                          ],
+                        ]
+                      }
+                      testID="container-item"
+                    >
+                      <View>
+                        <View
+                          style={
+                            [
+                              {
+                                "alignItems": "center",
+                                "justifyContent": "center",
+                              },
+                            ]
+                          }
+                        >
+                          <View
+                            style={
+                              [
+                                {
+                                  "aspectRatio": 1,
+                                  "marginBottom": 8,
+                                  "width": "100%",
+                                },
+                                {
+                                  "aspectRatio": 1,
+                                  "borderRadius": 10,
+                                },
+                              ]
+                            }
+                          >
+                            <Image
+                              defaultSource={1}
+                              source={1}
+                              style={
+                                {
+                                  "borderRadius": 10,
+                                  "height": "100%",
+                                  "width": "100%",
+                                }
+                              }
+                              testID="album-art"
+                            />
+                          </View>
+                          <View
+                            collapsable={false}
+                            style={
+                              {
+                                "backgroundColor": "#05050670",
+                                "borderColor": "rgba(121, 116, 126, 1)",
+                                "borderRadius": 26,
+                                "borderWidth": 0,
+                                "elevation": 0,
+                                "height": 52,
+                                "margin": 6,
+                                "overflow": "hidden",
+                                "padding": undefined,
+                                "position": "absolute",
+                                "transform": undefined,
+                                "width": 52,
+                              }
+                            }
+                            testID="icon-button-container"
+                          >
+                            <View
+                              accessibilityComponentType="button"
+                              accessibilityRole="button"
+                              accessibilityState={
+                                {
+                                  "busy": undefined,
+                                  "checked": undefined,
+                                  "disabled": true,
+                                  "expanded": undefined,
+                                  "selected": undefined,
+                                }
+                              }
+                              accessibilityTraits="button"
+                              accessibilityValue={
+                                {
+                                  "max": undefined,
+                                  "min": undefined,
+                                  "now": undefined,
+                                  "text": undefined,
+                                }
+                              }
+                              accessible={true}
+                              centered={true}
+                              collapsable={false}
+                              focusable={true}
+                              hitSlop={
+                                {
+                                  "bottom": 6,
+                                  "left": 6,
+                                  "right": 6,
+                                  "top": 6,
+                                }
+                              }
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onFocus={[Function]}
+                              onResponderGrant={[Function]}
+                              onResponderMove={[Function]}
+                              onResponderRelease={[Function]}
+                              onResponderTerminate={[Function]}
+                              onResponderTerminationRequest={[Function]}
+                              onStartShouldSetResponder={[Function]}
+                              style={
+                                [
+                                  {
+                                    "overflow": "hidden",
+                                  },
+                                  [
+                                    {
+                                      "alignItems": "center",
+                                      "flexGrow": 1,
+                                      "justifyContent": "center",
+                                    },
+                                    {
+                                      "borderRadius": 26,
+                                    },
+                                  ],
+                                ]
+                              }
+                              testID="icon-button"
+                            >
+                              <Text />
+                            </View>
+                          </View>
+                          <View
+                            collapsable={false}
+                            style={
+                              {
+                                "backgroundColor": undefined,
+                                "borderColor": "rgba(121, 116, 126, 1)",
+                                "borderRadius": 20,
+                                "borderWidth": 0,
+                                "elevation": 0,
+                                "height": 40,
+                                "margin": 6,
+                                "overflow": "hidden",
+                                "padding": undefined,
+                                "position": "absolute",
+                                "right": 0,
+                                "top": 0,
+                                "transform": undefined,
+                                "width": 40,
+                              }
+                            }
+                            testID="icon-button-container"
+                          >
+                            <View
+                              accessibilityComponentType="button"
+                              accessibilityRole="button"
+                              accessibilityState={
+                                {
+                                  "busy": undefined,
+                                  "checked": undefined,
+                                  "disabled": false,
+                                  "expanded": undefined,
+                                  "selected": undefined,
+                                }
+                              }
+                              accessibilityTraits="button"
+                              accessibilityValue={
+                                {
+                                  "max": undefined,
+                                  "min": undefined,
+                                  "now": undefined,
+                                  "text": undefined,
+                                }
+                              }
+                              accessible={true}
+                              centered={true}
+                              collapsable={false}
+                              focusable={true}
+                              hitSlop={
+                                {
+                                  "bottom": 6,
+                                  "left": 6,
+                                  "right": 6,
+                                  "top": 6,
+                                }
+                              }
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onFocus={[Function]}
+                              onResponderGrant={[Function]}
+                              onResponderMove={[Function]}
+                              onResponderRelease={[Function]}
+                              onResponderTerminate={[Function]}
+                              onResponderTerminationRequest={[Function]}
+                              onStartShouldSetResponder={[Function]}
+                              style={
+                                [
+                                  {
+                                    "overflow": "hidden",
+                                  },
+                                  [
+                                    {
+                                      "alignItems": "center",
+                                      "flexGrow": 1,
+                                      "justifyContent": "center",
+                                    },
+                                    {
+                                      "borderRadius": 20,
+                                    },
+                                  ],
+                                ]
+                              }
+                              testID="icon-button"
+                            >
+                              <Text />
+                            </View>
+                          </View>
+                        </View>
+                        <Text
+                          numberOfLines={1}
+                          style={
+                            {
+                              "color": "#E8DEF8",
+                              "fontFamily": "Poppins-Bold",
+                              "fontSize": 17,
+                              "lineHeight": 20.4,
+                            }
+                          }
+                        >
+                          Song 1
+                        </Text>
+                        <Text
+                          numberOfLines={1}
+                          style={
+                            [
+                              {
+                                "color": "#E8DEF8",
+                                "fontFamily": "Poppins-Medium",
+                                "fontSize": 10,
+                                "letterSpacing": 0.5,
+                                "lineHeight": 12,
+                              },
+                              {
+                                "opacity": 0.75,
+                              },
+                            ]
+                          }
+                        >
+                          Artist 1 • 2024
+                           
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </RCTScrollView>
+          </View>
+        </View>
+        <View
+          style={
+            {
+              "gap": 16,
+              "marginTop": 16,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingHorizontal": 16,
+              }
+            }
+          >
+            <Text
+              numberOfLines={1}
+              style={
+                [
+                  {
+                    "color": "#E8DEF8",
+                    "fontFamily": "Poppins-Bold",
+                    "fontSize": 22,
+                    "lineHeight": 26.4,
+                  },
+                  {
+                    "flex": 1,
+                    "marginRight": 16,
+                  },
+                ]
+              }
+            >
+              Recently played
+            </Text>
+            <View
+              style={
+                {
+                  "flexDirection": "row",
+                  "gap": 16,
+                }
+              }
+            >
+              <View
+                accessibilityState={
+                  {
+                    "busy": undefined,
+                    "checked": undefined,
+                    "disabled": undefined,
+                    "expanded": undefined,
+                    "selected": undefined,
+                  }
+                }
+                accessibilityValue={
+                  {
+                    "max": undefined,
+                    "min": undefined,
+                    "now": undefined,
+                    "text": undefined,
+                  }
+                }
+                accessible={true}
+                collapsable={false}
+                focusable={true}
+                nativeBackgroundAndroid={
+                  {
+                    "borderless": true,
+                    "color": 820567800,
+                    "rippleRadius": undefined,
+                    "type": "RippleAndroid",
+                  }
+                }
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                testID="shuffle-button"
+              >
+                <Text />
+              </View>
+            </View>
+          </View>
+          <View
+            style={{}}
+          >
+            <RCTScrollView
+              ItemSeparatorComponent={[Function]}
+              applyWindowCorrection={[Function]}
+              canChangeSize={true}
+              contentContainerStyle={
+                {
+                  "backgroundColor": undefined,
+                  "minHeight": 1,
+                  "minWidth": 1,
+                  "paddingBottom": 0,
+                  "paddingTop": 0,
+                }
+              }
+              contentHeight={0}
+              contentWidth={0}
+              data={
+                [
+                  {
+                    "artist": "Artist 1",
+                    "artwork": undefined,
+                    "autoCreated": false,
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "id": "A123",
+                    "lastModified": "2024-01-01T00:00:00.000Z",
+                    "songs": [
+                      "123",
+                    ],
+                    "title": "Album 1",
+                    "type": "album",
+                    "year": "2024",
+                  },
+                  {
+                    "artwork": undefined,
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "description": "Playlist 1 description",
+                    "id": "P123",
+                    "lastModified": "2024-01-01T00:00:00.000Z",
+                    "songs": [
+                      "123",
+                    ],
+                    "title": "Playlist 1",
+                    "type": "playlist",
+                  },
+                ]
+              }
+              dataProvider={
+                DataProvider {
+                  "_data": [
+                    {
+                      "artist": "Artist 1",
+                      "artwork": undefined,
+                      "autoCreated": false,
+                      "createdAt": "2024-01-01T00:00:00.000Z",
+                      "id": "A123",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "songs": [
+                        "123",
+                      ],
+                      "title": "Album 1",
+                      "type": "album",
+                      "year": "2024",
+                    },
+                    {
+                      "artwork": undefined,
+                      "createdAt": "2024-01-01T00:00:00.000Z",
+                      "description": "Playlist 1 description",
+                      "id": "P123",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "songs": [
+                        "123",
+                      ],
+                      "title": "Playlist 1",
+                      "type": "playlist",
+                    },
+                  ],
+                  "_firstIndexToProcess": 0,
+                  "_hasStableIds": true,
+                  "_requiresDataChangeHandling": false,
+                  "_size": 2,
+                  "getStableId": [Function],
+                  "rowHasChanged": [Function],
+                }
+              }
+              disableRecycling={false}
+              estimatedItemSize={10}
+              extendedState={
+                {
+                  "value": [
+                    {
+                      "artist": "Artist 1",
+                      "artwork": undefined,
+                      "autoCreated": false,
+                      "createdAt": "2024-01-01T00:00:00.000Z",
+                      "id": "A123",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "songs": [
+                        "123",
+                      ],
+                      "title": "Album 1",
+                      "type": "album",
+                      "year": "2024",
+                    },
+                    {
+                      "artwork": undefined,
+                      "createdAt": "2024-01-01T00:00:00.000Z",
+                      "description": "Playlist 1 description",
+                      "id": "P123",
+                      "lastModified": "2024-01-01T00:00:00.000Z",
+                      "songs": [
+                        "123",
+                      ],
+                      "title": "Playlist 1",
+                      "type": "playlist",
+                    },
+                  ],
+                }
+              }
+              externalScrollView={[Function]}
+              extraData={
+                [
+                  {
+                    "artist": "Artist 1",
+                    "artwork": undefined,
+                    "autoCreated": false,
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "id": "A123",
+                    "lastModified": "2024-01-01T00:00:00.000Z",
+                    "songs": [
+                      "123",
+                    ],
+                    "title": "Album 1",
+                    "type": "album",
+                    "year": "2024",
+                  },
+                  {
+                    "artwork": undefined,
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "description": "Playlist 1 description",
+                    "id": "P123",
+                    "lastModified": "2024-01-01T00:00:00.000Z",
+                    "songs": [
+                      "123",
+                    ],
+                    "title": "Playlist 1",
+                    "type": "playlist",
+                  },
+                ]
+              }
+              finalRenderAheadOffset={250}
+              forceNonDeterministicRendering={true}
+              horizontal={true}
+              initialOffset={0}
+              initialRenderIndex={0}
+              isHorizontal={true}
+              keyExtractor={[Function]}
+              layoutProvider={
+                GridLayoutProviderWithProps {
+                  "_acceptableRelayoutDelta": 1,
+                  "_getHeightOrWidth": [Function],
+                  "_getLayoutTypeForIndex": [Function],
+                  "_getSpan": [Function],
+                  "_hasExpired": false,
+                  "_maxSpan": 1,
+                  "_setLayoutForType": [Function],
+                  "_tempDim": {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "averageWindow": AverageWindow {
+                    "currentAverage": 10,
+                    "currentCount": 1,
+                    "inputValues": [
+                      10,
+                    ],
+                    "nextIndex": 1,
+                  },
+                  "defaultEstimatedItemSize": 100,
+                  "layoutObject": {
+                    "size": undefined,
+                    "span": undefined,
+                  },
+                  "props": {
+                    "ItemSeparatorComponent": [Function],
+                    "contentContainerStyle": {
+                      "paddingHorizontal": 16,
+                    },
+                    "data": [
+                      {
+                        "artist": "Artist 1",
+                        "artwork": undefined,
+                        "autoCreated": false,
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "id": "A123",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "songs": [
+                          "123",
+                        ],
+                        "title": "Album 1",
+                        "type": "album",
+                        "year": "2024",
+                      },
+                      {
+                        "artwork": undefined,
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "description": "Playlist 1 description",
+                        "id": "P123",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "songs": [
+                          "123",
+                        ],
+                        "title": "Playlist 1",
+                        "type": "playlist",
+                      },
+                    ],
+                    "estimatedItemSize": 10,
+                    "extraData": [
+                      {
+                        "artist": "Artist 1",
+                        "artwork": undefined,
+                        "autoCreated": false,
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "id": "A123",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "songs": [
+                          "123",
+                        ],
+                        "title": "Album 1",
+                        "type": "album",
+                        "year": "2024",
+                      },
+                      {
+                        "artwork": undefined,
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "description": "Playlist 1 description",
+                        "id": "P123",
+                        "lastModified": "2024-01-01T00:00:00.000Z",
+                        "songs": [
+                          "123",
+                        ],
+                        "title": "Playlist 1",
+                        "type": "playlist",
+                      },
+                    ],
+                    "horizontal": true,
+                    "keyExtractor": [Function],
+                    "numColumns": 1,
+                    "renderItem": [Function],
+                  },
+                  "renderWindowInsets": {
+                    "height": 0,
+                    "width": 0,
+                  },
+                  "shouldRefreshWithAnchoring": true,
+                }
+              }
+              maxRenderAhead={750}
+              numColumns={1}
+              onEndReached={[Function]}
+              onEndReachedThreshold={0}
+              onEndReachedThresholdRelative={0}
+              onItemLayout={[Function]}
+              onLayout={[Function]}
+              onScroll={[Function]}
+              onScrollBeginDrag={[Function]}
+              onSizeChanged={[Function]}
+              onVisibleIndicesChanged={[Function]}
+              removeClippedSubviews={false}
+              renderAheadOffset={0}
+              renderAheadStep={250}
+              renderContentContainer={[Function]}
+              renderItem={[Function]}
+              renderItemContainer={[Function]}
+              rowRenderer={[Function]}
+              scrollEventThrottle={16}
+              scrollThrottle={16}
+              scrollViewProps={
+                {
+                  "contentContainerStyle": {
+                    "backgroundColor": undefined,
+                    "minHeight": 1,
+                    "minWidth": 1,
+                    "paddingBottom": 0,
+                    "paddingTop": 0,
+                  },
+                  "onLayout": [Function],
+                  "onScrollBeginDrag": [Function],
+                  "refreshControl": undefined,
+                  "style": {
+                    "minHeight": 1,
+                    "minWidth": 1,
+                  },
+                }
+              }
+              style={
+                {
+                  "minHeight": 1,
+                  "minWidth": 1,
+                }
+              }
+              suppressBoundedSizeException={true}
+              windowCorrectionConfig={
+                {
+                  "applyToInitialOffset": true,
+                  "applyToItemScroll": true,
+                  "value": {
+                    "endCorrection": 0,
+                    "startCorrection": 0,
+                    "windowShift": -0,
+                  },
+                }
+              }
+            >
+              <View>
+                <View
+                  style={
+                    {
+                      "flexDirection": "row",
+                    }
+                  }
+                >
+                  <AutoLayoutView
+                    enableInstrumentation={false}
+                    horizontal={true}
+                    onBlankAreaEvent={[Function]}
+                    onLayout={[Function]}
+                    renderAheadOffset={0}
+                    scrollOffset={0}
+                    style={
+                      {
+                        "height": 0,
+                        "width": 0,
+                      }
+                    }
+                    windowSize={0}
+                  />
+                  <View
+                    pointerEvents="none"
+                    style={
+                      {
+                        "opacity": 0,
+                      }
+                    }
+                  >
+                    <View
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": false,
+                          "expanded": undefined,
+                          "selected": undefined,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          false,
+                          [
+                            {
+                              "width": 160,
+                            },
+                            {
+                              "marginBottom": 8,
+                            },
+                          ],
+                        ]
+                      }
+                      testID="container-item"
+                    >
+                      <View>
+                        <View
+                          style={
+                            [
+                              {
+                                "alignItems": "center",
+                                "justifyContent": "center",
+                              },
+                            ]
+                          }
+                        >
+                          <View
+                            style={
+                              [
+                                {
+                                  "aspectRatio": 1,
+                                  "marginBottom": 8,
+                                  "width": "100%",
+                                },
+                                {
+                                  "aspectRatio": 1,
+                                  "borderRadius": 10,
+                                },
+                              ]
+                            }
+                          >
+                            <Image
+                              defaultSource={1}
+                              source={1}
+                              style={
+                                {
+                                  "borderRadius": 10,
+                                  "height": "100%",
+                                  "width": "100%",
+                                }
+                              }
+                              testID="album-art"
+                            />
+                          </View>
+                          <View
+                            collapsable={false}
+                            style={
+                              {
+                                "backgroundColor": undefined,
+                                "borderColor": "rgba(121, 116, 126, 1)",
+                                "borderRadius": 20,
+                                "borderWidth": 0,
+                                "elevation": 0,
+                                "height": 40,
+                                "margin": 6,
+                                "overflow": "hidden",
+                                "padding": undefined,
+                                "position": "absolute",
+                                "right": 0,
+                                "top": 0,
+                                "transform": undefined,
+                                "width": 40,
+                              }
+                            }
+                            testID="icon-button-container"
+                          >
+                            <View
+                              accessibilityComponentType="button"
+                              accessibilityRole="button"
+                              accessibilityState={
+                                {
+                                  "busy": undefined,
+                                  "checked": undefined,
+                                  "disabled": false,
+                                  "expanded": undefined,
+                                  "selected": undefined,
+                                }
+                              }
+                              accessibilityTraits="button"
+                              accessibilityValue={
+                                {
+                                  "max": undefined,
+                                  "min": undefined,
+                                  "now": undefined,
+                                  "text": undefined,
+                                }
+                              }
+                              accessible={true}
+                              centered={true}
+                              collapsable={false}
+                              focusable={true}
+                              hitSlop={
+                                {
+                                  "bottom": 6,
+                                  "left": 6,
+                                  "right": 6,
+                                  "top": 6,
+                                }
+                              }
+                              onBlur={[Function]}
+                              onClick={[Function]}
+                              onFocus={[Function]}
+                              onResponderGrant={[Function]}
+                              onResponderMove={[Function]}
+                              onResponderRelease={[Function]}
+                              onResponderTerminate={[Function]}
+                              onResponderTerminationRequest={[Function]}
+                              onStartShouldSetResponder={[Function]}
+                              style={
+                                [
+                                  {
+                                    "overflow": "hidden",
+                                  },
+                                  [
+                                    {
+                                      "alignItems": "center",
+                                      "flexGrow": 1,
+                                      "justifyContent": "center",
+                                    },
+                                    {
+                                      "borderRadius": 20,
+                                    },
+                                  ],
+                                ]
+                              }
+                              testID="icon-button"
+                            >
+                              <Text />
+                            </View>
+                          </View>
+                        </View>
+                        <Text
+                          numberOfLines={1}
+                          style={
+                            {
+                              "color": "#E8DEF8",
+                              "fontFamily": "Poppins-Bold",
+                              "fontSize": 17,
+                              "lineHeight": 20.4,
+                            }
+                          }
+                        >
+                          Playlist 1
+                        </Text>
+                        <Text
+                          numberOfLines={1}
+                          style={
+                            [
+                              {
+                                "color": "#E8DEF8",
+                                "fontFamily": "Poppins-Medium",
+                                "fontSize": 10,
+                                "letterSpacing": 0.5,
+                                "lineHeight": 12,
+                              },
+                              {
+                                "opacity": 0.75,
+                              },
+                            ]
+                          }
+                        >
+                          1 song
+                           
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </RCTScrollView>
+          </View>
+        </View>
+      </View>
+    </View>
+  </RCTScrollView>
+</View>
+`;

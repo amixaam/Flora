@@ -246,6 +246,11 @@ const PlayerScreen = () => {
                                     }}
                                 >
                                     <PaperIconButton
+                                        testID={
+                                            activeSong?.isLiked
+                                                ? "unlike-button"
+                                                : "like-button"
+                                        }
                                         onPress={() =>
                                             activeSong?.isLiked
                                                 ? unlikeSong(activeSong.id)
@@ -299,16 +304,19 @@ const PlayerScreen = () => {
                         }}
                     >
                         <PaperIconButton
+                            testID="queue-button"
                             icon="playlist-play"
                             onPress={() => router.push("/overlays/queue")}
                             iconColor={Colors.primary}
                         />
                         <PaperIconButton
+                            testID="sleep-button"
                             icon="alarm"
                             iconColor={Colors.primary}
                             disabled
                         />
                         <PaperIconButton
+                            testID="options-button"
                             icon="dots-vertical"
                             onPress={async () => {
                                 await setSelectedSong(activeSong as Song);

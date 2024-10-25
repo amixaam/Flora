@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { PressableProps, StyleProp, Text, View, ViewStyle } from "react-native";
+import {
+    Pressable,
+    PressableProps,
+    StyleProp,
+    Text,
+    View,
+    ViewStyle,
+} from "react-native";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist, Song } from "../../../types/song";
@@ -38,27 +45,6 @@ const ContainerItem = ({
     playOverlay = false,
     ...PressableProps
 }: ContainerItemProps) => {
-    const padding = useSharedValue(0);
-
-    useEffect(() => {
-        padding.value = withTiming(selected ? Spacing.sm : 0, {
-            easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-            duration: 200,
-        });
-    }, [selected]);
-
-    // // // // // idk man i think its better to just remove the padding animation
-    const animatedStyle = useAnimatedStyle(() => {
-        return {
-            backgroundColor: interpolateColor(
-                padding.value,
-                [0, Spacing.sm],
-                [Colors.transparent, Colors.badgeRare + "50"]
-            ),
-            borderRadius: Spacing.radius,
-        };
-    });
-
     const albumInfo = (
         <View>
             <View style={[utilStyles.center]}>
@@ -106,21 +92,19 @@ const ContainerItem = ({
         </View>
     );
 
-    const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
-
     return (
-        <AnimatedRipple
+        <TouchableRipple
             {...(PressableProps as TouchableRippleProps)}
             style={[
                 PressableProps.style as StyleProp<ViewStyle>,
-                animatedStyle,
                 {
                     marginBottom: Spacing.sm,
                 },
             ]}
+            testID="container-item"
         >
             {albumInfo}
-        </AnimatedRipple>
+        </TouchableRipple>
     );
 };
 

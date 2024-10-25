@@ -111,6 +111,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     }
                 >
                     <BottomSheetView
+                        testID="container-sheet"
                         style={{
                             gap: Spacing.md,
                         }}

@@ -51,6 +51,7 @@ exports[`MainButton renders correctly 1`] = `
         ],
         {
           "flex": 0,
+          "opacity": 1,
         },
       ],
     ]

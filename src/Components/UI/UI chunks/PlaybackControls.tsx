@@ -64,7 +64,7 @@ const PlaybackControls = ({
                 }}
             >
                 <IconButton
-                    testID="repeat-button"
+                    testID={getRepeatIcon() + "-button"}
                     icon={getRepeatIcon()}
                     size={IconSizes.lg}
                     onPress={toggleRepeatMode}
@@ -85,7 +85,11 @@ const PlaybackControls = ({
                     style={{ marginHorizontal: -Spacing.mmd }}
                 />
                 <IconButton
-                    testID="play-pause-button"
+                    testID={
+                        playbackState.state === "playing"
+                            ? "pause-button"
+                            : "play-button"
+                    }
                     onPress={hanldePlayPausePress}
                     icon={
                         playbackState.state === "playing"
@@ -109,7 +113,7 @@ const PlaybackControls = ({
                 />
 
                 <IconButton
-                    testID="shuffle-button"
+                    testID="playback-controls-shuffle-button"
                     icon={"shuffle"}
                     size={IconSizes.lg}
                     onPress={shuffle}

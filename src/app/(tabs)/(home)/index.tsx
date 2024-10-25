@@ -12,14 +12,13 @@ import { mainStyles, newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { Album, Playlist, Song } from "../../../types/song";
 
-import { IconButton as PaperIconButton } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
+import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
-import { TouchableRipple } from "react-native-paper";
-import SongSheet from "../../../Components/BottomSheets/Song/SongSheet";
 
 export default function HomeTab() {
     const {
@@ -27,7 +26,6 @@ export default function HomeTab() {
         getRecentlyAddedSongs,
         setSelectedContainer,
         setSelectedSong,
-        addListToQueue,
     } = useSongsStore();
     const insets = useSafeAreaInsets();
 
@@ -195,7 +193,11 @@ const HorizontalList = ({
                     {text}
                 </Text>
                 <View style={{ flexDirection: "row", gap: Spacing.md }}>
-                    <IconButton icon="shuffle" onPress={onHeaderPress} />
+                    <IconButton
+                        icon="shuffle"
+                        testID="shuffle-button"
+                        onPress={onHeaderPress}
+                    />
                 </View>
             </View>
             <FlashList

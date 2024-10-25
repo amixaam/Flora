@@ -45,10 +45,12 @@ const IconHeaders = () => {
                 color={Colors.primary}
             />
             <IconButton
+                testID="history-button"
                 icon="history"
                 onPress={() => router.push("/overlays/history")}
             />
             <IconButton
+                testID="search-button"
                 icon="magnify"
                 onPress={() => router.push("/overlays/search")}
             />

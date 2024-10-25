@@ -99,7 +99,9 @@ const HeaderButton = ({
     icon = "alert-circle",
     onPress = () => {},
 }: IconButtonProps) => {
-    return <IconButton icon={icon} onPress={onPress} />;
+    return (
+        <IconButton testID={icon + "-button"} icon={icon} onPress={onPress} />
+    );
 };
 
 export default SheetHeader;
