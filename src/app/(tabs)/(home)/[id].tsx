@@ -36,19 +36,6 @@ export default function ContainerScreen() {
 
     let data = getContainer(id);
 
-    if (data === undefined) {
-        return (
-            <View style={[mainStyles.container, { justifyContent: "center" }]}>
-                <ListItemsNotFound
-                    text="Container not found!"
-                    icon="alert-circle"
-                />
-            </View>
-        );
-    }
-
-    let songData = getSongsFromContainer(id);
-
     const {
         sheetRef: SongOptionsRef,
         open: openSongOptions,
@@ -60,6 +47,7 @@ export default function ContainerScreen() {
         open: openContainerOptions,
         close: dismissContainerOptions,
     } = useBottomSheetModal(async () => {
+        if (data === undefined) return;
         await setSelectedContainer(data);
     });
 
@@ -69,6 +57,12 @@ export default function ContainerScreen() {
     const handleScroll = useAnimatedScrollHandler((event) => {
         scrollY.value = event.contentOffset.y;
     });
+
+    if (data === undefined) {
+        return router.back();
+    }
+
+    let songData = getSongsFromContainer(id);
 
     return (
         <View style={[mainStyles.container, { position: "relative" }]}>

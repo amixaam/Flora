@@ -96,6 +96,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <SheetOptionsButton
+                            
                                 icon="album"
                                 buttonContent="Go to album"
                                 onPress={() => {

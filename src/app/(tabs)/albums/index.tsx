@@ -5,7 +5,6 @@ import Animated, {
     useAnimatedScrollHandler,
     useSharedValue,
 } from "react-native-reanimated";
-import CreateAlbum from "../../../Components/BottomSheets/Album/CreateAlbum";
 import CustomFAB from "../../../Components/UI/Buttons/CustomFAB";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
@@ -15,7 +14,8 @@ import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import useMultiSelect from "../../../hooks/useMultiSelect";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { Album } from "../../../types/song";
+import { Album, ContainerType } from "../../../types/song";
+import CreateContainer from "../../../Components/BottomSheets/Container/CreateContainer";
 
 export default function AlbumsTab() {
     const {
@@ -71,7 +71,11 @@ export default function AlbumsTab() {
                 />
             </Animated.ScrollView>
 
-            <CreateAlbum ref={CreateAlbumRef} dismiss={dismissCreateAlbum} />
+            <CreateContainer
+                type={ContainerType.ALBUM}
+                ref={CreateAlbumRef}
+                dismiss={dismissCreateAlbum}
+            />
         </View>
     );
 }

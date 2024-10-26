@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, TouchableNativeFeedback, View } from "react-native";
+import { Text, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import {
     Colors,
@@ -9,7 +10,6 @@ import {
 } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
-import { TouchableRipple } from "react-native-paper";
 
 interface SheetOptionsButtonProps {
     icon?: string;
@@ -25,7 +25,11 @@ const SheetOptionsButton = ({
     isDisabled = false,
 }: SheetOptionsButtonProps) => {
     return (
-        <TouchableRipple disabled={isDisabled} onPress={onPress}>
+        <TouchableRipple
+            testID={icon + "-sheet-options-button"}
+            disabled={isDisabled}
+            onPress={onPress}
+        >
             <View
                 style={[
                     mainStyles.textListItem,

@@ -11,16 +11,15 @@ import { BottomSheetProps } from "../../../types/other";
 import { Album, ContainerType, Playlist } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import Pluralize from "../../../utils/Pluralize";
+import DeleteContainer from "../../Modals/DeleteContainer";
 import LargeOptionButton from "../../UI/Buttons/LargeOptionButton";
 import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
 import AlbumArt from "../../UI/UI chunks/AlbumArt";
 import { UISeperator } from "../../UI/Utils/UISeperator";
-import { SheetModalLayout } from "../SheetModalLayout";
-import DeleteContainer from "../../Modals/DeleteContainer";
-import EditAlbum from "../Album/EditAlbum";
-import EditPlaylist from "../Playlist/EditPlaylist";
 import AlbumRanking from "../Album/AlbumRanking";
+import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
+import EditContainer from "./EditContainer";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
@@ -42,15 +41,9 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         } = useBottomSheetModal();
 
         const {
-            sheetRef: EditPlaylistRef,
-            open: openEditPlaylistRef,
-            close: dismissEditPlaylistRef,
-        } = useBottomSheetModal();
-
-        const {
-            sheetRef: EditAlbumRef,
-            open: openEditAlbumRef,
-            close: dismissEditAlbumRef,
+            sheetRef: EditContainerRef,
+            open: openEditContainerRef,
+            close: dismissEditContainerRef,
         } = useBottomSheetModal();
 
         const {
@@ -75,12 +68,6 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
         const handleAddToQueue = () => {
             props.dismiss?.();
             addToQueue(getSongsFromContainer(selectedContainer.id));
-        };
-
-        const handleEditContainer = () => {
-            if (selectedContainer.type === ContainerType.ALBUM)
-                openEditAlbumRef();
-            else openEditPlaylistRef();
         };
 
         return (
@@ -136,9 +123,7 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                                 icon="playlist-edit"
                                 buttonContent={"Edit " + selectedContainer.type}
                                 isDisabled={selectedContainer.id === "1"}
-                                onPress={() => {
-                                    handleEditContainer();
-                                }}
+                                onPress={openEditContainerRef}
                             />
                             <SheetOptionsButton
                                 icon="trash-can"
@@ -163,10 +148,9 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                     ref={AddSongsToContainerRef}
                     dismiss={dismissAddSongsToContainer}
                 />
-                <EditAlbum ref={EditAlbumRef} dismiss={dismissEditAlbumRef} />
-                <EditPlaylist
-                    ref={EditPlaylistRef}
-                    dismiss={dismissEditPlaylistRef}
+                <EditContainer
+                    ref={EditContainerRef}
+                    dismiss={dismissEditContainerRef}
                 />
                 <AlbumRanking
                     ref={AlbumRankingRef}

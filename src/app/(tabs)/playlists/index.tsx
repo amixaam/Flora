@@ -1,6 +1,5 @@
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import CreatePlaylist from "../../../Components/BottomSheets/Playlist/CreatePlaylist";
 import CustomFAB from "../../../Components/UI/Buttons/CustomFAB";
 import IconButton from "../../../Components/UI/Buttons/IconButton";
 import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
@@ -10,7 +9,8 @@ import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import useMultiSelect from "../../../hooks/useMultiSelect";
 import { Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
-import { Playlist } from "../../../types/song";
+import { ContainerType, Playlist } from "../../../types/song";
+import CreateContainer from "../../../Components/BottomSheets/Container/CreateContainer";
 
 export default function PlaylistsTab() {
     const {
@@ -19,11 +19,8 @@ export default function PlaylistsTab() {
         close: dismissCreatePlaylist,
     } = useBottomSheetModal();
 
-    const {
-        multiselectedItems,
-        toggle,
-        deselectAll,
-    } = useMultiSelect<Playlist["id"]>();
+    const { multiselectedItems, toggle, deselectAll } =
+        useMultiSelect<Playlist["id"]>();
 
     return (
         <View style={mainStyles.container}>
@@ -56,7 +53,8 @@ export default function PlaylistsTab() {
                     toggle={toggle}
                 />
             </ScrollView>
-            <CreatePlaylist
+            <CreateContainer
+                type={ContainerType.PLAYLIST}
                 ref={CreatePlaylistRef}
                 dismiss={dismissCreatePlaylist}
             />

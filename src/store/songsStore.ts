@@ -635,12 +635,35 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             deleteContainer: (id) => {
                 if (id[0] === "A") {
                     const updatedAlbumMap = new Map(get().albumMap);
+                    const updatedSongMap = new Map(get().songMap);
+                    const album = updatedAlbumMap.get(id);
+                    if (!album) return;
+
+                    const songIds = album.songs;
+                    songIds?.forEach((songId) => {
+                        const song = updatedSongMap.get(songId);
+                        if (!song) return;
+                        updatedSongMap.set(songId, {
+                            ...song,
+                            albumIds: song.albumIds.filter(
+                                (albumId) => albumId !== id
+                            ),
+                        });
+                    });
+
                     updatedAlbumMap.delete(id);
-                    set({ albumMap: updatedAlbumMap });
+                    set({
+                        albumMap: updatedAlbumMap,
+                        songMap: updatedSongMap,
+                        selectedContainer: undefined,
+                    });
                 } else {
                     const updatedPlaylistMap = new Map(get().playlistMap);
                     updatedPlaylistMap.delete(id);
-                    set({ playlistMap: updatedPlaylistMap });
+                    set({
+                        playlistMap: updatedPlaylistMap,
+                        selectedContainer: undefined,
+                    });
                 }
 
                 get().updateSelectedStates();
@@ -878,6 +901,7 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                         artwork: inputFields.artwork || album.artwork,
                         title: inputFields.title || "Untitled Album",
                         artist: inputFields.artist || "No artist",
+                        year: inputFields.year || "No year",
                     });
 
                     return {

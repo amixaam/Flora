@@ -5,13 +5,13 @@ import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
 import { useSongsStore } from "../../../store/songsStore";
 import { SnapPoints, Spacing } from "../../../styles/constants";
 import { BottomSheetProps } from "../../../types/other";
-import { Playlist, Song } from "../../../types/song";
+import { ContainerType, Playlist, Song } from "../../../types/song";
 import MainButton from "../../UI/Buttons/MainButton";
 import SheetOptionsButton from "../../UI/Buttons/SheetOptionsButton";
 import SheetPlaylistOptionsButton from "../../UI/Buttons/SheetPlaylistOptionsButton";
 import ListItemsNotFound from "../../UI/Text/ListItemsNotFound";
-import CreatePlaylist from "../Playlist/CreatePlaylist";
 import { SheetModalLayout } from "../SheetModalLayout";
+import CreateContainer from "../Container/CreateContainer";
 
 interface AddMultipleSongsProps extends BottomSheetProps {
     songs: Song["id"][];
@@ -82,7 +82,8 @@ const AddMultipleSongs = forwardRef<BottomSheetModal, AddMultipleSongsProps>(
                         )}
                     />
                 </SheetModalLayout>
-                <CreatePlaylist
+                <CreateContainer
+                    type={ContainerType.PLAYLIST}
                     ref={CreatePlaylistRef}
                     dismiss={dismissCreatePlaylist}
                 />
