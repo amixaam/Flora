@@ -22,14 +22,6 @@ exports[`ContainerItem renders correctly with minimal props 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  jestAnimatedStyle={
-    {
-      "value": {
-        "backgroundColor": "rgba(0, 0, 0, 0)",
-        "borderRadius": 10,
-      },
-    }
-  }
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -42,11 +34,12 @@ exports[`ContainerItem renders correctly with minimal props 1`] = `
   style={
     [
       false,
-      {
-        "backgroundColor": "rgba(0, 0, 0, 0)",
-        "borderRadius": 10,
-        "marginBottom": 8,
-      },
+      [
+        undefined,
+        {
+          "marginBottom": 8,
+        },
+      ],
     ]
   }
   testID="container-item"

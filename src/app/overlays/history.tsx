@@ -55,6 +55,7 @@ const HistoryScreen = () => {
                             title={`${multiselectedItems.length} selected`}
                             headerLeft={
                                 <IconButton
+                                    testID="history-close-selected-button"
                                     icon="close"
                                     onPress={deselectAll}
                                 />
@@ -151,6 +152,7 @@ const SelectedMenuButton = ({
             onDismiss={() => setVisible(false)}
             anchor={
                 <IconButton
+                    testID="history-selected-menu-button"
                     icon={"dots-vertical"}
                     onPress={() => setVisible(true)}
                 />
@@ -223,6 +225,7 @@ const MenuButton = ({
             onDismiss={() => setVisible(false)}
             anchor={
                 <IconButton
+                    testID="history-dots-vertical"
                     icon={"dots-vertical"}
                     onPress={() => setVisible(true)}
                 />

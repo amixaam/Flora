@@ -30,3 +30,5 @@ describe("MainButton", () => {
         expect(handlePress).toHaveBeenCalledTimes(1);
     });
 });
+
+

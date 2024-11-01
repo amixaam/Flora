@@ -1,0 +1,108 @@
+appId: com.anonymous.Flora
+---
+- tapOn: "Flora"
+- assertVisible: "Flora"
+- tapOn:
+    id: "SongsTabIcon"
+- assertVisible:
+    text: "Songs"
+    index: 0
+- assertVisible: "17 songs"
+- tapOn:
+    id: "dots-vertical-button"
+    index: 0
+- assertVisible: "View statistics"
+- tapOn:
+    id: "View statistics-large-option-button"
+- assertVisible: "Song statistics"
+- assertVisible: "Since October 13th, 2024"
+- assertVisible: "Skipped 0 times"
+- swipe:
+    direction: "DOWN"
+- assertVisible:
+    id: "sheet-like-button"
+- tapOn:
+    id: "sheet-like-button"
+- assertVisible:
+    id: "sheet-unlike-button"
+- tapOn:
+    id: "sheet-unlike-button"
+- assertVisible:
+    id: "sheet-like-button"
+- tapOn:
+    id: "Add to playlist-large-option-button"
+- assertVisible: "Choose a playlist"
+- tapOn:
+    id: "plus-sheet-options-button"
+- assertVisible: "Create playlist"
+- tapOn: "Create"
+- assertVisible: "Untitled Playlist"
+- tapOn: "Untitled Playlist"
+- swipe:
+    direction: "DOWN"
+- tapOn:
+    id: "PlaylistsTabIcon"
+- assertVisible:
+    text: "Playlists"
+    index: 0
+- assertVisible: "Untitled Playlist, 1 song "
+- tapOn:
+    id: "SongsTabIcon"
+- assertVisible:
+    text: "Songs"
+    index: 0
+- tapOn:
+    id: "dots-vertical-button"
+    index: 0
+- assertVisible: "Add to queue"
+- tapOn:
+    id: "Add to queue-large-option-button"
+- assertVisible:
+    id: "mini-player"
+- assertVisible:
+    id: "volume-high"
+- tapOn:
+    id: "dots-vertical-button"
+    index: 0
+- assertVisible:
+    id: "album-sheet-options-button"
+- tapOn:
+    id: "album-sheet-options-button"
+- assertVisible: "Albums"
+- assertVisible: "the mondo zone"
+- tapOn:
+    id: "dots-vertical-button"
+- assertVisible:
+    id: "eye-sheet-options-button"
+- tapOn:
+    id: "eye-sheet-options-button"
+- assertVisible:
+    id: "eye-off-sheet-options-button"
+- assertVisible:
+    id: "View statistics-large-option-button"
+    enabled: false
+- assertVisible:
+    id: "Add to playlist-large-option-button"
+    enabled: false
+- assertVisible:
+    id: "Add to queue-large-option-button"
+    enabled: false
+- tapOn:
+    id: "eye-off-sheet-options-button"
+- assertVisible:
+    id: "eye-sheet-options-button"
+- assertVisible:
+    id: "View statistics-large-option-button"
+    enabled: true
+- assertVisible:
+    id: "Add to playlist-large-option-button"
+    enabled: true
+- assertVisible:
+    id: "Add to queue-large-option-button"
+    enabled: true
+- assertVisible:
+    id: "pencil-sheet-options-button"
+    enabled: false
+- assertVisible:
+    id: "trash-can-sheet-options-button"
+    enabled: false

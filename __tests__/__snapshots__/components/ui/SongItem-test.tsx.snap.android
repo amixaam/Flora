@@ -171,7 +171,7 @@ exports[`SongItem renders correctly with minimal props 1`] = `
           "width": 40,
         }
       }
-      testID="icon-button-container"
+      testID="dots-vertical-button-container"
     >
       <View
         accessibilityComponentType="button"
@@ -232,7 +232,7 @@ exports[`SongItem renders correctly with minimal props 1`] = `
             ],
           ]
         }
-        testID="icon-button"
+        testID="dots-vertical-button"
       >
         <Text />
       </View>

@@ -1,0 +1,62 @@
+appId: com.anonymous.Flora
+---
+- assertVisible: "Flora"
+- tapOn:
+    text: "Your Recap is here!"
+    index: 1
+- assertVisible: "Recaps"
+- tapOn: "Delete"
+- assertVisible: "Delete Recap data?"
+- tapOn: "Cancel"
+- assertNotVisible: "Delete Recap data?"
+- tapOn: "Delete"
+- assertVisible: "Delete Recap data?"
+- tapOn: "Delete"
+- assertVisible:
+    id: "list-items-not-found"
+- tapOn: "Import"
+- tapOn: "music-recap-export-2024-10-27-000504.json"
+- assertNotVisible:
+    id: "list-items-not-found"
+- assertVisible: "Previous Recaps"
+- tapOn: "Export"
+- assertVisible: "Sharing 1 file"
+- swipe:
+    direction: "DOWN"
+- tapOn:
+    id: "latest-recap-banner"
+- assertVisible: "Let’s see your listening stats!"
+- assertVisible: "23 PM"
+- assertVisible: "1"
+- assertVisible: "seeyalater stratocaster"
+- assertVisible:
+    text: "super hopeful worried dreamer [dreamix]"
+    index: 0
+- "back"
+- tapOn:
+    id: "expand-history-button"
+- assertVisible: "Recap history"
+- "back"
+- assertVisible: "Select the frequency of Recaps"
+- tapOn:
+    id: "recap-period-YEARLY"
+- tapOn:
+    id: "recap-period-QUARTERLY"
+- tapOn:
+    id: "recap-period-MONTHLY"
+- tapOn:
+    id: "recap-period-WEEKLY"
+- tapOn:
+    id: "recap-period-WEEKLY"
+    index: 0
+- tapOn:
+    id: "recap-period-MONTHLY"
+    index: 0
+- tapOn:
+    id: "recap-period-QUARTERLY"
+    index: 0
+- tapOn:
+    id: "recap-period-YEARLY"
+- tapOn:
+    id: "recap-period-DAILY"
+- assertVisible: "You have a total of 2 Recaps"

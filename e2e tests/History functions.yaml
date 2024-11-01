@@ -1,0 +1,104 @@
+appId: com.anonymous.Flora
+---
+- tapOn: "Flora"
+- assertVisible: "Flora"
+- tapOn:
+      text: "Burning Desires"
+- assertVisible:
+      id: "mini-player"
+- tapOn:
+      id: "mini-player"
+- tapOn:
+      id: "pause-button"
+- assertVisible:
+      id: "play-button"
+- tapOn:
+      id: "next-button"
+- tapOn:
+      id: "next-button"
+- tapOn:
+      id: "next-button"
+- tapOn:
+      id: "next-button"
+- "back"
+- assertVisible:
+      id: "history-button"
+- tapOn:
+      id: "history-button"
+- assertVisible: "History"
+- tapOn:
+      id: "history-dots-vertical"
+- assertVisible:
+      text: "Add to queue"
+      index: 1
+- tapOn:
+      text: "Add to queue"
+      index: 1
+- tapOn:
+      id: "history-dots-vertical"
+- assertVisible:
+      text: "Add to playlist"
+      index: 1
+- tapOn:
+      text: "Add to playlist"
+      index: 1
+- assertVisible: "Recently added songs"
+- tapOn: "Make a new playlist"
+- assertVisible: "Create playlist"
+- tapOn: "Create"
+- assertVisible: "Untitled Playlist"
+- tapOn: "Untitled Playlist"
+- "back"
+- assertVisible: "Flora"
+- tapOn:
+      id: "PlaylistsTabIcon"
+- assertVisible:
+      text: "Playlists"
+      index: 0
+- tapOn: "Untitled Playlist"
+- "scroll"
+- assertVisible: "5 songs • 16:37"
+- tapOn:
+      id: "HomeTabIcon"
+- assertVisible: "Flora"
+- tapOn:
+      id: "history-button"
+- assertVisible: "History"
+- longPressOn: "Burning Desires, Sān-Z, HOYO-MiX • 2024"
+- assertVisible: "1 selected"
+- tapOn: "Burning Desires, Sān-Z, HOYO-MiX • 2024"
+- assertVisible: "History"
+- longPressOn: "Burning Desires, Sān-Z, HOYO-MiX • 2024"
+- tapOn: "Basics in Behavior (feat. Or3o) (Blue Version), The Living Tombstone, Or3o • 2018"
+- assertVisible: "2 selected"
+- tapOn:
+      id: "history-selected-menu-button"
+- assertVisible:
+      text: "Select all"
+      index: 1
+- tapOn:
+      text: "Select all"
+      index: 1
+- assertVisible: "5 selected"
+- tapOn:
+      id: "history-close-selected-button"
+- assertVisible: "History"
+- tapOn:
+      id: "history-dots-vertical"
+- assertVisible:
+      text: "Shuffle"
+      index: 1
+- tapOn:
+      text: "Shuffle"
+      index: 1
+- "back"
+- assertVisible:
+      id: "mini-player"
+- tapOn:
+      id: "mini-player"
+- assertVisible:
+      id: "pause-button"
+- tapOn:
+      id: "pause-button"
+- assertVisible:
+      id: "play-button"

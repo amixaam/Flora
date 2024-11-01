@@ -3,9 +3,9 @@ appId: com.anonymous.Flora
 - tapOn: "Flora"
 - assertVisible: "Flora"
 - assertVisible:
-    id: "search-button"
+      id: "search-button"
 - tapOn:
-    id: "search-button"
+      id: "search-button"
 - assertVisible: "Search All"
 - tapOn: "Search..."
 - inputText: "Desire"
@@ -21,9 +21,9 @@ appId: com.anonymous.Flora
 - tapOn: "Playlists"
 - assertVisible: "No results"
 - tapOn: "Artists"
-- tapOn: "No results"
+- assertVisible: "No results"
 - tapOn: "Year"
-- tapOn: "No results"
+- assertVisible: "No results"
 - tapOn: "Desire"
 - "eraseText"
 - inputText: "2024"

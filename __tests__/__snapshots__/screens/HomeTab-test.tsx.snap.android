@@ -396,69 +396,8 @@ exports[`HomeTab renders correctly with all main components 1`] = `
               }
               disableRecycling={false}
               estimatedItemSize={10}
-              extendedState={
-                {
-                  "value": [
-                    {
-                      "albumIds": [
-                        "A123",
-                      ],
-                      "artist": "Artist 1",
-                      "artwork": undefined,
-                      "bitRate": 128,
-                      "channels": 2,
-                      "duration": 100,
-                      "extension": "mp3",
-                      "id": "123",
-                      "isHidden": false,
-                      "isLiked": false,
-                      "sampleRate": 44100,
-                      "statistics": {
-                        "creationDate": "2024-01-01T00:00:00.000Z",
-                        "lastModified": "2024-01-01T00:00:00.000Z",
-                        "lastPlayed": "2024-01-01T00:00:00.000Z",
-                        "playCount": 0,
-                        "skipCount": 0,
-                      },
-                      "title": "Song 1",
-                      "trackNumber": 1,
-                      "url": "file:///examplesong.mp3",
-                      "year": "2024",
-                    },
-                  ],
-                }
-              }
+              extendedState={{}}
               externalScrollView={[Function]}
-              extraData={
-                [
-                  {
-                    "albumIds": [
-                      "A123",
-                    ],
-                    "artist": "Artist 1",
-                    "artwork": undefined,
-                    "bitRate": 128,
-                    "channels": 2,
-                    "duration": 100,
-                    "extension": "mp3",
-                    "id": "123",
-                    "isHidden": false,
-                    "isLiked": false,
-                    "sampleRate": 44100,
-                    "statistics": {
-                      "creationDate": "2024-01-01T00:00:00.000Z",
-                      "lastModified": "2024-01-01T00:00:00.000Z",
-                      "lastPlayed": "2024-01-01T00:00:00.000Z",
-                      "playCount": 0,
-                      "skipCount": 0,
-                    },
-                    "title": "Song 1",
-                    "trackNumber": 1,
-                    "url": "file:///examplesong.mp3",
-                    "year": "2024",
-                  },
-                ]
-              }
               finalRenderAheadOffset={250}
               forceNonDeterministicRendering={true}
               horizontal={true}
@@ -526,34 +465,6 @@ exports[`HomeTab renders correctly with all main components 1`] = `
                       },
                     ],
                     "estimatedItemSize": 10,
-                    "extraData": [
-                      {
-                        "albumIds": [
-                          "A123",
-                        ],
-                        "artist": "Artist 1",
-                        "artwork": undefined,
-                        "bitRate": 128,
-                        "channels": 2,
-                        "duration": 100,
-                        "extension": "mp3",
-                        "id": "123",
-                        "isHidden": false,
-                        "isLiked": false,
-                        "sampleRate": 44100,
-                        "statistics": {
-                          "creationDate": "2024-01-01T00:00:00.000Z",
-                          "lastModified": "2024-01-01T00:00:00.000Z",
-                          "lastPlayed": "2024-01-01T00:00:00.000Z",
-                          "playCount": 0,
-                          "skipCount": 0,
-                        },
-                        "title": "Song 1",
-                        "trackNumber": 1,
-                        "url": "file:///examplesong.mp3",
-                        "year": "2024",
-                      },
-                    ],
                     "horizontal": true,
                     "keyExtractor": [Function],
                     "numColumns": 1,
@@ -1127,69 +1038,8 @@ exports[`HomeTab renders correctly with all main components 1`] = `
               }
               disableRecycling={false}
               estimatedItemSize={10}
-              extendedState={
-                {
-                  "value": [
-                    {
-                      "artist": "Artist 1",
-                      "artwork": undefined,
-                      "autoCreated": false,
-                      "createdAt": "2024-01-01T00:00:00.000Z",
-                      "id": "A123",
-                      "lastModified": "2024-01-01T00:00:00.000Z",
-                      "songs": [
-                        "123",
-                      ],
-                      "title": "Album 1",
-                      "type": "album",
-                      "year": "2024",
-                    },
-                    {
-                      "artwork": undefined,
-                      "createdAt": "2024-01-01T00:00:00.000Z",
-                      "description": "Playlist 1 description",
-                      "id": "P123",
-                      "lastModified": "2024-01-01T00:00:00.000Z",
-                      "songs": [
-                        "123",
-                      ],
-                      "title": "Playlist 1",
-                      "type": "playlist",
-                    },
-                  ],
-                }
-              }
+              extendedState={{}}
               externalScrollView={[Function]}
-              extraData={
-                [
-                  {
-                    "artist": "Artist 1",
-                    "artwork": undefined,
-                    "autoCreated": false,
-                    "createdAt": "2024-01-01T00:00:00.000Z",
-                    "id": "A123",
-                    "lastModified": "2024-01-01T00:00:00.000Z",
-                    "songs": [
-                      "123",
-                    ],
-                    "title": "Album 1",
-                    "type": "album",
-                    "year": "2024",
-                  },
-                  {
-                    "artwork": undefined,
-                    "createdAt": "2024-01-01T00:00:00.000Z",
-                    "description": "Playlist 1 description",
-                    "id": "P123",
-                    "lastModified": "2024-01-01T00:00:00.000Z",
-                    "songs": [
-                      "123",
-                    ],
-                    "title": "Playlist 1",
-                    "type": "playlist",
-                  },
-                ]
-              }
               finalRenderAheadOffset={250}
               forceNonDeterministicRendering={true}
               horizontal={true}
@@ -1257,34 +1107,6 @@ exports[`HomeTab renders correctly with all main components 1`] = `
                       },
                     ],
                     "estimatedItemSize": 10,
-                    "extraData": [
-                      {
-                        "artist": "Artist 1",
-                        "artwork": undefined,
-                        "autoCreated": false,
-                        "createdAt": "2024-01-01T00:00:00.000Z",
-                        "id": "A123",
-                        "lastModified": "2024-01-01T00:00:00.000Z",
-                        "songs": [
-                          "123",
-                        ],
-                        "title": "Album 1",
-                        "type": "album",
-                        "year": "2024",
-                      },
-                      {
-                        "artwork": undefined,
-                        "createdAt": "2024-01-01T00:00:00.000Z",
-                        "description": "Playlist 1 description",
-                        "id": "P123",
-                        "lastModified": "2024-01-01T00:00:00.000Z",
-                        "songs": [
-                          "123",
-                        ],
-                        "title": "Playlist 1",
-                        "type": "playlist",
-                      },
-                    ],
                     "horizontal": true,
                     "keyExtractor": [Function],
                     "numColumns": 1,

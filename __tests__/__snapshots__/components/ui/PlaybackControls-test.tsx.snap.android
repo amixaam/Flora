@@ -38,7 +38,7 @@ exports[`PlaybackControls renders correctly 1`] = `
           "width": 46,
         }
       }
-      testID="repeat-button-container"
+      testID="repeat-off-button-container"
     >
       <View
         accessibilityComponentType="button"
@@ -99,7 +99,7 @@ exports[`PlaybackControls renders correctly 1`] = `
             ],
           ]
         }
-        testID="repeat-button"
+        testID="repeat-off-button"
       >
         <Text />
       </View>
@@ -206,7 +206,7 @@ exports[`PlaybackControls renders correctly 1`] = `
           "width": 80,
         }
       }
-      testID="play-pause-button-container"
+      testID="pause-button-container"
     >
       <View
         accessibilityComponentType="button"
@@ -267,7 +267,7 @@ exports[`PlaybackControls renders correctly 1`] = `
             ],
           ]
         }
-        testID="play-pause-button"
+        testID="pause-button"
       >
         <Text />
       </View>
@@ -374,7 +374,7 @@ exports[`PlaybackControls renders correctly 1`] = `
           "width": 46,
         }
       }
-      testID="shuffle-button-container"
+      testID="playback-controls-shuffle-button-container"
     >
       <View
         accessibilityComponentType="button"
@@ -435,7 +435,7 @@ exports[`PlaybackControls renders correctly 1`] = `
             ],
           ]
         }
-        testID="shuffle-button"
+        testID="playback-controls-shuffle-button"
       >
         <Text />
       </View>

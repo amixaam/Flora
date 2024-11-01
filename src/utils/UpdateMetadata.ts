@@ -8,7 +8,7 @@ export const UpdateMetadata = async () => {
     useSongsStore.getState().setIsReadingSongs(true);
     const songIds = useSongsStore.getState().getSongIds();
 
-    await loadAllAudioFiles(songIds);
+    await loadNewAudioFiles(songIds);
     await checkDeletedFiles(songIds);
     useSongsStore.getState().setIsReadingSongs(false);
 };
@@ -35,7 +35,7 @@ async function checkDeletedFiles(ids: string[]) {
     }
 }
 
-async function loadAllAudioFiles(songIds: string[]) {
+async function loadNewAudioFiles(songIds: string[]) {
     const pageSize = 5;
     let pageNumber = 1;
     let allAudioFiles: AudioFile[] = [];
@@ -64,11 +64,11 @@ async function loadAllAudioFiles(songIds: string[]) {
     );
 
     if (allAudioFiles.length > 0) {
-        saveAllAudioFiles(allAudioFiles);
+        saveGivenAudioFiles(allAudioFiles);
     }
 }
 
-const saveAllAudioFiles = (audioFiles: AudioFile[]) => {
+const saveGivenAudioFiles = (audioFiles: AudioFile[]) => {
     const newSongs: Song[] = [];
     const albumMap: {
         [key: string]: { songs: string[]; data: Partial<Album> };

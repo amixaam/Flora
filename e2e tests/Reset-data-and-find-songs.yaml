@@ -1,6 +1,6 @@
 appId: com.anonymous.Flora
 ---
-- longPressOn: "Flora"
+- longPressOn: "Flora not exist"
 - tapOn: "App info"
 - tapOn: "Storage & cache"
 - tapOn: "Clear storage"
@@ -13,11 +13,11 @@ appId: com.anonymous.Flora
 - assertVisible: "Allow Flora to access photos and videos on this device?"
 - tapOn: "Allow all"
 - tapOn:
-    id: "SongsTabIcon"
+      id: "SongsTabIcon"
 - assertVisible: "17 songs"
 - tapOn:
-    id: "AlbumsTabIcon"
+      id: "AlbumsTabIcon"
 - assertVisible: "7 albums"
 - tapOn:
-    id: "PlaylistsTabIcon"
+      id: "PlaylistsTabIcon"
 - assertVisible: "1 playlist"

@@ -46,15 +46,9 @@ describe("PlaybackControls", () => {
     });
 
     it("renders correctly", () => {
-        const { getByTestId, toJSON } = render(
+        const { toJSON } = render(
             <PlaybackControls animation={mockAnimation} />
         );
-
-        expect(getByTestId("repeat-button-container")).toBeTruthy();
-        expect(getByTestId("previous-button-container")).toBeTruthy();
-        expect(getByTestId("play-pause-button-container")).toBeTruthy();
-        expect(getByTestId("next-button-container")).toBeTruthy();
-        expect(getByTestId("shuffle-button-container")).toBeTruthy();
 
         expect(toJSON()).toMatchSnapshot();
     });
@@ -64,7 +58,7 @@ describe("PlaybackControls", () => {
             <PlaybackControls animation={mockAnimation} />
         );
 
-        const playPauseButton = getByTestId("play-pause-button");
+        const playPauseButton = getByTestId("pause-button");
 
         expect(mockPlaybackState.state).toBe("playing");
         fireEvent.press(playPauseButton);
@@ -118,14 +112,14 @@ describe("PlaybackControls", () => {
     it("triggers shuffle", () => {
         const { getByTestId } = render(<PlaybackControls />);
 
-        fireEvent.press(getByTestId("shuffle-button"));
+        fireEvent.press(getByTestId("playback-controls-shuffle-button"));
         expect(mockPlaybackActions.shuffle).toHaveBeenCalled();
     });
 
     it("triggers repeat mode toggle", () => {
         const { getByTestId } = render(<PlaybackControls />);
 
-        fireEvent.press(getByTestId("repeat-button"));
+        fireEvent.press(getByTestId("repeat-off-button"));
         expect(mockPlaybackActions.toggleRepeatMode).toHaveBeenCalled();
     });
 

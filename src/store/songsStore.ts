@@ -358,14 +358,18 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     selectedSong?.id ?? list[0].id;
 
                 if (selectedSong) {
-                    const selectedSongIndex = list.findIndex(
+                    const selectedIndex = list.findIndex(
                         (song) => song.id === selectedSong.id
                     );
-
-                    if (selectedSongIndex > 0) {
-                        const songsBefore = list.slice(0, selectedSongIndex);
-                        const songsAfter = list.slice(selectedSongIndex);
-                        queue = [...songsBefore, ...songsAfter];
+                    if (selectedIndex !== -1) {
+                        // Reorder the queue to put the selected song first
+                        const beforeSelected = list.slice(0, selectedIndex);
+                        const afterSelected = list.slice(selectedIndex + 1);
+                        queue = [
+                            selectedSong,
+                            ...afterSelected,
+                            ...beforeSelected,
+                        ];
                     }
                 }
 
@@ -406,14 +410,29 @@ export const useSongsStore = create<SongsState & SongsActions>()(
 
             shuffle: async () => {
                 const queue = await TrackPlayer.getQueue();
-                const current = await TrackPlayer.getActiveTrackIndex();
-                if (!current) return;
+                const currentIndex = await TrackPlayer.getActiveTrackIndex();
 
-                const futureTracks = queue.slice(current + 1);
-                await TrackPlayer.removeUpcomingTracks();
-                await TrackPlayer.add(
-                    futureTracks.sort(() => Math.random() - 0.5)
+                if (!queue.length || currentIndex === undefined) return;
+
+                const currentSong = queue[currentIndex];
+                const remainingTracks = [
+                    ...queue.slice(0, currentIndex),
+                    ...queue.slice(currentIndex + 1),
+                ];
+
+                // Shuffle remaining tracks
+                const shuffledTracks = remainingTracks.sort(
+                    () => Math.random() - 0.5
                 );
+
+                const newQueue = [
+                    ...shuffledTracks.slice(0, currentIndex),
+                    currentSong,
+                    ...shuffledTracks.slice(currentIndex),
+                ];
+
+                await TrackPlayer.removeUpcomingTracks();
+                await TrackPlayer.add(newQueue.slice(currentIndex + 1));
 
                 set({ queue: await TrackPlayer.getQueue() });
             },

@@ -65,6 +65,7 @@ const RecapScreen = () => {
                             },
                         }}
                         buttons={Object.values(RECAP_PERIOD).map((period) => ({
+                            testID: `recap-period-${period}`,
                             value: period as string,
                             label:
                                 period.charAt(0) +
@@ -111,6 +112,7 @@ const RecapScreen = () => {
                         ]}
                     >
                         <TouchableRipple
+                            testID="latest-recap-banner"
                             onPress={() => {
                                 router.push(
                                     `overlays/recap/${latestPeriod.periodId}?period=${latestPeriod.period}`
@@ -222,6 +224,7 @@ const FinishedPeriodsList = ({ periods }: FinishedPeriodsListProps) => {
                 <TextHeader text="Previous Recaps" style={textStyles.h5} />
                 {periods.length >= 2 && (
                     <IconButton
+                        testID="expand-history-button"
                         icon={"chevron-right"}
                         iconColor={Colors.primary}
                         onPress={() => router.push("./recap/history")}
