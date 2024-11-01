@@ -12,6 +12,7 @@ import { textStyles } from "../../../styles/text";
 import { Direction } from "../../../types/other";
 import { CalculateDurationLeft, FormatSecs } from "../../../utils/FormatMillis";
 import PlaybackSlider from "../Utils/PlaybackSlider";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 const PlaybackControls = ({
     animation = (direction: Direction, fast: boolean) => {},
@@ -23,9 +24,10 @@ const PlaybackControls = ({
         previous,
         seekToPosition,
         shuffle,
-        toggleRepeatMode,
+        cycleRepeatMode,
         repeatMode,
-    } = useSongsStore();
+    } = usePlaybackStore();
+
     const playbackState = usePlaybackState();
     const progress = useProgress();
 
@@ -67,7 +69,7 @@ const PlaybackControls = ({
                     testID={getRepeatIcon() + "-button"}
                     icon={getRepeatIcon()}
                     size={IconSizes.lg}
-                    onPress={toggleRepeatMode}
+                    onPress={cycleRepeatMode}
                     iconColor={Colors.primary}
                     style={{ marginHorizontal: -Spacing.mmd }}
                 />

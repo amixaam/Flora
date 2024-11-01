@@ -1,76 +1,58 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { Stack, router } from "expo-router";
-import { useEffect } from "react";
-import { Linking } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import TrackPlayer, {
     AppKilledPlaybackBehavior,
     Capability,
     RatingType,
-    RepeatMode,
 } from "react-native-track-player";
-import { PlaybackService } from "../../PlaybackService";
-import { useSongsStore } from "../store/songsStore";
 import { Colors } from "../styles/constants";
-import * as NavigationBar from "expo-navigation-bar";
+import { DEFAULT_REPEAT_MODE } from "../types/other";
 import { UpdateMetadata } from "../utils/UpdateMetadata";
+import { useEffect } from "react";
 export default function App() {
-    const { startup } = useSongsStore();
-    useEffect(() => {
-        async function setup() {
-            try {
-                await TrackPlayer.getActiveTrack();
-                await startup();
-            } catch (error) {
-                TrackPlayer.registerPlaybackService(() => PlaybackService);
+    async function setupPlayer() {
+        try {
+            await TrackPlayer.getActiveTrack();
+        } catch (error) {
+            await TrackPlayer.setupPlayer({
+                autoHandleInterruptions: true,
+            });
 
-                await TrackPlayer.setupPlayer({
-                    autoHandleInterruptions: true,
-                });
-
-                await TrackPlayer.updateOptions({
-                    ratingType: RatingType.Heart,
-                    android: {
-                        appKilledPlaybackBehavior:
-                            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-                    },
-                    notificationCapabilities: [
-                        Capability.SetRating,
-                        Capability.Play,
-                        Capability.Pause,
-                        Capability.SkipToNext,
-                        Capability.SkipToPrevious,
-                        Capability.SeekTo,
-                    ],
-                });
-                await TrackPlayer.setRepeatMode(RepeatMode.Off);
-                await startup();
-
-                console.log("Setup!");
-            }
-
+            await TrackPlayer.updateOptions({
+                ratingType: RatingType.Heart,
+                android: {
+                    appKilledPlaybackBehavior:
+                        AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+                },
+                icon: require("../../assets/images/system/icon.png"),
+                capabilities: [
+                    Capability.Play,
+                    Capability.Pause,
+                    Capability.SkipToNext,
+                    Capability.SkipToPrevious,
+                    Capability.SeekTo,
+                    Capability.Stop,
+                    Capability.SetRating,
+                ],
+                notificationCapabilities: [
+                    Capability.Play,
+                    Capability.Pause,
+                    Capability.SkipToNext,
+                    Capability.SkipToPrevious,
+                    Capability.SeekTo,
+                    Capability.SetRating,
+                ],
+            });
+            await TrackPlayer.setRepeatMode(DEFAULT_REPEAT_MODE);
             await UpdateMetadata();
         }
-        setup();
-        function deepLinkHandler(data: { url: string }) {
-            console.log("deepLinkHandler", data.url);
-            if (data.url === "trackplayer://notification.click") {
-                router.navigate("/overlays/player");
-            }
-        }
+    }
 
-        // This event will be fired when the app is already open and the notification is clicked
-        Linking.addEventListener("url", deepLinkHandler);
-
-        // When you launch the closed app from the notification or any other link
-        Linking.getInitialURL().then((url) =>
-            console.log("getInitialURL", url)
-        );
-
-        return () => {
-            Linking.removeAllListeners("url");
-        };
+    useEffect(() => {
+        setupPlayer();
     }, []);
 
     return (
@@ -94,7 +76,6 @@ function DefaultLayout() {
                 headerShown: false,
                 statusBarStyle: "light",
                 statusBarTranslucent: true,
-                // statusBarColor:"#00000070",
                 animation: "slide_from_bottom",
             }}
         >

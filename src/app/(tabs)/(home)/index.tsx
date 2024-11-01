@@ -18,6 +18,7 @@ import { MainHeader } from "../../../Components/UI/Headers/MainHeader";
 import BackgroundImageAbsolute from "../../../Components/UI/UI chunks/BackgroundImageAbsolute";
 import ContainerItem from "../../../Components/UI/UI chunks/ContainerItem";
 import useBottomSheetModal from "../../../hooks/useBottomSheetModal";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 export default function HomeTab() {
     const {
@@ -85,45 +86,52 @@ export default function HomeTab() {
 type HorizontalListProps = {
     list?: (Playlist | Album | Song)[];
     longPress?: any;
-    onPress?: any;
     text?: string;
 };
+
 const HorizontalList = ({
     list = [],
     longPress,
-    onPress,
     text = "List header",
 }: HorizontalListProps) => {
-    const { shuffleList, getSongsFromContainer, addListToQueue } =
-        useSongsStore();
+    const { getSongsFromContainer } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
-    // shuffle list items
-    const onHeaderPress = async () => {
-        if (list.every((item) => "sampleRate" in item)) {
-            shuffleList(list);
-            return;
-        }
+    const isSongList = list.length > 0 && "sampleRate" in list[0];
 
-        // convert list of containers to list of songs
-        const songs = list
+    const getAllSongsFromContainers = (): Song[] => {
+        return list
             .map((container) => getSongsFromContainer(container.id))
             .flat()
             .filter((s) => s !== undefined) as Song[];
-
-        shuffleList(songs, true);
     };
 
-    const onContainerPress = (item: Playlist | Album | Song) => {
-        if (onPress) {
-            onPress(item);
+    const onHeaderPress = async () => {
+        const songs = isSongList
+            ? (list as Song[])
+            : getAllSongsFromContainers();
+
+        await addToQueue(songs, {
+            shuffle: true,
+            playImmediately: true,
+            redirect: true,
+        });
+    };
+
+    const onContainerPress = async (
+        item: Playlist | Album | Song,
+        index: number
+    ) => {
+        if (isSongList) {
+            await addToQueue(list as Song[], {
+                playImmediately: true,
+                startFromIndex: index,
+                redirect: true,
+            });
             return;
         }
 
-        if (list.every((item) => "sampleRate" in item)) {
-            addListToQueue(list, item as Song, true);
-            return;
-        }
-
+        // If containers, navigate to detail view
         router.push(`/${item.id}`);
     };
 
@@ -173,23 +181,17 @@ const HorizontalList = ({
                 ItemSeparatorComponent={() => (
                     <View style={{ width: Spacing.md }} />
                 )}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                     <ContainerItem
                         style={{
                             width: 160,
                         }}
                         item={item}
                         icon={{
-                            onPress: () => {
-                                longPress(item);
-                            },
+                            onPress: () => longPress(item),
                         }}
-                        onLongPress={() => {
-                            longPress(item);
-                        }}
-                        onPress={() => {
-                            onContainerPress(item);
-                        }}
+                        onLongPress={() => longPress(item)}
+                        onPress={() => onContainerPress(item, index)}
                     />
                 )}
             />

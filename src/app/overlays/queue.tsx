@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import DraggableFlatList, {
     DragEndParams,
@@ -12,29 +12,46 @@ import ListItemsNotFound from "../../Components/UI/Text/ListItemsNotFound";
 import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 import SongItem from "../../Components/UI/UI chunks/SongItem";
 import SwipeDownScreen from "../../Components/UI/Utils/SwipeDownScreen";
-import { useSongsStore } from "../../store/songsStore";
 import { Colors, Spacing } from "../../styles/constants";
 import { textStyles } from "../../styles/text";
 import { Song } from "../../types/song";
 import { CombineStrings } from "../../utils/CombineStrings";
 import SheetHeader from "../../Components/UI/Headers/SheetHeader";
+import { usePlaybackStore } from "../../store/playbackStore";
+import useTrack from "../../hooks/useActiveTrack";
 
 const QueueScreen = () => {
-    const { queue, setQueue } = useSongsStore();
+    const { getQueue, moveQueueItem } = usePlaybackStore();
+    const [queueItems, setQueueItems] = useState<Song[]>([]);
+
+    // Load queue on mount
+    useEffect(() => {
+        const loadQueue = async () => {
+            const queue = await getQueue();
+            setQueueItems(queue);
+        };
+        loadQueue();
+    }, [getQueue]);
 
     // Optimistic update handler
     const updateQueue = useCallback(
-        async ({ data: newQueue }: DragEndParams<Song>) => {
-            useSongsStore.setState({ queue: newQueue });
+        async ({ from, to }: DragEndParams<Song>) => {
+            // Optimistically update local state
+            const newQueue = [...queueItems];
+            const [movedItem] = newQueue.splice(from, 1);
+            newQueue.splice(to, 0, movedItem);
+            setQueueItems(newQueue);
 
             try {
-                await setQueue(newQueue);
+                await moveQueueItem(from, to);
             } catch (error) {
                 console.error("Failed to update queue:", error);
-                useSongsStore.setState({ queue });
+                // Revert on failure
+                const queue = await getQueue();
+                setQueueItems(queue);
             }
         },
-        [queue, setQueue]
+        [queueItems, moveQueueItem, getQueue]
     );
 
     const renderItem = useCallback(
@@ -44,16 +61,14 @@ const QueueScreen = () => {
 
     const keyExtractor = useCallback((item: Song) => item.id, []);
 
-    const memoizedQueue = useMemo(() => queue as Song[], [queue]);
-
     return (
         <SwipeDownScreen disable header={<SheetHeader title="Queue" />}>
             <NowPlayingItem />
-            {queue.length === 0 ? (
+            {queueItems.length === 0 ? (
                 <ListItemsNotFound text="Queue is empty" icon="music-note" />
             ) : (
                 <DraggableFlatList
-                    data={memoizedQueue}
+                    data={queueItems}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}
                     onDragEnd={updateQueue}
@@ -68,14 +83,15 @@ const QueueScreen = () => {
 
 const NowPlayingItem = memo(() => {
     const playback = usePlaybackState();
-    const { play, pause, activeSong } = useSongsStore();
+    const { play, pause } = usePlaybackStore();
+    const { track: activeTrack } = useTrack();
 
     const handlePlayPausePress = useCallback(() => {
         if (playback.state === "playing") pause();
         else play();
     }, [playback.state, pause, play]);
 
-    if (!activeSong) return null;
+    if (!activeTrack) return null;
 
     return (
         <View
@@ -90,7 +106,7 @@ const NowPlayingItem = memo(() => {
             }}
         >
             <View style={{ flex: 1, flexDirection: "row", gap: Spacing.md }}>
-                <AlbumArt image={activeSong.artwork} />
+                <AlbumArt image={activeTrack.artwork} />
                 <View
                     style={{
                         flexDirection: "column",
@@ -100,7 +116,7 @@ const NowPlayingItem = memo(() => {
                     }}
                 >
                     <TextTicker
-                        key={activeSong.title}
+                        key={activeTrack.title}
                         style={textStyles.h6}
                         duration={12 * 1000}
                         marqueeDelay={2 * 1000}
@@ -109,7 +125,7 @@ const NowPlayingItem = memo(() => {
                         scroll={false}
                         loop
                     >
-                        {activeSong.title}
+                        {activeTrack.title}
                     </TextTicker>
                     <Text
                         style={[
@@ -118,7 +134,7 @@ const NowPlayingItem = memo(() => {
                         ]}
                         numberOfLines={1}
                     >
-                        {CombineStrings([activeSong.artist, activeSong.year])}
+                        {CombineStrings([activeTrack.artist, activeTrack.year])}
                     </Text>
                 </View>
             </View>
@@ -131,25 +147,23 @@ const NowPlayingItem = memo(() => {
     );
 });
 
-const QueueItem = React.memo(
-    ({ item, drag, isActive }: RenderItemParams<Song>) => {
-        return (
-            <ScaleDecorator activeScale={1.05}>
-                <SongItem
-                    song={item}
-                    isActive={isActive}
-                    controls={
-                        <IconButton
-                            icon="drag"
-                            iconColor={Colors.primary}
-                            onLongPress={drag}
-                            delayLongPress={50}
-                        />
-                    }
-                />
-            </ScaleDecorator>
-        );
-    }
-);
+const QueueItem = memo(({ item, drag, isActive }: RenderItemParams<Song>) => {
+    return (
+        <ScaleDecorator activeScale={1.05}>
+            <SongItem
+                song={item}
+                isActive={isActive}
+                controls={
+                    <IconButton
+                        icon="drag"
+                        iconColor={Colors.primary}
+                        onLongPress={drag}
+                        delayLongPress={50}
+                    />
+                }
+            />
+        </ScaleDecorator>
+    );
+});
 
 export default QueueScreen;

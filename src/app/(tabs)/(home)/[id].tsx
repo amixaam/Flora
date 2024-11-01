@@ -26,6 +26,7 @@ import { textStyles } from "../../../styles/text";
 import { Album, ContainerType, Playlist, Song } from "../../../types/song";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import { CalculateTotalDuration } from "../../../utils/FormatMillis";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 export default function ContainerScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -122,7 +123,7 @@ const AlbumInfo = ({
     songData,
     openContainerOptions,
 }: AlbumInfoProps) => {
-    const { shuffleList, addListToQueue } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
     const isAlbum = data.type === ContainerType.ALBUM;
 
@@ -159,14 +160,25 @@ const AlbumInfo = ({
                     testID="single-container-shuffle-button"
                     icon="shuffle"
                     size={IconSizes.md}
-                    onPress={() => shuffleList(songData, true)}
+                    onPress={() =>
+                        addToQueue(songData, {
+                            shuffle: true,
+                            playImmediately: true,
+                            redirect: true,
+                        })
+                    }
                     iconColor={Colors.primary}
                 />
                 <IconButton
                     testID="single-container-play-button"
                     icon="play-circle"
                     size={IconSizes.md * 2}
-                    onPress={() => addListToQueue(songData, undefined, true)}
+                    onPress={() =>
+                        addToQueue(songData, {
+                            playImmediately: true,
+                            redirect: true,
+                        })
+                    }
                     iconColor={Colors.primary}
                 />
                 <IconButton
@@ -191,7 +203,8 @@ const SongList = ({
     openSongOptions = () => {},
     isAlbum,
 }: SongListProps) => {
-    const { setSelectedSong, addListToQueue } = useSongsStore();
+    const { setSelectedSong } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
     return (
         <View style={{ minHeight: 5 }}>
@@ -229,7 +242,11 @@ const SongList = ({
                         }}
                         onPress={() => {
                             setSelectedSong(item);
-                            addListToQueue(songData, item, true);
+                            addToQueue(songData, {
+                                playImmediately: true,
+                                redirect: true,
+                                startFromIndex: index,
+                            });
                         }}
                         controls={{
                             onPress: async () => {

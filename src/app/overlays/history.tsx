@@ -12,10 +12,10 @@ import useMultiSelect from "../../hooks/useMultiSelect";
 import { useSongsStore } from "../../store/songsStore";
 import { Colors } from "../../styles/constants";
 import { Song } from "../../types/song";
+import { usePlaybackStore } from "../../store/playbackStore";
 
 const HistoryScreen = () => {
-    const { history, getSong, setSelectedSong, addToQueueFirst } =
-        useSongsStore();
+    const { history, getSong, setSelectedSong } = useSongsStore();
 
     const {
         sheetRef: SongRef,
@@ -34,7 +34,6 @@ const HistoryScreen = () => {
         if (multiselectMode) {
             toggle(song.id);
         } else {
-            addToQueueFirst(song);
         }
     };
 
@@ -138,7 +137,8 @@ const SelectedMenuButton = ({
     openAddToPlaylist: () => void;
 }) => {
     const [visible, setVisible] = useState(false);
-    const { shuffleList, addToQueue, getSong } = useSongsStore();
+    const { getSong } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
     const getSelectedSongs = () => {
         return selectedSongs.map((id) => getSong(id) as Song);
@@ -160,7 +160,9 @@ const SelectedMenuButton = ({
         >
             <Menu.Item
                 onPress={() => {
-                    shuffleList(getSelectedSongs());
+                    addToQueue(getSelectedSongs(), {
+                        shuffle: true,
+                    });
                     setVisible(false);
                 }}
                 title="Shuffle"
@@ -201,7 +203,8 @@ const MenuButton = ({
 }) => {
     const [visible, setVisible] = useState(false);
 
-    const { getHistory, getSong, shuffleList, addToQueue } = useSongsStore();
+    const { getHistory, getSong } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
     function getSongsFromHistory() {
         const history = getHistory().history;
@@ -233,7 +236,9 @@ const MenuButton = ({
         >
             <Menu.Item
                 onPress={() => {
-                    shuffleList(getSongsFromHistory());
+                    addToQueue(getSongsFromHistory(), {
+                        shuffle: true,
+                    });
                     setVisible(false);
                 }}
                 title="Shuffle"

@@ -5,8 +5,8 @@ interface Container {
 
     title: string;
     songs: string[]; // song id's
-    artwork: string | undefined;
-    lastModified: string | undefined;
+    artwork?: string;
+    lastModified?: string;
 }
 
 interface Album extends Container {
@@ -18,7 +18,7 @@ interface Album extends Container {
 
 interface Playlist extends Container {
     readonly type: ContainerType.PLAYLIST;
-    description: string | undefined;
+    description?: string;
 }
 
 interface Song {
@@ -32,21 +32,21 @@ interface Song {
     title: string;
     artist: string;
     year: string;
-    trackNumber: number | undefined;
-    artwork: string | undefined;
+    trackNumber?: number;
+    artwork?: string;
 
     sampleRate: number;
     bitRate: number;
     channels: number;
 
     isHidden: boolean;
-    isLiked: boolean;
+    rating: number;
     statistics: {
         playCount: number;
         skipCount: number;
         creationDate: string;
-        lastPlayed: string | undefined;
-        lastModified: string | undefined;
+        lastPlayed?: string;
+        lastModified?: string;
     };
 }
 

@@ -12,9 +12,11 @@ import { useSongsStore } from "../../../store/songsStore";
 import { Colors, Spacing } from "../../../styles/constants";
 import { mainStyles } from "../../../styles/styles";
 import { UpdateMetadata } from "../../../utils/UpdateMetadata";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 export default function SongsTab() {
-    const { getAllSongs, setSelectedSong, addListToQueue } = useSongsStore();
+    const { getAllSongs, setSelectedSong } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
     const [refreshing, setRefreshing] = useState(false);
 
     const songs = getAllSongs();
@@ -76,7 +78,11 @@ export default function SongsTab() {
                             }}
                             onPress={async () => {
                                 await setSelectedSong(item);
-                                addListToQueue(songs, item, true);
+                                addToQueue(songs, {
+                                    playImmediately: true,
+                                    redirect: true,
+                                    startFromIndex: songs.indexOf(item),
+                                });
                             }}
                         />
                     );

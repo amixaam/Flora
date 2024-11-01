@@ -10,6 +10,7 @@ import { CombineStrings } from "../../../utils/CombineStrings";
 import AlbumArt from "./AlbumArt";
 import React from "react";
 import { IconButtonProps } from "../Headers/SheetHeader";
+import { useActiveTrack } from "react-native-track-player";
 
 type SongItemProps = {
     song: Song;
@@ -30,7 +31,8 @@ const SongItem = ({
     onPress,
     onLongPress,
 }: SongItemProps) => {
-    const { activeSong } = useSongsStore();
+    const activeSong = useActiveTrack();
+
     let active;
 
     if (typeof isActive === "boolean") {

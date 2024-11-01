@@ -1,6 +1,5 @@
-import { View } from "react-native";
-import SwipeDownScreen from "../../../Components/UI/Utils/SwipeDownScreen";
 import SheetHeader from "../../../Components/UI/Headers/SheetHeader";
+import SwipeDownScreen from "../../../Components/UI/Utils/SwipeDownScreen";
 
 const RecapHistoryScreen = () => {
     return (

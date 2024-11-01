@@ -20,7 +20,9 @@ import SongSheet from "../../Components/BottomSheets/Song/SongSheet";
 import AlbumArt from "../../Components/UI/UI chunks/AlbumArt";
 import ImageBlurBackground from "../../Components/UI/UI chunks/ImageBlurBackground";
 import PlaybackControls from "../../Components/UI/UI chunks/PlaybackControls";
+import useTrack from "../../hooks/useActiveTrack";
 import useBottomSheetModal from "../../hooks/useBottomSheetModal";
+import { usePlaybackStore } from "../../store/playbackStore";
 import { useSongsStore } from "../../store/songsStore";
 import { Colors, Spacing } from "../../styles/constants";
 import { mainStyles } from "../../styles/styles";
@@ -32,8 +34,8 @@ import { CombineStrings } from "../../utils/CombineStrings";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const PlayerScreen = () => {
-    const { activeSong, likeSong, unlikeSong, setSelectedSong } =
-        useSongsStore();
+    const { setSelectedSong } = useSongsStore();
+    const { toggleLike } = usePlaybackStore();
 
     const { bottom } = useSafeAreaInsets();
 
@@ -153,6 +155,8 @@ const PlayerScreen = () => {
         };
     });
 
+    const { track: activeSong, updateTrack } = useTrack();
+
     return (
         <GestureDetector gesture={dismissGesture}>
             <Animated.View
@@ -247,19 +251,20 @@ const PlayerScreen = () => {
                                 >
                                     <PaperIconButton
                                         testID={
-                                            activeSong?.isLiked
+                                            activeSong?.rating
                                                 ? "unlike-button"
                                                 : "like-button"
                                         }
-                                        onPress={() =>
-                                            activeSong?.isLiked
-                                                ? unlikeSong(activeSong.id)
-                                                : likeSong(
-                                                      activeSong?.id as string
-                                                  )
-                                        }
+                                        onPress={() => {
+                                            toggleLike(activeSong?.id);
+                                            updateTrack({
+                                                rating: activeSong?.rating
+                                                    ? 0
+                                                    : 1,
+                                            });
+                                        }}
                                         icon={
-                                            activeSong?.isLiked
+                                            activeSong?.rating
                                                 ? "heart"
                                                 : "heart-outline"
                                         }

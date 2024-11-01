@@ -5,6 +5,7 @@ import { Colors, Spacing } from "../../../styles/constants";
 import { textStyles } from "../../../styles/text";
 import { Song } from "../../../types/song";
 import Pluralize from "../../../utils/Pluralize";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 interface TopButtonControlsProps {
     horizontalMargins?: number;
@@ -19,7 +20,7 @@ export const TopButtonControls = ({
     type,
     count,
 }: TopButtonControlsProps) => {
-    const { shuffleList } = useSongsStore();
+    const { addToQueue } = usePlaybackStore();
 
     return (
         <View
@@ -45,7 +46,12 @@ export const TopButtonControls = ({
                         marginRight: -Spacing.sm,
                     }}
                     icon={"shuffle"}
-                    onPress={() => shuffleList(songs)}
+                    onPress={() =>
+                        addToQueue(songs, {
+                            shuffle: true,
+                            playImmediately: true,
+                        })
+                    }
                     iconColor={Colors.primary}
                 />
             </View>

@@ -20,16 +20,13 @@ import AlbumRanking from "../Album/AlbumRanking";
 import { SheetModalLayout } from "../SheetModalLayout";
 import AddSongsToContainer from "./AddSongsToContainer";
 import EditContainer from "./EditContainer";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const {
-            selectedContainer,
-            deleteContainer,
-            shuffleList,
-            getSongsFromContainer,
-            addToQueue,
-        } = useSongsStore();
+        const { selectedContainer, deleteContainer, getSongsFromContainer } =
+            useSongsStore();
+        const { addToQueue } = usePlaybackStore();
 
         const [deleteConfirmModal, setDeleteConfirmModal] =
             useState<boolean>(false);
@@ -62,7 +59,10 @@ const ContainerSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
         const handleShufflePlay = () => {
             props.dismiss?.();
-            shuffleList(getSongsFromContainer(selectedContainer.id));
+            addToQueue(getSongsFromContainer(selectedContainer.id), {
+                shuffle: true,
+                playImmediately: true,
+            });
         };
 
         const handleAddToQueue = () => {

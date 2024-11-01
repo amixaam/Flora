@@ -18,11 +18,12 @@ import { UISeperator } from "../../UI/Utils/UISeperator";
 import { SheetModalLayout } from "../SheetModalLayout";
 import AddMultipleSongs from "./AddMultipleSongs";
 import SongStatistics from "./SongStatistics";
+import { usePlaybackStore } from "../../../store/playbackStore";
 
 const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
     (props, ref) => {
-        const { selectedSong, toggleSongVisibility, addToQueue } =
-            useSongsStore();
+        const { selectedSong, toggleSongVisibility } = useSongsStore();
+        const { addToQueue } = usePlaybackStore();
 
         const {
             sheetRef: addPlaylistRef,
@@ -46,7 +47,7 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 
         const handleAddToQueue = () => {
             props.dismiss?.();
-            addToQueue(selectedSong);
+            addToQueue([selectedSong]);
         };
 
         return (
@@ -96,7 +97,6 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
                             }}
                         >
                             <SheetOptionsButton
-                            
                                 icon="album"
                                 buttonContent="Go to album"
                                 onPress={() => {
@@ -148,15 +148,8 @@ const SongSheet = forwardRef<BottomSheetModal, BottomSheetProps>(
 );
 
 const SongSheetHeader = ({ song }: { song: Song }) => {
-    const { likeSong, unlikeSong } = useSongsStore();
+    const { toggleLike } = usePlaybackStore();
 
-    const handleToggleLike = () => {
-        if (song.isLiked) {
-            unlikeSong(song.id);
-        } else {
-            likeSong(song.id);
-        }
-    };
     return (
         <BottomSheetView
             style={{
@@ -210,10 +203,10 @@ const SongSheetHeader = ({ song }: { song: Song }) => {
             </BottomSheetView>
             <IconButton
                 testID={
-                    song.isLiked ? "sheet-unlike-button" : "sheet-like-button"
+                    song.rating ? "sheet-unlike-button" : "sheet-like-button"
                 }
-                icon={song.isLiked ? "heart" : "heart-outline"}
-                onPress={handleToggleLike}
+                icon={song.rating ? "heart" : "heart-outline"}
+                onPress={() => toggleLike(song.id)}
                 iconColor={Colors.primary}
                 size={IconSizes.md}
             />

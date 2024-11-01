@@ -2,11 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { router } from "expo-router";
-import TrackPlayer, { RepeatMode, Track } from "react-native-track-player";
+import moment from "moment";
 import { Album, ContainerType, History, Playlist, Song } from "../types/song";
 import { useRecapStore } from "./recapStore";
-import moment from "moment";
 
 const MARKED_SONGS_KEY = "MarkedSongs";
 
@@ -75,11 +73,8 @@ interface SongsState {
     albumMap: Map<string, Album>;
     playlistMap: Map<string, Playlist>;
     history: History;
-    queue: Track[];
     isReadingSongs: boolean;
     selectedSong: Song | undefined;
-    activeSong: Song | undefined;
-    repeatMode: RepeatMode;
     selectedContainer: Playlist | Album | undefined;
 }
 
@@ -89,41 +84,7 @@ interface SongsActions {
     setIsReadingSongs: (value: boolean) => void;
     setSelectedSong: (song: Song) => Promise<void>;
     setSelectedContainer: (container: Playlist | Album) => Promise<void>;
-
     updateSelectedStates: () => void;
-
-    // PLAYBACK
-    resetPlayer: () => Promise<void>;
-    startup: () => Promise<void>;
-
-    play: () => Promise<void>;
-    pause: () => Promise<void>;
-    next: () => Promise<void>;
-    previous: () => Promise<void>;
-
-    seekToPosition: (position: number) => Promise<void>;
-
-    setRepeatMode: (mode: RepeatMode) => Promise<void>;
-    toggleRepeatMode: () => Promise<void>;
-
-    shuffle: () => void;
-    shuffleList: (list: Song[], redirect?: boolean) => Promise<void>;
-
-    // QUEUE
-    getQueue: () => Promise<Song[]>;
-    setQueue: (queue: Song[]) => void;
-
-    addToQueue: (song: Song | Song[]) => Promise<void>;
-    addToQueueFirst: (
-        song: Song,
-        redirect?: boolean,
-        override?: boolean
-    ) => Promise<void>;
-    addListToQueue: (
-        list: Song[],
-        selectedSong?: Song,
-        redirect?: boolean
-    ) => Promise<void>;
 
     // SONG
     setSongs: (songs: Song[]) => void;
@@ -198,17 +159,13 @@ const initialState: SongsState = {
     songMap: new Map(),
     albumMap: new Map(),
     playlistMap: new Map([[defaultLikedPlaylist.id, defaultLikedPlaylist]]),
-    queue: [],
 
     history: {
         history: [],
         consciousHistory: [],
     },
 
-    repeatMode: RepeatMode.Off,
-    activeSong: undefined,
-    isReadingSongs: false, // for song discovering loading state
-
+    isReadingSongs: false,
     selectedSong: undefined,
     selectedContainer: undefined,
 };
@@ -251,204 +208,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                 set({ selectedContainer: container });
             },
 
-            // Music playback ----------------------------------------------------------
-            resetPlayer: async () => {
-                await TrackPlayer.reset();
-                set({ queue: [] });
-            },
-            startup: async () => {
-                set({
-                    queue: await TrackPlayer.getQueue(),
-                    repeatMode: await TrackPlayer.getRepeatMode(),
-                    activeSong: (await TrackPlayer.getActiveTrack()) as Song,
-                });
-            },
-
-            play: async () => {
-                await TrackPlayer.play();
-            },
-            pause: async () => {
-                await TrackPlayer.pause();
-            },
-            next: async () => {
-                get().updateSongSkip(get().activeSong?.id as string);
-                await TrackPlayer.skipToNext();
-            },
-            previous: async () => {
-                const playbackProgress = await TrackPlayer.getProgress();
-
-                if (playbackProgress.position >= 3) {
-                    return await TrackPlayer.seekTo(0);
-                }
-
-                await TrackPlayer.skipToPrevious();
-            },
-            seekToPosition: async (position) => {
-                await TrackPlayer.seekTo(position);
-            },
-            setRepeatMode: async (mode) => {
-                await TrackPlayer.setRepeatMode(mode);
-            },
-
-            toggleRepeatMode: async () => {
-                const current = await TrackPlayer.getRepeatMode();
-                let setRepeat: RepeatMode;
-
-                switch (current) {
-                    case RepeatMode.Off:
-                        setRepeat = RepeatMode.Queue;
-                        break;
-                    case RepeatMode.Queue:
-                        setRepeat = RepeatMode.Track;
-                        break;
-                    case RepeatMode.Track:
-                        setRepeat = RepeatMode.Off;
-                        break;
-                    default:
-                        setRepeat = RepeatMode.Off;
-                        break;
-                }
-                await TrackPlayer.setRepeatMode(setRepeat);
-                set({ repeatMode: setRepeat });
-            },
-
-            addToQueue: async (song) => {
-                let consciousHistory: string;
-
-                if (Array.isArray(song)) {
-                    consciousHistory = song[0].id;
-                    await TrackPlayer.add(song);
-                } else {
-                    consciousHistory = song.id;
-                    await TrackPlayer.add([song]);
-                }
-
-                get().addSongToConsciousHistory(consciousHistory);
-                set({ queue: await TrackPlayer.getQueue() });
-            },
-
-            // meant for 1 song at a time + conscious press
-            addToQueueFirst: async (
-                song,
-                redirect = false,
-                override = false
-            ) => {
-                if (!override) {
-                    // do nothing if same song playing
-                    const current = await TrackPlayer.getActiveTrack();
-                    if (song.id === current?.id) {
-                        console.log("same song playing! Not adding to queue.");
-
-                        return;
-                    }
-                }
-
-                await TrackPlayer.load(song);
-
-                get().addSongToConsciousHistory(song.id);
-                set({ queue: await TrackPlayer.getQueue() });
-                if (redirect) router.push("/overlays/player");
-            },
-
-            addListToQueue: async (list, selectedSong, redirect = false) => {
-                if (redirect) router.push("/overlays/player");
-
-                let queue: Song[] = list;
-                let consciousHistory: Song["id"] =
-                    selectedSong?.id ?? list[0].id;
-
-                if (selectedSong) {
-                    const selectedIndex = list.findIndex(
-                        (song) => song.id === selectedSong.id
-                    );
-                    if (selectedIndex !== -1) {
-                        // Reorder the queue to put the selected song first
-                        const beforeSelected = list.slice(0, selectedIndex);
-                        const afterSelected = list.slice(selectedIndex + 1);
-                        queue = [
-                            selectedSong,
-                            ...afterSelected,
-                            ...beforeSelected,
-                        ];
-                    }
-                }
-
-                await TrackPlayer.setQueue(queue);
-                await TrackPlayer.play();
-
-                set({ queue: await TrackPlayer.getQueue() });
-                get().addSongToConsciousHistory(consciousHistory);
-            },
-
-            getQueue: async (): Promise<Song[]> => {
-                const queue = await TrackPlayer.getQueue();
-                const songs = await Promise.all(
-                    queue.map(async (track) => {
-                        const song = get().getSong(track.id);
-                        if (song === undefined) {
-                            console.error(
-                                `could not find song with id ${track.id}`
-                            );
-                            return;
-                        }
-                        return song;
-                    })
-                );
-                return songs.filter((song) => song !== undefined) as Song[];
-            },
-
-            setQueue: async (queue) => {
-                try {
-                    await TrackPlayer.setQueue(queue);
-                    set({ queue });
-                    return true;
-                } catch (error) {
-                    console.error("Failed to set track player queue:", error);
-                    return false;
-                }
-            },
-
-            shuffle: async () => {
-                const queue = await TrackPlayer.getQueue();
-                const currentIndex = await TrackPlayer.getActiveTrackIndex();
-
-                if (!queue.length || currentIndex === undefined) return;
-
-                const currentSong = queue[currentIndex];
-                const remainingTracks = [
-                    ...queue.slice(0, currentIndex),
-                    ...queue.slice(currentIndex + 1),
-                ];
-
-                // Shuffle remaining tracks
-                const shuffledTracks = remainingTracks.sort(
-                    () => Math.random() - 0.5
-                );
-
-                const newQueue = [
-                    ...shuffledTracks.slice(0, currentIndex),
-                    currentSong,
-                    ...shuffledTracks.slice(currentIndex),
-                ];
-
-                await TrackPlayer.removeUpcomingTracks();
-                await TrackPlayer.add(newQueue.slice(currentIndex + 1));
-
-                set({ queue: await TrackPlayer.getQueue() });
-            },
-
-            shuffleList: async (list, redirect = false) => {
-                if (redirect) router.push("/overlays/player");
-
-                const shuffledList = [...list].sort(() => Math.random() - 0.5);
-
-                await TrackPlayer.setQueue(shuffledList);
-                await TrackPlayer.play();
-
-                set({ queue: shuffledList });
-                get().addSongToConsciousHistory(shuffledList[0].id);
-            },
-
             // songs ----------------------------------------------------------
             addSongs: (newSongs) => {
                 set((state) => {
@@ -472,9 +231,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                     selectedSong: state.selectedSong
                         ? state.getSong(state.selectedSong.id)
                         : undefined,
-                    activeSong: state.activeSong
-                        ? state.getSong(state.activeSong.id)
-                        : undefined,
                     selectedContainer: state.selectedContainer
                         ? state.getContainer(state.selectedContainer.id)
                         : undefined,
@@ -486,9 +242,16 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             likeSong: (id) => {
+                const song = get().getSong(id);
+                if (!song || song.rating) return;
+
                 get().addSongToPlaylist("1", [id]);
             },
+
             unlikeSong: (id) => {
+                const song = get().getSong(id);
+                if (!song || !song.rating) return;
+
                 get().removeSongFromPlaylist("1", [id]);
             },
 
@@ -531,7 +294,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
 
                     return {
                         songMap: updatedSongMap,
-                        activeSong: updatedSong,
                         history: {
                             ...state.history,
                             history: [
@@ -776,9 +538,6 @@ export const useSongsStore = create<SongsState & SongsActions>()(
             },
 
             addSongToPlaylist: (playlistId, songIds) => {
-                // add songs to playlist, skipping any duplicates
-                // if playlist is default, set isLiked to true
-
                 set((state) => {
                     const editedPlaylistMap = new Map(state.playlistMap);
                     const editedSongsMap = new Map(state.songMap);
@@ -788,16 +547,21 @@ export const useSongsStore = create<SongsState & SongsActions>()(
 
                     const updatedPlaylist = {
                         ...playlist,
-                        songs: [...new Set([...playlist.songs, ...songIds])], //set is unique values
+                        songs: [...new Set([...playlist.songs, ...songIds])],
+                        lastModified: getCurrentTimestamp(),
                     };
                     editedPlaylistMap.set(playlistId, updatedPlaylist);
 
                     if (playlistId === "1") {
-                        editedSongsMap.forEach((song, id) => {
-                            editedSongsMap.set(id, {
-                                ...song,
-                                isLiked: songIds.includes(id),
-                            });
+                        // Update isLiked status for added songs
+                        songIds.forEach((songId) => {
+                            const song = editedSongsMap.get(songId);
+                            if (song) {
+                                editedSongsMap.set(songId, {
+                                    ...song,
+                                    rating: 1,
+                                });
+                            }
                         });
                     }
 
@@ -823,15 +587,20 @@ export const useSongsStore = create<SongsState & SongsActions>()(
                         songs: playlist.songs.filter(
                             (id) => !songIds.includes(id)
                         ),
+                        lastModified: getCurrentTimestamp(),
                     };
                     editedPlaylistMap.set(playlistId, updatedPlaylist);
 
                     if (playlistId === "1") {
-                        editedSongsMap.forEach((song, id) => {
-                            editedSongsMap.set(id, {
-                                ...song,
-                                isLiked: !songIds.includes(id),
-                            });
+                        // Update isLiked status for removed songs
+                        songIds.forEach((songId) => {
+                            const song = editedSongsMap.get(songId);
+                            if (song) {
+                                editedSongsMap.set(songId, {
+                                    ...song,
+                                    rating: 0,
+                                });
+                            }
                         });
                     }
 

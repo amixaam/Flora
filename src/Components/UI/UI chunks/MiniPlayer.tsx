@@ -23,17 +23,24 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import TextTicker from "react-native-text-ticker";
-import { usePlaybackState, useProgress } from "react-native-track-player";
+import {
+    useActiveTrack,
+    usePlaybackState,
+    useProgress,
+} from "react-native-track-player";
 import { Colors, IconSizes, Spacing } from "../../../styles/constants";
 import { newStyles } from "../../../styles/styles";
 import { textStyles } from "../../../styles/text";
 import { CombineStrings } from "../../../utils/CombineStrings";
 import IconButton from "../Buttons/IconButton";
 import AlbumArt from "./AlbumArt";
+import { usePlaybackStore } from "../../../store/playbackStore";
+import { Song } from "../../../types/song";
 
 export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
     const translateX = useSharedValue(0);
     const opacity = useSharedValue(1);
+    const activeSong = useActiveTrack();
 
     // Reset the position of the player
     const resetPosition = () => {
@@ -54,7 +61,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
         );
     };
 
-    const { next, previous, activeSong } = useSongsStore();
+    const { next, previous } = usePlaybackStore();
 
     const onSongChange = (direction: 1 | -1) => {
         if (direction === -1) {
@@ -104,6 +111,7 @@ export const MiniPlayer = ({ style }: { style?: StyleProp<ViewStyle> }) => {
             <TouchableNativeFeedback onPress={openPlayer}>
                 <View style={newStyles.miniPlayer}>
                     <SongDetails
+                        activeSong={activeSong as Song}
                         skipGesture={skipGesture}
                         animatedStyle={animatedStyle}
                     />
@@ -124,13 +132,15 @@ interface d {
 
 interface SongDetailsProps {
     skipGesture: GestureType;
+    activeSong: Song;
     animatedStyle: d;
 }
 
-const SongDetails = ({ skipGesture, animatedStyle }: SongDetailsProps) => {
-    const { activeSong } = useSongsStore();
-    if (!activeSong) return null;
-
+const SongDetails = ({
+    skipGesture,
+    animatedStyle,
+    activeSong,
+}: SongDetailsProps) => {
     return (
         <View
             style={{
@@ -207,7 +217,7 @@ interface SongControlsProps {
 }
 
 const SongControls = ({ skipAnimation }: SongControlsProps) => {
-    const { play, pause, next, previous } = useSongsStore();
+    const { play, pause, next, previous } = usePlaybackStore();
     const playbackState = usePlaybackState();
     const progress = useProgress();
 
