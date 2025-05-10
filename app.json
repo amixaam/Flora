@@ -1,50 +1,38 @@
 {
-    "expo": {
-        "scheme": "flora",
-        "name": "Flora",
-        "slug": "Flora",
-        "version": "0.3.0",
-        "orientation": "portrait",
-        "icon": "./assets/images/system/icon.png",
-        "userInterfaceStyle": "dark",
-        "splash": {
-            "image": "./assets/images/system/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#050506"
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.anonymous.Flora"
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/images/system/adaptive-icon.png",
-                "backgroundColor": "#050506"
-            },
-            "package": "com.anonymous.Flora",
-            "permissions": ["WAKE_LOCK"]
-        },
-        "web": {
-            "favicon": "./assets/images/system/favicon.png"
-        },
-        "plugins": [
-            [
-                "expo-font",
-                {
-                    "fonts": [
-                        "./assets/fonts/Poppins-Bold.ttf",
-                        "./assets/fonts/Poppins-Medium.ttf",
-                        "./assets/fonts/Poppins-Regular.ttf"
-                    ]
-                }
-            ],
-            "expo-router"
-        ],
-        "extra": {
-            "router": {
-                "origin": false
-            }
-        }
+  "expo": {
+    "name": "my-app",
+    "slug": "my-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
+  }
 }
